@@ -12,14 +12,21 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final CreateUserUseCase createUserUseCase;
+    private final GetUserByIdUseCase getUserByIdUseCase;
 
-    public UserController(CreateUserUseCase createUserUseCase) {
+    public UserController(CreateUserUseCase createUserUseCase, GetUserByIdUseCase getUserByIdUseCase) {
         this.createUserUseCase = createUserUseCase;
+        this.getUserByIdUseCase = getUserByIdUseCase;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserResponse create(@Valid @RequestBody CreateUserRequest request) {
         return createUserUseCase.execute(request);
+    }
+
+    @GetMapping("/{userId}")
+    public UserDetailsResponse getById(@PathVariable UUID userId) {
+        return getUserByIdUseCase.execute(userId);
     }
 }

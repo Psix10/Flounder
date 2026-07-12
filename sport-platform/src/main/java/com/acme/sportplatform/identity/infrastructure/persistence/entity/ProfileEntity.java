@@ -45,8 +45,9 @@ public class ProfileEntity {
     @Column(name = "club_name", length = 255)
     private String clubName;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "sport_meta", nullable = false, columnDefinition = "jsonb")
-    private String sportMeta = "{}";
+    private Map<String, Object> sportMeta = new HashMap<>();
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
@@ -96,8 +97,8 @@ public class ProfileEntity {
     public String getClubName() { return clubName; }
     public void setClubName(String clubName) { this.clubName = clubName; }
 
-    public String getSportMeta() { return sportMeta; }
-    public void setSportMeta(String sportMeta) { this.sportMeta = sportMeta; }
+    public Map<String, Object> getSportMeta() { return sportMeta; }
+    public void setSportMeta(Map<String, Object> sportMeta) { this.sportMeta = sportMeta; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }

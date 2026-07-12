@@ -2,32 +2,44 @@ package com.acme.sportplatform.identity.application;
 
 import com.acme.sportplatform.identity.api.CreateUserRequest;
 import com.acme.sportplatform.identity.api.UserResponse;
+import com.acme.sportplatform.identity.domain.UserAlreadyExistsException;
 import com.acme.sportplatform.identity.infrastructure.persistence.entity.ProfileEntity;
+import com.acme.sportplatform.identity.infrastructure.persistence.entity.RoleEntity;
 import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEntity;
+import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserRoleAssignmentEntity;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
+import com.acme.sportplatform.identity.infrastructure.persistence.repository.RoleRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
+import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRoleAssignmentRepository;
 import jakarta.transaction.Transactional;
-
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CreateUserUseCase {
+
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final RoleRepository roleRepository;
+    private final UserRoleAssignmentRepository userRoleAssignmentRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public CreateUserUseCase(UserRepository userRepository, ProfileRepository profileRepository, PasswordEncoder passwordEncoder) {
+    public CreateUserUseCase(UserRepository userRepository,
+                             ProfileRepository profileRepository,
+                             RoleRepository roleRepository,
+                             UserRoleAssignmentRepository userRoleAssignmentRepository,
+                             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
+        this.roleRepository = roleRepository;
+        this.userRoleAssignmentRepository = userRoleAssignmentRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
-    public UserResponse createUser(CreateUserRequest request) {
+    public UserResponse execute(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new UserAlreadyExistsException(request.email());
         }
 
         UserEntity user = new UserEntity();
@@ -48,15 +60,22 @@ public class CreateUserUseCase {
         profile.setCity(request.city());
         profile.setCountryCode(request.countryCode());
         profile.setClubName(request.clubName());
-
         profileRepository.save(profile);
 
+        RoleEntity participantRole = roleRepository.findByCode("participant")
+                .orElseThrow(() -> new IllegalStateException("Default participant role not found"));
+
+        UserRoleAssignmentEntity assignment = new UserRoleAssignmentEntity();
+        assignment.setUserId(savedUser.getId());
+        assignment.setRoleId(participantRole.getId());
+        userRoleAssignmentRepository.save(assignment);
+
         return new UserResponse(
-            savedUser.getId(),
-            savedUser.getEmail(),
-            savedUser.getPhone(),
-            savedUser.getStatus(),
-            savedUser.getCreatedAt()
+                savedUser.getId(),
+                savedUser.getEmail(),
+                savedUser.getPhone(),
+                savedUser.getStatus(),
+                savedUser.getCreatedAt()
         );
     }
 }
