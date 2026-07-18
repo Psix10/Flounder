@@ -1,0 +1,7 @@
+com\acme\sportplatform\architecture\ArchitectureTest.class
+com\acme\sportplatform\integration\identity\RbacIntegrationTest.class
+com\acme\sportplatform\modulith\ModulithArchitectureTest.class
+com\acme\sportplatform\integration\identity\UserIdentityIntegrationTest.class
+com\acme\sportplatform\integration\identity\AuthIntegrationTest.class
+com\acme\sportplatform\identity\web\UserControllerTest.class
+com\acme\sportplatform\support\AbstractPostgresIntegrationTest.class

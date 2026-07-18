@@ -31,9 +31,9 @@ public class UserEntity {
     private String status;
 
     @Column(name = "created_at", nullable = false)
-    private OffsetrDateTime createdAt;
+    private OffsetDateTime createdAt;
 
-    @Column(name = "update_at", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
     @PrePersist
@@ -64,8 +64,8 @@ public class UserEntity {
     public void setStatus(String status) { this.status = status; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
-    public void serCreatedAt (OffSetDateTime createdAt) { this.createAt = createdAt; }
+    public void serCreatedAt (OffsetDateTime createdAt) { this.createdAt = createdAt; }
 
-    public OffsetDateTime getUpdateAt() { return updatedAt; }
-    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updateAt = updatedAt; }
+    public OffsetDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(OffsetDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

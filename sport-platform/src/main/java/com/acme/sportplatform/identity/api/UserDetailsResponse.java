@@ -14,14 +14,14 @@ public record UserDetailsResponse(
         Profile profile,
         List<String> roles
 ) {
-    public record Profile(
-            String firstName,
-            String lastName,
-            String middleName,
-            LocalDate birthDate,
-            String gender,
-            String city,
-            String countryCode,
-            String clubName
-    ) {}
+        public record Profile(
+                String firstName,
+                String lastName,
+                String middleName,
+                LocalDate birthDate,
+                String gender,
+                String city,
+                String countryCode,
+                String clubName
+        ) {}
 }
