@@ -1,17 +1,19 @@
 package com.acme.sportplatform.identity.application;
 
+import java.util.List;
+
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.stereotype.Service;
+
 import com.acme.sportplatform.identity.api.AuthTokenResponse;
 import com.acme.sportplatform.identity.api.LoginRequest;
 import com.acme.sportplatform.identity.domain.InvalidCredentialsException;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRoleAssignmentRepository;
 import com.acme.sportplatform.identity.infrastructure.security.JwtService;
-import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserDetailsService;
-import java.util.List;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.stereotype.Service;
+import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
 
 @Service
 public class LoginUseCase {
@@ -43,10 +45,7 @@ public class LoginUseCase {
         PlatformUserPrincipal principal =
                 (PlatformUserPrincipal) userDetailsService.loadUserByUsername(request.email());
 
-        List<String> roles = userRoleAssignmentRepository.findRoleCodesByUserId(principal.getUserId())
-                .stream()
-                .map(role -> role.getCode())
-                .toList();
+        List<String> roles = userRoleAssignmentRepository.findRoleCodesByUserId(principal.getUserId());
 
         String token = jwtService.generateAccessToken(principal, roles);
 

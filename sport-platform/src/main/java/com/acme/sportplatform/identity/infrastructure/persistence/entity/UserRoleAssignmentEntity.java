@@ -27,10 +27,10 @@ public class UserRoleAssignmentEntity {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
-    @Column(name = "event_id", nullable = false)
+    @Column(name = "event_id")
     private UUID eventId;
 
-    @Column(name = "organization_id", nullable = false)
+    @Column(name = "organization_id")
     private UUID organizationId;
 
     @PrePersist

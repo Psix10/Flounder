@@ -27,10 +27,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiErrorResponse> handleBusiness(BusinessException ex) {
         HttpStatus status = switch (ex.getCode()) {
-            case "identity.user_already_exists" -> HttpStatus.CONFLICT;
-            case "identity.user_not_found" -> HttpStatus.NOT_FOUND;
-            case "identity.invalid_credentials" -> HttpStatus.UNAUTHORIZED;
-            default -> HttpStatus.BAD_REQUEST;
+                case "identity.user_already_exists" -> HttpStatus.CONFLICT;
+                case "identity.user_not_found" -> HttpStatus.NOT_FOUND;
+                case "identity.role_not_found" -> HttpStatus.NOT_FOUND;
+                case "identity.invalid_credentials" -> HttpStatus.UNAUTHORIZED;
+                case "sports.sport_not_found" -> HttpStatus.NOT_FOUND;
+                case "sports.discipline_template_not_found" -> HttpStatus.NOT_FOUND;
+                case "regulations.template_not_found" -> HttpStatus.NOT_FOUND;
+                case "regulations.version_not_found" -> HttpStatus.NOT_FOUND;
+
+                case "sports.sport_already_exists" -> HttpStatus.CONFLICT;
+                case "sports.discipline_template_already_exists" -> HttpStatus.CONFLICT;
+                case "regulations.template_already_exists" -> HttpStatus.CONFLICT;
+                case "regulations.version_already_exists" -> HttpStatus.CONFLICT;
+                default -> HttpStatus.BAD_REQUEST;
         };
 
         return ResponseEntity.status(status).body(

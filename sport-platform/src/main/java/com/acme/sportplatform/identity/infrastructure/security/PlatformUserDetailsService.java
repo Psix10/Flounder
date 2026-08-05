@@ -1,14 +1,16 @@
 package com.acme.sportplatform.identity.infrastructure.security;
 
-import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEntity;
-import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
-import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRoleAssignmentRepository;
 import java.util.List;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEntity;
+import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
+import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRoleAssignmentRepository;
 
 @Service
 public class PlatformUserDetailsService implements UserDetailsService {
@@ -29,7 +31,7 @@ public class PlatformUserDetailsService implements UserDetailsService {
 
         List<SimpleGrantedAuthority> authorities = userRoleAssignmentRepository.findRoleCodesByUserId(user.getId())
                 .stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getCode().toUpperCase()))
+                .map(roleCode -> new SimpleGrantedAuthority("ROLE_" + roleCode.toUpperCase()))
                 .toList();
 
         return new PlatformUserPrincipal(

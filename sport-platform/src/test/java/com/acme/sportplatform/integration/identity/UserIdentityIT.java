@@ -21,6 +21,7 @@ import com.jayway.jsonpath.JsonPath;
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
+
         @Autowired
         private MockMvc mockMvc;
 
@@ -36,7 +37,7 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
                 mockMvc.perform(get("/api/v1/users/{id}", userId)
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken))
                         .andExpect(status().isForbidden());
-                }
+        }
 
         @Test
         void shouldFetchUserByIdWhenAdmin() throws Exception {
@@ -68,9 +69,9 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
 
                 String patchPayload = """
                         {
-                        "phone": "79990001122",
-                        "city": "Saint Petersburg",
-                        "clubName": "Neva Club"
+                          "phone": "79990001122",
+                          "city": "Saint Petersburg",
+                          "clubName": "Neva Club"
                         }
                         """;
 
@@ -95,7 +96,7 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
 
                 String patchPayload = """
                         {
-                        "city": "Kazan"
+                          "city": "Kazan"
                         }
                         """;
 
@@ -108,25 +109,25 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
 
         @Test
         void shouldSoftDeleteUserWhenAdmin() throws Exception {
-                String targetEmail = uniqueEmail("target");
-                String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
+            String targetEmail = uniqueEmail("target");
+            String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
 
-                String adminEmail = uniqueEmail("admin");
-                String adminUserId = createUser(adminEmail, "secret123", "Admin", "User");
-                assignRole(adminUserId, "platform_admin");
-                String adminToken = login(adminEmail, "secret123");
+            String adminEmail = uniqueEmail("admin");
+            String adminUserId = createUser(adminEmail, "secret123", "Admin", "User");
+            assignRole(adminUserId, "platform_admin");
+            String adminToken = login(adminEmail, "secret123");
 
-                mockMvc.perform(delete("/api/v1/users/{id}", targetUserId)
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken))
-                        .andExpect(status().isNoContent());
+            mockMvc.perform(delete("/api/v1/users/{id}", targetUserId)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken))
+                    .andExpect(status().isNoContent());
 
-                String statusValue = jdbcTemplate.queryForObject(
-                        "select status from users where id = ?::uuid",
-                        String.class,
-                        targetUserId
-                );
+            String statusValue = jdbcTemplate.queryForObject(
+                    "select status from users where id = ?::uuid",
+                    String.class,
+                    targetUserId
+            );
 
-                org.junit.jupiter.api.Assertions.assertEquals("inactive", statusValue);
+            org.junit.jupiter.api.Assertions.assertEquals("inactive", statusValue);
         }
 
         @Test
@@ -150,25 +151,188 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
                 assignRole(adminUserId, "platform_admin");
                 String adminToken = login(adminEmail, "secret123");
 
-                mockMvc.perform(get("/api/v1/users/{id}", "11111111-1111-1111-1111-111111111111")
+                mockMvc.perform(get("/api/v1/users/{id}", "21111111-1111-1111-1111-111111111111")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken))
                         .andExpect(status().isNotFound())
                         .andExpect(jsonPath("$.code").value("identity.user_not_found"));
         }
 
+        @Test
+        void shouldAssignRoleWhenAdmin() throws Exception {
+                String targetEmail = uniqueEmail("target");
+                String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
+
+                String adminEmail = uniqueEmail("admin");
+                String adminUserId = createUser(adminEmail, "secret123", "Admin", "User");
+                assignRole(adminUserId, "platform_admin");
+                String adminToken = login(adminEmail, "secret123");
+
+                String payload = """
+                        {
+                          "roleCode": "organizer"
+                        }
+                        """;
+
+                mockMvc.perform(post("/api/v1/users/{id}/roles", targetUserId)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(payload))
+                        .andExpect(status().isCreated());
+
+                Integer count = jdbcTemplate.queryForObject("""
+                        select count(*)
+                        from user_role_assignments ura
+                        join roles r on r.id = ura.role_id
+                        where ura.user_id = ?::uuid
+                          and r.code = ?
+                          and ura.event_id is null
+                          and ura.organization_id is null
+                        """, Integer.class, targetUserId, "organizer");
+
+                org.junit.jupiter.api.Assertions.assertEquals(1, count);
+        }
+
+        @Test
+        void shouldReturnOkWhenRoleAlreadyAssigned() throws Exception {
+                String targetEmail = uniqueEmail("target");
+                String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
+
+                String adminEmail = uniqueEmail("admin");
+                String adminUserId = createUser(adminEmail, "secret123", "Admin", "User");
+                assignRole(adminUserId, "platform_admin");
+                String adminToken = login(adminEmail, "secret123");
+
+                assignRole(targetUserId, "organizer");
+
+                String payload = """
+                        {
+                          "roleCode": "organizer"
+                        }
+                        """;
+
+                mockMvc.perform(post("/api/v1/users/{id}/roles", targetUserId)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(payload))
+                        .andExpect(status().isOk());
+
+                Integer count = jdbcTemplate.queryForObject("""
+                        select count(*)
+                        from user_role_assignments ura
+                        join roles r on r.id = ura.role_id
+                        where ura.user_id = ?::uuid
+                          and r.code = ?
+                          and ura.event_id is null
+                          and ura.organization_id is null
+                        """, Integer.class, targetUserId, "organizer");
+
+                org.junit.jupiter.api.Assertions.assertEquals(1, count);
+        }
+
+        @Test
+        void shouldReturnForbiddenWhenParticipantAssignsRole() throws Exception {
+                String targetEmail = uniqueEmail("target");
+                String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
+
+                String participantEmail = uniqueEmail("participant");
+                createUser(participantEmail, "secret123", "Petr", "Ivanov");
+                String participantToken = login(participantEmail, "secret123");
+
+                String payload = """
+                        {
+                          "roleCode": "organizer"
+                        }
+                        """;
+
+                mockMvc.perform(post("/api/v1/users/{id}/roles", targetUserId)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + participantToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(payload))
+                        .andExpect(status().isForbidden());
+        }
+
+        @Test
+        void shouldRevokeRoleWhenAdmin() throws Exception {
+                String targetEmail = uniqueEmail("target");
+                String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
+
+                String adminEmail = uniqueEmail("admin");
+                String adminUserId = createUser(adminEmail, "secret123", "Admin", "User");
+                assignRole(adminUserId, "platform_admin");
+                String adminToken = login(adminEmail, "secret123");
+
+                assignRole(targetUserId, "organizer");
+
+                mockMvc.perform(delete("/api/v1/users/{id}/roles/{roleCode}", targetUserId, "organizer")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken))
+                        .andExpect(status().isNoContent());
+
+                Integer count = jdbcTemplate.queryForObject("""
+                        select count(*)
+                        from user_role_assignments ura
+                        join roles r on r.id = ura.role_id
+                        where ura.user_id = ?::uuid
+                          and r.code = ?
+                          and ura.event_id is null
+                          and ura.organization_id is null
+                        """, Integer.class, targetUserId, "organizer");
+
+                org.junit.jupiter.api.Assertions.assertEquals(0, count);
+        }
+
+        @Test
+        void shouldReturnForbiddenWhenParticipantRevokesRole() throws Exception {
+                String targetEmail = uniqueEmail("target");
+                String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
+
+                String participantEmail = uniqueEmail("participant");
+                createUser(participantEmail, "secret123", "Petr", "Ivanov");
+                String participantToken = login(participantEmail, "secret123");
+
+                mockMvc.perform(delete("/api/v1/users/{id}/roles/{roleCode}", targetUserId, "organizer")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + participantToken))
+                        .andExpect(status().isForbidden());
+        }
+
+        @Test
+        void shouldReturnNotFoundWhenAssigningUnknownRole() throws Exception {
+                String targetEmail = uniqueEmail("target");
+                String targetUserId = createUser(targetEmail, "secret123", "Anna", "Smirnova");
+
+                String adminEmail = uniqueEmail("admin");
+                String adminUserId = createUser(adminEmail, "secret123", "Admin", "User");
+                assignRole(adminUserId, "platform_admin");
+                String adminToken = login(adminEmail, "secret123");
+
+                String payload = """
+                        {
+                        "roleCode": "non_existing_role"
+                        }
+                        """;
+
+                mockMvc.perform(post("/api/v1/users/{id}/roles", targetUserId)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + adminToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(payload))
+                        .andExpect(status().isNotFound())
+                        .andExpect(jsonPath("$.code").value("identity.role_not_found"));
+        }
+
+        // ----- helpers -----
+
         private String createUser(String email, String password, String firstName, String lastName) throws Exception {
                 String payload = """
                         {
-                        "email": "%s",
-                        "password": "%s",
-                        "phone": "79991112233",
-                        "firstName": "%s",
-                        "lastName": "%s",
-                        "birthDate": "1998-03-17",
-                        "gender": "female",
-                        "city": "Moscow",
-                        "countryCode": "RU",
-                        "clubName": "Wave Club"
+                          "email": "%s",
+                          "password": "%s",
+                          "phone": "79991112233",
+                          "firstName": "%s",
+                          "lastName": "%s",
+                          "birthDate": "1998-03-17",
+                          "gender": "female",
+                          "city": "Moscow",
+                          "countryCode": "RU",
+                          "clubName": "Wave Club"
                         }
                         """.formatted(email, password, firstName, lastName);
 
@@ -186,8 +350,8 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
         private String login(String email, String password) throws Exception {
                 String payload = """
                         {
-                        "email": "%s",
-                        "password": "%s"
+                          "email": "%s",
+                          "password": "%s"
                         }
                         """.formatted(email, password);
 
@@ -210,8 +374,8 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
                 );
 
                 jdbcTemplate.update("""
-                        insert into user_role_assignments (user_id, role_id)
-                        values (?::uuid, ?::uuid)
+                        insert into user_role_assignments (user_id, role_id, event_id, organization_id, created_at)
+                        values (?::uuid, ?::uuid, null, null, now())
                         """, userId, roleId);
         }
 

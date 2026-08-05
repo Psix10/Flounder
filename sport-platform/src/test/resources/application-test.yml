@@ -1,8 +1,20 @@
 spring:
+  config:
+    activate:
+      on-profile: test
+
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
       - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+  docker:
+    compose:
+      enabled: false
+
+  flyway:
+    enabled: true
+    clean-disabled: false
 
   jpa:
     hibernate:
@@ -10,9 +22,6 @@ spring:
     properties:
       hibernate:
         physical_naming_strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-
-  flyway:
-    enabled: true
 
 logging:
   level:

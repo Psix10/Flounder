@@ -1,7 +1,13 @@
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\architecture\ArchitectureTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\AuthIT.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\web\OrganizationControllerTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\web\UserControllerTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\identity\RbacIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\identity\UserIdentityIT.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\regulations\RegulationIT.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\sports\BaseIT.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\sports\DisciplineTemplateIntegrationTest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\sports\SportsIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\modulith\ModulithArchitectureTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\support\AbstractPostgresIntegrationTest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\support\JsonPathHelper.java

@@ -1,18 +1,17 @@
 package com.acme.sportplatform.identity.application;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
 import com.acme.sportplatform.identity.api.UserDetailsResponse;
 import com.acme.sportplatform.identity.domain.UserNotFoundException;
 import com.acme.sportplatform.identity.infrastructure.persistence.entity.ProfileEntity;
-import com.acme.sportplatform.identity.infrastructure.persistence.entity.RoleEntity;
 import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEntity;
-import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserRoleAssignmentEntity;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
-import com.acme.sportplatform.identity.infrastructure.persistence.repository.RoleRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRoleAssignmentRepository;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.stereotype.Service;
 
 @Service
 public class GetUserByIdUseCase {
@@ -36,9 +35,7 @@ public class GetUserByIdUseCase {
         ProfileEntity profile = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
-        List<String> roles = userRoleAssignmentRepository.findRoleCodesByUserId(userId).stream()
-                .map(role -> role.getCode())
-                .toList();
+        List<String> roles = userRoleAssignmentRepository.findRoleCodesByUserId(userId);
 
         return new UserDetailsResponse(
                 user.getId(),

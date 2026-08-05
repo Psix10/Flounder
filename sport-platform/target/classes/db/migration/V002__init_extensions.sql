@@ -51,3 +51,79 @@ values
     ('operator', 'Operator'),
     ('participant', 'Participant')
 on conflict (code) do nothing;
+
+insert into users (
+    id,
+    email,
+    phone,
+    password_hash,
+    status,
+    created_at,
+    updated_at
+)
+values (
+    '11111111-1111-1111-1111-111111111111',
+    'admin@sport-platform.local',
+    null,
+    '$2a$10$REPLACE_WITH_REAL_BCRYPT_HASH',
+    'active',
+    now(),
+    now()
+)
+on conflict (email) do nothing;
+
+insert into profiles (
+    id,
+    user_id,
+    first_name,
+    last_name,
+    middle_name,
+    birth_date,
+    gender,
+    city,
+    country_code,
+    club_name,
+    sport_meta,
+    created_at,
+    updated_at
+)
+values (
+    '22222222-2222-2222-2222-222222222222',
+    '11111111-1111-1111-1111-111111111111',
+    'Platform',
+    'Admin',
+    null,
+    date '1990-01-01',
+    null,
+    null,
+    null,
+    null,
+    '{}'::jsonb,
+    now(),
+    now()
+)
+on conflict (user_id) do nothing;
+
+insert into user_role_assignments (
+    id,
+    user_id,
+    role_id,
+    event_id,
+    organization_id,
+    created_at
+)
+select
+    '33333333-3333-3333-3333-333333333333',
+    '11111111-1111-1111-1111-111111111111',
+    r.id,
+    null,
+    null,
+    now()
+from roles r
+where r.code = 'platform_admin'
+and not exists (
+    select 1
+    from user_role_assignments ura
+    where ura.user_id = '11111111-1111-1111-1111-111111111111'
+      and ura.role_id = r.id
+);
