@@ -38,7 +38,7 @@ class RegulationIntegrationTest extends AbstractPostgresIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldCreateRegulationVersion() throws Exception {
         String templateId = createTemplate("vpiterespasat-2026-pool-versioned");
 
@@ -68,7 +68,7 @@ class RegulationIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldPublishRegulationVersion() throws Exception {
         String templateId = createTemplate("vpiterespasat-2026-publish");
         String versionId = createVersion(templateId, 1);

@@ -2,8 +2,11 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\AuthIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\web\OrganizationControllerTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\web\UserControllerTest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\competition\CompetitionIntegrationTest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\events\EventIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\identity\RbacIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\identity\UserIdentityIT.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\registrations\RegistrationIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\regulations\RegulationIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\sports\BaseIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\sports\DisciplineTemplateIntegrationTest.java
