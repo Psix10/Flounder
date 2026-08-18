@@ -91,3 +91,10 @@ app:
       secret: "change-me-change-me-change-me-change-me-change-me-please"
       issuer: "sport-platform"
       access-token-ttl: PT2H
+  payments:
+    provider: MANUAL
+    yookassa:
+      base-url: https://api.yookassa.ru/v3
+      shop-id: ${YOOKASSA_SHOP_ID:}
+      secret-key: ${YOOKASSA_SECRET_KEY:}
+      return-url: ${YOOKASSA_RETURN_URL:http://localhost:3000/payment-return}

@@ -1,12 +1,14 @@
 package com.acme.sportplatform.identity.infrastructure.security;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class PlatformUserPrincipal implements UserDetails {
+import com.acme.sportplatform.identity.AuthenticatedUserPrincipal;
+
+public class PlatformUserPrincipal implements UserDetails, AuthenticatedUserPrincipal  {
 
     private final UUID userId;
     private final String email;
@@ -15,10 +17,10 @@ public class PlatformUserPrincipal implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
 
     public PlatformUserPrincipal(UUID userId,
-                                 String email,
-                                 String passwordHash,
-                                 String status,
-                                 Collection<? extends GrantedAuthority> authorities) {
+                                String email,
+                                String passwordHash,
+                                String status,
+                                Collection<? extends GrantedAuthority> authorities) {
         this.userId = userId;
         this.email = email;
         this.passwordHash = passwordHash;
@@ -26,6 +28,7 @@ public class PlatformUserPrincipal implements UserDetails {
         this.authorities = authorities;
     }
 
+    @Override
     public UUID getUserId() {
         return userId;
     }

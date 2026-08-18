@@ -71,9 +71,11 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
 
         UUID eventId = createEventWithOpenRegistration();
         UUID disciplineTemplateId = createDisciplineTemplate();
+
         UUID eventDisciplineId = createPublishedEventDiscipline(
                 eventId,
-                disciplineTemplateId
+                disciplineTemplateId,
+                BigDecimal.ZERO
         );
 
         PlatformUserPrincipal principal = new PlatformUserPrincipal(
@@ -123,52 +125,224 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                 .getResponse()
                 .getContentAsString();
 
-                String registrationId = JsonPath.read(registrationResponse, "$.id");
+        String registrationId = JsonPath.read(registrationResponse, "$.id");
 
-                PlatformUserPrincipal organizerPrincipal = new PlatformUserPrincipal(
+        PlatformUserPrincipal organizerPrincipal = new PlatformUserPrincipal(
+                UUID.randomUUID(),
+                "organizer@example.com",
+                "",
+                "active",
+                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+        );
+
+        String reviewRequestJson = """
+                {
+                  "decision": "CONFIRMED",
+                  "reviewNote": "Допуск подтверждён"
+                }
+                """;
+
+        mockMvc.perform(
+                        post(
+                                "/api/v1/registrations/{registrationId}/review",
+                                registrationId
+                        )
+                                .with(user(organizerPrincipal))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(reviewRequestJson)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(registrationId))
+                .andExpect(jsonPath("$.status").value("CONFIRMED"))
+                .andExpect(jsonPath("$.reviewNote")
+                        .value("Допуск подтверждён"));
+
+        mockMvc.perform(
+                        get("/api/v1/registrations/me")
+                                .with(user(principal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(registrationId))
+                .andExpect(jsonPath("$[0].participantUserId")
+                        .value(user.getId().toString()))
+                .andExpect(jsonPath("$[0].eventId")
+                        .value(eventId.toString()))
+                .andExpect(jsonPath("$[0].eventDisciplineId")
+                        .value(eventDisciplineId.toString()))
+                .andExpect(jsonPath("$[0].status").value("CONFIRMED"))
+                .andExpect(jsonPath("$[0].reviewNote")
+                        .value("Допуск подтверждён"));
+    }
+
+    @Test
+    void shouldCreatePaymentForConfirmedPaidRegistration() throws Exception {
+        UserEntity user = createParticipantUser();
+        createParticipantProfile(user.getId());
+
+        UUID eventId = createEventWithOpenRegistration();
+        UUID disciplineTemplateId = createDisciplineTemplate();
+
+        UUID eventDisciplineId = createPublishedEventDiscipline(
+                eventId,
+                disciplineTemplateId,
+                new BigDecimal("1500.00")
+        );
+
+        PlatformUserPrincipal participantPrincipal =
+                new PlatformUserPrincipal(
+                        user.getId(),
+                        user.getEmail(),
+                        "",
+                        "active",
+                        List.of(
+                                new SimpleGrantedAuthority("ROLE_PARTICIPANT")
+                        )
+                );
+
+        String registrationRequestJson = """
+                {
+                  "eventDisciplineId": "%s",
+                  "registrationMeta": {
+                    "emergencyContactPhone": "+79990000000",
+                    "comment": "Платная тестовая заявка"
+                  }
+                }
+                """.formatted(eventDisciplineId);
+
+        String registrationResponse = mockMvc.perform(
+                        post("/api/v1/registrations")
+                                .with(user(participantPrincipal))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(registrationRequestJson)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUBMITTED"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String registrationId = JsonPath.read(
+                registrationResponse,
+                "$.id"
+        );
+
+        PlatformUserPrincipal organizerPrincipal =
+                new PlatformUserPrincipal(
                         UUID.randomUUID(),
                         "organizer@example.com",
                         "",
                         "active",
-                        List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+                        List.of(
+                                new SimpleGrantedAuthority("ROLE_ORGANIZER")
+                        )
                 );
 
-                String reviewRequestJson = """
-                        {
-                        "decision": "CONFIRMED",
-                        "reviewNote": "Допуск подтверждён"
-                        }
-                        """;
+        String reviewRequestJson = """
+                {
+                  "decision": "CONFIRMED",
+                  "reviewNote": "Платная заявка подтверждена"
+                }
+                """;
 
-                mockMvc.perform(
-                                post("/api/v1/registrations/{registrationId}/review", registrationId)
-                                        .with(user(organizerPrincipal))
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(reviewRequestJson)
+        mockMvc.perform(
+                        post(
+                                "/api/v1/registrations/{registrationId}/review",
+                                registrationId
                         )
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.id").value(registrationId))
-                        .andExpect(jsonPath("$.status").value("CONFIRMED"))
-                        .andExpect(jsonPath("$.reviewNote")
-                                .value("Допуск подтверждён"));
-                
-                mockMvc.perform(
-                                get("/api/v1/registrations/me")
-                                        .with(user(principal))
+                                .with(user(organizerPrincipal))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(reviewRequestJson)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("CONFIRMED"));
+
+        String paymentResponse = mockMvc.perform(
+                        post(
+                                "/api/v1/registrations/{registrationId}/payments",
+                                registrationId
                         )
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$").isArray())
-                        .andExpect(jsonPath("$.length()").value(1))
-                        .andExpect(jsonPath("$[0].id").value(registrationId))
-                        .andExpect(jsonPath("$[0].participantUserId")
-                                .value(user.getId().toString()))
-                        .andExpect(jsonPath("$[0].eventId")
-                                .value(eventId.toString()))
-                        .andExpect(jsonPath("$[0].eventDisciplineId")
-                                .value(eventDisciplineId.toString()))
-                        .andExpect(jsonPath("$[0].status").value("CONFIRMED"))
-                        .andExpect(jsonPath("$[0].reviewNote")
-                                .value("Допуск подтверждён"));
+                                .with(user(participantPrincipal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.registrationId")
+                        .value(registrationId))
+                .andExpect(jsonPath("$.amount").value(1500.00))
+                .andExpect(jsonPath("$.currency").value("RUB"))
+                .andExpect(jsonPath("$.status").value("CREATED"))
+                .andExpect(jsonPath("$.provider").value("MANUAL"))
+                .andExpect(jsonPath("$.confirmationUrl").doesNotExist())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String paymentId = JsonPath.read(paymentResponse, "$.id");
+
+        mockMvc.perform(
+                        get(
+                                "/api/v1/registrations/{registrationId}/payments",
+                                registrationId
+                        )
+                                .with(user(participantPrincipal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(paymentId))
+                .andExpect(jsonPath("$.registrationId").value(registrationId))
+                .andExpect(jsonPath("$.amount").value(1500.00))
+                .andExpect(jsonPath("$.currency").value("RUB"))
+                .andExpect(jsonPath("$.status").value("CREATED"))
+                .andExpect(jsonPath("$.provider").value("MANUAL"))
+                .andExpect(jsonPath("$.confirmationUrl").doesNotExist());
+
+        mockMvc.perform(
+                        post("/api/v1/payments/{paymentId}/confirm", paymentId)
+                                .with(user(organizerPrincipal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(paymentId))
+                .andExpect(jsonPath("$.registrationId").value(registrationId))
+                .andExpect(jsonPath("$.status").value("SUCCEEDED"))
+                .andExpect(jsonPath("$.paidAt").exists())
+                .andExpect(jsonPath("$.amount").value(1500.00))
+                .andExpect(jsonPath("$.currency").value("RUB"))
+                .andExpect(jsonPath("$.provider").value("MANUAL"));
+
+        mockMvc.perform(
+                        get(
+                                "/api/v1/registrations/{registrationId}/payments",
+                                registrationId
+                        )
+                                .with(user(participantPrincipal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(paymentId))
+                .andExpect(jsonPath("$.registrationId").value(registrationId))
+                .andExpect(jsonPath("$.status").value("SUCCEEDED"))
+                .andExpect(jsonPath("$.paidAt").exists())
+                .andExpect(jsonPath("$.amount").value(1500.00))
+                .andExpect(jsonPath("$.currency").value("RUB"))
+                .andExpect(jsonPath("$.provider").value("MANUAL"));
+
+        mockMvc.perform(
+                        post("/api/v1/payments/{paymentId}/confirm", paymentId)
+                                .with(user(organizerPrincipal))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("payments.not_confirmable"));
+
+        mockMvc.perform(
+                        post(
+                                "/api/v1/registrations/{registrationId}/payments",
+                                registrationId
+                        )
+                                .with(user(participantPrincipal))
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("payments.already_exists"));
     }
 
     private UserEntity createParticipantUser() {
@@ -227,7 +401,9 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
         DisciplineTemplateEntity template = new DisciplineTemplateEntity();
         template.setId(UUID.randomUUID());
         template.setSportId(SWIMMING_SPORT_ID);
-        template.setCode("100m-freestyle-registration");
+        template.setCode(
+                "100m-freestyle-registration-" + UUID.randomUUID()
+        );
         template.setName("100 м вольный стиль");
         template.setCompetitionFormat("INDIVIDUAL");
         template.setUnitType("HEAT");
@@ -246,7 +422,8 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
 
     private UUID createPublishedEventDiscipline(
             UUID eventId,
-            UUID disciplineTemplateId
+            UUID disciplineTemplateId,
+            BigDecimal entryFeeAmount
     ) {
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -261,7 +438,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
         discipline.setResultType("TIME");
         discipline.setRankingStrategy("ASC");
         discipline.setParticipantLimit(40);
-        discipline.setEntryFeeAmount(BigDecimal.ZERO);
+        discipline.setEntryFeeAmount(entryFeeAmount);
         discipline.setEntryFeeCurrency("RUB");
         discipline.setStatus(EventDisciplineStatus.PUBLISHED.name());
         discipline.setSettingsJson("""
@@ -276,4 +453,4 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
 
         return eventDisciplineRepository.save(discipline).getId();
     }
-} 
+}
