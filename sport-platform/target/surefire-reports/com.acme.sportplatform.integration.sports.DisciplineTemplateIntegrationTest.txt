@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.acme.sportplatform.integration.sports.DisciplineTemplateIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.616 s -- in com.acme.sportplatform.integration.sports.DisciplineTemplateIntegrationTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.130 s -- in com.acme.sportplatform.integration.sports.DisciplineTemplateIntegrationTest

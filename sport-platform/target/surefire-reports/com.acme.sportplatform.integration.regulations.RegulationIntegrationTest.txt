@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.acme.sportplatform.integration.regulations.RegulationIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.584 s -- in com.acme.sportplatform.integration.regulations.RegulationIntegrationTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.122 s -- in com.acme.sportplatform.integration.regulations.RegulationIntegrationTest

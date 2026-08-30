@@ -25,7 +25,7 @@ class SportsIntegrationTest extends AbstractPostgresIntegrationTest {
     private MockMvc mockMvc;
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldReturnSeededSports() throws Exception {
         mockMvc.perform(get("/api/v1/sports"))
                 .andExpect(status().isOk())
@@ -51,7 +51,7 @@ class SportsIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldCreateSportWhenPlatformAdmin() throws Exception {
         mockMvc.perform(post("/api/v1/sports")
                         .with(csrf())
@@ -70,7 +70,7 @@ class SportsIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldReturnConflictWhenSportCodeAlreadyExists() throws Exception {
         mockMvc.perform(post("/api/v1/sports")
                         .with(csrf())
@@ -96,7 +96,7 @@ class SportsIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldReturnValidationErrorForInvalidSportRequest() throws Exception {
         mockMvc.perform(post("/api/v1/sports")
                         .with(csrf())

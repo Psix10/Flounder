@@ -34,7 +34,7 @@ public class SportsController {
     }
 
     @PostMapping("/sports")
-    @PreAuthorize("hasAuthority('PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
     public ResponseEntity<SportResponse> createSport(@RequestBody @Valid CreateSportRequest request) {
         return ResponseEntity.ok(sportService.createSport(request));
     }
@@ -45,7 +45,7 @@ public class SportsController {
     }
 
     @PostMapping("/discipline-templates")
-    @PreAuthorize("hasAuthority('PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
     public ResponseEntity<DisciplineTemplateResponse> createDisciplineTemplate(
             @RequestBody @Valid CreateDisciplineTemplateRequest request
     ) {

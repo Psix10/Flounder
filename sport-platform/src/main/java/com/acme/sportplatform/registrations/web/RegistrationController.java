@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acme.sportplatform.registrations.api.CreateRegistrationRequest;
@@ -18,7 +19,9 @@ import com.acme.sportplatform.registrations.api.RegistrationResponse;
 import com.acme.sportplatform.registrations.api.ReviewRegistrationRequest;
 import com.acme.sportplatform.registrations.application.CreateRegistrationUseCase;
 import com.acme.sportplatform.registrations.application.ListMyRegistrationsUseCase;
+import com.acme.sportplatform.registrations.application.ListRegistrationsForReviewUseCase;
 import com.acme.sportplatform.registrations.application.ReviewRegistrationUseCase;
+import com.acme.sportplatform.registrations.domain.RegistrationStatus;
 
 import jakarta.validation.Valid;
 
@@ -29,15 +32,18 @@ public class RegistrationController {
         private final CreateRegistrationUseCase createRegistrationUseCase;
         private final ReviewRegistrationUseCase reviewRegistrationUseCase;
         private final ListMyRegistrationsUseCase listMyRegistrationsUseCase;
+        private final ListRegistrationsForReviewUseCase listRegistrationsForReviewUseCase;
 
         public RegistrationController(
                 CreateRegistrationUseCase createRegistrationUseCase,
                 ReviewRegistrationUseCase reviewRegistrationUseCase,
-                ListMyRegistrationsUseCase listMyRegistrationsUseCase
+                ListMyRegistrationsUseCase listMyRegistrationsUseCase,
+                ListRegistrationsForReviewUseCase listRegistrationsForReviewUseCase
         ) {
                 this.createRegistrationUseCase = createRegistrationUseCase;
                 this.reviewRegistrationUseCase = reviewRegistrationUseCase;
                 this.listMyRegistrationsUseCase = listMyRegistrationsUseCase;
+                this.listRegistrationsForReviewUseCase = listRegistrationsForReviewUseCase;
         }
 
         @PostMapping
@@ -59,10 +65,12 @@ public class RegistrationController {
         @PreAuthorize("hasRole('PLATFORM_ADMIN') or hasRole('ORGANIZER')")
         public ResponseEntity<RegistrationResponse> review(
                 @PathVariable UUID registrationId,
+                @AuthenticationPrincipal(expression = "userId")
+                UUID reviewerUserId,
                 @RequestBody @Valid ReviewRegistrationRequest request
         ) {
-        return ResponseEntity.ok(
-                reviewRegistrationUseCase.execute(registrationId, request)
+                return ResponseEntity.ok(
+                        reviewRegistrationUseCase.execute(registrationId, reviewerUserId, request)
                 );
         }
 
@@ -72,8 +80,19 @@ public class RegistrationController {
                 @AuthenticationPrincipal(expression = "userId")
                 UUID participantUserId
         ) {
-        return ResponseEntity.ok(
-                listMyRegistrationsUseCase.execute(participantUserId)
-        );
+                return ResponseEntity.ok(
+                        listMyRegistrationsUseCase.execute(participantUserId)
+                );
+        }
+
+        @GetMapping
+        @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER')")
+        public ResponseEntity<List<RegistrationResponse>> list(
+                @RequestParam(required = false) UUID eventId,
+                @RequestParam(required = false) RegistrationStatus status
+        ) {
+                return ResponseEntity.ok(
+                        listRegistrationsForReviewUseCase.execute(eventId, status)
+                );
         }
 }

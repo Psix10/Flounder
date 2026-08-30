@@ -28,6 +28,8 @@ public class RegistrationMapper {
                 readJson(entity.getParticipantSnapshot()),
                 readJson(entity.getRegistrationMeta()),
                 entity.getReviewNote(),
+                entity.getReviewedByUserId(),
+                entity.getReviewedAt(),
                 entity.getSubmittedAt(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()

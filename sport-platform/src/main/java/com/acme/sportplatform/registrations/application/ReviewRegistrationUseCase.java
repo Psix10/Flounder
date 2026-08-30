@@ -29,59 +29,35 @@ public class ReviewRegistrationUseCase {
         this.registrationMapper = registrationMapper;
     }
 
-    @Transactional
-    public RegistrationResponse execute(
-            UUID registrationId,
-            ReviewRegistrationRequest request
-    ) {
-        RegistrationEntity registration = registrationRepository
-                .findById(registrationId)
-                .orElseThrow(() -> new BusinessException(
-                        "registrations.not_found",
-                        "Registration not found"
-                ));
+        @Transactional
+        public RegistrationResponse execute(UUID registrationId, UUID reviewerUserId, ReviewRegistrationRequest request) {
+        RegistrationEntity registration = registrationRepository.findById(registrationId)
+                .orElseThrow(() -> new BusinessException("registrations.notfound", "Registration not found"));
 
-        if (!RegistrationStatus.SUBMITTED.name()
-                .equals(registration.getStatus())) {
-            throw new BusinessException(
-                    "registrations.not_submitted",
-                    "Only a submitted registration can be reviewed"
-            );
+        if (!RegistrationStatus.SUBMITTED.name().equals(registration.getStatus())) {
+                throw new BusinessException("registrations.notreviewable", "Only submitted registrations can be reviewed");
         }
 
-        if (requiresReviewNote(request.decision())
-                && (request.reviewNote() == null
-                || request.reviewNote().isBlank())) {
-            throw new BusinessException(
-                    "registrations.review_note_required",
-                    "A review note is required for this decision"
-            );
-        }
+        RegistrationStatus newStatus = switch (request.decision()) {
+                case CONFIRMED -> RegistrationStatus.CONFIRMED;
+                case REJECTED -> RegistrationStatus.REJECTED;
+                case NEEDS_CORRECTION -> RegistrationStatus.NEEDS_CORRECTION;
+        };
 
-        registration.setStatus(toRegistrationStatus(request.decision()));
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        registration.setStatus(newStatus.name());
         registration.setReviewNote(request.reviewNote());
-        registration.setUpdatedAt(OffsetDateTime.now(ZoneOffset.UTC));
+        registration.setReviewedByUserId(reviewerUserId);
+        registration.setReviewedAt(now);
+        registration.setUpdatedAt(now);
 
-        return registrationMapper.toResponse(
-                registrationRepository.save(registration)
-        );
-    }
+        return registrationMapper.toResponse(registrationRepository.save(registration));
+        }
 
     private boolean requiresReviewNote(
             RegistrationReviewDecision decision
     ) {
         return decision == RegistrationReviewDecision.NEEDS_CORRECTION
                 || decision == RegistrationReviewDecision.REJECTED;
-    }
-
-    private String toRegistrationStatus(
-            RegistrationReviewDecision decision
-    ) {
-        return switch (decision) {
-            case CONFIRMED -> RegistrationStatus.CONFIRMED.name();
-            case NEEDS_CORRECTION ->
-                    RegistrationStatus.NEEDS_CORRECTION.name();
-            case REJECTED -> RegistrationStatus.REJECTED.name();
-        };
     }
 }

@@ -110,6 +110,7 @@ com\acme\sportplatform\events\EventLookup.class
 com\acme\sportplatform\competition\web\PublicEventController.class
 com\acme\sportplatform\identity\domain\UserNotFoundException.class
 com\acme\sportplatform\common\exception\BusinessException.class
+com\acme\sportplatform\registrations\application\ListRegistrationsForReviewUseCase.class
 com\acme\sportplatform\competition\application\ListEventDisciplinesUseCase.class
 com\acme\sportplatform\payments\web\PaymentsController.class
 com\acme\sportplatform\identity\infrastructure\security\PlatformUserPrincipal.class
@@ -124,6 +125,7 @@ com\acme\sportplatform\regulations\api\CreateRegulationVersionRequest.class
 com\acme\sportplatform\payments\infrastructure\config\PaymentsConfiguration.class
 com\acme\sportplatform\identity\api\UpdateUserRequest.class
 com\acme\sportplatform\registrations\RegistrationLookup.class
+com\acme\sportplatform\config\CorsConfig.class
 com\acme\sportplatform\regulations\RegulationVersionLookup.class
 com\acme\sportplatform\identity\infrastructure\persistence\repository\UserRoleAssignmentRepository.class
 com\acme\sportplatform\payments\infrastructure\jpa\PaymentRepository.class

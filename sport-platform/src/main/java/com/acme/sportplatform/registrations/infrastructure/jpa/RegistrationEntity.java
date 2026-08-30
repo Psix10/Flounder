@@ -53,6 +53,12 @@ public class RegistrationEntity {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
+    @Column(name = "reviewed_by_user_id")
+    private UUID reviewedByUserId;
+
+    @Column(name = "reviewed_at")
+    private OffsetDateTime reviewedAt;
+
     public UUID getId() {
         return id;
     }
@@ -148,4 +154,21 @@ public class RegistrationEntity {
     public void setUpdatedAt(OffsetDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public UUID getReviewedByUserId() { 
+        return reviewedByUserId; 
+    }
+
+    public void setReviewedByUserId(UUID reviewedByUserId) { 
+        this.reviewedByUserId = reviewedByUserId; 
+    }
+
+    public OffsetDateTime getReviewedAt() { 
+        return reviewedAt; 
+    }
+    
+    public void setReviewedAt(OffsetDateTime reviewedAt) { 
+        this.reviewedAt = reviewedAt; 
+    }
+
 }

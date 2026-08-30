@@ -340,10 +340,115 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                         )
                                 .with(user(participantPrincipal))
                 )
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.code")
                         .value("payments.already_exists"));
     }
+
+        @Test
+        void shouldListRegistrationsFilteredByStatusAndTrackReviewer() throws Exception {
+        UserEntity user = createParticipantUser();
+        createParticipantProfile(user.getId());
+
+        UUID eventId = createEventWithOpenRegistration();
+        UUID disciplineTemplateId = createDisciplineTemplate();
+
+        UUID eventDisciplineId = createPublishedEventDiscipline(
+                eventId,
+                disciplineTemplateId,
+                BigDecimal.ZERO
+        );
+
+        PlatformUserPrincipal principal = new PlatformUserPrincipal(
+                user.getId(),
+                user.getEmail(),
+                "",
+                "active",
+                List.of(new SimpleGrantedAuthority("ROLE_PARTICIPANT"))
+        );
+
+        String requestJson = """
+                {
+                "eventDisciplineId": "%s",
+                "registrationMeta": {
+                        "emergencyContactPhone": "+79990000000",
+                        "comment": "Заявка для листинга"
+                }
+                }
+                """.formatted(eventDisciplineId);
+
+        String registrationResponse = mockMvc.perform(
+                        post("/api/v1/registrations")
+                                .with(user(principal))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestJson)
+                )
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String registrationId = JsonPath.read(registrationResponse, "$.id");
+
+        UUID organizerId = UUID.randomUUID();
+        PlatformUserPrincipal organizerPrincipal = new PlatformUserPrincipal(
+                organizerId,
+                "organizer@example.com",
+                "",
+                "active",
+                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+        );
+
+        mockMvc.perform(
+                        get("/api/v1/registrations")
+                                .param("status", "SUBMITTED")
+                                .with(user(organizerPrincipal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(registrationId))
+                .andExpect(jsonPath("$[0].status").value("SUBMITTED"))
+                .andExpect(jsonPath("$[0].reviewedByUserId").doesNotExist());
+
+        String reviewRequestJson = """
+                {
+                "decision": "CONFIRMED",
+                "reviewNote": "Проверено для листинга"
+                }
+                """;
+
+        mockMvc.perform(
+                        post(
+                                "/api/v1/registrations/{registrationId}/review",
+                                registrationId
+                        )
+                                .with(user(organizerPrincipal))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(reviewRequestJson)
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.reviewedByUserId").value(organizerId.toString()))
+                .andExpect(jsonPath("$.reviewedAt").exists());
+
+        mockMvc.perform(
+                        get("/api/v1/registrations")
+                                .param("status", "CONFIRMED")
+                                .with(user(organizerPrincipal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(registrationId))
+                .andExpect(jsonPath("$[0].status").value("CONFIRMED"))
+                .andExpect(jsonPath("$[0].reviewedByUserId").value(organizerId.toString()))
+                .andExpect(jsonPath("$[0].reviewedAt").exists());
+
+        mockMvc.perform(
+                        get("/api/v1/registrations")
+                                .param("status", "SUBMITTED")
+                                .with(user(organizerPrincipal))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+        }
 
     private UserEntity createParticipantUser() {
         UserEntity user = new UserEntity();

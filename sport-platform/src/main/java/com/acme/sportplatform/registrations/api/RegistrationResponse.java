@@ -15,8 +15,9 @@ public record RegistrationResponse(
         JsonNode participantSnapshot,
         JsonNode registrationMeta,
         String reviewNote,
+        UUID reviewedByUserId,
+        OffsetDateTime reviewedAt,
         OffsetDateTime submittedAt,
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt
-) {
-}
+) {}

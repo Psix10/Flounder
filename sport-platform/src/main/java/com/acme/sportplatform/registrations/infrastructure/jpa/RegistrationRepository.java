@@ -9,24 +9,27 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RegistrationRepository
         extends JpaRepository<RegistrationEntity, UUID> {
 
-    List<RegistrationEntity> findByEventId(UUID eventId);
+        List<RegistrationEntity> findByEventId(UUID eventId);
 
-    List<RegistrationEntity> findByEventDisciplineId(UUID eventDisciplineId);
+        List<RegistrationEntity> findByEventDisciplineId(UUID eventDisciplineId);
 
-    List<RegistrationEntity> findByParticipantUserId(UUID participantUserId);
+        List<RegistrationEntity> findByParticipantUserId(UUID participantUserId);
+        
+        List<RegistrationEntity> findByStatus(String status);
 
-    Optional<RegistrationEntity> findByEventDisciplineIdAndParticipantUserId(
-            UUID eventDisciplineId,
-            UUID participantUserId
-    );
+        List<RegistrationEntity> findByEventIdAndStatus(UUID eventId, String status);
+        Optional<RegistrationEntity> findByEventDisciplineIdAndParticipantUserId(
+                UUID eventDisciplineId,
+                UUID participantUserId
+        );
 
-    boolean existsByEventDisciplineIdAndParticipantUserId(
-            UUID eventDisciplineId,
-            UUID participantUserId
-    );
+        boolean existsByEventDisciplineIdAndParticipantUserId(
+                UUID eventDisciplineId,
+                UUID participantUserId
+        );
 
-    long countByEventDisciplineIdAndStatusIn(
-            UUID eventDisciplineId,
-            List<String> statuses
-    );
+        long countByEventDisciplineIdAndStatusIn(
+                UUID eventDisciplineId,
+                List<String> statuses
+        );
 }

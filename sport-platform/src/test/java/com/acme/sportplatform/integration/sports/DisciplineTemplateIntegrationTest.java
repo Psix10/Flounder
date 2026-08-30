@@ -33,7 +33,7 @@ class DisciplineTemplateIntegrationTest extends AbstractPostgresIntegrationTest 
     }
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldCreateDisciplineTemplate() throws Exception {
         mockMvc.perform(post("/api/v1/discipline-templates")
                         .with(csrf())
@@ -57,7 +57,7 @@ class DisciplineTemplateIntegrationTest extends AbstractPostgresIntegrationTest 
     }
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldReturnNotFoundWhenSportMissing() throws Exception {
         mockMvc.perform(post("/api/v1/discipline-templates")
                         .with(csrf())
@@ -77,7 +77,7 @@ class DisciplineTemplateIntegrationTest extends AbstractPostgresIntegrationTest 
     }
 
     @Test
-    @WithMockUser(authorities = "PLATFORM_ADMIN")
+    @WithMockUser(roles = "PLATFORM_ADMIN")
     void shouldReturnConflictWhenDisciplineTemplateAlreadyExists() throws Exception {
         String payload = """
                 {
