@@ -12,6 +12,7 @@ import { RegistrationReviewPage } from '../features/admin/RegistrationReviewPage
 import { SportsAdminPage } from '../features/admin/SportsAdminPage'
 import { OrganizerEventsPage } from '../features/organizer/OrganizerEventsPage'
 import { OperatorPaymentsPage } from '../features/payments/OperatorPaymentsPage'
+import { JudgePanelPage } from '../features/results/JudgePanelPage'
 
 export default function App() {
   return (
@@ -23,7 +24,7 @@ export default function App() {
         <Route path="login" element={<LoginPage />} />
 
         {/* Участник (PARTICIPANT) */}
-        <Route element={<ProtectedRoute />}>
+        <Route element={<RequireRole roles={['participant']} />}>
           <Route
             path="events/:eventCode/disciplines/:disciplineId/register"
             element={<RegistrationPage />}
@@ -57,13 +58,14 @@ export default function App() {
           <Route path="admin/sports" element={<SportsAdminPage />} />
         </Route>
 
-        {/* Оператор (например, ручная обработка платежей) */}
+        {/* Оператор (например, ручная обработка платежей + судейская панель) */}
         <Route
           element={
             <RequireRole roles={['platform_admin', 'operator']} />
           }
         >
           <Route path="operator/payments" element={<OperatorPaymentsPage />} />
+          <Route path="operator/units/:unitId" element={<JudgePanelPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

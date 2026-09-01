@@ -86,13 +86,13 @@ public class RegistrationController {
         }
 
         @GetMapping
-        @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER')")
+        @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER', 'OPERATOR')")
         public ResponseEntity<List<RegistrationResponse>> list(
                 @RequestParam(required = false) UUID eventId,
                 @RequestParam(required = false) RegistrationStatus status
         ) {
-                return ResponseEntity.ok(
-                        listRegistrationsForReviewUseCase.execute(eventId, status)
-                );
+        return ResponseEntity.ok(
+                listRegistrationsForReviewUseCase.execute(eventId, status)
+        );
         }
 }
