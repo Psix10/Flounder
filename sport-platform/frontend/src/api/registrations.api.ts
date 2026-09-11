@@ -56,16 +56,22 @@ export function reviewRegistration(
 }
 
 export function getRegistrations(
+  accessToken: string,
   status?: RegistrationStatus,
 ): Promise<Registration[]> {
   const query = status ? `?status=${encodeURIComponent(status)}` : ''
-  return apiFetch<Registration[]>(`'/api/v1/registrations${query}`)
+
+  return apiFetch<Registration[]>(`/api/v1/registrations${query}`, {
+    accessToken,
+  })
 }
 
 export function getRegistration(
   id: string,
+  accessToken: string,
 ): Promise<Registration> {
   return apiFetch<Registration>(
     `/api/v1/registrations/${encodeURIComponent(id)}`,
+    { accessToken },
   )
 }

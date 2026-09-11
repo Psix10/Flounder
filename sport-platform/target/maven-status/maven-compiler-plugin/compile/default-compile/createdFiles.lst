@@ -63,6 +63,7 @@ com\acme\sportplatform\payments\infrastructure\jpa\PaymentWebhookEventEntity.cla
 com\acme\sportplatform\results\api\CreateCompetitionUnitRequest.class
 com\acme\sportplatform\payments\web\PaymentReviewController.class
 com\acme\sportplatform\payments\application\GetPaymentForRegistrationUseCase.class
+com\acme\sportplatform\payments\web\PaymentReviewQueryController.class
 com\acme\sportplatform\payments\web\YooKassaWebhookController.class
 com\acme\sportplatform\organizations\infrastructure\jpa\VenueEntity.class
 com\acme\sportplatform\identity\api\CurrentUserResponse.class
@@ -72,6 +73,7 @@ com\acme\sportplatform\config\MethodSecurityConfig.class
 com\acme\sportplatform\registrations\infrastructure\jpa\RegistrationEntity.class
 com\acme\sportplatform\competition\domain\EventDisciplineStatus.class
 com\acme\sportplatform\identity\domain\InvalidCredentialsException.class
+com\acme\sportplatform\payments\application\GetPaymentForReviewUseCase.class
 com\acme\sportplatform\events\api\CreateEventRequest.class
 com\acme\sportplatform\organizations\api\AddOrganizationMemberRequest.class
 com\acme\sportplatform\organizations\web\VenueController.class
@@ -101,6 +103,7 @@ com\acme\sportplatform\organizations\api\CreateVenueRequest.class
 com\acme\sportplatform\registrations\web\RegistrationController.class
 com\acme\sportplatform\regulations\api\RegulationVersionResponse.class
 com\acme\sportplatform\results\application\AssignRegistrationToUnitUseCase.class
+com\acme\sportplatform\registrations\application\GetRegistrationByIdUseCase.class
 com\acme\sportplatform\competition\api\PublicEventListItemResponse.class
 com\acme\sportplatform\identity\application\ProfileLookupService.class
 com\acme\sportplatform\identity\AuthenticatedUserPrincipal.class

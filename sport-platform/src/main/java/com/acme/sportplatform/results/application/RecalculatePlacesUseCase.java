@@ -28,52 +28,104 @@ public class RecalculatePlacesUseCase {
     }
 
     /**
-     * rankingStrategy: "ASC" — меньше значение лучше (время),
-     *                  "DESC" — больше значение лучше (очки)
+     * ASC  — меньше значение лучше: время, штрафные секунды.
+     * DESC — больше значение лучше: очки, голы, баллы.
      */
     @Transactional
-    public void execute(UUID competitionUnitId, String rankingStrategy) {
-        List<ResultEntity> results = entryRepository.findByCompetitionUnitId(competitionUnitId).stream()
-                .map(entry -> resultRepository.findByCompetitionUnitEntryId(entry.getId()).orElse(null))
-                .filter(r -> r != null && ResultStatus.VALID.name().equals(r.getStatus()) || r != null && ResultStatus.PENDING.name().equals(r.getStatus()))
-                .toList();
+    public void execute(
+            UUID competitionUnitId,
+            String rankingStrategy
+    ) {
+        boolean descending =
+                "DESC".equalsIgnoreCase(rankingStrategy);
 
-        Comparator<ResultEntity> comparator = Comparator.comparing(
-                r -> parseNumeric(r.getRawValue())
-        );
-
-        if ("DESC".equalsIgnoreCase(rankingStrategy)) {
-            comparator = comparator.reversed();
+        if (!descending
+                && !"ASC".equalsIgnoreCase(rankingStrategy)) {
+            throw new IllegalArgumentException(
+                    "rankingStrategy must be ASC or DESC"
+            );
         }
 
-        List<ResultEntity> sorted = results.stream()
-                .filter(r -> parseNumeric(r.getRawValue()) != null)
-                .sorted(comparator)
+        List<ResultEntity> allResults =
+                entryRepository.findByCompetitionUnitId(
+                        competitionUnitId
+                ).stream()
+                        .map(entry -> resultRepository
+                                .findByCompetitionUnitEntryId(
+                                        entry.getId()
+                                )
+                                .orElse(null)
+                        )
+                        .filter(result -> result != null)
+                        .toList();
+
+        OffsetDateTime now = OffsetDateTime.now();
+
+        for (ResultEntity result : allResults) {
+            result.setFinalPlace(null);
+            result.setUpdatedAt(now);
+        }
+
+        List<ResultEntity> rankedResults = allResults.stream()
+                .filter(result ->
+                        ResultStatus.PENDING.name().equals(
+                                result.getStatus()
+                        )
+                        || ResultStatus.VALID.name().equals(
+                                result.getStatus()
+                        )
+                )
+                .filter(result ->
+                        parseNumeric(result.getRawValue()) != null
+                )
+                .sorted(resultComparator(descending))
                 .toList();
 
         int place = 1;
-        for (ResultEntity result : sorted) {
+
+        for (ResultEntity result : rankedResults) {
             result.setFinalPlace(place++);
             result.setStatus(ResultStatus.VALID.name());
-            result.setUpdatedAt(OffsetDateTime.now());
-            resultRepository.save(result);
+            result.setUpdatedAt(now);
         }
+
+        resultRepository.saveAll(allResults);
+    }
+
+    private Comparator<ResultEntity> resultComparator(
+            boolean descending
+    ) {
+        Comparator<ResultEntity> comparator =
+                Comparator.comparing(
+                        result -> parseNumeric(result.getRawValue())
+                );
+
+        return descending
+                ? comparator.reversed()
+                : comparator;
     }
 
     private Double parseNumeric(String rawValue) {
-        if (rawValue == null) {
+        if (rawValue == null || rawValue.isBlank()) {
             return null;
         }
+
         try {
-            // упрощённый парсинг: секунды как число, либо "mm:ss.SS"
             if (rawValue.contains(":")) {
                 String[] parts = rawValue.split(":");
+
+                if (parts.length != 2) {
+                    return null;
+                }
+
                 double minutes = Double.parseDouble(parts[0]);
                 double seconds = Double.parseDouble(parts[1]);
+
                 return minutes * 60 + seconds;
             }
+
             return Double.parseDouble(rawValue);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             return null;
         }
     }

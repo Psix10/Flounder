@@ -118,6 +118,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\application\CreateLocalPaymentForRegistrationUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\application\CreatePaymentForRegistrationUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\application\GetPaymentForRegistrationUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\application\GetPaymentForReviewUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\application\PaymentMapper.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\application\ProcessYooKassaWebhookUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\application\ReceiveYooKassaWebhookUseCase.java
@@ -146,12 +147,14 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\provider\ProviderPaymentCommand.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\provider\ProviderPaymentResult.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\web\PaymentReviewController.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\web\PaymentReviewQueryController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\web\PaymentsController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\payments\web\YooKassaWebhookController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\api\CreateRegistrationRequest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\api\RegistrationResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\api\ReviewRegistrationRequest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\application\CreateRegistrationUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\application\GetRegistrationByIdUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\application\ListMyRegistrationsUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\application\ListRegistrationsForReviewUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\registrations\application\RegistrationLookupService.java

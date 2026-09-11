@@ -13,6 +13,7 @@ import { SportsAdminPage } from '../features/admin/SportsAdminPage'
 import { OrganizerEventsPage } from '../features/organizer/OrganizerEventsPage'
 import { OperatorPaymentsPage } from '../features/payments/OperatorPaymentsPage'
 import { JudgePanelPage } from '../features/results/JudgePanelPage'
+import { OperatorRegistrationPage } from '../features/payments/OperatorRegistrationPage'
 
 export default function App() {
   return (
@@ -65,6 +66,12 @@ export default function App() {
           }
         >
           <Route path="operator/payments" element={<OperatorPaymentsPage />} />
+
+          <Route
+            path="operator/registrations/:registrationId"
+            element={<OperatorRegistrationPage />}
+          />
+
           <Route path="operator/units/:unitId" element={<JudgePanelPage />} />
         </Route>
 

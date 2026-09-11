@@ -24,7 +24,8 @@ export function OperatorPaymentsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!session) {
+    if (!session?.accessToken) {
+      setIsLoading(false)
       return
     }
 
@@ -35,7 +36,8 @@ export function OperatorPaymentsPage() {
       setErrorMessage(null)
 
       try {
-        const data = await getRegistrations()
+        const data = await getRegistrations(session.accessToken)
+
         if (isMounted) {
           setRegistrations(data)
         }
@@ -55,7 +57,7 @@ export function OperatorPaymentsPage() {
     return () => {
       isMounted = false
     }
-  }, [session])
+  }, [session?.accessToken])
 
   return (
     <section className="admin-section">
@@ -90,8 +92,8 @@ export function OperatorPaymentsPage() {
                   <td>{registration.eventName ?? registration.eventId}</td>
                   <td>{registration.status}</td>
                   <td>
-                    <NavLink to={`/my/registrations/${registration.id}/payment`}>
-                      Открыть оплату
+                    <NavLink to={`/operator/registrations/${registration.id}`}>
+                      Открыть заявку
                     </NavLink>
                   </td>
                 </tr>

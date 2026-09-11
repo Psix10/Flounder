@@ -18,6 +18,7 @@ import com.acme.sportplatform.registrations.api.CreateRegistrationRequest;
 import com.acme.sportplatform.registrations.api.RegistrationResponse;
 import com.acme.sportplatform.registrations.api.ReviewRegistrationRequest;
 import com.acme.sportplatform.registrations.application.CreateRegistrationUseCase;
+import com.acme.sportplatform.registrations.application.GetRegistrationByIdUseCase;
 import com.acme.sportplatform.registrations.application.ListMyRegistrationsUseCase;
 import com.acme.sportplatform.registrations.application.ListRegistrationsForReviewUseCase;
 import com.acme.sportplatform.registrations.application.ReviewRegistrationUseCase;
@@ -33,17 +34,20 @@ public class RegistrationController {
         private final ReviewRegistrationUseCase reviewRegistrationUseCase;
         private final ListMyRegistrationsUseCase listMyRegistrationsUseCase;
         private final ListRegistrationsForReviewUseCase listRegistrationsForReviewUseCase;
+        private final GetRegistrationByIdUseCase getRegistrationByIdUseCase;
 
         public RegistrationController(
                 CreateRegistrationUseCase createRegistrationUseCase,
                 ReviewRegistrationUseCase reviewRegistrationUseCase,
                 ListMyRegistrationsUseCase listMyRegistrationsUseCase,
-                ListRegistrationsForReviewUseCase listRegistrationsForReviewUseCase
+                ListRegistrationsForReviewUseCase listRegistrationsForReviewUseCase,
+                GetRegistrationByIdUseCase getRegistrationByIdUseCase
         ) {
                 this.createRegistrationUseCase = createRegistrationUseCase;
                 this.reviewRegistrationUseCase = reviewRegistrationUseCase;
                 this.listMyRegistrationsUseCase = listMyRegistrationsUseCase;
                 this.listRegistrationsForReviewUseCase = listRegistrationsForReviewUseCase;
+                this.getRegistrationByIdUseCase = getRegistrationByIdUseCase;
         }
 
         @PostMapping
@@ -95,4 +99,14 @@ public class RegistrationController {
                 listRegistrationsForReviewUseCase.execute(eventId, status)
         );
         }
-}
+
+        @GetMapping("/{registrationId}")
+        @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER', 'OPERATOR')")
+        public ResponseEntity<RegistrationResponse> getById(
+                @PathVariable UUID registrationId
+        ) {
+        return ResponseEntity.ok(
+                getRegistrationByIdUseCase.execute(registrationId)
+        );
+        }
+        }

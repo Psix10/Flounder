@@ -10,13 +10,14 @@ public record CompetitionUnitDetailsResponse(
         String status,
         List<EntryView> entries
 ) {
-    public record EntryView(
-            UUID entryId,
-            UUID registrationId,
-            Integer laneOrPosition,
-            String rawValue,
-            String resultType,
-            String resultStatus,
-            Integer finalPlace
-    ) {}
+        public record EntryView(
+                        UUID entryId,
+                        UUID registrationId,
+                        Integer laneOrPosition,
+                        String rawValue,
+                        String resultType,
+                        String resultStatus,
+                        Integer finalPlace
+        ) {
+        }
 }

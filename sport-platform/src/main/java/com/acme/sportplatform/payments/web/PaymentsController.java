@@ -20,49 +20,42 @@ import com.acme.sportplatform.payments.application.GetPaymentForRegistrationUseC
 @RequestMapping("/api/v1/registrations/{registrationId}/payments")
 public class PaymentsController {
 
-    private final CreatePaymentForRegistrationUseCase
-            createPaymentForRegistrationUseCase;
+        private final CreatePaymentForRegistrationUseCase createPaymentForRegistrationUseCase;
+        private final GetPaymentForRegistrationUseCase getPaymentForRegistrationUseCase;
 
-    private final GetPaymentForRegistrationUseCase
-            getPaymentForRegistrationUseCase;
+        public PaymentsController(
+                CreatePaymentForRegistrationUseCase createPaymentForRegistrationUseCase,
+                GetPaymentForRegistrationUseCase getPaymentForRegistrationUseCase
+        ) {
+                this.createPaymentForRegistrationUseCase = createPaymentForRegistrationUseCase;
+                this.getPaymentForRegistrationUseCase = getPaymentForRegistrationUseCase;
+        }
 
-    public PaymentsController(
-            CreatePaymentForRegistrationUseCase
-                    createPaymentForRegistrationUseCase,
-            GetPaymentForRegistrationUseCase
-                    getPaymentForRegistrationUseCase
-    ) {
-        this.createPaymentForRegistrationUseCase =
-                createPaymentForRegistrationUseCase;
-        this.getPaymentForRegistrationUseCase =
-                getPaymentForRegistrationUseCase;
-    }
-
-    @GetMapping
-    @PreAuthorize("hasRole('PARTICIPANT')")
-    public ResponseEntity<PaymentResponse> getForRegistration(
-            @PathVariable UUID registrationId,
-            @AuthenticationPrincipal AuthenticatedUserPrincipal principal
-    ) {
+        @GetMapping
+        @PreAuthorize("hasRole('PARTICIPANT')")
+        public ResponseEntity<PaymentResponse> getForRegistration(
+                @PathVariable UUID registrationId,
+                @AuthenticationPrincipal AuthenticatedUserPrincipal principal
+        ) {
         return ResponseEntity.ok(
                 getPaymentForRegistrationUseCase.execute(
                         registrationId,
                         principal.getUserId()
                 )
         );
-    }
+        }
 
-    @PostMapping
-    @PreAuthorize("hasRole('PARTICIPANT')")
-    public ResponseEntity<PaymentResponse> createForRegistration(
-            @PathVariable UUID registrationId,
-            @AuthenticationPrincipal AuthenticatedUserPrincipal principal
-    ) {
-        return ResponseEntity.ok(
-                createPaymentForRegistrationUseCase.execute(
-                        registrationId,
-                        principal.getUserId()
-                )
-        );
-    }
+        @PostMapping
+        @PreAuthorize("hasRole('PARTICIPANT')")
+        public ResponseEntity<PaymentResponse> createForRegistration(
+                @PathVariable UUID registrationId,
+                @AuthenticationPrincipal AuthenticatedUserPrincipal principal
+        ) {
+                return ResponseEntity.ok(
+                        createPaymentForRegistrationUseCase.execute(
+                                registrationId,
+                                principal.getUserId()
+                        )
+                );
+        }
 }

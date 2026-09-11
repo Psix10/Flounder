@@ -786,3 +786,114 @@ code {
   border: 0;
   cursor: pointer;
 }
+
+
+/* Operator registration detail */
+
+.detail-list {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0 36px;
+}
+
+.detail-list > div {
+  display: grid;
+  gap: 5px;
+  padding: 16px 18px;
+  border: 1px solid #dce7f0;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.detail-list dt {
+  color: #71809a;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.detail-list dd {
+  margin: 0;
+  color: #33435c;
+  font-size: 0.96rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.admin-section > h2 {
+  margin: 36px 0 0;
+  font-size: 1.5rem;
+  letter-spacing: -0.025em;
+}
+
+.admin-section > label {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.admin-section > label > span {
+  color: #33435c;
+  font-size: 0.92rem;
+  font-weight: 750;
+}
+
+.admin-section > label textarea {
+  width: 100%;
+  min-height: 112px;
+  padding: 12px;
+  border: 1px solid #bfcddd;
+  border-radius: 8px;
+  outline: none;
+  resize: vertical;
+  background: #ffffff;
+  color: #172033;
+  line-height: 1.45;
+}
+
+.admin-section > label textarea:focus {
+  border-color: #0b5b7b;
+  box-shadow: 0 0 0 3px rgb(11 91 123 / 0.14);
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.action-row .button {
+  margin-top: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.button-danger {
+  color: #ffffff;
+  background: #a12747;
+}
+
+.button-danger:hover {
+  background: #851c38;
+}
+
+.button:disabled,
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+@media (max-width: 640px) {
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .action-row .button,
+  .admin-section > .button {
+    width: 100%;
+    justify-content: center;
+  }
+}

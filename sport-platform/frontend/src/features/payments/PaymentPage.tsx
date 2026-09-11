@@ -3,34 +3,103 @@ import { useNavigate, useParams, useSearchParams } from 'react-router'
 import { useAuth } from '../../app/providers/AuthProvider'
 import { ApiError } from '../../api/http'
 import {
-  getRegistration,
+  getMyRegistrations,
   type Registration,
 } from '../../api/registrations.api'
+import {
+  createPaymentForRegistration,
+  getPaymentForRegistration,
+  type Payment,
+} from '../../api/payments.api'
 
-function getErrorMessage(error: unknown) {
+function getErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
     if (error.status === 403) {
-      return 'У вашей учётной записи нет прав на просмотр этой страницы.'
+      return 'У вашей учётной записи нет прав для выполнения этого действия.'
     }
+
+    if (error.status === 404) {
+      return 'Запись не найдена.'
+    }
+
     return error.message
   }
-  return 'Не удалось загрузить данные заявки.'
+
+  return fallback
+}
+
+function paymentStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    PENDING: 'Ожидает оплаты',
+    WAITING_FOR_CAPTURE: 'Ожидает подтверждения',
+    SUCCEEDED: 'Оплата подтверждена',
+    CANCELED: 'Оплата отменена',
+    FAILED: 'Ошибка оплаты',
+  }
+
+  return labels[status] ?? status
 }
 
 export function PaymentPage() {
   const { session } = useAuth()
   const navigate = useNavigate()
-  const { registrationId } = useParams()
+  const { registrationId } = useParams<{ registrationId: string }>()
   const [searchParams] = useSearchParams()
+  const accessToken = session?.accessToken ?? null
 
   const [registration, setRegistration] = useState<Registration | null>(null)
+  const [payment, setPayment] = useState<Payment | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isCreatingPayment, setIsCreatingPayment] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const paymentStatus = searchParams.get('status')
+  const paymentStatusFromReturn = searchParams.get('status')
+
+  async function loadPage() {
+    if (!registrationId || !accessToken) {
+      return
+    }
+
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      const registrations = await getMyRegistrations(accessToken)
+      const ownRegistration = registrations.find(
+        (item) => item.id === registrationId,
+      )
+
+      if (!ownRegistration) {
+        setErrorMessage('Заявка не найдена или недоступна вашей учётной записи.')
+        return
+      }
+
+      setRegistration(ownRegistration)
+
+      try {
+        const loadedPayment = await getPaymentForRegistration(
+          registrationId,
+          accessToken,
+        )
+        setPayment(loadedPayment)
+      } catch (error) {
+        if (error instanceof ApiError && error.status === 404) {
+          setPayment(null)
+        } else {
+          throw error
+        }
+      }
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось загрузить данные заявки и оплаты.'),
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    if (!session) {
+    if (!accessToken) {
       navigate('/login', { replace: true })
       return
     }
@@ -41,41 +110,44 @@ export function PaymentPage() {
       return
     }
 
-    let isMounted = true
+    loadPage()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, registrationId, navigate])
 
-    async function loadRegistration() {
-      setIsLoading(true)
-      setErrorMessage(null)
+  async function handleCreatePayment() {
+    if (!registrationId || !accessToken) {
+      return
+    }
 
-      try {
-        const data = await getRegistration(registrationId)
-        if (isMounted) {
-          setRegistration(data)
-        }
-      } catch (error) {
-        if (isMounted) {
-          setErrorMessage(getErrorMessage(error))
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false)
-        }
+    setIsCreatingPayment(true)
+    setErrorMessage(null)
+
+    try {
+      const createdPayment = await createPaymentForRegistration(
+        registrationId,
+        accessToken,
+      )
+
+      setPayment(createdPayment)
+
+      if (createdPayment.confirmationUrl) {
+        window.location.assign(createdPayment.confirmationUrl)
       }
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось создать платёж.'),
+      )
+    } finally {
+      setIsCreatingPayment(false)
     }
-
-    loadRegistration()
-
-    return () => {
-      isMounted = false
-    }
-  }, [session, registrationId, navigate])
+  }
 
   return (
     <section className="admin-section">
       <p className="eyebrow">Оплата участия</p>
       <h1>Заявка и статус оплаты</h1>
 
-      {isLoading ? <p>Загрузка...</p> : null}
+      {isLoading ? <p>Загрузка…</p> : null}
 
       {errorMessage ? (
         <p className="form-error" role="alert">
@@ -100,20 +172,54 @@ export function PaymentPage() {
             </div>
           </dl>
 
-          {paymentStatus === 'success' ? (
-            <div className="success-banner" role="status">
-              Оплата успешно завершена. Спасибо за участие!
-            </div>
-          ) : paymentStatus === 'failed' ? (
-            <div className="form-error" role="alert">
-              Оплата не удалась. Попробуйте ещё раз или свяжитесь с организатором.
-            </div>
+          <h2>Платёж</h2>
+
+          {payment ? (
+            <>
+              <dl className="definition-list">
+                <div>
+                  <dt>Сумма</dt>
+                  <dd>{payment.amount} {payment.currency}</dd>
+                </div>
+                <div>
+                  <dt>Статус</dt>
+                  <dd>{paymentStatusLabel(payment.status)}</dd>
+                </div>
+              </dl>
+
+              {payment.confirmationUrl && payment.status === 'PENDING' ? (
+                <a
+                  className="button button-primary"
+                  href={payment.confirmationUrl}
+                >
+                  Перейти к оплате
+                </a>
+              ) : null}
+            </>
           ) : (
-            <p>
-              Вы будете перенаправлены на платёжную страницу. После завершения
-              оплаты сюда вернётся статус операции.
-            </p>
+            <button
+              className="button button-primary"
+              type="button"
+              onClick={handleCreatePayment}
+              disabled={isCreatingPayment}
+            >
+              {isCreatingPayment ? 'Создаём платёж…' : 'Перейти к оплате'}
+            </button>
           )}
+
+          {paymentStatusFromReturn === 'success' ? (
+            <div className="success-banner" role="status">
+              Оплата успешно завершена. Статус платежа будет обновлён после
+              подтверждения платёжного провайдера.
+            </div>
+          ) : null}
+
+          {paymentStatusFromReturn === 'failed' ? (
+            <div className="form-error" role="alert">
+              Оплата не завершена. Попробуйте ещё раз или обратитесь к
+              организатору.
+            </div>
+          ) : null}
         </>
       ) : null}
     </section>
