@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
+import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationEntity;
+import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationRepository;
 import com.acme.sportplatform.results.api.CompetitionUnitDetailsResponse;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
@@ -15,49 +17,48 @@ import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRep
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
 import com.acme.sportplatform.results.infrastructure.jpa.ResultEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.ResultRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class GetCompetitionUnitDetailsUseCase {
 
-        private final CompetitionUnitRepository competitionUnitRepository;
-        private final CompetitionUnitEntryRepository entryRepository;
-        private final ResultRepository resultRepository;
+    private final CompetitionUnitRepository competitionUnitRepository;
+    private final CompetitionUnitEntryRepository entryRepository;
+    private final ResultRepository resultRepository;
+    private final RegistrationRepository registrationRepository;
+    private final ObjectMapper objectMapper;
 
-        public GetCompetitionUnitDetailsUseCase(
-                CompetitionUnitRepository competitionUnitRepository,
-                CompetitionUnitEntryRepository entryRepository,
-                ResultRepository resultRepository
-        ) {
-                this.competitionUnitRepository = competitionUnitRepository;
-                this.entryRepository = entryRepository;
-                this.resultRepository = resultRepository;
-        }
+    public GetCompetitionUnitDetailsUseCase(
+            CompetitionUnitRepository competitionUnitRepository,
+            CompetitionUnitEntryRepository entryRepository,
+            ResultRepository resultRepository,
+            RegistrationRepository registrationRepository,
+            ObjectMapper objectMapper
+    ) {
+        this.competitionUnitRepository = competitionUnitRepository;
+        this.entryRepository = entryRepository;
+        this.resultRepository = resultRepository;
+        this.registrationRepository = registrationRepository;
+        this.objectMapper = objectMapper;
+    }
 
-        @Transactional(readOnly = true)
-        public CompetitionUnitDetailsResponse execute(UUID unitId) {
-                CompetitionUnitEntity unit = competitionUnitRepository.findById(unitId)
-                        .orElseThrow(() -> new BusinessException(
-                                "results.unit_not_found",
-                                "Competition unit not found: " + unitId));
+    @Transactional(readOnly = true)
+    public CompetitionUnitDetailsResponse execute(UUID unitId) {
+        CompetitionUnitEntity unit = competitionUnitRepository
+                .findById(unitId)
+                .orElseThrow(() -> new BusinessException(
+                        "results.unit_not_found",
+                        "Competition unit not found: " + unitId
+                ));
 
-                List<CompetitionUnitEntryEntity> entries = entryRepository.findByCompetitionUnitId(unitId);
+        List<CompetitionUnitEntryEntity> entries =
+                entryRepository.findByCompetitionUnitId(unitId);
 
-                List<CompetitionUnitDetailsResponse.EntryView> entryViews = entries.stream()
-                        .map(entry -> {
-                        ResultEntity result = resultRepository
-                                .findByCompetitionUnitEntryId(entry.getId())
-                                .orElse(null);
-
-                        return new CompetitionUnitDetailsResponse.EntryView(
-                        entry.getId(),
-                        entry.getRegistrationId(),
-                        entry.getLaneOrPosition(),
-                        result != null ? result.getRawValue() : null,
-                        result != null ? result.getResultType() : null,
-                        result != null ? result.getStatus() : null,
-                        result != null ? result.getFinalPlace() : null
-                );
-                })
-                .collect(Collectors.toList());
+        List<CompetitionUnitDetailsResponse.EntryView> entryViews =
+                entries.stream()
+                        .map(this::toEntryView)
+                        .collect(Collectors.toList());
 
         return new CompetitionUnitDetailsResponse(
                 unit.getId(),
@@ -66,5 +67,69 @@ public class GetCompetitionUnitDetailsUseCase {
                 unit.getStatus(),
                 entryViews
         );
+    }
+
+    private CompetitionUnitDetailsResponse.EntryView toEntryView(
+            CompetitionUnitEntryEntity entry
+    ) {
+        ResultEntity result = resultRepository
+                .findByCompetitionUnitEntryId(entry.getId())
+                .orElse(null);
+
+        RegistrationEntity registration = registrationRepository
+                .findById(entry.getRegistrationId())
+                .orElse(null);
+
+        return new CompetitionUnitDetailsResponse.EntryView(
+                entry.getId(),
+                registration == null
+                        ? fallbackParticipantName(entry.getRegistrationId())
+                        : extractParticipantName(
+                                registration.getParticipantSnapshot(),
+                                entry.getRegistrationId()
+                        ),
+                entry.getRegistrationId(),
+                entry.getLaneOrPosition(),
+                result != null ? result.getRawValue() : null,
+                result != null ? result.getResultType() : null,
+                result != null ? result.getStatus() : null,
+                result != null ? result.getFinalPlace() : null
+        );
+    }
+
+    private String extractParticipantName(
+            String participantSnapshot,
+            UUID registrationId
+    ) {
+        if (participantSnapshot == null || participantSnapshot.isBlank()) {
+            return fallbackParticipantName(registrationId);
         }
+
+        try {
+            JsonNode snapshot = objectMapper.readTree(participantSnapshot);
+
+            String firstName = snapshot.path("firstName").asText("").trim();
+            String lastName = snapshot.path("lastName").asText("").trim();
+            String middleName = snapshot.path("middleName").asText("").trim();
+
+            String participantName = String.join(
+                    " ",
+                    List.of(lastName, firstName, middleName)
+                            .stream()
+                            .filter(value -> !value.isBlank())
+                            .toList()
+            );
+
+            return participantName.isBlank()
+                    ? fallbackParticipantName(registrationId)
+                    : participantName;
+        } catch (Exception exception) {
+            return fallbackParticipantName(registrationId);
+        }
+    }
+
+    private String fallbackParticipantName(UUID registrationId) {
+        return "Участник "
+                + registrationId.toString().substring(0, 8);
+    }
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "competition_units")
@@ -14,6 +15,10 @@ public class CompetitionUnitEntity {
 
     @Id
     private UUID id;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    private Long version;
 
     @Column(name = "event_discipline_id", nullable = false)
     private UUID eventDisciplineId;
@@ -38,6 +43,10 @@ public class CompetitionUnitEntity {
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
+
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
+
 
     public UUID getEventDisciplineId() { return eventDisciplineId; }
     public void setEventDisciplineId(UUID eventDisciplineId) { this.eventDisciplineId = eventDisciplineId; }

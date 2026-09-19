@@ -1,5 +1,6 @@
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\architecture\ArchitectureTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\AuthIT.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\infrastructure\security\JwtAuthenticationFilterTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\web\OrganizationControllerTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\identity\web\UserControllerTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\competition\CompetitionIntegrationTest.java

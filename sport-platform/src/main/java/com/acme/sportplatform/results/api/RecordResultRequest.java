@@ -4,5 +4,6 @@ import java.util.UUID;
 
 public record RecordResultRequest(
         UUID competitionUnitEntryId,
-        String rawValue
+        String rawValue,
+        String status
 ) {}

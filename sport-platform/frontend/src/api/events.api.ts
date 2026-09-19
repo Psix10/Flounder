@@ -1,18 +1,20 @@
 import { apiFetch } from './http'
-import type { PublicEvent, PublicEventDetails } from '../features/events/event.types'
+import type {
+  PublicEvent,
+  PublicEventDetails,
+} from '../features/events/event.types'
 
 export function getPublicEvents(): Promise<PublicEvent[]> {
-  return apiFetch<PublicEvent[]>('/api/v1/public/events')
+  return apiFetch<PublicEvent[]>('/api/v1/events')
 }
 
 export function getPublicEventDetails(
   publicSlug: string,
 ): Promise<PublicEventDetails> {
   return apiFetch<PublicEventDetails>(
-    `/api/v1/public/events/${encodeURIComponent(publicSlug)}`,
+    `/api/v1/events/public/${encodeURIComponent(publicSlug)}`,
   )
 }
-
 
 export type OrganizerEvent = {
   id: string

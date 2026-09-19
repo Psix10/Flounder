@@ -22,6 +22,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\competition\domain\EventDisciplineStatus.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\competition\EventDisciplineLookup.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\competition\EventDisciplineLookupResult.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\competition\EventDisciplineSummary.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\competition\infrastructure\jpa\EventDisciplineEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\competition\infrastructure\jpa\EventDisciplineRepository.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\competition\web\CompetitionController.java
@@ -31,6 +32,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\config\PasswordConfig.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\api\CreateEventRequest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\api\EventResponse.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\api\PublicEventDetailsResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\CloseEventRegistrationUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\CompleteEventUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\CreateEventUseCase.java
@@ -184,11 +186,17 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\CompetitionUnitDetailsResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\CompetitionUnitResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\CreateCompetitionUnitRequest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\PublicCompetitionUnitResultsResponse.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\PublicDisciplineResultsResponse.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\PublishCompetitionUnitRequest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\RecordResultRequest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\ResultResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\AssignRegistrationToUnitUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\CreateCompetitionUnitUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\GetCompetitionUnitDetailsUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\GetPublicCompetitionUnitResultsUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\GetPublicDisciplineResultsUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\PublishCompetitionUnitUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\RecalculatePlacesUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\RecordResultUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\domain\CompetitionUnitStatus.java
@@ -199,6 +207,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\infrastructure\jpa\CompetitionUnitRepository.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\infrastructure\jpa\ResultEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\infrastructure\jpa\ResultRepository.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\web\PublicResultsController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\web\ResultsController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\SportPlatformApplication.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\sports\api\CreateDisciplineTemplateRequest.java

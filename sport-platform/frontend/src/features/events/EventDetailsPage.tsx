@@ -121,6 +121,8 @@ export function EventDetailsPage() {
     return <ErrorState message="Событие не найдено." />
   }
 
+  const disciplines = event.disciplines ?? []
+
   return (
     <section>
       <Link className="back-link" to="/">
@@ -159,13 +161,13 @@ export function EventDetailsPage() {
         </div>
       </div>
 
-      {event.disciplines.length === 0 ? (
+      {disciplines.length === 0 ? (
         <div className="state-card">
           Для этого события пока нет доступных дисциплин.
         </div>
       ) : (
         <div className="discipline-list">
-          {event.disciplines.map((discipline) => {
+          {disciplines.map((discipline) => {
             const settings = parseSettings(discipline.settingsJson)
             const gender = getGenderLabel(settings.gender)
             const ageGroup = getAgeGroupLabel(settings.ageGroup)
@@ -211,12 +213,21 @@ export function EventDetailsPage() {
                       : 'командный'}
                   </span>
 
-                  <Link
-                    className="button button-primary"
-                    to={`/events/${event.publicSlug}/disciplines/${discipline.id}/register`}
-                  >
-                    Зарегистрироваться
-                  </Link>
+                  <div className="discipline-actions">
+                    <Link
+                      className="button button-secondary"
+                      to={`/events/${event.id}/disciplines/${discipline.id}/results`}
+                    >
+                      Результаты
+                    </Link>
+
+                    <Link
+                      className="button button-primary"
+                      to={`/events/${event.publicSlug}/disciplines/${discipline.id}/register`}
+                    >
+                      Зарегистрироваться
+                    </Link>
+                  </div>
                 </div>
               </article>
             )

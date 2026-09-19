@@ -88,7 +88,7 @@ logging:
 app:
   security:
     jwt:
-      secret: "change-me-change-me-change-me-change-me-change-me-please"
+      secret: ${JWT_SECRET}
       issuer: "sport-platform"
       access-token-ttl: PT2H
   payments:

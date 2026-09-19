@@ -42,8 +42,11 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*/roles/*").hasRole("PLATFORM_ADMIN")
                     .requestMatchers(HttpMethod.POST,"/api/v1/payments/webhooks/yookassa").permitAll()
                     .requestMatchers(HttpMethod.GET,
-                                    "/api/v1/public/events",
-                                    "/api/v1/public/events/*").permitAll()
+                                    "/api/v1/events",
+                                    "/api/v1/events/*",
+                                    "/api/v1/events/public/*",
+                                    "/api/v1/events/*/disciplines/*/results",
+                                    "/api/v1/public/events/*/disciplines/*/results").permitAll()
                     .anyRequest().authenticated()
             )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

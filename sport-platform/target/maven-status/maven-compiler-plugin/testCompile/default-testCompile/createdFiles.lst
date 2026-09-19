@@ -9,6 +9,7 @@ com\acme\sportplatform\integration\regulations\RegulationIntegrationTest.class
 com\acme\sportplatform\identity\web\UserControllerTest.class
 com\acme\sportplatform\integration\payments\YooKassaWebhookIntegrationTest.class
 com\acme\sportplatform\architecture\ArchitectureTest.class
+com\acme\sportplatform\identity\infrastructure\security\JwtAuthenticationFilterTest.class
 com\acme\sportplatform\integration\sports\BaseIT.class
 com\acme\sportplatform\integration\events\EventIntegrationTest.class
 com\acme\sportplatform\integration\identity\RbacIntegrationTest.class

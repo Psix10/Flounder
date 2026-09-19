@@ -6,10 +6,12 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
@@ -87,6 +89,12 @@ public class GlobalExceptionHandler {
             case "registrations.discipline_limit_reached" ->
                     HttpStatus.CONFLICT;
 
+            case "results.concurrent_update" ->
+                    HttpStatus.CONFLICT;
+
+            case "results.public_not_found" ->
+                    HttpStatus.NOT_FOUND;
+
             default -> HttpStatus.BAD_REQUEST;
         };
 
@@ -94,6 +102,23 @@ public class GlobalExceptionHandler {
                 new ApiErrorResponse(
                         ex.getCode(),
                         ex.getMessage(),
+                        OffsetDateTime.now(),
+                        List.of()
+                )
+        );
+    }
+
+    @ExceptionHandler({
+            ObjectOptimisticLockingFailureException.class,
+            OptimisticLockingFailureException.class
+    })
+    public ResponseEntity<ApiErrorResponse> handleOptimisticLocking(
+            OptimisticLockingFailureException ex
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                new ApiErrorResponse(
+                        "results.concurrent_update",
+                        "Данные были изменены другим пользователем. Обновите страницу и повторите действие.",
                         OffsetDateTime.now(),
                         List.of()
                 )

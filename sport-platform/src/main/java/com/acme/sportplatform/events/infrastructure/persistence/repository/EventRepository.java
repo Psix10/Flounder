@@ -22,4 +22,5 @@ public interface EventRepository
             String publicSlug,
             Collection<String> statuses
     );
+    Optional<EventEntity> findByPublicSlug(String publicSlug);
 }

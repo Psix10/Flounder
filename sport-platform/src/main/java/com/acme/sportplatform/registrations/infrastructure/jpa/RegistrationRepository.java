@@ -32,4 +32,6 @@ public interface RegistrationRepository
                 UUID eventDisciplineId,
                 List<String> statuses
         );
+
+        List<RegistrationEntity> findByIdIn(List<UUID> ids);
 }

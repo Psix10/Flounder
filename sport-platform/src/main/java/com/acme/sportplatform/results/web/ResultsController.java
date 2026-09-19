@@ -1,5 +1,6 @@
 package com.acme.sportplatform.results.web;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -14,17 +15,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.acme.sportplatform.common.exception.BusinessException;
+import com.acme.sportplatform.competition.infrastructure.jpa.EventDisciplineEntity;
+import com.acme.sportplatform.competition.infrastructure.jpa.EventDisciplineRepository;
 import com.acme.sportplatform.results.api.AssignRegistrationRequest;
 import com.acme.sportplatform.results.api.CompetitionUnitDetailsResponse;
 import com.acme.sportplatform.results.api.CompetitionUnitResponse;
 import com.acme.sportplatform.results.api.CreateCompetitionUnitRequest;
+import com.acme.sportplatform.results.api.PublicCompetitionUnitResultsResponse;
+import com.acme.sportplatform.results.api.PublicDisciplineResultsResponse;
+import com.acme.sportplatform.results.api.PublishCompetitionUnitRequest;
 import com.acme.sportplatform.results.api.RecordResultRequest;
 import com.acme.sportplatform.results.api.ResultResponse;
 import com.acme.sportplatform.results.application.AssignRegistrationToUnitUseCase;
 import com.acme.sportplatform.results.application.CreateCompetitionUnitUseCase;
 import com.acme.sportplatform.results.application.GetCompetitionUnitDetailsUseCase;
+import com.acme.sportplatform.results.application.GetPublicCompetitionUnitResultsUseCase;
+import com.acme.sportplatform.results.application.GetPublicDisciplineResultsUseCase;
+import com.acme.sportplatform.results.application.PublishCompetitionUnitUseCase;
 import com.acme.sportplatform.results.application.RecalculatePlacesUseCase;
 import com.acme.sportplatform.results.application.RecordResultUseCase;
+import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
 
 import jakarta.validation.Valid;
 
@@ -37,29 +48,79 @@ public class ResultsController {
     private final RecordResultUseCase recordResultUseCase;
     private final RecalculatePlacesUseCase recalculatePlacesUseCase;
     private final GetCompetitionUnitDetailsUseCase getCompetitionUnitDetailsUseCase;
+    private final PublishCompetitionUnitUseCase publishCompetitionUnitUseCase;
+    private final CompetitionUnitRepository competitionUnitRepository;
+    private final GetPublicCompetitionUnitResultsUseCase
+            getPublicCompetitionUnitResultsUseCase;
+    private final GetPublicDisciplineResultsUseCase
+            getPublicDisciplineResultsUseCase;
+    private final EventDisciplineRepository eventDisciplineRepository;
 
     public ResultsController(
             CreateCompetitionUnitUseCase createCompetitionUnitUseCase,
             AssignRegistrationToUnitUseCase assignRegistrationToUnitUseCase,
             RecordResultUseCase recordResultUseCase,
             RecalculatePlacesUseCase recalculatePlacesUseCase,
-            GetCompetitionUnitDetailsUseCase getCompetitionUnitDetailsUseCase
+            GetCompetitionUnitDetailsUseCase getCompetitionUnitDetailsUseCase,
+            PublishCompetitionUnitUseCase publishCompetitionUnitUseCase,
+            CompetitionUnitRepository competitionUnitRepository,
+            GetPublicCompetitionUnitResultsUseCase
+                    getPublicCompetitionUnitResultsUseCase,
+            GetPublicDisciplineResultsUseCase
+                    getPublicDisciplineResultsUseCase,
+            EventDisciplineRepository eventDisciplineRepository
     ) {
         this.createCompetitionUnitUseCase = createCompetitionUnitUseCase;
         this.assignRegistrationToUnitUseCase = assignRegistrationToUnitUseCase;
         this.recordResultUseCase = recordResultUseCase;
         this.recalculatePlacesUseCase = recalculatePlacesUseCase;
         this.getCompetitionUnitDetailsUseCase = getCompetitionUnitDetailsUseCase;
+        this.publishCompetitionUnitUseCase = publishCompetitionUnitUseCase;
+        this.competitionUnitRepository = competitionUnitRepository;
+        this.getPublicCompetitionUnitResultsUseCase =
+                getPublicCompetitionUnitResultsUseCase;
+        this.getPublicDisciplineResultsUseCase =
+                getPublicDisciplineResultsUseCase;
+        this.eventDisciplineRepository = eventDisciplineRepository;
     }
 
     /**
-     * Внутренний просмотр заплыва/матча с участниками и черновыми результатами.
+     * Список заплывов, матчей, групп или финалов для одной дисциплины.
+     * Доступен только внутренним ролям.
+     */
+    @GetMapping("/event-disciplines/{eventDisciplineId}/competition-units")
+    @PreAuthorize(
+            "hasRole('PLATFORM_ADMIN') or "
+            + "hasRole('ORGANIZER') or "
+            + "hasRole('OPERATOR')"
+    )
+    public List<CompetitionUnitResponse> listCompetitionUnits(
+            @PathVariable UUID eventDisciplineId
+    ) {
+        return competitionUnitRepository
+                .findByEventDisciplineIdOrderBySequenceNumberAsc(
+                        eventDisciplineId
+                )
+                .stream()
+                .map(unit -> new CompetitionUnitResponse(
+                        unit.getId(),
+                        unit.getEventDisciplineId(),
+                        unit.getLabel(),
+                        unit.getSequenceNumber(),
+                        unit.getStatus(),
+                        unit.getScheduledAt()
+                ))
+                .toList();
+    }
+
+    /**
+     * Внутренний просмотр unit с участниками и черновыми результатами.
      */
     @GetMapping("/competition-units/{unitId}")
     @PreAuthorize(
-            "hasRole('PLATFORM_ADMIN') or " +
-            "hasRole('ORGANIZER') or " +
-            "hasRole('OPERATOR')"
+            "hasRole('PLATFORM_ADMIN') or "
+            + "hasRole('ORGANIZER') or "
+            + "hasRole('OPERATOR')"
     )
     public CompetitionUnitDetailsResponse getUnitDetails(
             @PathVariable UUID unitId
@@ -68,17 +129,41 @@ public class ResultsController {
     }
 
     /**
-     * Публичная итоговая таблица.
-     *
-     * Для первого MVP временно возвращает те же данные, что и внутренний read API.
-     * До пользовательского тестирования лучше ограничить её только unit-ами
-     * в статусе PUBLISHED.
+     * Публичная итоговая таблица одной опубликованной единицы соревнования.
+     * Черновик намеренно выглядит как отсутствующий ресурс.
      */
     @GetMapping("/public/competition-units/{unitId}/results")
-    public CompetitionUnitDetailsResponse getPublicResults(
+    public PublicCompetitionUnitResultsResponse getPublicResults(
             @PathVariable UUID unitId
     ) {
-        return getCompetitionUnitDetailsUseCase.execute(unitId);
+        return getPublicCompetitionUnitResultsUseCase.execute(unitId);
+    }
+
+    /**
+     * Публичные результаты всех опубликованных unit конкретной дисциплины.
+     *
+     * eventId и eventDisciplineId сверяются, чтобы нельзя было запросить
+     * дисциплину одного события через URL другого события.
+     */
+    @GetMapping(
+            "/public/events/{eventId}/disciplines/{eventDisciplineId}/results"
+    )
+    public PublicDisciplineResultsResponse getPublicDisciplineResults(
+            @PathVariable UUID eventId,
+            @PathVariable UUID eventDisciplineId
+    ) {
+        EventDisciplineEntity discipline = eventDisciplineRepository
+                .findById(eventDisciplineId)
+                .orElseThrow(this::publicResultsNotFound);
+
+        if (!eventId.equals(discipline.getEventId())) {
+            throw publicResultsNotFound();
+        }
+
+        return getPublicDisciplineResultsUseCase.execute(
+                eventId,
+                eventDisciplineId
+        );
     }
 
     /**
@@ -123,7 +208,6 @@ public class ResultsController {
 
     /**
      * Оператор вносит или обновляет результат одной entry.
-     * После записи место ещё может быть null, пока не вызван recalculate.
      */
     @PostMapping("/results")
     @PreAuthorize(
@@ -143,8 +227,7 @@ public class ResultsController {
     }
 
     /**
-     * Удобная MVP-ручка:
-     * сохраняет результат и сразу пересчитывает все места в unit.
+     * Сохраняет результат и сразу пересчитывает места в конкретном unit.
      */
     @PostMapping("/competition-units/{unitId}/results")
     @PreAuthorize(
@@ -158,10 +241,11 @@ public class ResultsController {
             @RequestParam String resultType,
             @RequestParam(defaultValue = "ASC") String rankingStrategy
     ) {
-        ResultResponse result = recordResultUseCase.execute(
+        recordResultUseCase.execute(
                 request,
                 resultType,
-                recordedByUserId
+                recordedByUserId,
+                unitId
         );
 
         recalculatePlacesUseCase.execute(
@@ -173,10 +257,7 @@ public class ResultsController {
     }
 
     /**
-     * Ручной пересчёт после внесения нескольких результатов.
-     *
-     * rankingStrategy=ASC  — меньше значение лучше, например время.
-     * rankingStrategy=DESC — больше значение лучше, например очки.
+     * Ручной пересчёт мест после внесения нескольких результатов.
      */
     @PostMapping("/competition-units/{unitId}/recalculate")
     @PreAuthorize(
@@ -192,5 +273,31 @@ public class ResultsController {
         );
 
         return getCompetitionUnitDetailsUseCase.execute(unitId);
+    }
+
+    /**
+     * Публикует результаты либо возвращает unit в статус DRAFT.
+     */
+    @PostMapping("/competition-units/{unitId}/publication")
+    @PreAuthorize(
+            "hasAnyRole('PLATFORM_ADMIN', 'OPERATOR', 'ORGANIZER', 'JUDGE')"
+    )
+    public ResponseEntity<Void> changePublication(
+            @PathVariable UUID unitId,
+            @RequestBody PublishCompetitionUnitRequest request
+    ) {
+        publishCompetitionUnitUseCase.execute(
+                unitId,
+                request.published()
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    private BusinessException publicResultsNotFound() {
+        return new BusinessException(
+                "results.public_not_found",
+                "Published results were not found."
+        );
     }
 }

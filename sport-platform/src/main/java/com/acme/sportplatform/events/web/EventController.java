@@ -99,4 +99,14 @@ public class EventController {
     public ResponseEntity<EventResponse> complete(@PathVariable UUID id) {
         return ResponseEntity.ok(completeEventUseCase.execute(id));
     }
+
+    @GetMapping("/events/public/{publicSlug}")
+    public ResponseEntity<EventResponse> getByPublicSlug(
+            @PathVariable String publicSlug
+    ) {
+        EventEntity entity = eventRepository.findByPublicSlug(publicSlug)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        return ResponseEntity.ok(eventMapper.toResponse(entity));
+    }
 }

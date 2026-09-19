@@ -10,6 +10,7 @@ export function AppLayout() {
     isParticipant,
     logout,
   } = useAuth()
+
   const navigate = useNavigate()
 
   function handleLogout() {
@@ -19,6 +20,11 @@ export function AppLayout() {
 
   const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'nav-link nav-link-active' : 'nav-link'
+
+  const canManageEvents = isPlatformAdmin || isOrganizer
+  const canReviewRegistrations = isPlatformAdmin || isOrganizer
+  const canProcessPayments = isPlatformAdmin || isOperator
+  const canManageResults = isPlatformAdmin || isOperator
 
   return (
     <div className="app-shell">
@@ -32,41 +38,48 @@ export function AppLayout() {
             События
           </NavLink>
 
-          {/* Участник: свои заявки */}
           {isAuthenticated && isParticipant ? (
             <NavLink className={navLinkClassName} to="/my/registrations">
               Мои заявки
             </NavLink>
           ) : null}
 
-          {/* Организатор и Админ платформы: управление событиями */}
-          {isPlatformAdmin || isOrganizer ? (
+          {canManageEvents ? (
             <NavLink className={navLinkClassName} to="/organizer/events">
               Мои события
             </NavLink>
           ) : null}
 
-          {/* Организатор и Админ платформы: рассмотрение заявок */}
-          {isPlatformAdmin || isOrganizer ? (
+          {canReviewRegistrations ? (
             <NavLink
               className={navLinkClassName}
               to="/admin/registrations/review"
             >
-              Заявки на рассмотрение
+              Заявки
             </NavLink>
           ) : null}
 
-          {/* Только Админ платформы: справочники */}
           {isPlatformAdmin ? (
             <NavLink className={navLinkClassName} to="/admin/sports">
               Виды спорта
             </NavLink>
           ) : null}
 
-          {/* Оператор: обработка платежей */}
-          {isPlatformAdmin || isOperator ? (
-            <NavLink className={navLinkClassName} to="/operator/payments">
-              Платежи
+          {canManageResults ? (
+            <NavLink
+              className={navLinkClassName}
+              to="/operator/results"
+            >
+              Результаты
+            </NavLink>
+          ) : null}
+
+          {canProcessPayments ? (
+            <NavLink
+              className={navLinkClassName}
+              to="/operator/payments"
+            >
+              Заявки и платежи
             </NavLink>
           ) : null}
 

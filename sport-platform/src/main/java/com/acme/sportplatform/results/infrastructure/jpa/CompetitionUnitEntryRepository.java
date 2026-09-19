@@ -14,6 +14,10 @@ public interface CompetitionUnitEntryRepository
                 UUID competitionUnitId
         );
 
+        List<CompetitionUnitEntryEntity> findByCompetitionUnitIdIn(
+                List<UUID> competitionUnitIds
+        );
+
         boolean existsByCompetitionUnitIdAndRegistrationId(
                 UUID competitionUnitId,
                 UUID registrationId
@@ -29,4 +33,5 @@ public interface CompetitionUnitEntryRepository
                 @Param("competitionUnitId") UUID competitionUnitId,
                 @Param("laneOrPosition") Integer laneOrPosition
         );
+
 }
