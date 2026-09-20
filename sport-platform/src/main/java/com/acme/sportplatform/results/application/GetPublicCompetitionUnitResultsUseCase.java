@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationEntity;
-import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationRepository;
+import com.acme.sportplatform.registrations.RegistrationLookup;
+import com.acme.sportplatform.registrations.RegistrationLookupResult;
 import com.acme.sportplatform.results.api.PublicCompetitionUnitResultsResponse;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
@@ -29,20 +29,20 @@ public class GetPublicCompetitionUnitResultsUseCase {
     private final CompetitionUnitRepository competitionUnitRepository;
     private final CompetitionUnitEntryRepository entryRepository;
     private final ResultRepository resultRepository;
-    private final RegistrationRepository registrationRepository;
+    private final RegistrationLookup registrationLookup;
     private final ObjectMapper objectMapper;
 
     public GetPublicCompetitionUnitResultsUseCase(
             CompetitionUnitRepository competitionUnitRepository,
             CompetitionUnitEntryRepository entryRepository,
             ResultRepository resultRepository,
-            RegistrationRepository registrationRepository,
+            RegistrationLookup registrationLookup,
             ObjectMapper objectMapper
     ) {
         this.competitionUnitRepository = competitionUnitRepository;
         this.entryRepository = entryRepository;
         this.resultRepository = resultRepository;
-        this.registrationRepository = registrationRepository;
+        this.registrationLookup = registrationLookup;
         this.objectMapper = objectMapper;
     }
 
@@ -76,11 +76,11 @@ public class GetPublicCompetitionUnitResultsUseCase {
                                 Function.identity()
                         ));
 
-        Map<UUID, RegistrationEntity> registrationById =
-                registrationRepository.findByIdIn(registrationIds)
+        Map<UUID, RegistrationLookupResult> registrationById =
+                registrationLookup.findByIdIn(registrationIds)
                         .stream()
                         .collect(Collectors.toMap(
-                                RegistrationEntity::getId,
+                                RegistrationLookupResult::id,
                                 Function.identity()
                         ));
 
@@ -122,13 +122,13 @@ public class GetPublicCompetitionUnitResultsUseCase {
     private PublicCompetitionUnitResultsResponse.EntryView toEntryView(
             CompetitionUnitEntryEntity entry,
             ResultEntity result,
-            RegistrationEntity registration
+            RegistrationLookupResult registration
     ) {
         return new PublicCompetitionUnitResultsResponse.EntryView(
                 registration == null
                         ? fallbackParticipantName(entry.getRegistrationId())
                         : extractParticipantName(
-                                registration.getParticipantSnapshot(),
+                                registration.participantSnapshot(),
                                 entry.getRegistrationId()
                         ),
                 entry.getLaneOrPosition(),

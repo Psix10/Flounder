@@ -32,6 +32,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
+                    .requestMatchers("/actuator/**").hasRole("PLATFORM_ADMIN")
                     .requestMatchers("/api/ping").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
@@ -46,7 +47,8 @@ public class SecurityConfig {
                                     "/api/v1/events/*",
                                     "/api/v1/events/public/*",
                                     "/api/v1/events/*/disciplines/*/results",
-                                    "/api/v1/public/events/*/disciplines/*/results").permitAll()
+                                    "/api/v1/public/events",
+                                    "/api/v1/public/events/**").permitAll()
                     .anyRequest().authenticated()
             )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

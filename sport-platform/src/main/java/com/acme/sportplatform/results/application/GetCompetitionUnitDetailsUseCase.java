@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationEntity;
-import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationRepository;
+import com.acme.sportplatform.registrations.RegistrationLookup;
+import com.acme.sportplatform.registrations.RegistrationLookupResult;
 import com.acme.sportplatform.results.api.CompetitionUnitDetailsResponse;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
@@ -26,20 +26,20 @@ public class GetCompetitionUnitDetailsUseCase {
     private final CompetitionUnitRepository competitionUnitRepository;
     private final CompetitionUnitEntryRepository entryRepository;
     private final ResultRepository resultRepository;
-    private final RegistrationRepository registrationRepository;
+    private final RegistrationLookup registrationLookup;
     private final ObjectMapper objectMapper;
 
     public GetCompetitionUnitDetailsUseCase(
             CompetitionUnitRepository competitionUnitRepository,
             CompetitionUnitEntryRepository entryRepository,
             ResultRepository resultRepository,
-            RegistrationRepository registrationRepository,
+            RegistrationLookup registrationLookup,
             ObjectMapper objectMapper
     ) {
         this.competitionUnitRepository = competitionUnitRepository;
         this.entryRepository = entryRepository;
         this.resultRepository = resultRepository;
-        this.registrationRepository = registrationRepository;
+        this.registrationLookup = registrationLookup;
         this.objectMapper = objectMapper;
     }
 
@@ -76,7 +76,7 @@ public class GetCompetitionUnitDetailsUseCase {
                 .findByCompetitionUnitEntryId(entry.getId())
                 .orElse(null);
 
-        RegistrationEntity registration = registrationRepository
+        RegistrationLookupResult registration = registrationLookup
                 .findById(entry.getRegistrationId())
                 .orElse(null);
 
@@ -85,7 +85,7 @@ public class GetCompetitionUnitDetailsUseCase {
                 registration == null
                         ? fallbackParticipantName(entry.getRegistrationId())
                         : extractParticipantName(
-                                registration.getParticipantSnapshot(),
+                                registration.participantSnapshot(),
                                 entry.getRegistrationId()
                         ),
                 entry.getRegistrationId(),

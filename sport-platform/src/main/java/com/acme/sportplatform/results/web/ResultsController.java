@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.competition.infrastructure.jpa.EventDisciplineEntity;
-import com.acme.sportplatform.competition.infrastructure.jpa.EventDisciplineRepository;
+import com.acme.sportplatform.competition.EventDisciplineLookup;
+import com.acme.sportplatform.competition.EventDisciplineSummary;
 import com.acme.sportplatform.results.api.AssignRegistrationRequest;
 import com.acme.sportplatform.results.api.CompetitionUnitDetailsResponse;
 import com.acme.sportplatform.results.api.CompetitionUnitResponse;
@@ -54,7 +54,7 @@ public class ResultsController {
             getPublicCompetitionUnitResultsUseCase;
     private final GetPublicDisciplineResultsUseCase
             getPublicDisciplineResultsUseCase;
-    private final EventDisciplineRepository eventDisciplineRepository;
+    private final EventDisciplineLookup eventDisciplineLookup;
 
     public ResultsController(
             CreateCompetitionUnitUseCase createCompetitionUnitUseCase,
@@ -68,7 +68,7 @@ public class ResultsController {
                     getPublicCompetitionUnitResultsUseCase,
             GetPublicDisciplineResultsUseCase
                     getPublicDisciplineResultsUseCase,
-            EventDisciplineRepository eventDisciplineRepository
+            EventDisciplineLookup eventDisciplineLookup
     ) {
         this.createCompetitionUnitUseCase = createCompetitionUnitUseCase;
         this.assignRegistrationToUnitUseCase = assignRegistrationToUnitUseCase;
@@ -81,7 +81,7 @@ public class ResultsController {
                 getPublicCompetitionUnitResultsUseCase;
         this.getPublicDisciplineResultsUseCase =
                 getPublicDisciplineResultsUseCase;
-        this.eventDisciplineRepository = eventDisciplineRepository;
+        this.eventDisciplineLookup = eventDisciplineLookup;
     }
 
     /**
@@ -152,11 +152,11 @@ public class ResultsController {
             @PathVariable UUID eventId,
             @PathVariable UUID eventDisciplineId
     ) {
-        EventDisciplineEntity discipline = eventDisciplineRepository
+        EventDisciplineSummary discipline = eventDisciplineLookup
                 .findById(eventDisciplineId)
                 .orElseThrow(this::publicResultsNotFound);
 
-        if (!eventId.equals(discipline.getEventId())) {
+        if (!eventId.equals(discipline.eventId())) {
             throw publicResultsNotFound();
         }
 

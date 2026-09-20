@@ -7,9 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.registrations.domain.RegistrationStatus;
-import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationEntity;
-import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationRepository;
+import com.acme.sportplatform.registrations.RegistrationLookup;
+import com.acme.sportplatform.registrations.RegistrationLookupResult;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRepository;
@@ -18,18 +17,20 @@ import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitReposito
 @Service
 public class AssignRegistrationToUnitUseCase {
 
+    private static final String CONFIRMED = "CONFIRMED";
+
     private final CompetitionUnitRepository competitionUnitRepository;
     private final CompetitionUnitEntryRepository entryRepository;
-    private final RegistrationRepository registrationRepository;
+    private final RegistrationLookup registrationLookup;
 
     public AssignRegistrationToUnitUseCase(
             CompetitionUnitRepository competitionUnitRepository,
             CompetitionUnitEntryRepository entryRepository,
-            RegistrationRepository registrationRepository
+            RegistrationLookup registrationLookup
     ) {
         this.competitionUnitRepository = competitionUnitRepository;
         this.entryRepository = entryRepository;
-        this.registrationRepository = registrationRepository;
+        this.registrationLookup = registrationLookup;
     }
 
     @Transactional
@@ -45,16 +46,14 @@ public class AssignRegistrationToUnitUseCase {
                         "Заплыв/забег не найден"
                 ));
 
-        RegistrationEntity registration = registrationRepository
+        RegistrationLookupResult registration = registrationLookup
                 .findById(registrationId)
                 .orElseThrow(() -> new BusinessException(
                         "results.registration_not_found",
                         "Заявка не найдена"
                 ));
 
-        if (!RegistrationStatus.CONFIRMED.name().equals(
-                registration.getStatus()
-        )) {
+        if (!CONFIRMED.equals(registration.status())) {
             throw new BusinessException(
                     "results.registration_not_confirmed",
                     "В соревнование можно назначить только подтверждённую заявку"
@@ -62,7 +61,7 @@ public class AssignRegistrationToUnitUseCase {
         }
 
         if (!competitionUnit.getEventDisciplineId().equals(
-                registration.getEventDisciplineId()
+                registration.eventDisciplineId()
         )) {
             throw new BusinessException(
                     "results.registration_discipline_mismatch",

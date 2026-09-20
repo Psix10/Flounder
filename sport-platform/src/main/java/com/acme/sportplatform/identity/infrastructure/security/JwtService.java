@@ -1,20 +1,24 @@
 package com.acme.sportplatform.identity.infrastructure.security;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.stereotype.Service;
+
 import com.acme.sportplatform.identity.domain.ExpiredTokenException;
 import com.acme.sportplatform.identity.domain.InvalidTokenException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-import javax.crypto.SecretKey;
-import org.springframework.stereotype.Service;
-
 
 @Service
 public class JwtService {
@@ -62,9 +66,25 @@ public class JwtService {
         return parse(token).getSubject();
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> extractRoles(String token) {
-        return (List<String>) parse(token).get("roles");
+        Object rolesClaim = parse(token).get("roles");
+
+        if (!(rolesClaim instanceof Collection<?> rawRoles)) {
+            throw new InvalidTokenException();
+        }
+
+        List<String> roles = rawRoles.stream()
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .map(String::trim)
+                .filter(role -> !role.isBlank())
+                .toList();
+
+        if (roles.isEmpty()) {
+            throw new InvalidTokenException();
+        }
+
+        return roles;
     }
 
     private SecretKey signingKey() {
