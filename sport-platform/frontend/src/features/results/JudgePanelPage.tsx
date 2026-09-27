@@ -11,6 +11,7 @@ import {
   type ResultType,
 } from '../../api/results.api'
 import { useAuth } from '../../app/providers/AuthProvider'
+import styles from './JudgePanelPage.module.css'
 
 type EditableResultStatus =
   | 'PENDING'
@@ -74,6 +75,33 @@ function resultStatusLabel(status: string | null) {
   return status ? labels[status] ?? status : 'Нет результата'
 }
 
+function resultStatusClassName(status: string | null) {
+  if (status === 'VALID') {
+    return `${styles.resultStatus} ${styles.resultStatusValid}`
+  }
+
+  if (
+    status === 'DID_NOT_START' ||
+    status === 'DID_NOT_FINISH'
+  ) {
+    return `${styles.resultStatus} ${styles.resultStatusWarning}`
+  }
+
+  if (status === 'DISQUALIFIED') {
+    return `${styles.resultStatus} ${styles.resultStatusDanger}`
+  }
+
+  if (status === 'CORRECTED') {
+    return `${styles.resultStatus} ${styles.resultStatusCorrected}`
+  }
+
+  if (status === 'EXHIBITION') {
+    return `${styles.resultStatus} ${styles.resultStatusNeutral}`
+  }
+
+  return `${styles.resultStatus} ${styles.resultStatusPending}`
+}
+
 function unitStatusLabel(status: string) {
   const labels: Record<string, string> = {
     DRAFT: 'Черновик',
@@ -81,6 +109,18 @@ function unitStatusLabel(status: string) {
   }
 
   return labels[status] ?? status
+}
+
+function unitStatusClassName(status: string) {
+  if (status === 'PUBLISHED') {
+    return `${styles.unitStatus} ${styles.unitStatusPublished}`
+  }
+
+  if (status === 'DRAFT') {
+    return `${styles.unitStatus} ${styles.unitStatusDraft}`
+  }
+
+  return `${styles.unitStatus} ${styles.unitStatusNeutral}`
 }
 
 function sortEntries(
@@ -98,7 +138,7 @@ export function JudgePanelPage() {
   const { session } = useAuth()
   const navigate = useNavigate()
   const { unitId } = useParams<{ unitId: string }>()
-  const accessToken = session?.accessToken ?? null
+  const accessToken = session?.accessToken
 
   const [unit, setUnit] =
     useState<CompetitionUnitDetailsResponse | null>(null)
@@ -138,10 +178,27 @@ export function JudgePanelPage() {
 
   const isPublished = unit?.status === 'PUBLISHED'
 
+  const isBusy =
+    savingEntryId !== null ||
+    isRecalculating ||
+    isChangingPublication
+
+  const completedResultsCount = useMemo(
+    () =>
+      entries.filter(
+        (entry) =>
+          Boolean(entry.rawValue?.trim()) ||
+          entry.resultStatus === 'DID_NOT_START' ||
+          entry.resultStatus === 'DID_NOT_FINISH' ||
+          entry.resultStatus === 'DISQUALIFIED',
+      ).length,
+    [entries],
+  )
+
   const hasPendingResults = entries.some(
     (entry) =>
-      Boolean(entry.rawValue?.trim())
-      && entry.resultStatus === 'PENDING',
+      Boolean(entry.rawValue?.trim()) &&
+      entry.resultStatus === 'PENDING',
   )
 
   function updateDraftValues(
@@ -160,9 +217,9 @@ export function JudgePanelPage() {
       Object.fromEntries(
         nextUnit.entries.map((entry) => [
           entry.entryId,
-          entry.resultStatus === 'DID_NOT_START'
-          || entry.resultStatus === 'DID_NOT_FINISH'
-          || entry.resultStatus === 'DISQUALIFIED'
+          entry.resultStatus === 'DID_NOT_START' ||
+          entry.resultStatus === 'DID_NOT_FINISH' ||
+          entry.resultStatus === 'DISQUALIFIED'
             ? entry.resultStatus
             : 'PENDING',
         ]),
@@ -275,17 +332,13 @@ export function JudgePanelPage() {
     setSuccessMessage(null)
 
     try {
-      const updatedUnit = await recalculatePlaces(
-        unit.id,
-        {
-          rankingStrategy,
-          accessToken,
-        },
-      )
+      const updatedUnit = await recalculatePlaces(unit.id, {
+        rankingStrategy,
+        accessToken,
+      })
 
       setUnit(updatedUnit)
       updateDraftValues(updatedUnit)
-
       setSuccessMessage('Места успешно пересчитаны.')
     } catch (error) {
       setErrorMessage(
@@ -334,297 +387,360 @@ export function JudgePanelPage() {
   }
 
   return (
-    <section className="results-section">
-      <Link className="back-link" to="/operator/payments">
-        ← К панели оператора
+    <section className={styles.page}>
+      <Link className={styles.backLink} to="/operator/results">
+        ← К списку соревновательных единиц
       </Link>
 
-      <p className="eyebrow">Судейская панель</p>
-      <h1>{unit?.label ?? 'Результаты'}</h1>
+      <div className={styles.titleRow}>
+        <div>
+          <p className={styles.eyebrow}>Судейская панель</p>
 
-      <p className="page-description">
+          <h1 className={styles.title}>
+            {unit?.label ?? 'Результаты'}
+          </h1>
+        </div>
+
+        {unit ? (
+          <span className={unitStatusClassName(unit.status)}>
+            {unitStatusLabel(unit.status)}
+          </span>
+        ) : null}
+      </div>
+
+      <p className={styles.description}>
         Вносите результаты участников, затем пересчитывайте итоговые места.
         Для времени используйте формат <code>00:58.42</code>.
       </p>
 
       {isLoading ? (
-        <div className="state-card">
+        <div className={styles.stateCard}>
           <h2>Загрузка</h2>
           <p>Получаем стартовый лист и результаты.</p>
         </div>
       ) : null}
 
       {errorMessage ? (
-        <p className="form-error" role="alert">
+        <p className={styles.errorMessage} role="alert">
           {errorMessage}
         </p>
       ) : null}
 
       {successMessage ? (
-        <p className="form-success" role="status">
+        <p className={styles.successMessage} role="status">
           {successMessage}
         </p>
       ) : null}
 
       {!isLoading && !errorMessage && unit ? (
         <>
-          <dl className="detail-list">
+          <div className={styles.summaryCard}>
             <div>
-              <dt>Статус</dt>
-              <dd>{unitStatusLabel(unit.status)}</dd>
+              <span className={styles.summaryLabel}>Статус</span>
+
+              <strong>{unitStatusLabel(unit.status)}</strong>
             </div>
 
             <div>
-              <dt>Дисциплина</dt>
-              <dd>{unit.eventDisciplineId}</dd>
+              <span className={styles.summaryLabel}>Участников</span>
+
+              <strong>{unit.entries.length}</strong>
             </div>
 
             <div>
-              <dt>Участников</dt>
-              <dd>{unit.entries.length}</dd>
+              <span className={styles.summaryLabel}>Введено результатов</span>
+
+              <strong>
+                {completedResultsCount} / {unit.entries.length}
+              </strong>
             </div>
-          </dl>
 
-          {isPublished ? (
-            <p className="results-hint" role="status">
-              Результаты опубликованы и защищены от изменений. Снимите
-              публикацию, чтобы изменить результат или пересчитать места.
-            </p>
-          ) : null}
+            <div className={styles.disciplineSummary}>
+              <span className={styles.summaryLabel}>ID дисциплины</span>
 
-          <div className="results-toolbar">
-            <label>
-              <span>Тип результата</span>
-
-              <select
-                value={resultType}
-                onChange={(event) => {
-                  const nextType = event.target.value as ResultType
-
-                  setResultType(nextType)
-                  setRankingStrategy(
-                    nextType === 'TIME' ? 'ASC' : 'DESC',
-                  )
-                }}
-                disabled={
-                  isPublished
-                  || isRecalculating
-                  || isChangingPublication
-                }
-              >
-                <option value="TIME">
-                  Время — меньше лучше
-                </option>
-
-                <option value="POINTS">
-                  Очки — больше лучше
-                </option>
-              </select>
-            </label>
-
-            <button
-              className="button button-primary"
-              type="button"
-              onClick={handleRecalculate}
-              disabled={
-                isPublished
-                || isRecalculating
-                || isChangingPublication
-                || entries.length === 0
-              }
-            >
-              {isRecalculating
-                ? 'Пересчитываем…'
-                : 'Пересчитать места'}
-            </button>
-
-            <button
-              className="button button-secondary"
-              type="button"
-              onClick={handleChangePublication}
-              disabled={
-                isChangingPublication
-                || isRecalculating
-                || entries.length === 0
-                || (!isPublished && hasPendingResults)
-              }
-            >
-              {isChangingPublication
-                ? 'Обновляем…'
-                : isPublished
-                  ? 'Снять с публикации'
-                  : 'Опубликовать результаты'}
-            </button>
+              <code>{unit.eventDisciplineId}</code>
+            </div>
           </div>
 
-          {!isPublished && hasPendingResults ? (
-            <p className="results-hint">
-              Перед публикацией пересчитайте места после внесения
-              результатов.
-            </p>
+          {isPublished ? (
+            <div className={styles.publishedNotice} role="status">
+              <div>
+                <strong>Результаты опубликованы</strong>
+
+                <p>
+                  Ввод результатов и пересчёт мест заблокированы, чтобы
+                  опубликованный протокол не изменился случайно.
+                </p>
+              </div>
+
+              <button
+                className={styles.unpublishButton}
+                disabled={isBusy}
+                onClick={handleChangePublication}
+                type="button"
+              >
+                {isChangingPublication
+                  ? 'Снимаем…'
+                  : 'Снять с публикации'}
+              </button>
+            </div>
           ) : null}
 
-          {entries.length === 0 ? (
-            <div className="state-card">
-              <h2>Участники не назначены</h2>
+          <section className={styles.toolbarCard}>
+            <div>
+              <h2>Настройки результата</h2>
 
               <p>
-                Организатор должен добавить подтверждённые заявки в этот
-                заплыв или матч.
+                Выберите формат результата. Для времени лучшим считается
+                меньшее значение, для очков — большее.
               </p>
             </div>
-          ) : (
-            <div className="results-table-wrap">
-              <table className="results-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Место</th>
-                    <th scope="col">Дорожка</th>
-                    <th scope="col">Участник</th>
-                    <th scope="col">Результат</th>
-                    <th scope="col">Статус ввода</th>
-                    <th scope="col">Статус</th>
-                    <th scope="col">
-                      <span className="visually-hidden">
-                        Действия
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
 
-                <tbody>
-                  {entries.map((entry) => {
-                    const isSaving =
-                      savingEntryId === entry.entryId
+            <div className={styles.toolbarControls}>
+              <label className={styles.field}>
+                <span>Тип результата</span>
 
-                    const draftStatus =
-                      draftStatuses[entry.entryId] ?? 'PENDING'
+                <select
+                  disabled={isPublished || isBusy}
+                  onChange={(event) => {
+                    const nextType = event.target.value as ResultType
 
-                    const hasSpecialStatus =
-                      draftStatus !== 'PENDING'
+                    setResultType(nextType)
+                    setRankingStrategy(
+                      nextType === 'TIME' ? 'ASC' : 'DESC',
+                    )
+                  }}
+                  value={resultType}
+                >
+                  <option value="TIME">
+                    Время — меньше лучше
+                  </option>
 
-                    return (
-                      <tr key={entry.entryId}>
-                        <td className="results-place">
-                          {entry.finalPlace ?? '—'}
-                        </td>
+                  <option value="POINTS">
+                    Очки — больше лучше
+                  </option>
+                </select>
+              </label>
 
-                        <td>
-                          {entry.laneOrPosition ?? '—'}
-                        </td>
+              <button
+                className={styles.recalculateButton}
+                disabled={
+                  isPublished ||
+                  isBusy ||
+                  entries.length === 0
+                }
+                onClick={handleRecalculate}
+                type="button"
+              >
+                {isRecalculating
+                  ? 'Пересчитываем…'
+                  : 'Пересчитать места'}
+              </button>
 
-                        <td>
-                          <strong className="result-participant-name">
-                            {entry.participantName}
-                          </strong>
+              {!isPublished ? (
+                <button
+                  className={styles.publishButton}
+                  disabled={
+                    isBusy ||
+                    entries.length === 0 ||
+                    hasPendingResults
+                  }
+                  onClick={handleChangePublication}
+                  type="button"
+                >
+                  {isChangingPublication
+                    ? 'Публикуем…'
+                    : 'Опубликовать результаты'}
+                </button>
+              ) : null}
+            </div>
 
-                          <span className="results-registration-id">
-                            Заявка {entry.registrationId.slice(0, 8)}
-                          </span>
-                        </td>
+            {!isPublished && hasPendingResults ? (
+              <p className={styles.recalculateHint}>
+                Перед публикацией пересчитайте места после внесения
+                результатов.
+              </p>
+            ) : null}
+          </section>
 
-                        <td>
-                          <input
-                            className="result-input"
-                            type="text"
-                            value={draftValues[entry.entryId] ?? ''}
-                            placeholder={
-                              hasSpecialStatus
-                                ? 'Не требуется'
-                                : resultType === 'TIME'
-                                  ? '00:58.42'
-                                  : '0'
-                            }
-                            onChange={(event) => {
-                              setDraftValues((current) => ({
-                                ...current,
-                                [entry.entryId]: event.target.value,
-                              }))
-                            }}
-                            disabled={
-                              isPublished
-                              || hasSpecialStatus
-                              || isSaving
-                              || isRecalculating
-                              || isChangingPublication
-                            }
-                          />
-                        </td>
+          <section className={styles.entriesSection}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <h2>Стартовый протокол</h2>
 
-                        <td>
-                          <select
-                            className="result-status-select"
-                            value={draftStatus}
-                            onChange={(event) => {
-                              const nextStatus =
-                                event.target.value as EditableResultStatus
+                <p>
+                  Сохраняйте результат каждого участника отдельно. После
+                  изменений пересчитайте места.
+                </p>
+              </div>
 
-                              setDraftStatuses((current) => ({
-                                ...current,
-                                [entry.entryId]: nextStatus,
-                              }))
+              <span className={styles.entriesCount}>
+                {entries.length}{' '}
+                {entries.length === 1 ? 'участник' : 'участников'}
+              </span>
+            </div>
 
-                              if (nextStatus !== 'PENDING') {
+            {entries.length === 0 ? (
+              <div className={styles.stateCard}>
+                <h2>Участники не назначены</h2>
+
+                <p>
+                  Организатор должен добавить подтверждённые заявки в этот
+                  заплыв или матч.
+                </p>
+              </div>
+            ) : (
+              <div className={styles.tableWrap}>
+                <table className={styles.resultsTable}>
+                  <thead>
+                    <tr>
+                      <th scope="col">Место</th>
+                      <th scope="col">Дорожка</th>
+                      <th scope="col">Участник</th>
+                      <th scope="col">Результат</th>
+                      <th scope="col">Статус ввода</th>
+                      <th scope="col">Статус</th>
+                      <th scope="col">
+                        <span className={styles.visuallyHidden}>
+                          Действия
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {entries.map((entry) => {
+                      const isSaving =
+                        savingEntryId === entry.entryId
+
+                      const draftStatus =
+                        draftStatuses[entry.entryId] ?? 'PENDING'
+
+                      const hasSpecialStatus =
+                        draftStatus !== 'PENDING'
+
+                      const isEntryDisabled =
+                        isPublished ||
+                        isSaving ||
+                        isBusy
+
+                      return (
+                        <tr key={entry.entryId}>
+                          <td className={styles.placeCell}>
+                            {entry.finalPlace ?? '—'}
+                          </td>
+
+                          <td className={styles.laneCell}>
+                            {entry.laneOrPosition ?? '—'}
+                          </td>
+
+                          <td>
+                            <strong className={styles.participantName}>
+                              {entry.participantName}
+                            </strong>
+
+                            <span className={styles.registrationId}>
+                              Заявка {entry.registrationId.slice(0, 8)}
+                            </span>
+                          </td>
+
+                          <td>
+                            <input
+                              className={styles.resultInput}
+                              disabled={
+                                isEntryDisabled || hasSpecialStatus
+                              }
+                              onChange={(event) => {
                                 setDraftValues((current) => ({
                                   ...current,
-                                  [entry.entryId]: '',
+                                  [entry.entryId]: event.target.value,
                                 }))
+                              }}
+                              placeholder={
+                                hasSpecialStatus
+                                  ? 'Не требуется'
+                                  : resultType === 'TIME'
+                                    ? '00:58.42'
+                                    : '0'
                               }
-                            }}
-                            disabled={
-                              isPublished
-                              || isSaving
-                              || isRecalculating
-                              || isChangingPublication
-                            }
-                          >
-                            {RESULT_STATUS_OPTIONS.map((option) => (
-                              <option
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
+                              spellCheck={false}
+                              type="text"
+                              value={draftValues[entry.entryId] ?? ''}
+                            />
+                          </td>
 
-                        <td>
-                          <span className="status-badge">
-                            {resultStatusLabel(entry.resultStatus)}
-                          </span>
-                        </td>
+                          <td>
+                            <select
+                              className={styles.statusSelect}
+                              disabled={isEntryDisabled}
+                              onChange={(event) => {
+                                const nextStatus =
+                                  event.target
+                                    .value as EditableResultStatus
 
-                        <td>
-                          <button
-                            className="button button-secondary result-save-button"
-                            type="button"
-                            onClick={() =>
-                              handleSaveResult(entry.entryId)
-                            }
-                            disabled={
-                              isPublished
-                              || isSaving
-                              || isRecalculating
-                              || isChangingPublication
-                              || (
-                                !hasSpecialStatus
-                                && !draftValues[entry.entryId]?.trim()
-                              )
-                            }
-                          >
-                            {isSaving
-                              ? 'Сохраняем…'
-                              : 'Сохранить'}
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+                                setDraftStatuses((current) => ({
+                                  ...current,
+                                  [entry.entryId]: nextStatus,
+                                }))
+
+                                if (nextStatus !== 'PENDING') {
+                                  setDraftValues((current) => ({
+                                    ...current,
+                                    [entry.entryId]: '',
+                                  }))
+                                }
+                              }}
+                              value={draftStatus}
+                            >
+                              {RESULT_STATUS_OPTIONS.map((option) => (
+                                <option
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+
+                          <td>
+                            <span
+                              className={resultStatusClassName(
+                                entry.resultStatus,
+                              )}
+                            >
+                              {resultStatusLabel(entry.resultStatus)}
+                            </span>
+                          </td>
+
+                          <td>
+                            <button
+                              className={styles.saveButton}
+                              disabled={
+                                isEntryDisabled ||
+                                (!hasSpecialStatus &&
+                                  !draftValues[
+                                    entry.entryId
+                                  ]?.trim())
+                              }
+                              onClick={() =>
+                                handleSaveResult(entry.entryId)
+                              }
+                              type="button"
+                            >
+                              {isSaving
+                                ? 'Сохраняем…'
+                                : 'Сохранить'}
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
         </>
       ) : null}
     </section>

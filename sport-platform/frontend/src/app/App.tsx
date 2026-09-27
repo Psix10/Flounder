@@ -1,20 +1,30 @@
 import { Navigate, Route, Routes } from 'react-router'
+
 import { AppLayout } from '../components/AppLayout'
 import { RequireRole } from '../components/RequireRole'
-import { LoginPage } from '../features/auth/LoginPage'
+
 import { RegistrationReviewPage } from '../features/admin/RegistrationReviewPage'
 import { SportsAdminPage } from '../features/admin/SportsAdminPage'
+
+import { LoginPage } from '../features/auth/LoginPage'
+import { RegisterPage } from '../features/auth/RegisterPage'
+
 import { EventDetailsPage } from '../features/events/EventDetailsPage'
 import { EventsPage } from '../features/events/EventsPage'
+
 import { OrganizerEventsPage } from '../features/organizer/OrganizerEventsPage'
+import { OrganizerRegistrationsPage } from '../features/organizer/OrganizerRegistrationsPage'
+
 import { OperatorPaymentsPage } from '../features/payments/OperatorPaymentsPage'
 import { OperatorRegistrationPage } from '../features/payments/OperatorRegistrationPage'
 import { PaymentPage } from '../features/payments/PaymentPage'
+
+import { MyRegistrationsPage } from '../features/registrations/MyRegistrationsPage'
+import { RegistrationPage } from '../features/registrations/RegistrationPage'
+
 import { CompetitionUnitsPage } from '../features/results/CompetitionUnitsPage'
 import { JudgePanelPage } from '../features/results/JudgePanelPage'
 import { PublicDisciplineResultsPage } from '../features/results/PublicDisciplineResultsPage'
-import { MyRegistrationsPage } from '../features/registrations/MyRegistrationsPage'
-import { RegistrationPage } from '../features/registrations/RegistrationPage'
 
 export default function App() {
   return (
@@ -29,14 +39,26 @@ export default function App() {
         />
 
         <Route
-          path="events/:eventId/disciplines/:disciplineId/results"
+          path="events/:publicSlug/disciplines/:disciplineId/results"
           element={<PublicDisciplineResultsPage />}
         />
 
-        <Route path="login" element={<LoginPage />} />
+        <Route
+          path="login"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="register"
+          element={<RegisterPage />}
+        />
 
         {/* Участник */}
-        <Route element={<RequireRole roles={['participant']} />}>
+        <Route
+          element={
+            <RequireRole roles={['participant']} />
+          }
+        >
           <Route
             path="events/:eventCode/disciplines/:disciplineId/register"
             element={<RegistrationPage />}
@@ -61,7 +83,9 @@ export default function App() {
         {/* Организатор и администратор платформы */}
         <Route
           element={
-            <RequireRole roles={['platform_admin', 'organizer']} />
+            <RequireRole
+              roles={['platform_admin', 'organizer']}
+            />
           }
         >
           <Route
@@ -70,30 +94,45 @@ export default function App() {
           />
 
           <Route
+            path="organizer/events/:eventId/registrations"
+            element={<OrganizerRegistrationsPage />}
+          />
+
+          <Route
             path="admin/registrations/review"
             element={<RegistrationReviewPage />}
           />
         </Route>
 
-        {/* Только администратор платформы */}
-        <Route element={<RequireRole roles={['platform_admin']} />}>
-          <Route path="admin/sports" element={<SportsAdminPage />} />
-        </Route>
-
-        {/* Оператор и администратор: платежи, заявки и результаты */}
+        {/* Просмотр конкретной заявки */}
         <Route
           element={
-            <RequireRole roles={['platform_admin', 'operator']} />
+            <RequireRole
+              roles={[
+                'platform_admin',
+                'organizer',
+                'operator',
+              ]}
+            />
+          }
+        >
+          <Route
+            path="operator/registrations/:registrationId"
+            element={<OperatorRegistrationPage />}
+          />
+        </Route>
+
+        {/* Оператор и администратор платформы */}
+        <Route
+          element={
+            <RequireRole
+              roles={['platform_admin', 'operator']}
+            />
           }
         >
           <Route
             path="operator/payments"
             element={<OperatorPaymentsPage />}
-          />
-
-          <Route
-            path="operator/registrations/:registrationId"
-            element={<OperatorRegistrationPage />}
           />
 
           <Route
@@ -107,8 +146,23 @@ export default function App() {
           />
         </Route>
 
+        {/* Только администратор платформы */}
+        <Route
+          element={
+            <RequireRole roles={['platform_admin']} />
+          }
+        >
+          <Route
+            path="admin/sports"
+            element={<SportsAdminPage />}
+          />
+        </Route>
+
         {/* Неизвестный маршрут */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
       </Route>
     </Routes>
   )

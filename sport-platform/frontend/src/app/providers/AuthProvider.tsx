@@ -32,11 +32,6 @@ type AuthContextValue = {
   isOrganizer: boolean
   isOperator: boolean
   isParticipant: boolean
-  /**
-   * @deprecated Use hasAnyRole(['platform_admin', 'organizer']) or
-   * isPlatformAdmin / isOrganizer instead. Kept temporarily for backward
-   * compatibility with existing components.
-   */
   isAdmin: boolean
   login: (request: LoginRequest) => Promise<void>
   logout: () => void
@@ -53,6 +48,7 @@ function decodeJwtPayload(accessToken: string): JwtPayload | null {
 
   try {
     const base64 = payload.replace(/-/g, '+').replace(/_/g, '/')
+
     const json = decodeURIComponent(
       Array.from(atob(base64))
         .map((character) => {
@@ -108,7 +104,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     readStoredSession(),
   )
 
-  async function login(request: LoginRequest) {
+  async function login(request: LoginRequest): Promise<void> {
     const response = await loginRequest(request)
 
     const nextSession: AuthSession = {
@@ -157,15 +153,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
       login,
       logout,
     }),
-    [session, roles.join(',')],
+    [
+      session,
+      roles,
+      isPlatformAdmin,
+      isOrganizer,
+      isOperator,
+      isParticipant,
+      isAdmin,
+    ],
   )
 
   return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
   )
 }
 
-export function useAuth() {
+export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext)
 
   if (!context) {

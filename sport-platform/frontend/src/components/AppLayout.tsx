@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router'
 import { useAuth } from '../app/providers/AuthProvider'
+import styles from './AppLayout.module.css'
 
 export function AppLayout() {
   const {
@@ -18,8 +19,11 @@ export function AppLayout() {
     navigate('/', { replace: true })
   }
 
-  const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
-    isActive ? 'nav-link nav-link-active' : 'nav-link'
+  function navLinkClassName({ isActive }: { isActive: boolean }) {
+    return isActive
+      ? `${styles.navLink} ${styles.navLinkActive}`
+      : styles.navLink
+  }
 
   const canManageEvents = isPlatformAdmin || isOrganizer
   const canReviewRegistrations = isPlatformAdmin || isOrganizer
@@ -27,13 +31,13 @@ export function AppLayout() {
   const canManageResults = isPlatformAdmin || isOperator
 
   return (
-    <div className="app-shell">
-      <header className="site-header">
-        <NavLink className="brand" to="/">
+    <div className={styles.shell}>
+      <header className={styles.header}>
+        <NavLink className={styles.brand} to="/">
           Flounder
         </NavLink>
 
-        <nav className="main-nav" aria-label="Основная навигация">
+        <nav className={styles.navigation} aria-label="Основная навигация">
           <NavLink className={navLinkClassName} to="/" end>
             События
           </NavLink>
@@ -66,26 +70,20 @@ export function AppLayout() {
           ) : null}
 
           {canManageResults ? (
-            <NavLink
-              className={navLinkClassName}
-              to="/operator/results"
-            >
+            <NavLink className={navLinkClassName} to="/operator/results">
               Результаты
             </NavLink>
           ) : null}
 
           {canProcessPayments ? (
-            <NavLink
-              className={navLinkClassName}
-              to="/operator/payments"
-            >
+            <NavLink className={navLinkClassName} to="/operator/payments">
               Заявки и платежи
             </NavLink>
           ) : null}
 
           {isAuthenticated ? (
             <button
-              className="nav-link nav-button"
+              className={`${styles.navLink} ${styles.navButton}`}
               onClick={handleLogout}
               type="button"
             >
@@ -99,7 +97,7 @@ export function AppLayout() {
         </nav>
       </header>
 
-      <main className="page-content">
+      <main className={styles.content}>
         <Outlet />
       </main>
     </div>

@@ -1,7 +1,9 @@
-import { FormEvent, useState } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
 import { ApiError } from '../../api/http'
 import { useAuth } from '../../app/providers/AuthProvider'
+import styles from './LoginPage.module.css'
 
 type LoginLocationState = {
   from?: string
@@ -20,7 +22,6 @@ export function LoginPage() {
   const state = location.state as LoginLocationState | null
   const returnTo = state?.from ?? '/my/registrations'
 
-  // Если уже залогинен — делаем декларативный редирект, без вызова navigate() в рендере
   if (isAuthenticated) {
     return <Navigate to={returnTo} replace />
   }
@@ -36,15 +37,14 @@ export function LoginPage() {
         password,
       })
 
-      // navigate внутри обработчика события — это нормально
       navigate(returnTo, { replace: true })
     } catch (error) {
       const message =
         error instanceof ApiError && error.status === 401
           ? 'Проверьте email и пароль.'
           : error instanceof ApiError
-          ? error.message
-          : 'Не удалось выполнить вход. Попробуйте ещё раз.'
+            ? error.message
+            : 'Не удалось выполнить вход. Попробуйте ещё раз.'
 
       setErrorMessage(message)
     } finally {
@@ -53,22 +53,22 @@ export function LoginPage() {
   }
 
   return (
-    <section className="auth-section">
-      <Link className="back-link" to="/">
+    <section className={styles.page}>
+      <Link className={styles.backLink} to="/">
         ← К событиям
       </Link>
 
-      <div className="auth-card">
-        <p className="eyebrow">Личный кабинет</p>
+      <div className={styles.card}>
+        <p className={styles.eyebrow}>Личный кабинет</p>
 
-        <h1>Войти</h1>
+        <h1 className={styles.title}>Войти</h1>
 
-        <p className="page-description">
+        <p className={styles.description}>
           Войдите, чтобы подать заявку на дисциплину и посмотреть её статус.
         </p>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <label className={styles.field}>
             <span>Email</span>
             <input
               autoComplete="email"
@@ -81,7 +81,7 @@ export function LoginPage() {
             />
           </label>
 
-          <label>
+          <label className={styles.field}>
             <span>Пароль</span>
             <input
               autoComplete="current-password"
@@ -95,19 +95,25 @@ export function LoginPage() {
           </label>
 
           {errorMessage ? (
-            <p className="form-error" role="alert">
+            <p className={styles.errorMessage} role="alert">
               {errorMessage}
             </p>
           ) : null}
 
           <button
-            className="button button-primary"
+            className={styles.submitButton}
             disabled={isSubmitting}
             type="submit"
           >
             {isSubmitting ? 'Входим…' : 'Войти'}
           </button>
         </form>
+        <p className={styles.registerPrompt}>
+          Ещё нет аккаунта?{' '}
+          <Link to="/register" state={{ from: returnTo }}>
+            Создать аккаунт
+          </Link>
+        </p>
       </div>
     </section>
   )

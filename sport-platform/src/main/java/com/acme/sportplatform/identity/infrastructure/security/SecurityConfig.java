@@ -36,6 +36,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/ping").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                     .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/users/*").hasRole("PLATFORM_ADMIN")
                     .requestMatchers(HttpMethod.PATCH, "/api/v1/users/*").hasRole("PLATFORM_ADMIN")
                     .requestMatchers(HttpMethod.DELETE, "/api/v1/users/*").hasRole("PLATFORM_ADMIN")

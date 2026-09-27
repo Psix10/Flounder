@@ -1,6 +1,5 @@
 package com.acme.sportplatform.identity.infrastructure.security;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
@@ -18,6 +17,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
@@ -88,7 +88,14 @@ public class JwtService {
     }
 
     private SecretKey signingKey() {
-        byte[] keyBytes = jwtProperties.secret().getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secret());
+
+        if (keyBytes.length < 32) {
+            throw new IllegalStateException(
+                    "JWT secret must decode to at least 32 bytes for HS256."
+            );
+        }
+
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

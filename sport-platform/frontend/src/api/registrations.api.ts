@@ -1,8 +1,8 @@
 import { apiFetch } from './http'
 import type {
   CreateRegistrationRequest,
-  Registration, 
-  RegistrationStatus
+  Registration,
+  RegistrationStatus,
 } from '../features/registrations/registration.types'
 
 export type RegistrationReviewDecision =
@@ -13,6 +13,11 @@ export type RegistrationReviewDecision =
 export type ReviewRegistrationRequest = {
   decision: RegistrationReviewDecision
   reviewNote: string
+}
+
+export type GetRegistrationsOptions = {
+  eventId?: string
+  status?: RegistrationStatus
 }
 
 export function createRegistration(
@@ -57,13 +62,26 @@ export function reviewRegistration(
 
 export function getRegistrations(
   accessToken: string,
-  status?: RegistrationStatus,
+  options: GetRegistrationsOptions = {},
 ): Promise<Registration[]> {
-  const query = status ? `?status=${encodeURIComponent(status)}` : ''
+  const params = new URLSearchParams()
 
-  return apiFetch<Registration[]>(`/api/v1/registrations${query}`, {
-    accessToken,
-  })
+  if (options.eventId) {
+    params.set('eventId', options.eventId)
+  }
+
+  if (options.status) {
+    params.set('status', options.status)
+  }
+
+  const query = params.toString()
+
+  return apiFetch<Registration[]>(
+    `/api/v1/registrations${query ? `?${query}` : ''}`,
+    {
+      accessToken,
+    },
+  )
 }
 
 export function getRegistration(
@@ -72,6 +90,8 @@ export function getRegistration(
 ): Promise<Registration> {
   return apiFetch<Registration>(
     `/api/v1/registrations/${encodeURIComponent(id)}`,
-    { accessToken },
+    {
+      accessToken,
+    },
   )
 }

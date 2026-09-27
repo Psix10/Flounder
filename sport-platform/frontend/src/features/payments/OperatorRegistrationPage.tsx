@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useParams } from 'react-router'
-import { useAuth } from '../../app/providers/AuthProvider'
 import { ApiError } from '../../api/http'
 import {
   getRegistration,
   reviewRegistration,
-  type Registration,
   type RegistrationReviewDecision,
 } from '../../api/registrations.api'
+import { useAuth } from '../../app/providers/AuthProvider'
+import type { Registration } from '../../features/registrations/registration.types'
 import {
   confirmPayment,
   getPaymentForReview,
   type Payment,
 } from '../../api/payments.api'
+import styles from './OperatorRegistrationPage.module.css'
 
 function getErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
@@ -42,22 +43,46 @@ function paymentStatusLabel(status: string) {
   return labels[status] ?? status
 }
 
-function registrationStatusLabel(status: string) {
-  const labels: Record<string, string> = {
-    SUBMITTED: 'Отправлена',
+function registrationStatusLabel(status: Registration['status']) {
+  const labels: Record<Registration['status'], string> = {
+    SUBMITTED: 'На рассмотрении',
     CONFIRMED: 'Подтверждена',
-    NEEDS_CORRECTION: 'Нужна корректировка',
+    NEEDS_CORRECTION: 'Требует уточнения',
     REJECTED: 'Отклонена',
     CANCELLED: 'Отменена',
   }
 
-  return labels[status] ?? status
+  return labels[status]
+}
+
+function registrationStatusClassName(status: Registration['status']) {
+  const classes: Record<Registration['status'], string> = {
+    SUBMITTED: styles.statusSubmitted,
+    CONFIRMED: styles.statusConfirmed,
+    NEEDS_CORRECTION: styles.statusCorrection,
+    REJECTED: styles.statusRejected,
+    CANCELLED: styles.statusCancelled,
+  }
+
+  return `${styles.statusBadge} ${classes[status]}`
+}
+
+function paymentStatusClassName(status: string) {
+  const classes: Record<string, string> = {
+    PENDING: styles.paymentPending,
+    WAITING_FOR_CAPTURE: styles.paymentWaiting,
+    SUCCEEDED: styles.paymentSucceeded,
+    CANCELED: styles.paymentCancelled,
+    FAILED: styles.paymentFailed,
+  }
+
+  return `${styles.statusBadge} ${classes[status] ?? styles.statusNeutral}`
 }
 
 export function OperatorRegistrationPage() {
   const { registrationId } = useParams<{ registrationId: string }>()
   const { session, hasRole } = useAuth()
-  const accessToken = session?.accessToken ?? null
+  const accessToken = session?.accessToken
 
   const [registration, setRegistration] = useState<Registration | null>(null)
   const [payment, setPayment] = useState<Payment | null>(null)
@@ -73,48 +98,68 @@ export function OperatorRegistrationPage() {
   const canConfirmPayment =
     hasRole('platform_admin') || hasRole('organizer')
 
-  async function loadData() {
+  useEffect(() => {
     if (!registrationId || !accessToken) {
+      setIsLoading(false)
       return
     }
 
-    setIsLoading(true)
-    setErrorMessage(null)
+    const authenticatedAccessToken = accessToken
+    let isMounted = true
 
-    try {
-      const loadedRegistration = await getRegistration(
-        registrationId,
-        accessToken,
-      )
-
-      setRegistration(loadedRegistration)
+    async function loadData() {
+      setIsLoading(true)
+      setErrorMessage(null)
 
       try {
-        const loadedPayment = await getPaymentForReview(
+        const loadedRegistration = await getRegistration(
           registrationId,
-          accessToken,
+          authenticatedAccessToken,
         )
-        setPayment(loadedPayment)
-      } catch (error) {
-        if (error instanceof ApiError && error.status === 404) {
-          setPayment(null)
+
+        if (!isMounted) {
           return
-        } else {
-          throw error
+        }
+
+        setRegistration(loadedRegistration)
+        setReviewNote(loadedRegistration.reviewNote ?? '')
+
+        try {
+          const loadedPayment = await getPaymentForReview(
+            registrationId,
+            authenticatedAccessToken,
+          )
+
+          if (isMounted) {
+            setPayment(loadedPayment)
+          }
+        } catch (error) {
+          if (error instanceof ApiError && error.status === 404) {
+            if (isMounted) {
+              setPayment(null)
+            }
+          } else {
+            throw error
+          }
+        }
+      } catch (error) {
+        if (isMounted) {
+          setErrorMessage(
+            getErrorMessage(error, 'Не удалось загрузить данные заявки.'),
+          )
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
         }
       }
-    } catch (error) {
-      setErrorMessage(
-        getErrorMessage(error, 'Не удалось загрузить данные заявки.'),
-      )
-    } finally {
-      setIsLoading(false)
     }
-  }
 
-  useEffect(() => {
-    loadData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void loadData()
+
+    return () => {
+      isMounted = false
+    }
   }, [registrationId, accessToken])
 
   async function handleReview(decision: RegistrationReviewDecision) {
@@ -137,6 +182,7 @@ export function OperatorRegistrationPage() {
       )
 
       setRegistration(updated)
+      setReviewNote(updated.reviewNote ?? '')
       setSuccessMessage('Статус заявки обновлён.')
     } catch (error) {
       setErrorMessage(
@@ -174,14 +220,23 @@ export function OperatorRegistrationPage() {
   }
 
   if (isLoading) {
-    return <section className="admin-section"><p>Загрузка заявки…</p></section>
+    return (
+      <section className={styles.page}>
+        <div className={styles.stateCard}>Загрузка заявки…</div>
+      </section>
+    )
   }
 
   if (errorMessage && !registration) {
     return (
-      <section className="admin-section">
-        <p className="form-error" role="alert">{errorMessage}</p>
-        <NavLink to="/operator/payments">Вернуться к списку</NavLink>
+      <section className={styles.page}>
+        <p className={styles.errorMessage} role="alert">
+          {errorMessage}
+        </p>
+
+        <NavLink className={styles.backLink} to="/operator/payments">
+          ← Вернуться к списку
+        </NavLink>
       </section>
     )
   }
@@ -191,126 +246,176 @@ export function OperatorRegistrationPage() {
   }
 
   return (
-    <section className="admin-section">
-        <NavLink to="/operator/payments">← К заявкам и платежам</NavLink>
+    <section className={styles.page}>
+      <NavLink className={styles.backLink} to="/operator/payments">
+        ← К заявкам и платежам
+      </NavLink>
 
-        <p className="eyebrow">Панель оператора</p>
-        <h1>Заявка</h1>
+      <p className={styles.eyebrow}>Панель оператора</p>
 
-        <dl className="detail-list">
+      <div className={styles.titleRow}>
+        <h1 className={styles.title}>Заявка</h1>
+
+        <span className={registrationStatusClassName(registration.status)}>
+          {registrationStatusLabel(registration.status)}
+        </span>
+      </div>
+
+      <div className={styles.content}>
+        <article className={styles.card}>
+          <h2 className={styles.cardTitle}>Данные заявки</h2>
+
+          <dl className={styles.detailList}>
             <div>
-            <dt>ID заявки</dt>
-            <dd>{registration.id}</dd>
+              <dt>ID заявки</dt>
+              <dd className={styles.technicalValue}>{registration.id}</dd>
             </div>
+
             <div>
-            <dt>Событие</dt>
-            <dd>{registration.eventName ?? registration.eventId}</dd>
+              <dt>ID события</dt>
+              <dd className={styles.technicalValue}>
+                {registration.eventId}
+              </dd>
             </div>
+
             <div>
-            <dt>Дисциплина</dt>
-            <dd>{registration.eventDisciplineName ?? registration.eventDisciplineId}</dd>
+              <dt>ID дисциплины</dt>
+              <dd className={styles.technicalValue}>
+                {registration.eventDisciplineId}
+              </dd>
             </div>
+
             <div>
-            <dt>Статус</dt>
-            <dd>{registrationStatusLabel(registration.status)}</dd>
+              <dt>Статус</dt>
+              <dd>{registrationStatusLabel(registration.status)}</dd>
             </div>
+
             {registration.reviewNote ? (
-            <div>
+              <div className={styles.reviewNote}>
                 <dt>Комментарий проверки</dt>
                 <dd>{registration.reviewNote}</dd>
-            </div>
+              </div>
             ) : null}
-        </dl>
+          </dl>
+        </article>
 
-        <h2>Платёж</h2>
+        <article className={styles.card}>
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitle}>Платёж</h2>
 
-        {payment ? (
-            <dl className="detail-list">
-            <div>
-                <dt>ID платежа</dt>
-                <dd>{payment.id}</dd>
-            </div>
-            <div>
-                <dt>Сумма</dt>
-                <dd>{payment.amount} {payment.currency}</dd>
-            </div>
-            <div>
-                <dt>Провайдер</dt>
-                <dd>{payment.provider}</dd>
-            </div>
-            <div>
-                <dt>Статус</dt>
-                <dd>{paymentStatusLabel(payment.status)}</dd>
-            </div>
-            </dl>
-        ) : (
-            <p>Платёж для этой заявки ещё не создан.</p>
-        )}
+            {payment ? (
+              <span className={paymentStatusClassName(payment.status)}>
+                {paymentStatusLabel(payment.status)}
+              </span>
+            ) : null}
+          </div>
 
-        {canConfirmPayment && payment && payment.status === 'PENDING' ? (
-            <button
-            className="button button-primary"
-            disabled={isSaving}
-            onClick={handleConfirmPayment}
-            >
-            {isSaving ? 'Сохраняем…' : 'Подтвердить платёж'}
-            </button>
-        ) : null}
+          {payment ? (
+            <>
+              <dl className={styles.detailList}>
+                <div>
+                  <dt>ID платежа</dt>
+                  <dd className={styles.technicalValue}>{payment.id}</dd>
+                </div>
+
+                <div>
+                  <dt>Сумма</dt>
+                  <dd className={styles.amount}>
+                    {payment.amount} {payment.currency}
+                  </dd>
+                </div>
+
+                <div>
+                  <dt>Провайдер</dt>
+                  <dd>{payment.provider}</dd>
+                </div>
+
+                <div>
+                  <dt>Статус</dt>
+                  <dd>{paymentStatusLabel(payment.status)}</dd>
+                </div>
+              </dl>
+
+              {canConfirmPayment && payment.status === 'PENDING' ? (
+                <button
+                  className={styles.primaryButton}
+                  disabled={isSaving}
+                  onClick={handleConfirmPayment}
+                  type="button"
+                >
+                  {isSaving ? 'Сохраняем…' : 'Подтвердить платёж'}
+                </button>
+              ) : null}
+            </>
+          ) : (
+            <p className={styles.emptyText}>
+              Платёж для этой заявки ещё не создан.
+            </p>
+          )}
+        </article>
 
         {canReviewRegistration ? (
-            <>
-            <h2>Проверка заявки</h2>
+          <article className={styles.card}>
+            <h2 className={styles.cardTitle}>Проверка заявки</h2>
 
-            <label>
-                <span>Комментарий</span>
-                <textarea
-                value={reviewNote}
-                onChange={(event) => setReviewNote(event.target.value)}
+            <label className={styles.noteField}>
+              <span>Комментарий организатора</span>
+              <textarea
                 disabled={isSaving}
+                onChange={(event) => setReviewNote(event.target.value)}
                 rows={4}
-                />
+                value={reviewNote}
+              />
             </label>
 
-            <div className="action-row">
-                <button
-                className="button button-primary"
+            <div className={styles.actionRow}>
+              <button
+                className={styles.primaryButton}
                 disabled={isSaving}
                 onClick={() => handleReview('CONFIRMED')}
-                >
+                type="button"
+              >
                 Подтвердить заявку
-                </button>
+              </button>
 
-                <button
-                className="button button-secondary"
+              <button
+                className={styles.secondaryButton}
                 disabled={isSaving}
                 onClick={() => handleReview('NEEDS_CORRECTION')}
-                >
+                type="button"
+              >
                 Вернуть на корректировку
-                </button>
+              </button>
 
-                <button
-                className="button button-danger"
+              <button
+                className={styles.dangerButton}
                 disabled={isSaving}
                 onClick={() => handleReview('REJECTED')}
-                >
+                type="button"
+              >
                 Отклонить заявку
-                </button>
+              </button>
             </div>
-            </>
+          </article>
         ) : (
-            <p className="page-description">
-            У оператора есть доступ к просмотру. Подтверждение заявки и платежа
-            доступно организатору или администратору.
-            </p>
+          <div className={styles.readOnlyNotice}>
+            У оператора есть доступ к просмотру. Подтверждение заявки и
+            платежа доступно организатору или администратору.
+          </div>
         )}
 
         {errorMessage ? (
-            <p className="form-error" role="alert">{errorMessage}</p>
+          <p className={styles.errorMessage} role="alert">
+            {errorMessage}
+          </p>
         ) : null}
 
         {successMessage ? (
-            <p className="form-success" role="status">{successMessage}</p>
+          <p className={styles.successMessage} role="status">
+            {successMessage}
+          </p>
         ) : null}
-        </section>
-    )
+      </div>
+    </section>
+  )
 }

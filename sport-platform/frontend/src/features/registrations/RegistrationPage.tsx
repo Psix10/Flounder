@@ -1,8 +1,10 @@
-import { FormEvent, useState } from 'react'
+import { useEffect, useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import { createRegistration } from '../../api/registrations.api'
 import { ApiError } from '../../api/http'
+import { createRegistration } from '../../api/registrations.api'
 import { useAuth } from '../../app/providers/AuthProvider'
+import styles from './RegistrationPage.module.css'
 
 function getRegistrationErrorMessage(error: unknown) {
   if (!(error instanceof ApiError)) {
@@ -35,13 +37,46 @@ export function RegistrationPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  if (!disciplineId || !session) {
+  const accessToken = session?.accessToken
+
+  useEffect(() => {
+    if (!accessToken) {
+      navigate('/login', {
+        replace: true,
+        state: {
+          from: eventCode && disciplineId
+            ? `/events/${eventCode}/disciplines/${disciplineId}/register`
+            : '/',
+        },
+      })
+    }
+  }, [accessToken, disciplineId, eventCode, navigate])
+
+  if (!disciplineId || !accessToken) {
     return null
   }
 
+  const registrationDisciplineId = disciplineId
+  const authenticatedAccessToken = accessToken
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (isSubmitting) {
+      return
+    }
+
     setErrorMessage(null)
+
+    const normalizedContactName = emergencyContactName.trim()
+    const normalizedContactPhone = emergencyContactPhone.trim()
+
+    if (!normalizedContactName || !normalizedContactPhone) {
+      setErrorMessage(
+        'Укажите имя и телефон контактного лица для экстренной связи.',
+      )
+      return
+    }
 
     if (!agreeToRules) {
       setErrorMessage('Необходимо подтвердить согласие с правилами.')
@@ -53,15 +88,15 @@ export function RegistrationPage() {
     try {
       const registration = await createRegistration(
         {
-          eventDisciplineId: disciplineId,
+          eventDisciplineId: registrationDisciplineId,
           registrationMeta: {
-            emergencyContactName: emergencyContactName.trim(),
-            emergencyContactPhone: emergencyContactPhone.trim(),
+            emergencyContactName: normalizedContactName,
+            emergencyContactPhone: normalizedContactPhone,
             medicalCertificate,
             agreeToRules,
           },
         },
-        session.accessToken,
+        authenticatedAccessToken,
       )
 
       navigate(`/my/registrations?created=${registration.id}`, {
@@ -75,81 +110,114 @@ export function RegistrationPage() {
   }
 
   return (
-    <section className="registration-section">
-      <Link className="back-link" to={`/events/${eventCode ?? ''}`}>
+    <section className={styles.page}>
+      <Link
+        className={styles.backLink}
+        to={eventCode ? `/events/${eventCode}` : '/'}
+      >
         ← К соревнованию
       </Link>
 
-      <div className="auth-card registration-card">
-        <p className="eyebrow">Подача заявки</p>
+      <div className={styles.card}>
+        <p className={styles.eyebrow}>Подача заявки</p>
 
-        <h1>Регистрация на дисциплину</h1>
+        <h1 className={styles.title}>Регистрация на дисциплину</h1>
 
-        <p className="page-description">
+        <p className={styles.description}>
           Укажите контакт на случай экстренной ситуации и подтвердите условия
-          участия.
+          участия. После отправки вы сможете отслеживать статус заявки в
+          личном кабинете.
         </p>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label>
-            <span>Контактное лицо</span>
-            <input
-              disabled={isSubmitting}
-              maxLength={200}
-              onChange={(event) =>
-                setEmergencyContactName(event.target.value)
-              }
-              required
-              value={emergencyContactName}
-            />
-          </label>
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <fieldset
+            className={styles.fieldset}
+            disabled={isSubmitting}
+          >
+            <legend className={styles.legend}>
+              Контакт для экстренной связи
+            </legend>
 
-          <label>
-            <span>Телефон контактного лица</span>
-            <input
-              disabled={isSubmitting}
-              inputMode="tel"
-              maxLength={50}
-              onChange={(event) =>
-                setEmergencyContactPhone(event.target.value)
-              }
-              required
-              type="tel"
-              value={emergencyContactPhone}
-            />
-          </label>
+            <label className={styles.field}>
+              <span>Контактное лицо</span>
 
-          <label className="checkbox-field">
-            <input
-              checked={medicalCertificate}
-              disabled={isSubmitting}
-              onChange={(event) =>
-                setMedicalCertificate(event.target.checked)
-              }
-              type="checkbox"
-            />
-            <span>У меня есть действующая медицинская справка.</span>
-          </label>
+              <input
+                autoComplete="name"
+                maxLength={200}
+                onChange={(event) =>
+                  setEmergencyContactName(event.target.value)
+                }
+                placeholder="Например, Анна Иванова"
+                required
+                value={emergencyContactName}
+              />
+            </label>
 
-          <label className="checkbox-field">
-            <input
-              checked={agreeToRules}
-              disabled={isSubmitting}
-              onChange={(event) => setAgreeToRules(event.target.checked)}
-              required
-              type="checkbox"
-            />
-            <span>Я согласен(на) с правилами соревнования и обработкой данных.</span>
-          </label>
+            <label className={styles.field}>
+              <span>Телефон контактного лица</span>
+
+              <input
+                autoComplete="tel"
+                inputMode="tel"
+                maxLength={50}
+                onChange={(event) =>
+                  setEmergencyContactPhone(event.target.value)
+                }
+                placeholder="+7 900 000-00-00"
+                required
+                type="tel"
+                value={emergencyContactPhone}
+              />
+            </label>
+          </fieldset>
+
+          <div className={styles.medicalNotice}>
+            <strong>Медицинская справка</strong>
+
+            <p>
+              Подтвердите наличие действующей справки, если она требуется
+              правилами выбранной дисциплины.
+            </p>
+          </div>
+
+          <div className={styles.checkboxes}>
+            <label className={styles.checkboxField}>
+              <input
+                checked={medicalCertificate}
+                disabled={isSubmitting}
+                onChange={(event) =>
+                  setMedicalCertificate(event.target.checked)
+                }
+                type="checkbox"
+              />
+
+              <span>У меня есть действующая медицинская справка.</span>
+            </label>
+
+            <label className={styles.checkboxField}>
+              <input
+                checked={agreeToRules}
+                disabled={isSubmitting}
+                onChange={(event) => setAgreeToRules(event.target.checked)}
+                required
+                type="checkbox"
+              />
+
+              <span>
+                Я согласен(на) с правилами соревнования и обработкой
+                персональных данных.
+              </span>
+            </label>
+          </div>
 
           {errorMessage ? (
-            <p className="form-error" role="alert">
+            <p className={styles.errorMessage} role="alert">
               {errorMessage}
             </p>
           ) : null}
 
           <button
-            className="button button-primary"
+            className={styles.submitButton}
             disabled={isSubmitting}
             type="submit"
           >

@@ -8,6 +8,7 @@ import type {
   DisciplineSettings,
   PublicEventDetails,
 } from './event.types'
+import styles from './EventDetailsPage.module.css'
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -124,21 +125,21 @@ export function EventDetailsPage() {
   const disciplines = event.disciplines ?? []
 
   return (
-    <section>
-      <Link className="back-link" to="/">
+    <section className={styles.page}>
+      <Link className={styles.backLink} to="/">
         ← Все события
       </Link>
 
-      <p className="eyebrow">Соревнование</p>
+      <p className={styles.eyebrow}>Соревнование</p>
 
-      <h1>{event.title}</h1>
+      <h1 className={styles.title}>{event.title}</h1>
 
       {event.description ? (
-        <p className="page-description">{event.description}</p>
+        <p className={styles.description}>{event.description}</p>
       ) : null}
 
-      <div className="event-details-meta">
-        <div>
+      <div className={styles.metaGrid}>
+        <div className={styles.metaCard}>
           <span>Регистрация</span>
           <strong>
             {formatDate(event.registrationOpenAt)} —{' '}
@@ -146,7 +147,7 @@ export function EventDetailsPage() {
           </strong>
         </div>
 
-        <div>
+        <div className={styles.metaCard}>
           <span>Дата события</span>
           <strong>
             {formatDate(event.eventStartAt)} — {formatDate(event.eventEndAt)}
@@ -154,33 +155,33 @@ export function EventDetailsPage() {
         </div>
       </div>
 
-      <div className="section-heading">
-        <div>
-          <p className="eyebrow">Выбор дисциплины</p>
-          <h2>Доступные дисциплины</h2>
-        </div>
+      <div className={styles.sectionHeading}>
+        <p className={styles.eyebrow}>Выбор дисциплины</p>
+        <h2 className={styles.sectionTitle}>Доступные дисциплины</h2>
       </div>
 
       {disciplines.length === 0 ? (
-        <div className="state-card">
+        <div className={styles.emptyState}>
           Для этого события пока нет доступных дисциплин.
         </div>
       ) : (
-        <div className="discipline-list">
+        <div className={styles.disciplineList}>
           {disciplines.map((discipline) => {
             const settings = parseSettings(discipline.settingsJson)
             const gender = getGenderLabel(settings.gender)
             const ageGroup = getAgeGroupLabel(settings.ageGroup)
 
             return (
-              <article className="discipline-card" key={discipline.id}>
-                <div className="discipline-card-top">
+              <article className={styles.disciplineCard} key={discipline.id}>
+                <div className={styles.disciplineCardTop}>
                   <div>
-                    <p className="discipline-label">Дисциплина</p>
-                    <h3>{discipline.name}</h3>
+                    <p className={styles.disciplineLabel}>Дисциплина</p>
+                    <h3 className={styles.disciplineTitle}>
+                      {discipline.name}
+                    </h3>
                   </div>
 
-                  <strong className="discipline-price">
+                  <strong className={styles.disciplinePrice}>
                     {formatMoney(
                       discipline.entryFeeAmount,
                       discipline.entryFeeCurrency,
@@ -188,7 +189,7 @@ export function EventDetailsPage() {
                   </strong>
                 </div>
 
-                <div className="discipline-facts">
+                <div className={styles.facts}>
                   {settings.distanceMeters ? (
                     <span>{settings.distanceMeters} м</span>
                   ) : null}
@@ -206,23 +207,24 @@ export function EventDetailsPage() {
                   ) : null}
                 </div>
 
-                <div className="discipline-footer">
+                <div className={styles.disciplineFooter}>
                   <span>
-                    Формат: {discipline.competitionFormat === 'INDIVIDUAL'
+                    Формат:{' '}
+                    {discipline.competitionFormat === 'INDIVIDUAL'
                       ? 'личный'
                       : 'командный'}
                   </span>
 
-                  <div className="discipline-actions">
+                  <div className={styles.actions}>
                     <Link
-                      className="button button-secondary"
-                      to={`/events/${event.id}/disciplines/${discipline.id}/results`}
+                      className={styles.secondaryButton}
+                      to={`/events/${event.publicSlug}/disciplines/${discipline.id}/results`}
                     >
                       Результаты
                     </Link>
 
                     <Link
-                      className="button button-primary"
+                      className={styles.primaryButton}
                       to={`/events/${event.publicSlug}/disciplines/${discipline.id}/register`}
                     >
                       Зарегистрироваться

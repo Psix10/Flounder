@@ -15,15 +15,18 @@ function getErrorMessage(error: unknown) {
 
 export function SportsAdminPage() {
   const { session } = useAuth()
+  const accessToken = session?.accessToken
   const [sports, setSports] = useState<Sport[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!session) {
+    if (!accessToken) {
+      setIsLoading(false)
       return
     }
 
+    const authenticatedAccessToken = accessToken
     let isMounted = true
 
     async function loadSports() {
@@ -31,7 +34,8 @@ export function SportsAdminPage() {
       setErrorMessage(null)
 
       try {
-        const data = await getSports(session.accessToken)
+        const data = await getSports(authenticatedAccessToken)
+
         if (isMounted) {
           setSports(data)
         }
@@ -46,12 +50,12 @@ export function SportsAdminPage() {
       }
     }
 
-    loadSports()
+    void loadSports()
 
     return () => {
       isMounted = false
     }
-  }, [session])
+  }, [accessToken])
 
   return (
     <section className="admin-section">

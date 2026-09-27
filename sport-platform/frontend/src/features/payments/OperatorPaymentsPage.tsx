@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router'
-import { useAuth } from '../../app/providers/AuthProvider'
 import { ApiError } from '../../api/http'
-import {
-  getRegistrations,
-  type Registration,
-} from '../../api/registrations.api'
+import { getRegistrations } from '../../api/registrations.api'
+import { useAuth } from '../../app/providers/AuthProvider'
+import type { Registration } from '../../features/registrations/registration.types'
+import styles from './OperatorPaymentsPage.module.css'
 
 function getErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
@@ -19,15 +18,28 @@ function getErrorMessage(error: unknown) {
   return 'Не удалось загрузить список заявок.'
 }
 
-function registrationStatusLabel(status: string) {
-  const labels: Record<string, string> = {
+function registrationStatusLabel(status: Registration['status']) {
+  const labels: Record<Registration['status'], string> = {
     SUBMITTED: 'На рассмотрении',
     CONFIRMED: 'Подтверждена',
     REJECTED: 'Отклонена',
+    NEEDS_CORRECTION: 'Требует уточнения',
     CANCELLED: 'Отменена',
   }
 
-  return labels[status] ?? status
+  return labels[status]
+}
+
+function registrationStatusClassName(status: Registration['status']) {
+  const classes: Record<Registration['status'], string> = {
+    SUBMITTED: styles.statusSubmitted,
+    CONFIRMED: styles.statusConfirmed,
+    REJECTED: styles.statusRejected,
+    NEEDS_CORRECTION: styles.statusCorrection,
+    CANCELLED: styles.statusCancelled,
+  }
+
+  return `${styles.statusBadge} ${classes[status]}`
 }
 
 function shortId(value: string) {
@@ -36,16 +48,19 @@ function shortId(value: string) {
 
 export function OperatorPaymentsPage() {
   const { session } = useAuth()
+  const accessToken = session?.accessToken
+
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!session?.accessToken) {
+    if (!accessToken) {
       setIsLoading(false)
       return
     }
 
+    const authenticatedAccessToken = accessToken
     let isMounted = true
 
     async function loadRegistrations() {
@@ -53,7 +68,7 @@ export function OperatorPaymentsPage() {
       setErrorMessage(null)
 
       try {
-        const data = await getRegistrations(session.accessToken)
+        const data = await getRegistrations(authenticatedAccessToken)
 
         if (isMounted) {
           setRegistrations(data)
@@ -69,39 +84,48 @@ export function OperatorPaymentsPage() {
       }
     }
 
-    loadRegistrations()
+    void loadRegistrations()
 
     return () => {
       isMounted = false
     }
-  }, [session?.accessToken])
+  }, [accessToken])
 
   return (
-    <section className="admin-section">
-      <p className="eyebrow">Панель оператора</p>
-      <h1>Заявки и платежи</h1>
+    <section className={styles.page}>
+      <p className={styles.eyebrow}>Панель оператора</p>
 
-      {isLoading ? <p>Загрузка...</p> : null}
+      <h1 className={styles.title}>Заявки и платежи</h1>
+
+      <p className={styles.description}>
+        Откройте заявку, чтобы проверить данные участника и статус платежа.
+      </p>
+
+      {isLoading ? (
+        <div className={styles.stateCard}>
+          Загружаем список заявок…
+        </div>
+      ) : null}
 
       {errorMessage ? (
-        <p className="form-error" role="alert">
+        <p className={styles.errorMessage} role="alert">
           {errorMessage}
         </p>
       ) : null}
 
       {!isLoading && !errorMessage ? (
         registrations.length === 0 ? (
-          <p>Заявок пока нет.</p>
+          <div className={styles.stateCard}>Заявок пока нет.</div>
         ) : (
-          <div className="admin-table-wrap">
-            <table className="admin-table">
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
               <thead>
                 <tr>
                   <th scope="col">Заявка</th>
                   <th scope="col">Событие</th>
                   <th scope="col">Статус</th>
                   <th scope="col">
-                    <span className="visually-hidden">Действия</span>
+                    <span className={styles.visuallyHidden}>Действия</span>
                   </th>
                 </tr>
               </thead>
@@ -110,38 +134,36 @@ export function OperatorPaymentsPage() {
                 {registrations.map((registration) => (
                   <tr key={registration.id}>
                     <td>
-                      <strong className="registration-title">
+                      <strong className={styles.registrationTitle}>
                         Заявка #{shortId(registration.id)}
                       </strong>
 
-                      <span className="registration-id">
+                      <span className={styles.registrationId}>
                         {registration.id}
                       </span>
                     </td>
 
                     <td>
-                      <strong className="registration-event-name">
-                        {registration.eventName ?? 'Событие'}
-                      </strong>
+                      <strong className={styles.eventLabel}>Событие</strong>
 
-                      {!registration.eventName ? (
-                        <span className="registration-id">
-                          {registration.eventId}
-                        </span>
-                      ) : null}
+                      <span className={styles.registrationId}>
+                        {registration.eventId}
+                      </span>
                     </td>
 
                     <td>
                       <span
-                        className={`status-badge status-${registration.status.toLowerCase()}`}
+                        className={registrationStatusClassName(
+                          registration.status,
+                        )}
                       >
                         {registrationStatusLabel(registration.status)}
                       </span>
                     </td>
 
-                    <td className="admin-table-action">
+                    <td>
                       <NavLink
-                        className="button button-secondary"
+                        className={styles.openLink}
                         to={`/operator/registrations/${registration.id}`}
                       >
                         Открыть

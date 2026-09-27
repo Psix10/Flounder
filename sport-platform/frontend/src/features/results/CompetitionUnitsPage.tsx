@@ -1,11 +1,13 @@
-import { FormEvent, useState } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ApiError } from '../../api/http'
+import { useAuth } from '../../app/providers/AuthProvider'
 import {
   getCompetitionUnitsByDiscipline,
   type CompetitionUnitResponse,
 } from '../../api/results.api'
-import { useAuth } from '../../app/providers/AuthProvider'
+import styles from './CompetitionUnitsPage.module.css'
 
 function getErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
@@ -32,6 +34,15 @@ function unitStatusLabel(status: string) {
   return labels[status] ?? status
 }
 
+function unitStatusClassName(status: string) {
+  const classes: Record<string, string> = {
+    DRAFT: styles.statusDraft,
+    PUBLISHED: styles.statusPublished,
+  }
+
+  return `${styles.statusBadge} ${classes[status] ?? styles.statusNeutral}`
+}
+
 function formatDate(value: string | null) {
   if (!value) {
     return 'Не назначено'
@@ -47,7 +58,7 @@ function formatDate(value: string | null) {
 export function CompetitionUnitsPage() {
   const { session } = useAuth()
   const navigate = useNavigate()
-  const accessToken = session?.accessToken ?? null
+  const accessToken = session?.accessToken
 
   const [eventDisciplineId, setEventDisciplineId] = useState('')
   const [units, setUnits] = useState<CompetitionUnitResponse[]>([])
@@ -91,82 +102,83 @@ export function CompetitionUnitsPage() {
   }
 
   return (
-    <section className="results-section">
-      <Link className="back-link" to="/operator/payments">
+    <section className={styles.page}>
+      <Link className={styles.backLink} to="/operator/payments">
         ← К панели оператора
       </Link>
 
-      <p className="eyebrow">Оператор</p>
-      <h1>Результаты</h1>
+      <p className={styles.eyebrow}>Оператор</p>
 
-      <p className="page-description">
+      <h1 className={styles.title}>Результаты</h1>
+
+      <p className={styles.description}>
         Введите идентификатор дисциплины, чтобы открыть список заплывов,
         матчей, групп или финалов.
       </p>
 
-      <form className="competition-units-search" onSubmit={handleSubmit}>
-        <label>
+      <form className={styles.searchForm} onSubmit={handleSubmit}>
+        <label className={styles.field}>
           <span>ID дисциплины</span>
 
           <input
-            type="text"
-            value={eventDisciplineId}
+            autoComplete="off"
+            disabled={isLoading}
             onChange={(event) => setEventDisciplineId(event.target.value)}
             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-            disabled={isLoading}
+            spellCheck={false}
+            type="text"
+            value={eventDisciplineId}
           />
         </label>
 
         <button
-          className="button button-primary"
-          type="submit"
+          className={styles.submitButton}
           disabled={isLoading}
+          type="submit"
         >
           {isLoading ? 'Загружаем…' : 'Открыть'}
         </button>
       </form>
 
       {errorMessage ? (
-        <p className="form-error" role="alert">
+        <p className={styles.errorMessage} role="alert">
           {errorMessage}
         </p>
       ) : null}
 
       {hasLoaded && units.length === 0 ? (
-        <div className="state-card">
+        <div className={styles.stateCard}>
           <h2>Соревновательных единиц пока нет</h2>
           <p>
-            Организатор должен создать заплыв, матч, группу или финал
-            для этой дисциплины.
+            Организатор должен создать заплыв, матч, группу или финал для этой
+            дисциплины.
           </p>
         </div>
       ) : null}
 
       {units.length > 0 ? (
-        <div className="competition-units-list">
+        <div className={styles.unitsList}>
           {units.map((unit) => (
-            <article className="competition-unit-card" key={unit.id}>
+            <article className={styles.unitCard} key={unit.id}>
               <div>
-                <p className="discipline-label">
+                <p className={styles.unitLabel}>
                   Единица #{unit.sequenceNumber ?? '—'}
                 </p>
 
-                <h2>{unit.label}</h2>
+                <h2 className={styles.unitTitle}>{unit.label}</h2>
 
-                <p className="competition-unit-meta">
+                <p className={styles.unitMeta}>
                   Проведение: {formatDate(unit.scheduledAt)}
                 </p>
               </div>
 
-              <div className="competition-unit-actions">
-                <span
-                  className={`status-badge status-${unit.status.toLowerCase()}`}
-                >
+              <div className={styles.unitActions}>
+                <span className={unitStatusClassName(unit.status)}>
                   {unitStatusLabel(unit.status)}
                 </span>
 
                 <Link
-                  className="button button-secondary"
+                  className={styles.openLink}
                   to={`/operator/competition-units/${unit.id}`}
                 >
                   Открыть результаты
