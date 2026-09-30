@@ -196,9 +196,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                         user.getEmail(),
                         "",
                         "active",
-                        List.of(
-                                new SimpleGrantedAuthority("ROLE_PARTICIPANT")
-                        )
+                        List.of(new SimpleGrantedAuthority("ROLE_PARTICIPANT"))
                 );
 
         String registrationRequestJson = """
@@ -234,9 +232,16 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                         "organizer@example.com",
                         "",
                         "active",
-                        List.of(
-                                new SimpleGrantedAuthority("ROLE_ORGANIZER")
-                        )
+                        List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+                );
+
+        PlatformUserPrincipal operatorPrincipal =
+                new PlatformUserPrincipal(
+                        UUID.randomUUID(),
+                        "operator@example.com",
+                        "",
+                        "active",
+                        List.of(new SimpleGrantedAuthority("ROLE_OPERATOR"))
                 );
 
         String reviewRequestJson = """
@@ -267,8 +272,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.registrationId")
-                        .value(registrationId))
+                .andExpect(jsonPath("$.registrationId").value(registrationId))
                 .andExpect(jsonPath("$.amount").value(1500.00))
                 .andExpect(jsonPath("$.currency").value("RUB"))
                 .andExpect(jsonPath("$.status").value("CREATED"))
@@ -300,6 +304,12 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                         post("/api/v1/payments/{paymentId}/confirm", paymentId)
                                 .with(user(organizerPrincipal))
                 )
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(
+                        post("/api/v1/payments/{paymentId}/confirm", paymentId)
+                                .with(user(operatorPrincipal))
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(paymentId))
                 .andExpect(jsonPath("$.registrationId").value(registrationId))
@@ -327,7 +337,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
 
         mockMvc.perform(
                         post("/api/v1/payments/{paymentId}/confirm", paymentId)
-                                .with(user(organizerPrincipal))
+                                .with(user(operatorPrincipal))
                 )
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code")
@@ -345,8 +355,8 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                         .value("payments.already_exists"));
     }
 
-        @Test
-        void shouldListRegistrationsFilteredByStatusAndTrackReviewer() throws Exception {
+    @Test
+    void shouldListRegistrationsFilteredByStatusAndTrackReviewer() throws Exception {
         UserEntity user = createParticipantUser();
         createParticipantProfile(user.getId());
 
@@ -369,11 +379,11 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
 
         String requestJson = """
                 {
-                "eventDisciplineId": "%s",
-                "registrationMeta": {
-                        "emergencyContactPhone": "+79990000000",
-                        "comment": "Заявка для листинга"
-                }
+                  "eventDisciplineId": "%s",
+                  "registrationMeta": {
+                    "emergencyContactPhone": "+79990000000",
+                    "comment": "Заявка для листинга"
+                  }
                 }
                 """.formatted(eventDisciplineId);
 
@@ -411,8 +421,8 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
 
         String reviewRequestJson = """
                 {
-                "decision": "CONFIRMED",
-                "reviewNote": "Проверено для листинга"
+                  "decision": "CONFIRMED",
+                  "reviewNote": "Проверено для листинга"
                 }
                 """;
 
@@ -448,7 +458,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(0));
-        }
+    }
 
     private UserEntity createParticipantUser() {
         UserEntity user = new UserEntity();

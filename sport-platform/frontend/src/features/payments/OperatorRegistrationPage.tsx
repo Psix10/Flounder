@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useParams } from 'react-router'
+
 import { ApiError } from '../../api/http'
+import {
+  confirmPayment,
+  getPaymentForReview,
+  type Payment,
+} from '../../api/payments.api'
 import {
   getRegistration,
   reviewRegistration,
   type RegistrationReviewDecision,
 } from '../../api/registrations.api'
 import { useAuth } from '../../app/providers/AuthProvider'
-import type { Registration } from '../../features/registrations/registration.types'
-import {
-  confirmPayment,
-  getPaymentForReview,
-  type Payment,
-} from '../../api/payments.api'
+import type { Registration } from '../registrations/registration.types'
+
 import styles from './OperatorRegistrationPage.module.css'
 
 function getErrorMessage(error: unknown, fallback: string) {
@@ -33,7 +35,8 @@ function getErrorMessage(error: unknown, fallback: string) {
 
 function paymentStatusLabel(status: string) {
   const labels: Record<string, string> = {
-    PENDING: 'Ожидает оплаты',
+    CREATED: 'Создан',
+    PENDING: 'Ожидает подтверждения',
     WAITING_FOR_CAPTURE: 'Ожидает подтверждения',
     SUCCEEDED: 'Оплачен',
     CANCELED: 'Отменён',
@@ -69,6 +72,7 @@ function registrationStatusClassName(status: Registration['status']) {
 
 function paymentStatusClassName(status: string) {
   const classes: Record<string, string> = {
+    CREATED: styles.paymentPending,
     PENDING: styles.paymentPending,
     WAITING_FOR_CAPTURE: styles.paymentWaiting,
     SUCCEEDED: styles.paymentSucceeded,
@@ -76,27 +80,44 @@ function paymentStatusClassName(status: string) {
     FAILED: styles.paymentFailed,
   }
 
-  return `${styles.statusBadge} ${classes[status] ?? styles.statusNeutral}`
+  return `${styles.statusBadge} ${
+    classes[status] ?? styles.statusNeutral
+  }`
 }
 
 export function OperatorRegistrationPage() {
-  const { registrationId } = useParams<{ registrationId: string }>()
+  const { registrationId } = useParams<{
+    registrationId: string
+  }>()
+
   const { session, hasRole } = useAuth()
   const accessToken = session?.accessToken
 
-  const [registration, setRegistration] = useState<Registration | null>(null)
+  const [registration, setRegistration] =
+    useState<Registration | null>(null)
   const [payment, setPayment] = useState<Payment | null>(null)
+
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  const [errorMessage, setErrorMessage] =
+    useState<string | null>(null)
+  const [successMessage, setSuccessMessage] =
+    useState<string | null>(null)
+
   const [reviewNote, setReviewNote] = useState('')
 
   const canReviewRegistration =
     hasRole('platform_admin') || hasRole('organizer')
 
   const canConfirmPayment =
-    hasRole('platform_admin') || hasRole('organizer')
+    hasRole('platform_admin') || hasRole('operator')
+
+  const canManuallyConfirmPayment =
+    canConfirmPayment &&
+    payment?.provider === 'MANUAL' &&
+    (payment.status === 'CREATED' ||
+      payment.status === 'PENDING')
 
   useEffect(() => {
     if (!registrationId || !accessToken) {
@@ -110,6 +131,7 @@ export function OperatorRegistrationPage() {
     async function loadData() {
       setIsLoading(true)
       setErrorMessage(null)
+      setSuccessMessage(null)
 
       try {
         const loadedRegistration = await getRegistration(
@@ -134,7 +156,10 @@ export function OperatorRegistrationPage() {
             setPayment(loadedPayment)
           }
         } catch (error) {
-          if (error instanceof ApiError && error.status === 404) {
+          if (
+            error instanceof ApiError &&
+            error.status === 404
+          ) {
             if (isMounted) {
               setPayment(null)
             }
@@ -145,7 +170,10 @@ export function OperatorRegistrationPage() {
       } catch (error) {
         if (isMounted) {
           setErrorMessage(
-            getErrorMessage(error, 'Не удалось загрузить данные заявки.'),
+            getErrorMessage(
+              error,
+              'Не удалось загрузить данные заявки.',
+            ),
           )
         }
       } finally {
@@ -162,7 +190,9 @@ export function OperatorRegistrationPage() {
     }
   }, [registrationId, accessToken])
 
-  async function handleReview(decision: RegistrationReviewDecision) {
+  async function handleReview(
+    decision: RegistrationReviewDecision,
+  ) {
     if (!registration || !accessToken) {
       return
     }
@@ -186,7 +216,10 @@ export function OperatorRegistrationPage() {
       setSuccessMessage('Статус заявки обновлён.')
     } catch (error) {
       setErrorMessage(
-        getErrorMessage(error, 'Не удалось обновить статус заявки.'),
+        getErrorMessage(
+          error,
+          'Не удалось обновить статус заявки.',
+        ),
       )
     } finally {
       setIsSaving(false)
@@ -194,7 +227,11 @@ export function OperatorRegistrationPage() {
   }
 
   async function handleConfirmPayment() {
-    if (!payment || !accessToken) {
+    if (
+      !payment ||
+      !accessToken ||
+      !canManuallyConfirmPayment
+    ) {
       return
     }
 
@@ -203,12 +240,19 @@ export function OperatorRegistrationPage() {
     setSuccessMessage(null)
 
     try {
-      const updated = await confirmPayment(payment.id, accessToken)
+      const updated = await confirmPayment(
+        payment.id,
+        accessToken,
+      )
+
       setPayment(updated)
       setSuccessMessage('Платёж подтверждён.')
     } catch (error) {
       setErrorMessage(
-        getErrorMessage(error, 'Не удалось подтвердить платёж.'),
+        getErrorMessage(
+          error,
+          'Не удалось подтвердить платёж.',
+        ),
       )
     } finally {
       setIsSaving(false)
@@ -222,7 +266,9 @@ export function OperatorRegistrationPage() {
   if (isLoading) {
     return (
       <section className={styles.page}>
-        <div className={styles.stateCard}>Загрузка заявки…</div>
+        <div className={styles.stateCard}>
+          Загрузка заявки…
+        </div>
       </section>
     )
   }
@@ -230,11 +276,17 @@ export function OperatorRegistrationPage() {
   if (errorMessage && !registration) {
     return (
       <section className={styles.page}>
-        <p className={styles.errorMessage} role="alert">
+        <p
+          className={styles.errorMessage}
+          role="alert"
+        >
           {errorMessage}
         </p>
 
-        <NavLink className={styles.backLink} to="/operator/payments">
+        <NavLink
+          className={styles.backLink}
+          to="/operator/payments"
+        >
           ← Вернуться к списку
         </NavLink>
       </section>
@@ -247,28 +299,41 @@ export function OperatorRegistrationPage() {
 
   return (
     <section className={styles.page}>
-      <NavLink className={styles.backLink} to="/operator/payments">
+      <NavLink
+        className={styles.backLink}
+        to="/operator/payments"
+      >
         ← К заявкам и платежам
       </NavLink>
 
-      <p className={styles.eyebrow}>Панель оператора</p>
+      <p className={styles.eyebrow}>
+        Панель оператора
+      </p>
 
       <div className={styles.titleRow}>
         <h1 className={styles.title}>Заявка</h1>
 
-        <span className={registrationStatusClassName(registration.status)}>
+        <span
+          className={registrationStatusClassName(
+            registration.status,
+          )}
+        >
           {registrationStatusLabel(registration.status)}
         </span>
       </div>
 
       <div className={styles.content}>
         <article className={styles.card}>
-          <h2 className={styles.cardTitle}>Данные заявки</h2>
+          <h2 className={styles.cardTitle}>
+            Данные заявки
+          </h2>
 
           <dl className={styles.detailList}>
             <div>
               <dt>ID заявки</dt>
-              <dd className={styles.technicalValue}>{registration.id}</dd>
+              <dd className={styles.technicalValue}>
+                {registration.id}
+              </dd>
             </div>
 
             <div>
@@ -287,7 +352,11 @@ export function OperatorRegistrationPage() {
 
             <div>
               <dt>Статус</dt>
-              <dd>{registrationStatusLabel(registration.status)}</dd>
+              <dd>
+                {registrationStatusLabel(
+                  registration.status,
+                )}
+              </dd>
             </div>
 
             {registration.reviewNote ? (
@@ -301,10 +370,16 @@ export function OperatorRegistrationPage() {
 
         <article className={styles.card}>
           <div className={styles.cardHeader}>
-            <h2 className={styles.cardTitle}>Платёж</h2>
+            <h2 className={styles.cardTitle}>
+              Платёж
+            </h2>
 
             {payment ? (
-              <span className={paymentStatusClassName(payment.status)}>
+              <span
+                className={paymentStatusClassName(
+                  payment.status,
+                )}
+              >
                 {paymentStatusLabel(payment.status)}
               </span>
             ) : null}
@@ -315,7 +390,9 @@ export function OperatorRegistrationPage() {
               <dl className={styles.detailList}>
                 <div>
                   <dt>ID платежа</dt>
-                  <dd className={styles.technicalValue}>{payment.id}</dd>
+                  <dd className={styles.technicalValue}>
+                    {payment.id}
+                  </dd>
                 </div>
 
                 <div>
@@ -332,19 +409,32 @@ export function OperatorRegistrationPage() {
 
                 <div>
                   <dt>Статус</dt>
-                  <dd>{paymentStatusLabel(payment.status)}</dd>
+                  <dd>
+                    {paymentStatusLabel(payment.status)}
+                  </dd>
                 </div>
               </dl>
 
-              {canConfirmPayment && payment.status === 'PENDING' ? (
+              {canManuallyConfirmPayment ? (
                 <button
                   className={styles.primaryButton}
                   disabled={isSaving}
                   onClick={handleConfirmPayment}
                   type="button"
                 >
-                  {isSaving ? 'Сохраняем…' : 'Подтвердить платёж'}
+                  {isSaving
+                    ? 'Подтверждаем…'
+                    : 'Подтвердить платёж'}
                 </button>
+              ) : null}
+
+              {canConfirmPayment &&
+              payment.provider !== 'MANUAL' &&
+              payment.status !== 'SUCCEEDED' ? (
+                <p className={styles.emptyText}>
+                  Платёж через внешнего провайдера
+                  подтверждается автоматически.
+                </p>
               ) : null}
             </>
           ) : (
@@ -356,13 +446,18 @@ export function OperatorRegistrationPage() {
 
         {canReviewRegistration ? (
           <article className={styles.card}>
-            <h2 className={styles.cardTitle}>Проверка заявки</h2>
+            <h2 className={styles.cardTitle}>
+              Проверка заявки
+            </h2>
 
             <label className={styles.noteField}>
               <span>Комментарий организатора</span>
+
               <textarea
                 disabled={isSaving}
-                onChange={(event) => setReviewNote(event.target.value)}
+                onChange={(event) =>
+                  setReviewNote(event.target.value)
+                }
                 rows={4}
                 value={reviewNote}
               />
@@ -372,7 +467,9 @@ export function OperatorRegistrationPage() {
               <button
                 className={styles.primaryButton}
                 disabled={isSaving}
-                onClick={() => handleReview('CONFIRMED')}
+                onClick={() =>
+                  handleReview('CONFIRMED')
+                }
                 type="button"
               >
                 Подтвердить заявку
@@ -381,7 +478,9 @@ export function OperatorRegistrationPage() {
               <button
                 className={styles.secondaryButton}
                 disabled={isSaving}
-                onClick={() => handleReview('NEEDS_CORRECTION')}
+                onClick={() =>
+                  handleReview('NEEDS_CORRECTION')
+                }
                 type="button"
               >
                 Вернуть на корректировку
@@ -390,7 +489,9 @@ export function OperatorRegistrationPage() {
               <button
                 className={styles.dangerButton}
                 disabled={isSaving}
-                onClick={() => handleReview('REJECTED')}
+                onClick={() =>
+                  handleReview('REJECTED')
+                }
                 type="button"
               >
                 Отклонить заявку
@@ -399,19 +500,26 @@ export function OperatorRegistrationPage() {
           </article>
         ) : (
           <div className={styles.readOnlyNotice}>
-            У оператора есть доступ к просмотру. Подтверждение заявки и
-            платежа доступно организатору или администратору.
+            Решение по заявке принимает организатор
+            или администратор. Оператор может проверить
+            и подтвердить ручную оплату.
           </div>
         )}
 
         {errorMessage ? (
-          <p className={styles.errorMessage} role="alert">
+          <p
+            className={styles.errorMessage}
+            role="alert"
+          >
             {errorMessage}
           </p>
         ) : null}
 
         {successMessage ? (
-          <p className={styles.successMessage} role="status">
+          <p
+            className={styles.successMessage}
+            role="status"
+          >
             {successMessage}
           </p>
         ) : null}

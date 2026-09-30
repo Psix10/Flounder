@@ -1,12 +1,14 @@
 package com.acme.sportplatform.payments.infrastructure.yookassa;
 
 import java.math.RoundingMode;
+import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acme.sportplatform.common.exception.BusinessException;
 import com.acme.sportplatform.payments.PaymentProvider;
@@ -43,9 +45,7 @@ public class YooKassaPaymentProviderClient
                             properties.getSecretKey()
                     );
                     headers.setContentType(MediaType.APPLICATION_JSON);
-                    headers.setAccept(
-                            java.util.List.of(MediaType.APPLICATION_JSON)
-                    );
+                    headers.setAccept(List.of(MediaType.APPLICATION_JSON));
                 })
                 .build();
     }
@@ -65,14 +65,17 @@ public class YooKassaPaymentProviderClient
                 new YooKassaCreatePaymentRequest(
                         new YooKassaAmount(
                                 command.amount()
-                                        .setScale(2, RoundingMode.HALF_UP)
+                                        .setScale(
+                                                2,
+                                                RoundingMode.HALF_UP
+                                        )
                                         .toPlainString(),
                                 command.currency()
                         ),
                         true,
                         new YooKassaConfirmation(
                                 "redirect",
-                                properties.getReturnUrl()
+                                buildReturnUrl(command)
                         ),
                         "Sport event registration payment",
                         new YooKassaMetadata(
@@ -100,54 +103,110 @@ public class YooKassaPaymentProviderClient
             );
         }
 
-        if (response == null || response.id() == null
-                || response.id().isBlank()) {
+        validateResponse(response);
+
+        return new ProviderPaymentResult(
+                response.id(),
+                getConfirmationUrl(response),
+                mapStatus(response.status()),
+                response.expiresAt(),
+                buildProviderMetadata(response.status())
+        );
+    }
+
+    private void validateConfiguration() {
+        if (isBlank(properties.getBaseUrl())
+                || isBlank(properties.getShopId())
+                || isBlank(properties.getSecretKey())
+                || isBlank(properties.getReturnUrl())) {
+            throw new IllegalStateException(
+                    "YooKassa configuration requires baseUrl, "
+                            + "shopId, secretKey and returnUrl"
+            );
+        }
+    }
+
+    private void validateResponse(
+            YooKassaPaymentResponse response
+    ) {
+        if (response == null
+                || isBlank(response.id())
+                || isBlank(response.status())) {
             throw new BusinessException(
                     "payments.provider_invalid_response",
                     "Payment provider returned an invalid response"
             );
         }
 
-        return new ProviderPaymentResult(
-                response.id(),
-                response.confirmation() == null
-                        ? null
-                        : response.confirmation().confirmationUrl(),
-                mapStatus(response.status()),
-                response.expiresAt(),
-                "{\"yookassaStatus\":\""
-                        + escapeJson(response.status())
-                        + "\"}"
-        );
-    }
-
-    private void validateConfiguration() {
-        if (isBlank(properties.getShopId())
-                || isBlank(properties.getSecretKey())
-                || isBlank(properties.getReturnUrl())) {
-            throw new IllegalStateException(
-                    "YooKassa configuration requires shopId, secretKey and returnUrl"
+        if (response.confirmation() == null
+                || isBlank(
+                        response.confirmation().confirmationUrl()
+                )) {
+            throw new BusinessException(
+                    "payments.provider_invalid_response",
+                    "Payment provider did not return a confirmation URL"
             );
         }
     }
 
-    private PaymentStatus mapStatus(String providerStatus) {
-        if ("succeeded".equals(providerStatus)) {
-            return PaymentStatus.SUCCEEDED;
-        }
-
-        if ("canceled".equals(providerStatus)) {
-            return PaymentStatus.CANCELED;
-        }
-
-        return PaymentStatus.PENDING;
+    private String getConfirmationUrl(
+            YooKassaPaymentResponse response
+    ) {
+        return response.confirmation().confirmationUrl();
     }
 
-    private boolean isBlank(String value) {
+    private String buildReturnUrl(
+            ProviderPaymentCommand command
+    ) {
+        return UriComponentsBuilder
+                .fromUriString(properties.getReturnUrl())
+                .replaceQueryParam(
+                        "registrationId",
+                        command.registrationId()
+                )
+                .build()
+                .encode()
+                .toUriString();
+    }
+
+    private PaymentStatus mapStatus(
+            String providerStatus
+    ) {
+        return switch (providerStatus) {
+            case "pending", "waiting_for_capture" ->
+                    PaymentStatus.PENDING;
+
+            case "succeeded" ->
+                    PaymentStatus.SUCCEEDED;
+
+            case "canceled" ->
+                    PaymentStatus.CANCELED;
+
+            default -> throw new BusinessException(
+                    "payments.provider_invalid_response",
+                    "Payment provider returned an unsupported status: "
+                            + providerStatus
+            );
+        };
+    }
+
+    private String buildProviderMetadata(
+            String providerStatus
+    ) {
+        return "{\"yookassaStatus\":\""
+                + escapeJson(providerStatus)
+                + "\"}";
+    }
+
+    private boolean isBlank(
+            String value
+    ) {
         return value == null || value.isBlank();
     }
 
-    private String escapeJson(String value) {
+    private String escapeJson(
+            String value
+    ) {
         return value == null
                 ? ""
                 : value.replace("\\", "\\\\")

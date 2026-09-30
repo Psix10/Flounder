@@ -1,4 +1,5 @@
 com\acme\sportplatform\integration\competition\CompetitionIntegrationTest.class
+com\acme\sportplatform\integration\payments\ManualPaymentIntegrationTest$RegistrationFixture.class
 com\acme\sportplatform\integration\support\JsonPathHelper.class
 com\acme\sportplatform\integration\sports\DisciplineTemplateIntegrationTest.class
 com\acme\sportplatform\modulith\ModulithArchitectureTest.class
@@ -13,6 +14,7 @@ com\acme\sportplatform\identity\infrastructure\security\JwtAuthenticationFilterT
 com\acme\sportplatform\integration\sports\BaseIT.class
 com\acme\sportplatform\integration\events\EventIntegrationTest.class
 com\acme\sportplatform\integration\identity\RbacIntegrationTest.class
+com\acme\sportplatform\integration\payments\ManualPaymentIntegrationTest.class
 com\acme\sportplatform\integration\sports\SportsIntegrationTest.class
 com\acme\sportplatform\support\AbstractPostgresIntegrationTest.class
 OrganizationControllerTest.class

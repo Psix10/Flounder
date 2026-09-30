@@ -34,5 +34,7 @@ public abstract class AbstractPostgresIntegrationTest {
         registry.add("spring.flyway.password", postgres::getPassword);
 
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
+
+        registry.add("app.security.jwt.secret",() -> "MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=");
     }
 }

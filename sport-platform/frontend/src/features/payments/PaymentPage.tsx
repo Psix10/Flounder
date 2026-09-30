@@ -33,11 +33,13 @@ function getErrorMessage(error: unknown, fallback: string) {
 
 function paymentStatusLabel(status: string) {
   const labels: Record<string, string> = {
+    CREATED: 'Ожидает подтверждения оператором',
     PENDING: 'Ожидает оплаты',
     WAITING_FOR_CAPTURE: 'Ожидает подтверждения',
     SUCCEEDED: 'Оплата подтверждена',
     CANCELED: 'Оплата отменена',
     FAILED: 'Ошибка оплаты',
+    REFUNDED: 'Средства возвращены',
   }
 
   return labels[status] ?? status
@@ -57,11 +59,13 @@ function registrationStatusLabel(status: Registration['status']) {
 
 function paymentStatusClassName(status: string) {
   const statusClasses: Record<string, string> = {
+    CREATED: styles.statusPending,
     PENDING: styles.statusPending,
     WAITING_FOR_CAPTURE: styles.statusWaiting,
     SUCCEEDED: styles.statusSucceeded,
     CANCELED: styles.statusCanceled,
     FAILED: styles.statusFailed,
+    REFUNDED: styles.statusNeutral,
   }
 
   return `${styles.statusBadge} ${
@@ -112,8 +116,15 @@ function getPaymentUnavailableCopy(registration: Registration) {
 export function PaymentPage() {
   const { session } = useAuth()
   const navigate = useNavigate()
-  const { registrationId } = useParams<{ registrationId: string }>()
+  const { registrationId: routeRegistrationId } =
+    useParams<{ registrationId: string }>()
+
   const [searchParams] = useSearchParams()
+
+  const registrationId =
+    routeRegistrationId ??
+    searchParams.get('registrationId') ??
+    undefined
   const accessToken = session?.accessToken
 
   const [registration, setRegistration] = useState<Registration | null>(null)

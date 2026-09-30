@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
+import com.acme.sportplatform.payments.PaymentProvider;
 import com.acme.sportplatform.payments.api.PaymentResponse;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentEntity;
@@ -29,17 +30,27 @@ public class ConfirmPaymentUseCase {
 
     @Transactional
     public PaymentResponse execute(UUID paymentId) {
-        PaymentEntity payment = paymentRepository
-                .findById(paymentId)
+        PaymentEntity payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new BusinessException(
                         "payments.not_found",
                         "Payment not found"
                 ));
 
-        if (!PaymentStatus.CREATED.name().equals(payment.getStatus())) {
+        if (!PaymentProvider.MANUAL.name().equals(payment.getProvider())) {
+            throw new BusinessException(
+                    "payments.manual_confirmation_not_allowed",
+                    "Only manual payments can be confirmed by an operator"
+            );
+        }
+
+        boolean confirmableStatus =
+                PaymentStatus.CREATED.name().equals(payment.getStatus())
+                        || PaymentStatus.PENDING.name().equals(payment.getStatus());
+
+        if (!confirmableStatus) {
             throw new BusinessException(
                     "payments.not_confirmable",
-                    "Only a created payment can be manually confirmed"
+                    "Only a created or pending manual payment can be confirmed"
             );
         }
 
@@ -49,8 +60,6 @@ public class ConfirmPaymentUseCase {
         payment.setPaidAt(now);
         payment.setUpdatedAt(now);
 
-        return paymentMapper.toResponse(
-                paymentRepository.save(payment)
-        );
+        return paymentMapper.toResponse(paymentRepository.save(payment));
     }
 }

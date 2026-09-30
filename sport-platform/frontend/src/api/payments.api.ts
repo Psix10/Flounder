@@ -5,10 +5,19 @@ export type Payment = {
   registrationId: string
   amount: number
   currency: string
-  status: string
-  provider: string
-  providerPaymentId: string | null
+  status:
+    | 'CREATED'
+    | 'PENDING'
+    | 'WAITING_FOR_CAPTURE'
+    | 'SUCCEEDED'
+    | 'CANCELED'
+    | 'FAILED'
+    | 'REFUNDED'
+  provider: 'MANUAL' | 'YOOKASSA' | string
   confirmationUrl: string | null
+  expiresAt: string | null
+  paidAt: string | null
+  canceledAt: string | null
   createdAt: string
   updatedAt: string
 }
