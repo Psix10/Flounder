@@ -2,6 +2,7 @@ package com.acme.sportplatform.organizations.application;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -12,15 +13,21 @@ import com.acme.sportplatform.organizations.OrganizationLookup;
 import com.acme.sportplatform.organizations.api.CreateOrganizationRequest;
 import com.acme.sportplatform.organizations.api.OrganizationResponse;
 import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberRepository;
 import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationRepository;
 
 @Service
 public class OrganizationService implements OrganizationLookup {
 
     private final OrganizationRepository organizationRepository;
+    private final OrganizationMemberRepository organizationMemberRepository;
 
-    public OrganizationService(OrganizationRepository organizationRepository) {
+    public OrganizationService(
+            OrganizationRepository organizationRepository,
+            OrganizationMemberRepository organizationMemberRepository
+    ) {
         this.organizationRepository = organizationRepository;
+        this.organizationMemberRepository = organizationMemberRepository;
     }
 
     @Override
@@ -30,7 +37,9 @@ public class OrganizationService implements OrganizationLookup {
     }
 
     @Transactional
-    public OrganizationResponse createOrganization(CreateOrganizationRequest request) {
+    public OrganizationResponse createOrganization(
+            CreateOrganizationRequest request
+    ) {
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         OrganizationEntity entity = new OrganizationEntity();
@@ -44,23 +53,85 @@ public class OrganizationService implements OrganizationLookup {
         entity.setCreatedAt(now);
         entity.setUpdatedAt(now);
 
-        OrganizationEntity saved = organizationRepository.save(entity);
+        OrganizationEntity saved =
+                organizationRepository.save(entity);
 
         return mapToResponse(saved);
     }
 
     @Transactional(readOnly = true)
-    public OrganizationResponse getOrganization(UUID id) {
-        OrganizationEntity entity = organizationRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(
-                        "organizations.organization_not_found",
-                        "Organization not found"
-                ));
+    public OrganizationResponse getOrganization(
+            UUID organizationId,
+            UUID currentUserId,
+            boolean platformAdmin
+    ) {
+        OrganizationEntity organization;
 
-        return mapToResponse(entity);
+        if (platformAdmin) {
+            organization = organizationRepository
+                    .findById(organizationId)
+                    .orElseThrow(this::organizationNotFound);
+        } else {
+            organization = organizationRepository
+                    .findByIdAndMemberUserId(
+                            organizationId,
+                            currentUserId
+                    )
+                    .orElseThrow(this::organizationNotFound);
+        }
+
+        return mapToResponse(organization);
     }
 
-    private OrganizationResponse mapToResponse(OrganizationEntity entity) {
+    @Transactional(readOnly = true)
+    public List<OrganizationResponse> getOrganizations(
+            UUID currentUserId,
+            boolean platformAdmin
+    ) {
+        List<OrganizationEntity> organizations;
+
+        if (platformAdmin) {
+            organizations =
+                    organizationRepository.findAllByOrderByNameAsc();
+        } else {
+            organizations =
+                    organizationRepository.findAllByMemberUserId(
+                            currentUserId
+                    );
+        }
+
+        return organizations.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean canManageOrganization(
+            UUID organizationId,
+            UUID userId
+    ) {
+        return organizationMemberRepository
+                .findByOrganizationIdAndUserId(
+                        organizationId,
+                        userId
+                )
+                .map(member ->
+                        "OWNER".equals(member.getMemberRole())
+                                || "ADMIN".equals(member.getMemberRole())
+                )
+                .orElse(false);
+    }
+
+    private BusinessException organizationNotFound() {
+        return new BusinessException(
+                "organizations.organization_not_found",
+                "Organization not found"
+        );
+    }
+
+    private OrganizationResponse mapToResponse(
+            OrganizationEntity entity
+    ) {
         return new OrganizationResponse(
                 entity.getId(),
                 entity.getType(),

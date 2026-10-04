@@ -19,6 +19,9 @@ public class EventEntity {
     @Id
     private UUID id;
 
+    @Column(name = "created_by_user_id", nullable = false)
+    private UUID createdByUserId;
+
     @Column(nullable = false)
     private UUID organizationId;
 
@@ -68,6 +71,14 @@ public class EventEntity {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(UUID createdByUserId) {
+        this.createdByUserId = createdByUserId;
     }
 
     public UUID getOrganizationId() {

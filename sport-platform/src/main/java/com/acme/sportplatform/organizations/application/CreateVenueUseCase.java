@@ -29,17 +29,13 @@ public class CreateVenueUseCase {
 
         VenueEntity saved = venueRepository.save(entity);
 
-        return mapToResponse(saved);
-    }
-
-    private VenueResponse mapToResponse(VenueEntity entity) {
         return new VenueResponse(
-                entity.getId(),
-                entity.getName(),
-                entity.getCountryCode(),
-                entity.getCity(),
-                entity.getAddress(),
-                entity.getTimezone()
+                saved.getId(),
+                saved.getName(),
+                saved.getCountryCode(),
+                saved.getCity(),
+                saved.getAddress(),
+                saved.getTimezone()
         );
     }
 }

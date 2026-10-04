@@ -1,5 +1,6 @@
 package com.acme.sportplatform.organizations.web;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.acme.sportplatform.organizations.api.CreateVenueRequest;
 import com.acme.sportplatform.organizations.api.VenueResponse;
 import com.acme.sportplatform.organizations.application.CreateVenueUseCase;
+import com.acme.sportplatform.organizations.application.GetVenuesUseCase;
 import com.acme.sportplatform.organizations.application.GetVenueByIdUseCase;
-
+import com.acme.sportplatform.organizations.application.GetVenuesUseCase;
 import jakarta.validation.Valid;
 
 @RestController
@@ -24,13 +26,16 @@ public class VenueController {
 
     private final CreateVenueUseCase createVenueUseCase;
     private final GetVenueByIdUseCase getVenueByIdUseCase;
+    private final GetVenuesUseCase getVenuesUseCase;
 
     public VenueController(
             CreateVenueUseCase createVenueUseCase,
-            GetVenueByIdUseCase getVenueByIdUseCase
+            GetVenueByIdUseCase getVenueByIdUseCase,
+            GetVenuesUseCase getVenuesUseCase
     ) {
         this.createVenueUseCase = createVenueUseCase;
         this.getVenueByIdUseCase = getVenueByIdUseCase;
+        this.getVenuesUseCase = getVenuesUseCase;
     }
 
     @PostMapping
@@ -45,5 +50,11 @@ public class VenueController {
     @PreAuthorize("hasRole('PLATFORM_ADMIN') or hasRole('ORGANIZER')")
     public ResponseEntity<VenueResponse> getVenue(@PathVariable UUID id) {
         return ResponseEntity.ok(getVenueByIdUseCase.execute(id));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('PLATFORM_ADMIN') or hasRole('ORGANIZER')")
+    public ResponseEntity<List<VenueResponse>> getVenues() {
+        return ResponseEntity.ok(getVenuesUseCase.execute());
     }
 }

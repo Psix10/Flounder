@@ -1,39 +1,48 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { getPublicEvents } from '../../api/events.api'
+import { getPublicEvents, type Event } from '../../api/events.api'
 import { ApiError } from '../../api/http'
 import { ErrorState } from '../../components/ErrorState'
 import { LoadingState } from '../../components/LoadingState'
-import type { PublicEvent } from './event.types'
 import styles from './EventsPage.module.css'
 
-function formatDate(value: string | null) {
-  if (!value) {
-    return 'Не указано'
-  }
-
+function formatDate(value: string) {
   return new Intl.DateTimeFormat('ru-RU', {
-    dateStyle: 'long',
-    timeStyle: 'short',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
     timeZone: 'Europe/Moscow',
   }).format(new Date(value))
 }
 
-function getStatusLabel(status: PublicEvent['status']) {
-  const labels: Record<PublicEvent['status'], string> = {
+function getStatusLabel(status: string) {
+  const labels: Record<string, string> = {
     DRAFT: 'Черновик',
     PUBLISHED: 'Опубликовано',
     REGISTRATION_OPEN: 'Регистрация открыта',
     REGISTRATION_CLOSED: 'Регистрация закрыта',
-    FINISHED: 'Завершено',
-    CANCELLED: 'Отменено',
+    COMPLETED: 'Завершено',
   }
 
-  return labels[status]
+  return labels[status] ?? status
+}
+
+function getStatusClassName(status: string) {
+  const classes: Record<string, string> = {
+    DRAFT: styles.statusDraft,
+    PUBLISHED: styles.statusPublished,
+    REGISTRATION_OPEN: styles.statusOpen,
+    REGISTRATION_CLOSED: styles.statusClosed,
+    COMPLETED: styles.statusCompleted,
+  }
+
+  return classes[status] ?? styles.statusPublished
 }
 
 export function EventsPage() {
-  const [events, setEvents] = useState<PublicEvent[]>([])
+  const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -48,7 +57,7 @@ export function EventsPage() {
       const message =
         error instanceof ApiError
           ? error.message
-          : 'Проверьте, что backend запущен и CORS разрешает http://localhost:5173.'
+          : 'Не удалось загрузить список событий.'
 
       setErrorMessage(message)
     } finally {
@@ -60,45 +69,52 @@ export function EventsPage() {
     void loadEvents()
   }, [])
 
+  if (isLoading) {
+    return <LoadingState message="Загружаем события…" />
+  }
+
+  if (errorMessage) {
+    return <ErrorState message={errorMessage} onRetry={() => void loadEvents()} />
+  }
+
   return (
     <section className={styles.page}>
-      <p className={styles.eyebrow}>Flounder sport platform</p>
+      <div className={styles.hero}>
+        <p className={styles.eyebrow}>Календарь соревнований</p>
+        <h1 className={styles.title}>Выберите событие для участия</h1>
+        <p className={styles.subtitle}>
+          Публичные соревнования с открытой регистрацией, опубликованной программой
+          и доступными дисциплинами.
+        </p>
+      </div>
 
-      <h1 className={styles.title}>Спортивные события</h1>
-
-      <p className={styles.description}>
-        Выберите соревнование, чтобы посмотреть дисциплины и подать заявку.
-      </p>
-
-      {isLoading ? <LoadingState message="Загружаем события…" /> : null}
-
-      {!isLoading && errorMessage ? (
-        <ErrorState message={errorMessage} onRetry={() => void loadEvents()} />
-      ) : null}
-
-      {!isLoading && !errorMessage && events.length === 0 ? (
+      {events.length === 0 ? (
         <div className={styles.emptyState}>
           Сейчас нет опубликованных событий.
         </div>
-      ) : null}
-
-      {!isLoading && !errorMessage && events.length > 0 ? (
+      ) : (
         <div className={styles.grid}>
           {events.map((event) => (
-            <article className={styles.card} key={event.id}>
+            <article key={event.id} className={styles.card}>
               <div className={styles.cardHeader}>
-                <span className={styles.statusBadge}>
+                <span
+                  className={`${styles.statusBadge} ${getStatusClassName(event.status)}`}
+                >
+                  <span className={styles.statusDot} aria-hidden="true" />
                   {getStatusLabel(event.status)}
                 </span>
               </div>
 
-              <h2 className={styles.cardTitle}>{event.title}</h2>
+              <div className={styles.cardBody}>
+                <h2 className={styles.cardTitle}>{event.title}</h2>
 
-              <p className={styles.cardDescription}>
-                {event.description ?? 'Описание пока не добавлено.'}
-              </p>
+                <p className={styles.cardDescription}>
+                  {event.description?.trim() ||
+                    'Подробная информация о соревновании доступна на странице события.'}
+                </p>
+              </div>
 
-              <dl className={styles.meta}>
+              <dl className={styles.metaList}>
                 <div className={styles.metaItem}>
                   <dt>Регистрация</dt>
                   <dd>
@@ -110,22 +126,23 @@ export function EventsPage() {
                 <div className={styles.metaItem}>
                   <dt>Дата события</dt>
                   <dd>
-                    {formatDate(event.eventStartAt)} —{' '}
-                    {formatDate(event.eventEndAt)}
+                    {formatDate(event.eventStartAt)} — {formatDate(event.eventEndAt)}
                   </dd>
                 </div>
               </dl>
 
-              <Link
-                className={styles.primaryButton}
-                to={`/events/${event.publicSlug}`}
-              >
-                Подробнее
-              </Link>
+              <div className={styles.cardFooter}>
+                <Link
+                  className={styles.primaryAction}
+                  to={`/events/${event.publicSlug}`}
+                >
+                  Подробнее
+                </Link>
+              </div>
             </article>
           ))}
         </div>
-      ) : null}
+      )}
     </section>
   )
 }

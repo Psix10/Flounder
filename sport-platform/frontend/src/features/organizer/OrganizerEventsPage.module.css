@@ -205,3 +205,46 @@
 .secondaryLink:hover {
   background: #ccebf8;
 }
+
+
+.titleRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.createLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: #0d6178;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.createLink:hover {
+  background: #084b5d;
+}
+
+.createLink:focus-visible {
+  outline: 3px solid rgba(13, 97, 120, 0.25);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .titleRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .createLink {
+    width: 100%;
+  }
+}

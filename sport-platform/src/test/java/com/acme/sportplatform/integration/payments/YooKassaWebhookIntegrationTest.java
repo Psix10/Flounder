@@ -50,6 +50,11 @@ class YooKassaWebhookIntegrationTest
 
         private static final UUID SWIMMING_SPORT_ID =
                 UUID.fromString("10000000-0000-0000-0000-000000000001");
+        
+        private static final UUID TEST_EVENT_CREATOR_ID =
+                UUID.fromString(
+                        "20000000-0000-0000-0000-000000000001"
+                );
 
         private static final String WEBHOOK_URL =
                 "/api/v1/payments/webhooks/yookassa";
@@ -376,10 +381,13 @@ class YooKassaWebhookIntegrationTest
         }
 
         private UUID createEventWithOpenRegistration() {
-                OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+                OffsetDateTime now =
+                        OffsetDateTime.now(ZoneOffset.UTC);
 
                 EventEntity event = new EventEntity();
+
                 event.setId(UUID.randomUUID());
+                event.setCreatedByUserId(TEST_EVENT_CREATOR_ID);
                 event.setOrganizationId(UUID.randomUUID());
                 event.setVenueId(UUID.randomUUID());
                 event.setSportId(SWIMMING_SPORT_ID);
@@ -392,14 +400,20 @@ class YooKassaWebhookIntegrationTest
                 event.setRegistrationCloseAt(now.plusDays(20));
                 event.setEventStartAt(now.plusDays(30));
                 event.setEventEndAt(now.plusDays(31));
-                event.setStatus(EventStatus.REGISTRATION_OPEN.name());
-                event.setPublicSlug("yookassa-webhook-" + UUID.randomUUID());
+                event.setStatus(
+                        EventStatus.REGISTRATION_OPEN.name()
+                );
+                event.setPublicSlug(
+                        "yookassa-webhook-" + UUID.randomUUID()
+                );
                 event.setSettingsJson("{}");
                 event.setCreatedAt(now);
                 event.setUpdatedAt(now);
 
-                return eventRepository.saveAndFlush(event).getId();
-        }
+                return eventRepository
+                        .saveAndFlush(event)
+                        .getId();
+                }
 
         private UUID createDisciplineTemplate() {
                 DisciplineTemplateEntity template =

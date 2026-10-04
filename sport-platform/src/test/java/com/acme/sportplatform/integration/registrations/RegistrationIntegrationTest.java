@@ -69,7 +69,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
         UserEntity user = createParticipantUser();
         createParticipantProfile(user.getId());
 
-        UUID eventId = createEventWithOpenRegistration();
+        UUID eventId = createEventWithOpenRegistration(user.getId());
         UUID disciplineTemplateId = createDisciplineTemplate();
 
         UUID eventDisciplineId = createPublishedEventDiscipline(
@@ -181,7 +181,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
         UserEntity user = createParticipantUser();
         createParticipantProfile(user.getId());
 
-        UUID eventId = createEventWithOpenRegistration();
+        UUID eventId = createEventWithOpenRegistration(user.getId());
         UUID disciplineTemplateId = createDisciplineTemplate();
 
         UUID eventDisciplineId = createPublishedEventDiscipline(
@@ -360,7 +360,7 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
         UserEntity user = createParticipantUser();
         createParticipantProfile(user.getId());
 
-        UUID eventId = createEventWithOpenRegistration();
+        UUID eventId = createEventWithOpenRegistration(user.getId());
         UUID disciplineTemplateId = createDisciplineTemplate();
 
         UUID eventDisciplineId = createPublishedEventDiscipline(
@@ -488,29 +488,40 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
         profileRepository.save(profile);
     }
 
-    private UUID createEventWithOpenRegistration() {
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+    private UUID createEventWithOpenRegistration(
+                UUID createdByUserId
+        ) {
+        OffsetDateTime now =
+                OffsetDateTime.now(ZoneOffset.UTC);
 
         EventEntity event = new EventEntity();
+
         event.setId(UUID.randomUUID());
+        event.setCreatedByUserId(createdByUserId);
         event.setOrganizationId(UUID.randomUUID());
         event.setVenueId(UUID.randomUUID());
         event.setSportId(SWIMMING_SPORT_ID);
         event.setRegulationVersionId(UUID.randomUUID());
         event.setTitle("Registration IT Event");
-        event.setDescription("Event fixture for registration integration test");
+        event.setDescription(
+                "Event fixture for registration integration test"
+        );
         event.setRegistrationOpenAt(now.minusDays(1));
         event.setRegistrationCloseAt(now.plusDays(20));
         event.setEventStartAt(now.plusDays(30));
         event.setEventEndAt(now.plusDays(31));
-        event.setStatus(EventStatus.REGISTRATION_OPEN.name());
-        event.setPublicSlug("registration-it-" + UUID.randomUUID());
+        event.setStatus(
+                EventStatus.REGISTRATION_OPEN.name()
+        );
+        event.setPublicSlug(
+                "registration-it-" + UUID.randomUUID()
+        );
         event.setSettingsJson("{}");
         event.setCreatedAt(now);
         event.setUpdatedAt(now);
 
         return eventRepository.save(event).getId();
-    }
+        }
 
     private UUID createDisciplineTemplate() {
         DisciplineTemplateEntity template = new DisciplineTemplateEntity();

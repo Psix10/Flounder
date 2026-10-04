@@ -1,14 +1,16 @@
 import { apiFetch } from './http'
 
-export type Sport = {
+export type SportResponse = {
   id: string
   code: string
   name: string
-  active: boolean
+  isActive: boolean
 }
 
-export function getSports(accessToken: string): Promise<Sport[]> {
-  return apiFetch<Sport[]>('/api/v1/sports', {
+export async function getSports(
+  accessToken: string,
+): Promise<SportResponse[]> {
+  return apiFetch<SportResponse[]>('/api/v1/sports', {
     accessToken,
   })
 }

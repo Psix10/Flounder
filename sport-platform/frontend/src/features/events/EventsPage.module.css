@@ -1,96 +1,141 @@
 .page {
-  max-width: 100%;
+  display: grid;
+  gap: 32px;
+}
+
+.hero {
+  display: grid;
+  gap: 12px;
 }
 
 .eyebrow {
-  margin: 0 0 8px;
-  color: var(--color-primary);
-  font-size: 0.82rem;
+  margin: 0;
+  color: #01696f;
+  font-size: 14px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .title {
   margin: 0;
-  color: var(--color-text);
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  letter-spacing: -0.04em;
-  line-height: 1.08;
+  color: #0f172a;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.05;
 }
 
-.description {
-  max-width: 640px;
-  margin: 20px 0 0;
-  color: var(--color-text-muted);
-  font-size: 1.08rem;
-  line-height: 1.65;
+.subtitle {
+  max-width: 720px;
+  margin: 0;
+  color: #475569;
+  font-size: 18px;
+  line-height: 1.7;
 }
 
 .emptyState {
-  margin-top: 32px;
-  padding: 20px 24px;
-  border: 1px solid #cbe6f4;
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  color: #41516a;
-  box-shadow: var(--shadow-card);
-  line-height: 1.55;
+  padding: 32px;
+  color: #475569;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  text-align: center;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 20px;
-  margin-top: 32px;
 }
 
 .card {
   display: flex;
-  min-height: 100%;
   flex-direction: column;
+  gap: 20px;
+  min-height: 100%;
   padding: 24px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
 
 .cardHeader {
   display: flex;
-  justify-content: flex-start;
-  min-height: 28px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .statusBadge {
   display: inline-flex;
   align-items: center;
-  min-height: 26px;
-  padding: 0 10px;
+  gap: 8px;
+  min-height: 30px;
+  padding: 4px 10px;
   border-radius: 999px;
-  background: var(--color-primary-soft);
-  color: var(--color-primary);
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.statusOpen {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.statusPublished {
+  color: #0f766e;
+  background: #ccfbf1;
+}
+
+.statusClosed {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.statusCompleted {
+  color: #334155;
+  background: #e2e8f0;
+}
+
+.statusDraft {
+  color: #6b7280;
+  background: #f3f4f6;
+}
+
+.cardBody {
+  display: grid;
+  gap: 10px;
 }
 
 .cardTitle {
-  margin: 16px 0 0;
-  color: var(--color-text);
-  font-size: 1.35rem;
-  line-height: 1.25;
+  margin: 0;
+  color: #0f172a;
+  font-size: 24px;
+  line-height: 1.15;
 }
 
 .cardDescription {
-  margin: 12px 0 0;
-  color: var(--color-text-muted);
-  line-height: 1.55;
+  margin: 0;
+  color: #475569;
+  line-height: 1.65;
 }
 
-.meta {
+.metaList {
   display: grid;
   gap: 14px;
-  margin: 24px 0 0;
+  margin: 0;
+  padding: 16px 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .metaItem {
@@ -99,46 +144,69 @@
 }
 
 .metaItem dt {
-  color: #71809a;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .metaItem dd {
   margin: 0;
-  color: #33435c;
-  font-size: 0.92rem;
-  line-height: 1.45;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
 }
 
-.primaryButton {
+.cardFooter {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.primaryAction {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
-  margin-top: auto;
-  padding: 0 16px;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
+  min-height: 44px;
+  padding: 10px 16px;
   color: #ffffff;
+  background: #01696f;
+  border-radius: 10px;
   font-weight: 700;
   text-decoration: none;
-  transition: background-color 160ms ease, transform 160ms ease;
+  transition: background-color 0.2s ease;
 }
 
-.primaryButton:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-1px);
+.primaryAction:hover {
+  background: #0c4e54;
+}
+
+.primaryAction:active {
+  background: #0f3638;
 }
 
 @media (max-width: 640px) {
+  .page {
+    gap: 24px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
   .grid {
     grid-template-columns: 1fr;
   }
 
   .card {
     padding: 20px;
+  }
+
+  .cardTitle {
+    font-size: 22px;
+  }
+
+  .primaryAction {
+    width: 100%;
   }
 }

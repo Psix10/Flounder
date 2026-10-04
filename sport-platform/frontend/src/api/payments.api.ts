@@ -1,19 +1,24 @@
 import { apiFetch } from './http'
 
+export type PaymentStatus =
+  | 'CREATED'
+  | 'PENDING'
+  | 'WAITING_FOR_CAPTURE'
+  | 'SUCCEEDED'
+  | 'CANCELED'
+  | 'FAILED'
+  | 'REFUNDED'
+  | string
+
+export type PaymentProvider = 'MANUAL' | 'YOOKASSA' | string
+
 export type Payment = {
   id: string
   registrationId: string
   amount: number
   currency: string
-  status:
-    | 'CREATED'
-    | 'PENDING'
-    | 'WAITING_FOR_CAPTURE'
-    | 'SUCCEEDED'
-    | 'CANCELED'
-    | 'FAILED'
-    | 'REFUNDED'
-  provider: 'MANUAL' | 'YOOKASSA' | string
+  status: PaymentStatus
+  provider: PaymentProvider
   confirmationUrl: string | null
   expiresAt: string | null
   paidAt: string | null
@@ -36,7 +41,7 @@ export function getPaymentForRegistration(
 }
 
 /**
- * Создаёт платёж для собственной заявки участника.
+ * Создаёт платёж для собственной подтверждённой заявки участника.
  */
 export function createPaymentForRegistration(
   registrationId: string,
@@ -52,20 +57,22 @@ export function createPaymentForRegistration(
 }
 
 /**
- * Получает данные платежа для проверки оператором / организатором.
+ * Получает платёж для проверки сотрудником платформы.
  */
 export function getPaymentForReview(
   registrationId: string,
   accessToken: string,
 ): Promise<Payment> {
   return apiFetch<Payment>(
-    `/api/v1/payments/review/registrations/${encodeURIComponent(registrationId)}`,
+    `/api/v1/payments/review/registrations/${encodeURIComponent(
+      registrationId,
+    )}`,
     { accessToken },
   )
 }
 
 /**
- * Подтверждает платёж после проверки.
+ * Подтверждает только ручный платёж MANUAL.
  */
 export function confirmPayment(
   paymentId: string,

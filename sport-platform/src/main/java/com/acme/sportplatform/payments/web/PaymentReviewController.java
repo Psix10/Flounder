@@ -30,7 +30,11 @@ public class PaymentReviewController {
     }
 
     @GetMapping("/review/registrations/{registrationId}")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER', 'OPERATOR')")
+    @PreAuthorize(
+            "hasRole('PLATFORM_ADMIN') "
+                    + "or hasRole('ORGANIZER') "
+                    + "or hasRole('OPERATOR')"
+    )
     public ResponseEntity<PaymentResponse> getForReview(
             @PathVariable UUID registrationId
     ) {
@@ -40,7 +44,9 @@ public class PaymentReviewController {
     }
 
     @PostMapping("/{paymentId}/confirm")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'OPERATOR')")
+    @PreAuthorize(
+            "hasRole('PLATFORM_ADMIN') or hasRole('OPERATOR')"
+    )
     public ResponseEntity<PaymentResponse> confirm(
             @PathVariable UUID paymentId
     ) {

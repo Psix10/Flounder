@@ -9,8 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.acme.sportplatform.events.infrastructure.persistence.entity.EventEntity;
 
-public interface EventRepository
-        extends JpaRepository<EventEntity, UUID> {
+public interface EventRepository extends JpaRepository<EventEntity, UUID> {
 
     boolean existsByPublicSlug(String publicSlug);
 
@@ -22,5 +21,8 @@ public interface EventRepository
             String publicSlug,
             Collection<String> statuses
     );
+
     Optional<EventEntity> findByPublicSlug(String publicSlug);
+
+    List<EventEntity> findByCreatedByUserIdOrderByEventStartAtDesc(UUID createdByUserId);
 }

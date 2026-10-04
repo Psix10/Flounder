@@ -17,30 +17,27 @@ public class ApplyProviderPaymentResultUseCase {
 
     private final PaymentRepository paymentRepository;
 
-    public ApplyProviderPaymentResultUseCase(
-            PaymentRepository paymentRepository
-    ) {
+    public ApplyProviderPaymentResultUseCase(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
 
     @Transactional
-    public PaymentEntity execute(
-            UUID paymentId,
-            ProviderPaymentResult providerResult
-    ) {
+    public PaymentEntity execute(UUID paymentId, ProviderPaymentResult providerResult) {
         PaymentEntity payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new BusinessException(
                         "payments.not_found",
                         "Payment not found"
                 ));
 
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
         payment.setExternalPaymentId(providerResult.externalPaymentId());
         payment.setConfirmationUrl(providerResult.confirmationUrl());
         payment.setStatus(providerResult.status().name());
         payment.setExpiresAt(providerResult.expiresAt());
         payment.setProviderMetadata(providerResult.providerMetadata());
-        payment.setUpdatedAt(OffsetDateTime.now(ZoneOffset.UTC));
+        payment.setUpdatedAt(now);
 
-        return payment;
+        return paymentRepository.save(payment);
     }
 }

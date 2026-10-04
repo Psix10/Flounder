@@ -12,6 +12,7 @@ import { RegisterPage } from '../features/auth/RegisterPage'
 import { EventDetailsPage } from '../features/events/EventDetailsPage'
 import { EventsPage } from '../features/events/EventsPage'
 
+import { CreateEventPage } from '../features/organizer/CreateEventPage'
 import { OrganizerEventsPage } from '../features/organizer/OrganizerEventsPage'
 import { OrganizerRegistrationsPage } from '../features/organizer/OrganizerRegistrationsPage'
 
@@ -25,12 +26,13 @@ import { RegistrationPage } from '../features/registrations/RegistrationPage'
 import { CompetitionUnitsPage } from '../features/results/CompetitionUnitsPage'
 import { JudgePanelPage } from '../features/results/JudgePanelPage'
 import { PublicDisciplineResultsPage } from '../features/results/PublicDisciplineResultsPage'
+import { CreateRegulationPage } from '../features/regulations/CreateRegulationPage'
+
 
 export default function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        {/* Публичные страницы */}
         <Route index element={<EventsPage />} />
 
         <Route
@@ -43,22 +45,10 @@ export default function App() {
           element={<PublicDisciplineResultsPage />}
         />
 
-        <Route
-          path="login"
-          element={<LoginPage />}
-        />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
 
-        <Route
-          path="register"
-          element={<RegisterPage />}
-        />
-
-        {/* Участник */}
-        <Route
-          element={
-            <RequireRole roles={['participant']} />
-          }
-        >
+        <Route element={<RequireRole roles={['participant']} />}>
           <Route
             path="events/:eventCode/disciplines/:disciplineId/register"
             element={<RegistrationPage />}
@@ -80,17 +70,21 @@ export default function App() {
           />
         </Route>
 
-        {/* Организатор и администратор платформы */}
         <Route
           element={
             <RequireRole
-              roles={['platform_admin', 'organizer']}
+              roles={['platformadmin', 'organizer']}
             />
           }
         >
           <Route
             path="organizer/events"
             element={<OrganizerEventsPage />}
+          />
+
+          <Route
+            path="organizer/events/new"
+            element={<CreateEventPage />}
           />
 
           <Route
@@ -104,15 +98,10 @@ export default function App() {
           />
         </Route>
 
-        {/* Просмотр конкретной заявки */}
         <Route
           element={
             <RequireRole
-              roles={[
-                'platform_admin',
-                'organizer',
-                'operator',
-              ]}
+              roles={['platformadmin', 'organizer', 'operator']}
             />
           }
         >
@@ -122,11 +111,10 @@ export default function App() {
           />
         </Route>
 
-        {/* Оператор и администратор платформы */}
         <Route
           element={
             <RequireRole
-              roles={['platform_admin', 'operator']}
+              roles={['platformadmin', 'operator']}
             />
           }
         >
@@ -146,10 +134,9 @@ export default function App() {
           />
         </Route>
 
-        {/* Только администратор платформы */}
         <Route
           element={
-            <RequireRole roles={['platform_admin']} />
+            <RequireRole roles={['platformadmin']} />
           }
         >
           <Route
@@ -158,12 +145,17 @@ export default function App() {
           />
         </Route>
 
-        {/* Неизвестный маршрут */}
         <Route
           path="*"
           element={<Navigate to="/" replace />}
         />
-      </Route>
+        </Route>
+
+        <Route
+          path="/organizer/regulations/create"
+          element={<CreateRegulationPage />}
+        />
+
     </Routes>
   )
 }

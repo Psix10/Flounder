@@ -45,7 +45,7 @@ public class CreateEventUseCase {
     }
 
     @Transactional
-    public EventResponse execute(CreateEventRequest request) {
+    public EventResponse execute(CreateEventRequest request, UUID createdByUserId) {
         if (!organizationLookup.existsById(request.organizationId())) {
             throw new BusinessException(
                     "events.organization_not_found",
@@ -78,6 +78,7 @@ public class CreateEventUseCase {
 
         EventEntity entity = new EventEntity();
         entity.setId(UUID.randomUUID());
+        entity.setCreatedByUserId(createdByUserId);
         entity.setOrganizationId(request.organizationId());
         entity.setVenueId(request.venueId());
         entity.setSportId(request.sportId());

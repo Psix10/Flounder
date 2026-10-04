@@ -134,6 +134,13 @@ public class RegulationService {
         return mapVersion(regulationVersionRepository.save(entity));
     }
 
+    @Transactional(readOnly = true)
+        public List<RegulationVersionResponse> getVersions() {
+        return regulationVersionRepository.findAll().stream()
+                .map(this::mapVersion)
+                .toList();
+        }
+
     private RegulationTemplateResponse mapTemplate(RegulationTemplateEntity entity) {
         return new RegulationTemplateResponse(
                 entity.getId(),

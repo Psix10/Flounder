@@ -6,9 +6,11 @@ com\acme\sportplatform\organizations\OrganizationLookup.class
 com\acme\sportplatform\identity\infrastructure\persistence\entity\UserEntity.class
 com\acme\sportplatform\identity\infrastructure\security\JwtService.class
 com\acme\sportplatform\config\PasswordConfig.class
+com\acme\sportplatform\organizations\infrastructure\jpa\OrganizationRegistrationEntity.class
 com\acme\sportplatform\payments\application\CreatePaymentForRegistrationUseCase.class
 com\acme\sportplatform\identity\infrastructure\persistence\entity\RoleEntity.class
 com\acme\sportplatform\events\domain\EventStatus.class
+com\acme\sportplatform\organizations\infrastructure\jpa\OrganizationRegistrationRepository.class
 com\acme\sportplatform\results\application\GetPublicCompetitionUnitResultsUseCase.class
 com\acme\sportplatform\organizations\web\OrganizationController.class
 com\acme\sportplatform\identity\application\GetCurrentUserUseCase.class
@@ -45,6 +47,7 @@ com\acme\sportplatform\identity\api\UserResponse.class
 com\acme\sportplatform\SportPlatformApplication.class
 com\acme\sportplatform\organizations\api\OrganizationResponse.class
 com\acme\sportplatform\payments\application\CreateLocalPaymentForRegistrationUseCase.class
+com\acme\sportplatform\organizations\application\OrganizationRegistrationService.class
 com\acme\sportplatform\payments\infrastructure\yookassa\api\YooKassaConfirmation.class
 com\acme\sportplatform\identity\infrastructure\security\JwtProperties.class
 com\acme\sportplatform\competition\application\PublicEventCatalogQueryService.class
@@ -54,6 +57,7 @@ com\acme\sportplatform\payments\application\ApplyProviderPaymentResultUseCase.cl
 com\acme\sportplatform\results\api\PublicCompetitionUnitResultsResponse$EntryView.class
 com\acme\sportplatform\results\api\PublicDisciplineResultsResponse$EntryView.class
 com\acme\sportplatform\common\api\ApiErrorResponse$FieldViolation.class
+com\acme\sportplatform\organizations\api\OrganizationRegistrationResponse.class
 com\acme\sportplatform\registrations\application\ReviewRegistrationUseCase$1.class
 com\acme\sportplatform\payments\infrastructure\yookassa\YooKassaProperties.class
 com\acme\sportplatform\results\application\RecalculatePlacesUseCase$RankedResult.class
@@ -75,6 +79,7 @@ com\acme\sportplatform\organizations\infrastructure\jpa\VenueEntity.class
 com\acme\sportplatform\identity\api\CurrentUserResponse.class
 com\acme\sportplatform\identity\application\RevokeRoleFromUserUseCase.class
 com\acme\sportplatform\identity\application\GetUserByIdUseCase.class
+com\acme\sportplatform\organizations\api\CreateOrganizationRegistrationRequest.class
 com\acme\sportplatform\config\MethodSecurityConfig.class
 com\acme\sportplatform\registrations\infrastructure\jpa\RegistrationEntity.class
 com\acme\sportplatform\competition\domain\EventDisciplineStatus.class
@@ -112,6 +117,7 @@ com\acme\sportplatform\registrations\web\RegistrationController.class
 com\acme\sportplatform\regulations\api\RegulationVersionResponse.class
 com\acme\sportplatform\results\application\AssignRegistrationToUnitUseCase.class
 com\acme\sportplatform\registrations\application\GetRegistrationByIdUseCase.class
+com\acme\sportplatform\organizations\infrastructure\jpa\OrganizationMemberRepository.class
 com\acme\sportplatform\competition\api\PublicEventListItemResponse.class
 com\acme\sportplatform\identity\application\ProfileLookupService.class
 com\acme\sportplatform\identity\AuthenticatedUserPrincipal.class
@@ -209,6 +215,7 @@ com\acme\sportplatform\sports\DisciplineTemplateLookup.class
 com\acme\sportplatform\registrations\application\RegistrationMapper.class
 com\acme\sportplatform\regulations\api\RegulationRules.class
 com\acme\sportplatform\identity\application\LoginUseCase.class
+com\acme\sportplatform\organizations\application\GetVenuesUseCase.class
 com\acme\sportplatform\competition\application\EventDisciplineMapper.class
 com\acme\sportplatform\competition\EventDisciplineLookup.class
 com\acme\sportplatform\results\api\CompetitionUnitDetailsResponse.class
@@ -231,6 +238,7 @@ com\acme\sportplatform\identity\infrastructure\persistence\entity\UserRoleAssign
 com\acme\sportplatform\common\web\package-info.class
 com\acme\sportplatform\identity\application\AssignRoleToUserUseCase.class
 com\acme\sportplatform\sports\web\SportsController.class
+com\acme\sportplatform\organizations\web\OrganizationRegistrationController.class
 com\acme\sportplatform\identity\infrastructure\persistence\repository\RoleRepository.class
 com\acme\sportplatform\payments\infrastructure\yookassa\webhook\YooKassaWebhookPayload.class
 com\acme\sportplatform\registrations\api\CreateRegistrationRequest.class

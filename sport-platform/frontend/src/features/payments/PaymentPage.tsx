@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router'
 import { ApiError } from '../../api/http'
 import { getMyRegistrations } from '../../api/registrations.api'
 import { useAuth } from '../../app/providers/AuthProvider'
-import type { Registration } from '../../features/registrations/registration.types'
+import type {
+  Registration,
+  RegistrationStatus,
+} from '../../features/registrations/registration.types'
 import {
   createPaymentForRegistration,
   getPaymentForRegistration,
@@ -14,11 +22,11 @@ import styles from './PaymentPage.module.css'
 function getErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
     if (error.status === 401) {
-      return 'Сессия истекла. Войдите в систему снова.'
+      return 'Сессия истекла. Войдите снова.'
     }
 
     if (error.status === 403) {
-      return 'У вашей учётной записи нет прав для выполнения этого действия.'
+      return 'У вас нет доступа к оплате этой заявки.'
     }
 
     if (error.status === 404) {
@@ -33,11 +41,11 @@ function getErrorMessage(error: unknown, fallback: string) {
 
 function paymentStatusLabel(status: string) {
   const labels: Record<string, string> = {
-    CREATED: 'Ожидает подтверждения оператором',
+    CREATED: 'Платёж создан',
     PENDING: 'Ожидает оплаты',
     WAITING_FOR_CAPTURE: 'Ожидает подтверждения',
     SUCCEEDED: 'Оплата подтверждена',
-    CANCELED: 'Оплата отменена',
+    CANCELED: 'Платёж отменён',
     FAILED: 'Ошибка оплаты',
     REFUNDED: 'Средства возвращены',
   }
@@ -45,8 +53,8 @@ function paymentStatusLabel(status: string) {
   return labels[status] ?? status
 }
 
-function registrationStatusLabel(status: Registration['status']) {
-  const labels: Record<Registration['status'], string> = {
+function registrationStatusLabel(status: RegistrationStatus) {
+  const labels: Record<RegistrationStatus, string> = {
     SUBMITTED: 'На рассмотрении',
     CONFIRMED: 'Подтверждена',
     REJECTED: 'Отклонена',
@@ -76,118 +84,69 @@ function paymentStatusClassName(status: string) {
 function getPaymentUnavailableCopy(registration: Registration) {
   if (registration.status === 'SUBMITTED') {
     return {
-      title: 'Заявка находится на рассмотрении',
+      title: 'Заявка ещё рассматривается',
       message:
-        'Организатор проверяет данные заявки. Возможность оплаты появится после подтверждения.',
+        'Оплата станет доступна после подтверждения заявки организатором.',
     }
   }
 
   if (registration.status === 'NEEDS_CORRECTION') {
     return {
-      title: 'Заявка требует уточнения',
+      title: 'Требуется уточнение данных',
       message:
-        'Исправьте данные по комментарию организатора. Оплата станет доступна после повторного подтверждения заявки.',
+        'Оплата будет доступна после того, как организатор подтвердит заявку.',
     }
   }
 
   if (registration.status === 'REJECTED') {
     return {
       title: 'Заявка отклонена',
-      message:
-        'Оплата недоступна для отклонённой заявки.',
+      message: 'Оплата для отклонённой заявки недоступна.',
     }
   }
 
   if (registration.status === 'CANCELLED') {
     return {
       title: 'Заявка отменена',
-      message:
-        'Оплата недоступна для отменённой заявки.',
+      message: 'Оплата для отменённой заявки недоступна.',
     }
   }
 
   return {
-    title: 'Оплата пока недоступна',
-    message:
-      'Оплата станет доступна после подтверждения заявки организатором.',
+    title: 'Оплата недоступна',
+    message: 'Для этой заявки сейчас нельзя создать платёж.',
   }
+}
+
+function paymentProviderLabel(provider: string) {
+  const labels: Record<string, string> = {
+    MANUAL: 'Ручная оплата',
+    YOOKASSA: 'ЮKassa',
+  }
+
+  return labels[provider] ?? provider
 }
 
 export function PaymentPage() {
   const { session } = useAuth()
   const navigate = useNavigate()
-  const { registrationId: routeRegistrationId } =
-    useParams<{ registrationId: string }>()
-
+  const { registrationId: registrationIdFromPath } = useParams<{
+    registrationId: string
+  }>()
   const [searchParams] = useSearchParams()
 
   const registrationId =
-    routeRegistrationId ??
-    searchParams.get('registrationId') ??
-    undefined
-  const accessToken = session?.accessToken
+    registrationIdFromPath ?? searchParams.get('registrationId')
 
-  const [registration, setRegistration] = useState<Registration | null>(null)
+  const accessToken = session?.accessToken
+  const paymentStatusFromReturn = searchParams.get('status')
+
+  const [registration, setRegistration] =
+    useState<Registration | null>(null)
   const [payment, setPayment] = useState<Payment | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isCreatingPayment, setIsCreatingPayment] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  const paymentStatusFromReturn = searchParams.get('status')
-
-  async function loadPage() {
-    if (!registrationId || !accessToken) {
-      return
-    }
-
-    setIsLoading(true)
-    setErrorMessage(null)
-
-    try {
-      const registrations = await getMyRegistrations(accessToken)
-
-      const ownRegistration = registrations.find(
-        (item) => item.id === registrationId,
-      )
-
-      if (!ownRegistration) {
-        setRegistration(null)
-        setPayment(null)
-        setErrorMessage(
-          'Заявка не найдена или недоступна вашей учётной записи.',
-        )
-        return
-      }
-
-      setRegistration(ownRegistration)
-
-      if (ownRegistration.status !== 'CONFIRMED') {
-        setPayment(null)
-        return
-      }
-
-      try {
-        const loadedPayment = await getPaymentForRegistration(
-          registrationId,
-          accessToken,
-        )
-
-        setPayment(loadedPayment)
-      } catch (error) {
-        if (error instanceof ApiError && error.status === 404) {
-          setPayment(null)
-        } else {
-          throw error
-        }
-      }
-    } catch (error) {
-      setErrorMessage(
-        getErrorMessage(error, 'Не удалось загрузить данные заявки и оплаты.'),
-      )
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   useEffect(() => {
     if (!accessToken) {
@@ -199,6 +158,7 @@ export function PaymentPage() {
             : '/my/registrations',
         },
       })
+
       return
     }
 
@@ -208,18 +168,86 @@ export function PaymentPage() {
       return
     }
 
+    let isMounted = true
+
+    async function loadPage() {
+      setIsLoading(true)
+      setErrorMessage(null)
+
+      try {
+        const registrations = await getMyRegistrations(accessToken)
+
+        const ownRegistration = registrations.find(
+          (item) => item.id === registrationId,
+        )
+
+        if (!ownRegistration) {
+          if (isMounted) {
+            setRegistration(null)
+            setPayment(null)
+            setErrorMessage('Заявка не найдена или недоступна.')
+          }
+
+          return
+        }
+
+        if (!isMounted) {
+          return
+        }
+
+        setRegistration(ownRegistration)
+
+        if (ownRegistration.status !== 'CONFIRMED') {
+          setPayment(null)
+          return
+        }
+
+        try {
+          const loadedPayment = await getPaymentForRegistration(
+            registrationId,
+            accessToken,
+          )
+
+          if (isMounted) {
+            setPayment(loadedPayment)
+          }
+        } catch (error) {
+          if (error instanceof ApiError && error.status === 404) {
+            if (isMounted) {
+              setPayment(null)
+            }
+
+            return
+          }
+
+          throw error
+        }
+      } catch (error) {
+        if (isMounted) {
+          setErrorMessage(
+            getErrorMessage(error, 'Не удалось загрузить страницу оплаты.'),
+          )
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
     void loadPage()
-    // loadPage uses the current registrationId and accessToken.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken, registrationId, navigate])
+
+    return () => {
+      isMounted = false
+    }
+  }, [accessToken, navigate, registrationId])
 
   async function handleCreatePayment() {
-    if (
-      !registrationId ||
-      !accessToken ||
-      !registration ||
-      registration.status !== 'CONFIRMED'
-    ) {
+    if (!registrationId || !accessToken || !registration) {
+      return
+    }
+
+    if (registration.status !== 'CONFIRMED') {
       return
     }
 
@@ -234,7 +262,15 @@ export function PaymentPage() {
 
       setPayment(createdPayment)
 
-      if (createdPayment.confirmationUrl) {
+      if (createdPayment.provider === 'YOOKASSA') {
+        if (!createdPayment.confirmationUrl) {
+          setErrorMessage(
+            'Платёж создан, но ссылка на оплату не получена. Попробуйте позже.',
+          )
+
+          return
+        }
+
         window.location.assign(createdPayment.confirmationUrl)
       }
     } catch (error) {
@@ -250,8 +286,8 @@ export function PaymentPage() {
     return (
       <section className={styles.page}>
         <div className={styles.stateCard}>
-          <h2>Загрузка</h2>
-          <p>Получаем данные заявки и информацию об оплате.</p>
+          <h2>Загружаем оплату</h2>
+          <p>Проверяем статус заявки и данные платежа.</p>
         </div>
       </section>
     )
@@ -278,6 +314,15 @@ export function PaymentPage() {
   const isConfirmed = registration.status === 'CONFIRMED'
   const unavailableCopy = getPaymentUnavailableCopy(registration)
 
+  const isManualAwaitingConfirmation =
+    payment?.provider === 'MANUAL' &&
+    (payment.status === 'CREATED' || payment.status === 'PENDING')
+
+  const canPayThroughYooKassa =
+    payment?.provider === 'YOOKASSA' &&
+    Boolean(payment.confirmationUrl) &&
+    (payment.status === 'CREATED' || payment.status === 'PENDING')
+
   return (
     <section className={styles.page}>
       <Link className={styles.backLink} to="/my/registrations">
@@ -286,11 +331,11 @@ export function PaymentPage() {
 
       <p className={styles.eyebrow}>Оплата участия</p>
 
-      <h1 className={styles.title}>Заявка и статус оплаты</h1>
+      <h1 className={styles.title}>Оплата заявки</h1>
 
       <p className={styles.description}>
-        Проверьте данные заявки и перейдите к оплате участия после её
-        подтверждения организатором.
+        Проверьте статус заявки и выполните оплату участия, если она
+        требуется.
       </p>
 
       <div className={styles.content}>
@@ -352,10 +397,11 @@ export function PaymentPage() {
           {!isConfirmed ? (
             <div className={styles.paymentUnavailable}>
               <strong>{unavailableCopy.title}</strong>
-
               <p>{unavailableCopy.message}</p>
             </div>
-          ) : payment ? (
+          ) : null}
+
+          {isConfirmed && payment ? (
             <>
               <dl className={styles.facts}>
                 <div>
@@ -372,45 +418,65 @@ export function PaymentPage() {
 
                 <div>
                   <dt>Способ оплаты</dt>
-                  <dd>{payment.provider}</dd>
+                  <dd>{paymentProviderLabel(payment.provider)}</dd>
                 </div>
+
+                {payment.paidAt ? (
+                  <div>
+                    <dt>Подтверждён</dt>
+                    <dd>
+                      {new Intl.DateTimeFormat('ru-RU', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                        timeZone: 'Europe/Moscow',
+                      }).format(new Date(payment.paidAt))}
+                    </dd>
+                  </div>
+                ) : null}
               </dl>
 
-              {payment.confirmationUrl && payment.status === 'PENDING' ? (
+              {canPayThroughYooKassa ? (
                 <a
                   className={styles.primaryButton}
-                  href={payment.confirmationUrl}
+                  href={payment.confirmationUrl ?? undefined}
                 >
                   Перейти к оплате
                 </a>
               ) : null}
 
+              {isManualAwaitingConfirmation ? (
+                <div className={styles.paymentDescription}>
+                  Платёж создан. После оплаты дождитесь подтверждения
+                  оператором.
+                </div>
+              ) : null}
+
               {payment.status === 'SUCCEEDED' ? (
                 <div className={styles.paymentSuccess}>
-                  Оплата подтверждена. Ваша заявка готова к участию в
-                  соревновании.
+                  Оплата подтверждена. Ваша заявка успешно оплачена.
                 </div>
               ) : null}
 
               {payment.status === 'CANCELED' ||
               payment.status === 'FAILED' ? (
                 <div className={styles.paymentFailure}>
-                  Оплата не завершена. При необходимости создайте новый
-                  платёж или обратитесь к организатору.
+                  Платёж не был завершён. Свяжитесь с организатором или
+                  оператором, чтобы уточнить дальнейшие действия.
                 </div>
               ) : null}
             </>
-          ) : (
+          ) : null}
+
+          {isConfirmed && !payment ? (
             <>
               <p className={styles.paymentDescription}>
-                Заявка подтверждена. Создайте платёж, чтобы перейти к оплате
-                участия.
+                Создайте платёж, чтобы оплатить участие в соревновании.
               </p>
 
               <button
                 className={styles.primaryButton}
                 disabled={isCreatingPayment}
-                onClick={handleCreatePayment}
+                onClick={() => void handleCreatePayment()}
                 type="button"
               >
                 {isCreatingPayment
@@ -418,20 +484,20 @@ export function PaymentPage() {
                   : 'Создать платёж'}
               </button>
             </>
-          )}
+          ) : null}
         </article>
 
         {paymentStatusFromReturn === 'success' ? (
           <div className={styles.successBanner} role="status">
-            Оплата успешно завершена. Статус платежа будет обновлён после
-            подтверждения платёжного провайдера.
+            Возврат из платёжного сервиса выполнен. Проверяем актуальный
+            статус оплаты.
           </div>
         ) : null}
 
         {paymentStatusFromReturn === 'failed' ? (
           <div className={styles.errorBanner} role="alert">
-            Оплата не завершена. Попробуйте ещё раз или обратитесь к
-            организатору.
+            Платёжный сервис сообщил об ошибке оплаты. Проверьте статус
+            платежа выше или повторите попытку.
           </div>
         ) : null}
 

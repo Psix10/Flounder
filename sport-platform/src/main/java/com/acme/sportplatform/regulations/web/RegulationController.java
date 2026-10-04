@@ -36,7 +36,7 @@ public class RegulationController {
     }
 
     @PostMapping("/regulation-templates")
-    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER')")
     public ResponseEntity<RegulationTemplateResponse> createTemplate(
             @RequestBody @Valid CreateRegulationTemplateRequest request
     ) {
@@ -49,12 +49,17 @@ public class RegulationController {
     }
 
     @PostMapping("/regulation-templates/{id}/versions")
-    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER')")
     public ResponseEntity<RegulationVersionResponse> createVersion(
             @PathVariable UUID id,
             @RequestBody @Valid CreateRegulationVersionRequest request
     ) {
         return ResponseEntity.ok(regulationService.createVersion(id, request));
+    }
+
+    @GetMapping("/regulation-versions")
+    public ResponseEntity<List<RegulationVersionResponse>> getVersions() {
+        return ResponseEntity.ok(regulationService.getVersions());
     }
 
     @GetMapping("/regulation-versions/{id}")

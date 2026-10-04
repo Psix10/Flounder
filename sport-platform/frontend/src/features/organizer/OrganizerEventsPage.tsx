@@ -90,9 +90,19 @@ export function OrganizerEventsPage() {
 
   return (
     <section className={styles.page}>
-      <p className={styles.eyebrow}>Панель организатора</p>
+      <div className={styles.titleRow}>
+        <div>
+          <p className={styles.eyebrow}>Панель организатора</p>
+          <h1 className={styles.title}>Мои события</h1>
+        </div>
 
-      <h1 className={styles.title}>Мои события</h1>
+        <NavLink
+          className={styles.createLink}
+          to="/organizer/events/new"
+        >
+          Создать мероприятие
+        </NavLink>
+      </div>
 
       {isLoading ? (
         <div className={styles.stateCard}>
