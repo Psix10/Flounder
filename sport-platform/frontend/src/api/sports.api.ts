@@ -7,10 +7,8 @@ export type SportResponse = {
   isActive: boolean
 }
 
-export async function getSports(
-  accessToken: string,
-): Promise<SportResponse[]> {
-  return apiFetch<SportResponse[]>('/api/v1/sports', {
-    accessToken,
-  })
+export type Sport = SportResponse
+
+export async function getSports(accessToken: string): Promise<SportResponse[]> {
+  return apiFetch<SportResponse[]>('/api/v1/sports', { accessToken })
 }

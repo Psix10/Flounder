@@ -1,26 +1,27 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { NavLink, useLocation, useNavigate } from 'react-router'
-import { ApiError } from '../../api/http'
+
 import {
   createEvent,
   type CreateEventRequest,
 } from '../../api/events.api'
+import { ApiError } from '../../api/http'
 import {
   getOrganizations,
   type OrganizationResponse,
 } from '../../api/organizations.api'
 import {
-  getVenues,
-  type VenueResponse,
-} from '../../api/venues.api'
+  getRegulationVersions,
+  type RegulationVersionResponse,
+} from '../../api/regulations.api'
 import {
   getSports,
   type SportResponse,
 } from '../../api/sports.api'
 import {
-  getRegulationVersions,
-  type RegulationVersionResponse,
-} from '../../api/regulations.api'
+  getVenues,
+  type VenueResponse,
+} from '../../api/venues.api'
 import { useAuth } from '../../app/providers/AuthProvider'
 import styles from './CreateEventPage.module.css'
 
@@ -54,6 +55,10 @@ const initialFormState: FormState = {
 
 function getErrorMessage(error: unknown) {
   if (error instanceof ApiError) {
+    if (error.status === 401) {
+      return 'Сессия завершена. Войдите в систему повторно.'
+    }
+
     if (error.status === 403) {
       return 'У вашей учётной записи нет прав на создание мероприятий.'
     }
@@ -62,24 +67,28 @@ function getErrorMessage(error: unknown) {
       return error.message || 'Проверьте корректность заполненных данных.'
     }
 
+    if (error.status === 409) {
+      return error.message || 'Мероприятие с такими данными уже существует.'
+    }
+
+    return error.message || 'Не удалось выполнить запрос.'
+  }
+
+  if (error instanceof Error) {
     return error.message
   }
 
   return 'Не удалось создать мероприятие.'
 }
 
-function toIsoOrUndefined(value: string) {
+function parseTime(value: string): number | null {
   if (!value.trim()) {
-    return undefined
+    return null
   }
 
-  const date = new Date(value)
+  const timestamp = new Date(value).getTime()
 
-  if (Number.isNaN(date.getTime())) {
-    return undefined
-  }
-
-  return date.toISOString()
+  return Number.isNaN(timestamp) ? null : timestamp
 }
 
 function formatRegulationVersionLabel(
@@ -91,14 +100,17 @@ function formatRegulationVersionLabel(
       }).format(new Date(regulationVersion.effectiveFrom))
     : 'дата не указана'
 
-  return `Версия ${regulationVersion.versionNo} · ${regulationVersion.status} · c ${effectiveFrom}`
+  return (
+    `Версия ${regulationVersion.versionNo} · ` +
+    `${regulationVersion.status} · с ${effectiveFrom}`
+  )
 }
 
 function isPublishedRegulation(status: string) {
   return status.trim().toLowerCase() === 'published'
 }
 
-function validateForm(form: FormState) {
+function validateForm(form: FormState): FormErrors {
   const errors: FormErrors = {}
 
   if (!form.title.trim()) {
@@ -121,6 +133,16 @@ function validateForm(form: FormState) {
     errors.regulationVersionId = 'Выберите версию регламента.'
   }
 
+  if (!form.registrationOpenAt) {
+    errors.registrationOpenAt =
+      'Укажите дату открытия регистрации.'
+  }
+
+  if (!form.registrationCloseAt) {
+    errors.registrationCloseAt =
+      'Укажите дату закрытия регистрации.'
+  }
+
   if (!form.eventStartAt) {
     errors.eventStartAt = 'Укажите дату начала события.'
   }
@@ -129,18 +151,40 @@ function validateForm(form: FormState) {
     errors.eventEndAt = 'Укажите дату окончания события.'
   }
 
-  const registrationOpenAt = form.registrationOpenAt
-    ? new Date(form.registrationOpenAt).getTime()
-    : null
-  const registrationCloseAt = form.registrationCloseAt
-    ? new Date(form.registrationCloseAt).getTime()
-    : null
-  const eventStartAt = form.eventStartAt
-    ? new Date(form.eventStartAt).getTime()
-    : null
-  const eventEndAt = form.eventEndAt
-    ? new Date(form.eventEndAt).getTime()
-    : null
+  const registrationOpenAt = parseTime(
+    form.registrationOpenAt,
+  )
+  const registrationCloseAt = parseTime(
+    form.registrationCloseAt,
+  )
+  const eventStartAt = parseTime(form.eventStartAt)
+  const eventEndAt = parseTime(form.eventEndAt)
+
+  if (
+    form.registrationOpenAt &&
+    registrationOpenAt === null
+  ) {
+    errors.registrationOpenAt =
+      'Укажите корректную дату открытия регистрации.'
+  }
+
+  if (
+    form.registrationCloseAt &&
+    registrationCloseAt === null
+  ) {
+    errors.registrationCloseAt =
+      'Укажите корректную дату закрытия регистрации.'
+  }
+
+  if (form.eventStartAt && eventStartAt === null) {
+    errors.eventStartAt =
+      'Укажите корректную дату начала события.'
+  }
+
+  if (form.eventEndAt && eventEndAt === null) {
+    errors.eventEndAt =
+      'Укажите корректную дату окончания события.'
+  }
 
   if (
     registrationOpenAt !== null &&
@@ -157,7 +201,7 @@ function validateForm(form: FormState) {
     eventStartAt < registrationCloseAt
   ) {
     errors.eventStartAt =
-      'Дата начала события не может быть раньше закрытия регистрации.'
+      'Начало события не может быть раньше закрытия регистрации.'
   }
 
   if (
@@ -166,7 +210,7 @@ function validateForm(form: FormState) {
     eventEndAt < eventStartAt
   ) {
     errors.eventEndAt =
-      'Дата окончания события не может быть раньше даты начала.'
+      'Окончание события не может быть раньше его начала.'
   }
 
   return errors
@@ -179,22 +223,32 @@ export function CreateEventPage() {
   const accessToken = session?.accessToken
 
   const createdRegulationVersionId =
-    (location.state as { createdRegulationVersionId?: string } | null)
-      ?.createdRegulationVersionId
+    (
+      location.state as {
+        createdRegulationVersionId?: string
+      } | null
+    )?.createdRegulationVersionId
 
-  const [form, setForm] = useState<FormState>(initialFormState)
+  const [form, setForm] =
+    useState<FormState>(initialFormState)
   const [errors, setErrors] = useState<FormErrors>({})
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<
+    string | null
+  >(null)
+  const [successMessage, setSuccessMessage] = useState<
+    string | null
+  >(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoadingOptions, setIsLoadingOptions] = useState(true)
+  const [isLoadingOptions, setIsLoadingOptions] =
+    useState(true)
 
-  const [organizations, setOrganizations] = useState<OrganizationResponse[]>([])
+  const [organizations, setOrganizations] = useState<
+    OrganizationResponse[]
+  >([])
   const [venues, setVenues] = useState<VenueResponse[]>([])
   const [sports, setSports] = useState<SportResponse[]>([])
-  const [regulationVersions, setRegulationVersions] = useState<
-    RegulationVersionResponse[]
-  >([])
+  const [regulationVersions, setRegulationVersions] =
+    useState<RegulationVersionResponse[]>([])
 
   useEffect(() => {
     if (!accessToken) {
@@ -202,6 +256,7 @@ export function CreateEventPage() {
       return
     }
 
+    const authenticatedAccessToken = accessToken
     let isMounted = true
 
     async function loadOptions() {
@@ -215,10 +270,10 @@ export function CreateEventPage() {
           loadedSports,
           loadedRegulationVersions,
         ] = await Promise.all([
-          getOrganizations(accessToken),
-          getVenues(accessToken),
-          getSports(accessToken),
-          getRegulationVersions(accessToken),
+          getOrganizations(authenticatedAccessToken),
+          getVenues(authenticatedAccessToken),
+          getSports(authenticatedAccessToken),
+          getRegulationVersions(authenticatedAccessToken),
         ])
 
         if (!isMounted) {
@@ -226,13 +281,12 @@ export function CreateEventPage() {
         }
 
         const publishedRegulationVersions = loadedRegulationVersions.filter(
-          (regulationVersion) =>
-            isPublishedRegulation(regulationVersion.status),
+          (regulationVersion) => isPublishedRegulation(regulationVersion.status),
         )
 
         setOrganizations(loadedOrganizations)
         setVenues(loadedVenues)
-        setSports(loadedSports)
+        setSports(loadedSports.filter((sport) => sport.isActive))
         setRegulationVersions(publishedRegulationVersions)
 
         if (
@@ -248,10 +302,7 @@ export function CreateEventPage() {
         }
       } catch (error) {
         if (isMounted) {
-          setErrorMessage(
-            getErrorMessage(error) ||
-              'Не удалось загрузить связанные сущности.',
-          )
+          setErrorMessage(getErrorMessage(error))
         }
       } finally {
         if (isMounted) {
@@ -280,12 +331,18 @@ export function CreateEventPage() {
       ...current,
       [field]: undefined,
     }))
+
+    setErrorMessage(null)
+    setSuccessMessage(null)
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ) {
     event.preventDefault()
 
     const validationErrors = validateForm(form)
+
     setErrors(validationErrors)
     setErrorMessage(null)
     setSuccessMessage(null)
@@ -295,7 +352,9 @@ export function CreateEventPage() {
     }
 
     if (!accessToken) {
-      setErrorMessage('Не удалось определить активную сессию.')
+      setErrorMessage(
+        'Не удалось определить активную сессию.',
+      )
       return
     }
 
@@ -306,19 +365,33 @@ export function CreateEventPage() {
       regulationVersionId: form.regulationVersionId,
       title: form.title.trim(),
       description: form.description.trim() || null,
-      registrationOpenAt: toIsoOrUndefined(form.registrationOpenAt),
-      registrationCloseAt: toIsoOrUndefined(form.registrationCloseAt),
-      eventStartAt: new Date(form.eventStartAt).toISOString(),
-      eventEndAt: new Date(form.eventEndAt).toISOString(),
+      registrationOpenAt: new Date(
+        form.registrationOpenAt,
+      ).toISOString(),
+      registrationCloseAt: new Date(
+        form.registrationCloseAt,
+      ).toISOString(),
+      eventStartAt: new Date(
+        form.eventStartAt,
+      ).toISOString(),
+      eventEndAt: new Date(
+        form.eventEndAt,
+      ).toISOString(),
     }
 
     setIsSubmitting(true)
 
     try {
-      const created = await createEvent(payload, accessToken)
-      setSuccessMessage(`Мероприятие «${created.title}» успешно создано.`)
+      const created = await createEvent(
+        payload,
+        accessToken,
+      )
 
-      setTimeout(() => {
+      setSuccessMessage(
+        `Мероприятие «${created.title}» успешно создано.`,
+      )
+
+      window.setTimeout(() => {
         navigate('/organizer/events', {
           replace: true,
           state: {
@@ -335,48 +408,87 @@ export function CreateEventPage() {
 
   return (
     <section className={styles.page}>
-      <NavLink className={styles.backLink} to="/organizer/events">
+      <NavLink
+        className={styles.backLink}
+        to="/organizer/events"
+      >
         ← Назад к моим событиям
       </NavLink>
 
-      <p className={styles.eyebrow}>Панель организатора</p>
+      <p className={styles.eyebrow}>
+        Панель организатора
+      </p>
 
       <div className={styles.header}>
         <div>
-          <h1 className={styles.title}>Создание мероприятия</h1>
+          <h1 className={styles.title}>
+            Создание мероприятия
+          </h1>
+
           <p className={styles.description}>
-            Заполните обязательные поля события. После создания вы сможете
-            перейти к дальнейшей настройке дисциплин и публикации.
+            Заполните обязательные поля события. После
+            создания вы сможете настроить дисциплины и
+            опубликовать мероприятие.
           </p>
         </div>
       </div>
 
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form
+        className={styles.form}
+        onSubmit={handleSubmit}
+      >
         <article className={styles.card}>
-          <h2 className={styles.cardTitle}>Основные данные</h2>
+          <h2 className={styles.cardTitle}>
+            Основные данные
+          </h2>
 
           <div className={styles.grid}>
-            <label className={`${styles.field} ${styles.fieldFull}`}>
-              <span className={styles.label}>Название</span>
+            <label
+              className={`${styles.field} ${styles.fieldFull}`}
+            >
+              <span className={styles.label}>
+                Название
+              </span>
+
               <input
                 className={styles.input}
                 value={form.title}
-                onChange={(event) => updateField('title', event.target.value)}
+                maxLength={255}
+                required
+                disabled={isSubmitting}
+                onChange={(event) =>
+                  updateField(
+                    'title',
+                    event.target.value,
+                  )
+                }
                 placeholder="Кубок Москвы по плаванию"
               />
+
               {errors.title ? (
-                <span className={styles.fieldError}>{errors.title}</span>
+                <span className={styles.fieldError}>
+                  {errors.title}
+                </span>
               ) : null}
             </label>
 
-            <label className={`${styles.field} ${styles.fieldFull}`}>
-              <span className={styles.label}>Описание</span>
+            <label
+              className={`${styles.field} ${styles.fieldFull}`}
+            >
+              <span className={styles.label}>
+                Описание
+              </span>
+
               <textarea
                 className={styles.textarea}
                 rows={5}
                 value={form.description}
+                disabled={isSubmitting}
                 onChange={(event) =>
-                  updateField('description', event.target.value)
+                  updateField(
+                    'description',
+                    event.target.value,
+                  )
                 }
                 placeholder="Описание события, формат участия, ключевая информация."
               />
@@ -389,27 +501,51 @@ export function CreateEventPage() {
 
           <div className={styles.grid}>
             <label className={styles.field}>
-              <span className={styles.label}>Открытие регистрации</span>
+              <span className={styles.label}>
+                Открытие регистрации
+              </span>
+
               <input
                 className={styles.input}
                 type="datetime-local"
+                required
+                disabled={isSubmitting}
                 value={form.registrationOpenAt}
                 onChange={(event) =>
-                  updateField('registrationOpenAt', event.target.value)
+                  updateField(
+                    'registrationOpenAt',
+                    event.target.value,
+                  )
                 }
               />
+
+              {errors.registrationOpenAt ? (
+                <span className={styles.fieldError}>
+                  {errors.registrationOpenAt}
+                </span>
+              ) : null}
             </label>
 
             <label className={styles.field}>
-              <span className={styles.label}>Закрытие регистрации</span>
+              <span className={styles.label}>
+                Закрытие регистрации
+              </span>
+
               <input
                 className={styles.input}
                 type="datetime-local"
+                required
+                disabled={isSubmitting}
+                min={form.registrationOpenAt || undefined}
                 value={form.registrationCloseAt}
                 onChange={(event) =>
-                  updateField('registrationCloseAt', event.target.value)
+                  updateField(
+                    'registrationCloseAt',
+                    event.target.value,
+                  )
                 }
               />
+
               {errors.registrationCloseAt ? (
                 <span className={styles.fieldError}>
                   {errors.registrationCloseAt}
@@ -418,61 +554,110 @@ export function CreateEventPage() {
             </label>
 
             <label className={styles.field}>
-              <span className={styles.label}>Начало события</span>
+              <span className={styles.label}>
+                Начало события
+              </span>
+
               <input
                 className={styles.input}
                 type="datetime-local"
+                required
+                disabled={isSubmitting}
+                min={form.registrationCloseAt || undefined}
                 value={form.eventStartAt}
                 onChange={(event) =>
-                  updateField('eventStartAt', event.target.value)
+                  updateField(
+                    'eventStartAt',
+                    event.target.value,
+                  )
                 }
               />
+
               {errors.eventStartAt ? (
-                <span className={styles.fieldError}>{errors.eventStartAt}</span>
+                <span className={styles.fieldError}>
+                  {errors.eventStartAt}
+                </span>
               ) : null}
             </label>
 
             <label className={styles.field}>
-              <span className={styles.label}>Окончание события</span>
+              <span className={styles.label}>
+                Окончание события
+              </span>
+
               <input
                 className={styles.input}
                 type="datetime-local"
+                required
+                disabled={isSubmitting}
+                min={form.eventStartAt || undefined}
                 value={form.eventEndAt}
                 onChange={(event) =>
-                  updateField('eventEndAt', event.target.value)
+                  updateField(
+                    'eventEndAt',
+                    event.target.value,
+                  )
                 }
               />
+
               {errors.eventEndAt ? (
-                <span className={styles.fieldError}>{errors.eventEndAt}</span>
+                <span className={styles.fieldError}>
+                  {errors.eventEndAt}
+                </span>
               ) : null}
             </label>
           </div>
         </article>
 
         <article className={styles.card}>
-          <h2 className={styles.cardTitle}>Связанные сущности</h2>
+          <h2 className={styles.cardTitle}>
+            Связанные сущности
+          </h2>
 
           {isLoadingOptions ? (
-            <p className={styles.description}>Загружаем доступные значения…</p>
+            <p className={styles.description}>
+              Загружаем доступные значения…
+            </p>
           ) : (
             <div className={styles.grid}>
               <label className={styles.field}>
-                <span className={styles.label}>Организация</span>
+                <span className={styles.label}>
+                  Организация
+                </span>
+
                 <select
                   className={styles.input}
                   required
+                  disabled={isSubmitting}
                   value={form.organizationId}
                   onChange={(event) =>
-                    updateField('organizationId', event.target.value)
+                    updateField(
+                      'organizationId',
+                      event.target.value,
+                    )
                   }
                 >
-                  <option value="">Выберите организацию</option>
+                  <option value="">
+                    Выберите организацию
+                  </option>
+
                   {organizations.map((organization) => (
-                    <option key={organization.id} value={organization.id}>
+                    <option
+                      key={organization.id}
+                      value={organization.id}
+                    >
                       {organization.name}
                     </option>
                   ))}
                 </select>
+
+                {organizations.length === 0 ? (
+                  <p className={styles.fieldHint}>
+                    Для вашей учётной записи нет доступных
+                    организаций.
+                  </p>
+                ) : null}
+
                 {errors.organizationId ? (
                   <span className={styles.fieldError}>
                     {errors.organizationId}
@@ -481,50 +666,99 @@ export function CreateEventPage() {
               </label>
 
               <label className={styles.field}>
-                <span className={styles.label}>Площадка</span>
+                <span className={styles.label}>
+                  Площадка
+                </span>
+
                 <select
                   className={styles.input}
                   required
+                  disabled={isSubmitting}
                   value={form.venueId}
-                  onChange={(event) => updateField('venueId', event.target.value)}
+                  onChange={(event) =>
+                    updateField(
+                      'venueId',
+                      event.target.value,
+                    )
+                  }
                 >
-                  <option value="">Выберите площадку</option>
+                  <option value="">
+                    Выберите площадку
+                  </option>
+
                   {venues.map((venue) => (
-                    <option key={venue.id} value={venue.id}>
+                    <option
+                      key={venue.id}
+                      value={venue.id}
+                    >
                       {venue.name} · {venue.city}
                     </option>
                   ))}
                 </select>
+
+                {venues.length === 0 ? (
+                  <p className={styles.fieldHint}>
+                    Доступные площадки не найдены.
+                  </p>
+                ) : null}
+
                 {errors.venueId ? (
-                  <span className={styles.fieldError}>{errors.venueId}</span>
+                  <span className={styles.fieldError}>
+                    {errors.venueId}
+                  </span>
                 ) : null}
               </label>
 
               <label className={styles.field}>
-                <span className={styles.label}>Вид спорта</span>
+                <span className={styles.label}>
+                  Вид спорта
+                </span>
+
                 <select
                   className={styles.input}
                   required
+                  disabled={isSubmitting}
                   value={form.sportId}
-                  onChange={(event) => updateField('sportId', event.target.value)}
+                  onChange={(event) =>
+                    updateField(
+                      'sportId',
+                      event.target.value,
+                    )
+                  }
                 >
-                  <option value="">Выберите вид спорта</option>
-                  {sports
-                    .filter((sport) => sport.isActive)
-                    .map((sport) => (
-                      <option key={sport.id} value={sport.id}>
-                        {sport.name}
-                      </option>
-                    ))}
+                  <option value="">
+                    Выберите вид спорта
+                  </option>
+
+                  {sports.map((sport) => (
+                    <option
+                      key={sport.id}
+                      value={sport.id}
+                    >
+                      {sport.name}
+                    </option>
+                  ))}
                 </select>
+
+                {sports.length === 0 ? (
+                  <p className={styles.fieldHint}>
+                    Активные виды спорта не найдены.
+                  </p>
+                ) : null}
+
                 {errors.sportId ? (
-                  <span className={styles.fieldError}>{errors.sportId}</span>
+                  <span className={styles.fieldError}>
+                    {errors.sportId}
+                  </span>
                 ) : null}
               </label>
 
               <label className={styles.field}>
                 <div className={styles.fieldHeader}>
-                  <span className={styles.label}>Версия регламента</span>
+                  <span className={styles.label}>
+                    Версия регламента
+                  </span>
+
                   <NavLink
                     className={styles.inlineAction}
                     to="/organizer/regulations/create"
@@ -536,26 +770,38 @@ export function CreateEventPage() {
                 <select
                   className={styles.input}
                   required
+                  disabled={isSubmitting}
                   value={form.regulationVersionId}
                   onChange={(event) =>
-                    updateField('regulationVersionId', event.target.value)
+                    updateField(
+                      'regulationVersionId',
+                      event.target.value,
+                    )
                   }
                 >
-                  <option value="">Выберите версию регламента</option>
-                  {regulationVersions.map((regulationVersion) => (
-                    <option
-                      key={regulationVersion.id}
-                      value={regulationVersion.id}
-                    >
-                      {formatRegulationVersionLabel(regulationVersion)}
-                    </option>
-                  ))}
+                  <option value="">
+                    Выберите версию регламента
+                  </option>
+
+                  {regulationVersions.map(
+                    (regulationVersion) => (
+                      <option
+                        key={regulationVersion.id}
+                        value={regulationVersion.id}
+                      >
+                        {formatRegulationVersionLabel(
+                          regulationVersion,
+                        )}
+                      </option>
+                    ),
+                  )}
                 </select>
 
                 {regulationVersions.length === 0 ? (
                   <p className={styles.fieldHint}>
-                    Нет опубликованных регламентов. Создайте и опубликуйте
-                    версию, чтобы использовать её в мероприятии.
+                    Нет опубликованных регламентов.
+                    Создайте и опубликуйте версию, чтобы
+                    использовать её в мероприятии.
                   </p>
                 ) : null}
 
@@ -570,28 +816,46 @@ export function CreateEventPage() {
         </article>
 
         {errorMessage ? (
-          <p className={styles.errorMessage} role="alert">
+          <p
+            className={styles.errorMessage}
+            role="alert"
+          >
             {errorMessage}
           </p>
         ) : null}
 
         {successMessage ? (
-          <p className={styles.successMessage} role="status">
+          <p
+            className={styles.successMessage}
+            role="status"
+          >
             {successMessage}
           </p>
         ) : null}
 
         <div className={styles.actions}>
-          <NavLink className={styles.secondaryButton} to="/organizer/events">
+          <NavLink
+            className={styles.secondaryButton}
+            to="/organizer/events"
+          >
             Отмена
           </NavLink>
 
           <button
             className={styles.primaryButton}
             type="submit"
-            disabled={isSubmitting || isLoadingOptions}
+            disabled={
+              isSubmitting ||
+              isLoadingOptions ||
+              organizations.length === 0 ||
+              venues.length === 0 ||
+              sports.length === 0 ||
+              regulationVersions.length === 0
+            }
           >
-            {isSubmitting ? 'Создаём…' : 'Создать мероприятие'}
+            {isSubmitting
+              ? 'Создаём…'
+              : 'Создать мероприятие'}
           </button>
         </div>
       </form>

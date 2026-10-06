@@ -48,6 +48,7 @@ com\acme\sportplatform\SportPlatformApplication.class
 com\acme\sportplatform\organizations\api\OrganizationResponse.class
 com\acme\sportplatform\payments\application\CreateLocalPaymentForRegistrationUseCase.class
 com\acme\sportplatform\organizations\application\OrganizationRegistrationService.class
+com\acme\sportplatform\organizations\OrganizationManagementAccess.class
 com\acme\sportplatform\payments\infrastructure\yookassa\api\YooKassaConfirmation.class
 com\acme\sportplatform\identity\infrastructure\security\JwtProperties.class
 com\acme\sportplatform\competition\application\PublicEventCatalogQueryService.class

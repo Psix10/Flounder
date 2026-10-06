@@ -65,12 +65,12 @@ export function CreateRegulationPage() {
       return
     }
 
+    const authenticatedAccessToken = accessToken
     let isMounted = true
 
     async function loadSports() {
       try {
-        const result = await getSports(accessToken)
-
+        const result = await getSports(authenticatedAccessToken)
         if (isMounted) {
           setSports(result.filter((sport) => sport.isActive))
         }
@@ -160,7 +160,7 @@ export function CreateRegulationPage() {
         accessToken,
       )
 
-      navigate('/organizer/events/create', {
+      navigate('/organizer/events/new', {
         replace: true,
         state: {
           createdRegulationVersionId: publishedVersion.id,
@@ -175,18 +175,23 @@ export function CreateRegulationPage() {
 
   return (
     <section className={styles.page}>
-      <NavLink className={styles.backLink} to="/organizer/events/create">
+      <NavLink className={styles.backLink} to="/organizer/events/new">
         ← Вернуться к созданию мероприятия
       </NavLink>
 
       <p className={styles.eyebrow}>Панель организатора</p>
 
       <div className={styles.header}>
-        <h1 className={styles.title}>Новый регламент</h1>
-        <p className={styles.description}>
-          После сохранения регламент будет опубликован и станет доступен при
-          создании мероприятия.
-        </p>
+        <div>
+          <h1 className={styles.title}>
+            Новый регламент
+          </h1>
+
+          <p className={styles.description}>
+            После сохранения регламент будет опубликован
+            и станет доступен при создании мероприятия.
+          </p>
+        </div>
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -317,7 +322,7 @@ export function CreateRegulationPage() {
         ) : null}
 
         <div className={styles.actions}>
-          <NavLink className={styles.secondaryButton} to="/organizer/events/create">
+          <NavLink className={styles.secondaryButton} to="/organizer/events/new">
             Отмена
           </NavLink>
 
@@ -326,7 +331,7 @@ export function CreateRegulationPage() {
             type="submit"
             disabled={isLoading || isSubmitting}
           >
-            {isSubmitting ? 'Сохраняем…' : 'Создать и опубликовать'}
+            {isSubmitting ? 'Создаём и публикуем…' : 'Создать и опубликовать'}
           </button>
         </div>
       </form>

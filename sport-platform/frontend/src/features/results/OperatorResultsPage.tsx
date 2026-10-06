@@ -196,6 +196,8 @@ export function OperatorResultsPage() {
       setIsLoading(false)
       return
     }
+    const resolvedUnitId = unitId
+    const resolvedAccessToken = accessToken
 
     let isMounted = true
 
@@ -204,8 +206,10 @@ export function OperatorResultsPage() {
       setErrorMessage(null)
 
       try {
-        const loadedUnit = await getCompetitionUnitDetails(unitId, accessToken)
-
+        const loadedUnit = await getCompetitionUnitDetails(
+          resolvedUnitId,
+          resolvedAccessToken,
+        )
         if (!isMounted) {
           return
         }

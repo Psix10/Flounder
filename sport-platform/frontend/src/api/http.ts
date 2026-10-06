@@ -2,7 +2,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export class ApiError extends Error {
   public readonly status: number
-
   public readonly code?: string
 
   constructor(
@@ -38,16 +37,24 @@ export async function apiFetch<T>(
   }
 
   const { accessToken, ...requestOptions } = options
+  const headers = new Headers(requestOptions.headers)
+
+  headers.set('Accept', 'application/json')
+
+  if (accessToken) {
+    headers.set('Authorization', `Bearer ${accessToken}`)
+  }
+
+  if (
+    typeof requestOptions.body === 'string' &&
+    !headers.has('Content-Type')
+  ) {
+    headers.set('Content-Type', 'application/json')
+  }
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...requestOptions,
-    headers: {
-      Accept: 'application/json',
-      ...(accessToken
-        ? { Authorization: `Bearer ${accessToken}` }
-        : {}),
-      ...requestOptions.headers,
-    },
+    headers,
   })
 
   if (!response.ok) {
@@ -64,6 +71,10 @@ export async function apiFetch<T>(
       payload?.message ?? `Request failed with HTTP ${response.status}`,
       payload?.code,
     )
+  }
+
+  if (response.status === 204) {
+    return undefined as T
   }
 
   const contentType = response.headers.get('content-type')

@@ -58,7 +58,9 @@ export async function getRegulationTemplates(
 ): Promise<RegulationTemplateResponse[]> {
   return apiFetch<RegulationTemplateResponse[]>(
     '/api/v1/regulation-templates',
-    { accessToken },
+    {
+      accessToken,
+    },
   )
 }
 
@@ -67,7 +69,9 @@ export async function getRegulationVersions(
 ): Promise<RegulationVersionResponse[]> {
   return apiFetch<RegulationVersionResponse[]>(
     '/api/v1/regulation-versions',
-    { accessToken },
+    {
+      accessToken,
+    },
   )
 }
 
@@ -91,7 +95,7 @@ export async function createRegulationVersion(
   accessToken: string,
 ): Promise<RegulationVersionResponse> {
   return apiFetch<RegulationVersionResponse>(
-    `/api/v1/regulation-templates/${templateId}/versions`,
+    `/api/v1/regulation-templates/${encodeURIComponent(templateId)}/versions`,
     {
       method: 'POST',
       accessToken,
@@ -105,7 +109,7 @@ export async function publishRegulationVersion(
   accessToken: string,
 ): Promise<RegulationVersionResponse> {
   return apiFetch<RegulationVersionResponse>(
-    `/api/v1/regulation-versions/${versionId}/publish`,
+    `/api/v1/regulation-versions/${encodeURIComponent(versionId)}/publish`,
     {
       method: 'POST',
       accessToken,

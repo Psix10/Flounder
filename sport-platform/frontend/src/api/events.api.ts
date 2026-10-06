@@ -3,17 +3,33 @@ import { apiFetch } from './http'
 export type EventStatus =
   | 'DRAFT'
   | 'PUBLISHED'
-  | 'REGISTRATION_OPEN'
-  | 'REGISTRATION_CLOSED'
+  | 'REGISTRATIONOPEN'
+  | 'REGISTRATIONCLOSED'
+  | 'LIVE'
   | 'COMPLETED'
+  | 'ARCHIVED'
   | string
+
+export type EventDiscipline = {
+  id: string
+  code?: string | null
+  name: string
+  competitionFormat: 'INDIVIDUAL' | 'TEAM' | string
+  unitType?: string | null
+  resultType?: string | null
+  rankingStrategy?: string | null
+  participantLimit: number | null
+  entryFeeAmount: number | null
+  entryFeeCurrency: string | null
+  settingsJson: string | null
+}
 
 export type Event = {
   id: string
-  organizationId?: string
-  venueId?: string
+  organizationId?: string | null
+  venueId?: string | null
   sportId: string
-  regulationVersionId?: string
+  regulationVersionId?: string | null
   title: string
   description: string | null
   publicSlug: string
@@ -22,24 +38,31 @@ export type Event = {
   registrationCloseAt: string
   eventStartAt: string
   eventEndAt: string
-  createdAt?: string
-  updatedAt?: string
-  disciplines?: Array<{
-    id: string
-    code?: string
-    name: string
-    competitionFormat: 'INDIVIDUAL' | 'TEAM' | string
-    unitType?: string
-    resultType?: string
-    rankingStrategy?: string
-    participantLimit: number | null
-    entryFeeAmount: number
-    entryFeeCurrency: string
-    settingsJson: string | null
-  }>
+  settingsJson?: string | null
+  createdAt?: string | null
+  updatedAt?: string | null
+  disciplines?: EventDiscipline[]
 }
 
 export type EventResponse = Event
+export type OrganizerEvent = Event
+
+export type PublicEvent = {
+  id: string
+  sportId: string
+  title: string
+  description: string | null
+  registrationOpenAt: string
+  registrationCloseAt: string
+  eventStartAt: string
+  eventEndAt: string
+  status: EventStatus
+  publicSlug: string
+}
+
+export type PublicEventDetails = PublicEvent & {
+  disciplines: EventDiscipline[]
+}
 
 export type CreateEventRequest = {
   organizationId: string
@@ -55,24 +78,31 @@ export type CreateEventRequest = {
   eventEndAt: string
 }
 
-export async function getPublicEvents(): Promise<Event[]> {
-  return apiFetch<Event[]>('/api/v1/public/events')
+export async function getPublicEvents(): Promise<PublicEvent[]> {
+  return apiFetch<PublicEvent[]>('/api/v1/public/events')
 }
 
-export async function getPublicEventDetails(publicSlug: string): Promise<Event> {
-  return apiFetch<Event>(
+export async function getPublicEventDetails(
+  publicSlug: string,
+): Promise<PublicEventDetails> {
+  return apiFetch<PublicEventDetails>(
     `/api/v1/public/events/${encodeURIComponent(publicSlug)}`,
   )
 }
 
-export async function getMyEvents(accessToken: string): Promise<Event[]> {
-  return apiFetch<Event[]>('/api/v1/organizer/events', {
+export async function getMyEvents(
+  accessToken: string,
+): Promise<OrganizerEvent[]> {
+  return apiFetch<OrganizerEvent[]>('/api/v1/organizer/events', {
     accessToken,
   })
 }
 
-export async function getEvent(id: string, accessToken?: string): Promise<Event> {
-  return apiFetch<Event>(`/api/v1/events/${encodeURIComponent(id)}`, {
+export async function getEvent(
+  id: string,
+  accessToken?: string,
+): Promise<EventResponse> {
+  return apiFetch<EventResponse>(`/api/v1/events/${encodeURIComponent(id)}`, {
     accessToken,
   })
 }
@@ -87,8 +117,8 @@ export async function getEventById(
 export async function createEvent(
   request: CreateEventRequest,
   accessToken: string,
-): Promise<Event> {
-  return apiFetch<Event>('/api/v1/events', {
+): Promise<EventResponse> {
+  return apiFetch<EventResponse>('/api/v1/events', {
     method: 'POST',
     accessToken,
     headers: {
@@ -98,15 +128,24 @@ export async function createEvent(
   })
 }
 
-export async function publishEvent(id: string, accessToken: string): Promise<Event> {
-  return apiFetch<Event>(`/api/v1/events/${encodeURIComponent(id)}/publish`, {
-    method: 'POST',
-    accessToken,
-  })
+export async function publishEvent(
+  id: string,
+  accessToken: string,
+): Promise<EventResponse> {
+  return apiFetch<EventResponse>(
+    `/api/v1/events/${encodeURIComponent(id)}/publish`,
+    {
+      method: 'POST',
+      accessToken,
+    },
+  )
 }
 
-export async function openEventRegistration(id: string, accessToken: string): Promise<Event> {
-  return apiFetch<Event>(
+export async function openEventRegistration(
+  id: string,
+  accessToken: string,
+): Promise<EventResponse> {
+  return apiFetch<EventResponse>(
     `/api/v1/events/${encodeURIComponent(id)}/open-registration`,
     {
       method: 'POST',
@@ -115,8 +154,11 @@ export async function openEventRegistration(id: string, accessToken: string): Pr
   )
 }
 
-export async function closeEventRegistration(id: string, accessToken: string): Promise<Event> {
-  return apiFetch<Event>(
+export async function closeEventRegistration(
+  id: string,
+  accessToken: string,
+): Promise<EventResponse> {
+  return apiFetch<EventResponse>(
     `/api/v1/events/${encodeURIComponent(id)}/close-registration`,
     {
       method: 'POST',
@@ -125,9 +167,15 @@ export async function closeEventRegistration(id: string, accessToken: string): P
   )
 }
 
-export async function completeEvent(id: string, accessToken: string): Promise<Event> {
-  return apiFetch<Event>(`/api/v1/events/${encodeURIComponent(id)}/complete`, {
-    method: 'POST',
-    accessToken,
-  })
+export async function completeEvent(
+  id: string,
+  accessToken: string,
+): Promise<EventResponse> {
+  return apiFetch<EventResponse>(
+    `/api/v1/events/${encodeURIComponent(id)}/complete`,
+    {
+      method: 'POST',
+      accessToken,
+    },
+  )
 }

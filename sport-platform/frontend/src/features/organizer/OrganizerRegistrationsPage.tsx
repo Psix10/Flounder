@@ -10,6 +10,7 @@ import { useAuth } from '../../app/providers/AuthProvider'
 import type {
   Registration,
   RegistrationStatus,
+  ParticipantSnapshot,
 } from '../../features/registrations/registration.types'
 import styles from './OrganizerRegistrationsPage.module.css'
 
@@ -19,30 +20,12 @@ const FILTER_OPTIONS: Array<{
   value: RegistrationFilter
   label: string
 }> = [
-  {
-    value: 'ALL',
-    label: 'Все статусы',
-  },
-  {
-    value: 'SUBMITTED',
-    label: 'На рассмотрении',
-  },
-  {
-    value: 'CONFIRMED',
-    label: 'Подтверждённые',
-  },
-  {
-    value: 'NEEDS_CORRECTION',
-    label: 'Требуют уточнения',
-  },
-  {
-    value: 'REJECTED',
-    label: 'Отклонённые',
-  },
-  {
-    value: 'CANCELLED',
-    label: 'Отменённые',
-  },
+  { value: 'ALL', label: 'Все статусы' },
+  { value: 'SUBMITTED', label: 'На рассмотрении' },
+  { value: 'CONFIRMED', label: 'Подтверждённые' },
+  { value: 'NEEDS_CORRECTION', label: 'Требуют уточнения' },
+  { value: 'REJECTED', label: 'Отклонённые' },
+  { value: 'CANCELLED', label: 'Отменённые' },
 ]
 
 function getErrorMessage(error: unknown, fallback: string) {
@@ -101,11 +84,10 @@ function formatDate(value: string | null) {
 }
 
 function getSnapshotString(
-  snapshot: Registration['participantSnapshot'],
-  property: string,
-) {
+  snapshot: ParticipantSnapshot | null | undefined,
+  property: keyof ParticipantSnapshot,
+): string {
   const value = snapshot?.[property]
-
   return typeof value === 'string' ? value.trim() : ''
 }
 
@@ -144,8 +126,7 @@ export function OrganizerRegistrationsPage() {
   const [disciplineFilter, setDisciplineFilter] = useState('')
 
   const [isLoadingEvent, setIsLoadingEvent] = useState(true)
-  const [isLoadingRegistrations, setIsLoadingRegistrations] =
-    useState(true)
+  const [isLoadingRegistrations, setIsLoadingRegistrations] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   const isLoading = isLoadingEvent || isLoadingRegistrations
@@ -156,7 +137,7 @@ export function OrganizerRegistrationsPage() {
     }
 
     return new Map(
-      event.disciplines.map((discipline) => [
+      (event.disciplines ?? []).map((discipline) => [
         discipline.id,
         discipline.name,
       ]),
@@ -170,6 +151,8 @@ export function OrganizerRegistrationsPage() {
       return
     }
 
+    const currentEventId = eventId
+    const authenticatedAccessToken = accessToken
     let isMounted = true
 
     async function loadEvent() {
@@ -177,7 +160,10 @@ export function OrganizerRegistrationsPage() {
       setErrorMessage(null)
 
       try {
-        const loadedEvent = await getEventById(eventId, accessToken)
+        const loadedEvent = await getEventById(
+          currentEventId,
+          authenticatedAccessToken,
+        )
 
         if (isMounted) {
           setEvent(loadedEvent)
@@ -208,6 +194,8 @@ export function OrganizerRegistrationsPage() {
       return
     }
 
+    const currentEventId = eventId
+    const authenticatedAccessToken = accessToken
     let isMounted = true
 
     async function loadRegistrations() {
@@ -215,7 +203,7 @@ export function OrganizerRegistrationsPage() {
       setErrorMessage(null)
 
       const options: GetRegistrationsOptions = {
-        eventId,
+        eventId: currentEventId,
       }
 
       if (statusFilter !== 'ALL') {
@@ -224,7 +212,7 @@ export function OrganizerRegistrationsPage() {
 
       try {
         const loadedRegistrations = await getRegistrations(
-          accessToken,
+          authenticatedAccessToken,
           options,
         )
 
@@ -257,8 +245,7 @@ export function OrganizerRegistrationsPage() {
     }
 
     return registrations.filter(
-      (registration) =>
-        registration.eventDisciplineId === disciplineFilter,
+      (registration) => registration.eventDisciplineId === disciplineFilter,
     )
   }, [disciplineFilter, registrations])
 
@@ -290,9 +277,7 @@ export function OrganizerRegistrationsPage() {
       ) : null}
 
       {isLoading ? (
-        <div className={styles.stateCard}>
-          Загружаем событие и заявки…
-        </div>
+        <div className={styles.stateCard}>Загружаем событие и заявки…</div>
       ) : null}
 
       {!isLoading && !errorMessage && event ? (
@@ -302,14 +287,12 @@ export function OrganizerRegistrationsPage() {
               <span>Дисциплина</span>
 
               <select
-                onChange={(event) =>
-                  setDisciplineFilter(event.target.value)
-                }
+                onChange={(event) => setDisciplineFilter(event.target.value)}
                 value={disciplineFilter}
               >
                 <option value="">Все дисциплины</option>
 
-                {event.disciplines.map((discipline) => (
+                {(event.disciplines ?? []).map((discipline) => (
                   <option key={discipline.id} value={discipline.id}>
                     {discipline.name}
                   </option>
@@ -322,9 +305,7 @@ export function OrganizerRegistrationsPage() {
 
               <select
                 onChange={(event) =>
-                  setStatusFilter(
-                    event.target.value as RegistrationFilter,
-                  )
+                  setStatusFilter(event.target.value as RegistrationFilter)
                 }
                 value={statusFilter}
               >
@@ -358,9 +339,8 @@ export function OrganizerRegistrationsPage() {
                   getParticipantSecondaryInfo(registration)
 
                 const disciplineName =
-                  disciplineNameById.get(
-                    registration.eventDisciplineId,
-                  ) ?? 'Дисциплина не найдена'
+                  disciplineNameById.get(registration.eventDisciplineId) ??
+                  'Дисциплина не найдена'
 
                 return (
                   <article
@@ -369,9 +349,7 @@ export function OrganizerRegistrationsPage() {
                   >
                     <div className={styles.cardHeader}>
                       <div>
-                        <p className={styles.cardLabel}>
-                          {disciplineName}
-                        </p>
+                        <p className={styles.cardLabel}>{disciplineName}</p>
 
                         <h2 className={styles.participantName}>
                           {participantName}
@@ -395,9 +373,7 @@ export function OrganizerRegistrationsPage() {
                     </div>
 
                     <div className={styles.cardFooter}>
-                      <span>
-                        Подана: {formatDate(registration.submittedAt)}
-                      </span>
+                      <span>Подана: {formatDate(registration.submittedAt)}</span>
 
                       <Link
                         className={styles.reviewLink}

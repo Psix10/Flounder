@@ -87,7 +87,7 @@ export function SportsAdminPage() {
                 <tr key={sport.id}>
                   <td>{sport.code}</td>
                   <td>{sport.name}</td>
-                  <td>{sport.active ? 'Да' : 'Нет'}</td>
+                  <td>{sport.isActive ? 'Да' : 'Нет'}</td>
                 </tr>
               ))}
             </tbody>

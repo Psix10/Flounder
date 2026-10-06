@@ -122,6 +122,7 @@ export function OperatorRegistrationPage() {
     }
 
     const authenticatedAccessToken = accessToken
+    const resolvedRegistrationId = registrationId
     let isMounted = true
 
     async function loadData() {
@@ -130,7 +131,7 @@ export function OperatorRegistrationPage() {
 
       try {
         const loadedRegistration = await getRegistration(
-          registrationId,
+          resolvedRegistrationId,
           authenticatedAccessToken,
         )
 
@@ -143,7 +144,7 @@ export function OperatorRegistrationPage() {
 
         try {
           const loadedPayment = await getPaymentForReview(
-            registrationId,
+            resolvedRegistrationId,
             authenticatedAccessToken,
           )
 

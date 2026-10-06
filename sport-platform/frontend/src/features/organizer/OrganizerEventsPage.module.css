@@ -128,16 +128,6 @@
   color: #8c5a05;
 }
 
-.statusFinished {
-  background: #e2f4fc;
-  color: #0b5b7b;
-}
-
-.statusCancelled {
-  background: #fee9e7;
-  color: #a12747;
-}
-
 .statusNeutral {
   background: #edf0f3;
   color: #607083;
@@ -247,4 +237,71 @@
   .createLink {
     width: 100%;
   }
+}
+
+.statusLive {
+  color: #0b5b7b;
+  background: #e2f4fc;
+}
+
+.statusCompleted {
+  color: #5925dc;
+  background: #f4f3ff;
+}
+
+.statusArchived {
+  color: #475467;
+  background: #f2f4f7;
+}
+
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.statusDraft {
+  background: #edf0f3;
+  color: #607083;
+}
+
+.statusPublished {
+  background: #e8f0ff;
+  color: #2d5c9a;
+}
+
+.statusOpen {
+  background: #e5f7ec;
+  color: #17613c;
+}
+
+.statusClosed {
+  background: #fff4d7;
+  color: #8c5a05;
+}
+
+.statusLive {
+  color: #0b5b7b;
+  background: #e2f4fc;
+}
+
+.statusCompleted {
+  color: #5925dc;
+  background: #f4f3ff;
+}
+
+.statusArchived {
+  color: #475467;
+  background: #f2f4f7;
+}
+
+.statusNeutral {
+  background: #edf0f3;
+  color: #607083;
 }

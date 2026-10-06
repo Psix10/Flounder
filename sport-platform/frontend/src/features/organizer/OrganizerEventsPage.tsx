@@ -1,113 +1,117 @@
 import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router'
-import { getMyEvents, type OrganizerEvent } from '../../api/events.api'
+import { getMyEvents, type Event } from '../../api/events.api'
 import { ApiError } from '../../api/http'
 import { useAuth } from '../../app/providers/AuthProvider'
+import { getEventStatusLabel, getEventStatusTone } from './event-status'
 import styles from './OrganizerEventsPage.module.css'
 
-function getErrorMessage(error: unknown) {
+function getErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
     if (error.status === 403) {
-      return 'У вашей учётной записи нет прав на просмотр этого раздела.'
+      return 'Нет доступа к списку мероприятий организатора.'
     }
 
-    return error.message
+    return error.message || 'Не удалось загрузить мероприятия.'
   }
 
-  return 'Не удалось загрузить список событий.'
+  return 'Не удалось загрузить мероприятия.'
 }
 
-function statusLabel(status: string) {
-  const labels: Record<string, string> = {
-    DRAFT: 'Черновик',
-    PUBLISHED: 'Опубликовано',
-    REGISTRATION_OPEN: 'Регистрация открыта',
-    REGISTRATION_CLOSED: 'Регистрация закрыта',
-    FINISHED: 'Завершено',
-    CANCELLED: 'Отменено',
+function formatDate(value: string): string {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return 'Дата не указана'
   }
 
-  return labels[status] ?? status
+  return new Intl.DateTimeFormat('ru-RU', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date)
 }
 
-function statusClassName(status: string) {
-  const classes: Record<string, string> = {
-    DRAFT: styles.statusDraft,
-    PUBLISHED: styles.statusPublished,
-    REGISTRATION_OPEN: styles.statusOpen,
-    REGISTRATION_CLOSED: styles.statusClosed,
-    FINISHED: styles.statusFinished,
-    CANCELLED: styles.statusCancelled,
+function statusClassName(status: string): string {
+  switch (getEventStatusTone(status)) {
+    case 'draft':
+      return `${styles.statusBadge} ${styles.statusDraft}`
+    case 'published':
+      return `${styles.statusBadge} ${styles.statusPublished}`
+    case 'open':
+      return `${styles.statusBadge} ${styles.statusOpen}`
+    case 'closed':
+      return `${styles.statusBadge} ${styles.statusClosed}`
+    case 'live':
+      return `${styles.statusBadge} ${styles.statusLive}`
+    case 'completed':
+      return `${styles.statusBadge} ${styles.statusCompleted}`
+    case 'archived':
+      return `${styles.statusBadge} ${styles.statusArchived}`
+    default:
+      return `${styles.statusBadge} ${styles.statusNeutral}`
   }
-
-  return `${styles.statusBadge} ${classes[status] ?? styles.statusNeutral}`
 }
 
 export function OrganizerEventsPage() {
   const { session } = useAuth()
   const accessToken = session?.accessToken
 
-  const [events, setEvents] = useState<OrganizerEvent[]>([])
+  const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!accessToken) {
-      setIsLoading(false)
-      return
-    }
+    useEffect(() => {
+      if (!accessToken) {
+        setIsLoading(false)
+        return
+      }
 
-    const authenticatedAccessToken = accessToken
-    let isMounted = true
+      const authenticatedAccessToken = accessToken
+      let isMounted = true
 
-    async function loadEvents() {
-      setIsLoading(true)
-      setErrorMessage(null)
+      async function loadEvents() {
+        setIsLoading(true)
+        setErrorMessage(null)
 
-      try {
-        const data = await getMyEvents(authenticatedAccessToken)
+        try {
+          const data = await getMyEvents(authenticatedAccessToken)
 
-        if (isMounted) {
-          setEvents(data)
-        }
-      } catch (error) {
-        if (isMounted) {
-          setErrorMessage(getErrorMessage(error))
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false)
+          if (isMounted) {
+            setEvents(data)
+          }
+        } catch (error) {
+          if (isMounted) {
+            setErrorMessage(getErrorMessage(error))
+          }
+        } finally {
+          if (isMounted) {
+            setIsLoading(false)
+          }
         }
       }
-    }
 
-    void loadEvents()
+      void loadEvents()
 
-    return () => {
-      isMounted = false
-    }
-  }, [accessToken])
+      return () => {
+        isMounted = false
+      }
+    }, [accessToken])
 
   return (
     <section className={styles.page}>
       <div className={styles.titleRow}>
         <div>
-          <p className={styles.eyebrow}>Панель организатора</p>
-          <h1 className={styles.title}>Мои события</h1>
+          <p className={styles.eyebrow}>Организатор</p>
+          <h1 className={styles.title}>Мои мероприятия</h1>
         </div>
 
-        <NavLink
-          className={styles.createLink}
-          to="/organizer/events/new"
-        >
+        <NavLink className={styles.createLink} to="/organizer/events/new">
           Создать мероприятие
         </NavLink>
       </div>
 
       {isLoading ? (
-        <div className={styles.stateCard}>
-          Загружаем список событий…
-        </div>
+        <div className={styles.stateCard}>Загружаем мероприятия…</div>
       ) : null}
 
       {errorMessage ? (
@@ -119,14 +123,15 @@ export function OrganizerEventsPage() {
       {!isLoading && !errorMessage ? (
         events.length === 0 ? (
           <div className={styles.stateCard}>
-            У вас пока нет созданных событий.
+            У вас пока нет мероприятий. Создайте первое событие, чтобы начать работу.
           </div>
         ) : (
           <div className={styles.tableWrap}>
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th scope="col">Событие</th>
+                  <th scope="col">Мероприятие</th>
+                  <th scope="col">Дата</th>
                   <th scope="col">Статус</th>
                   <th scope="col">
                     <span className={styles.visuallyHidden}>Действия</span>
@@ -138,18 +143,22 @@ export function OrganizerEventsPage() {
                 {events.map((event) => (
                   <tr key={event.id}>
                     <td>
-                      <strong className={styles.eventName}>
-                        {event.title}
-                      </strong>
+                      <strong className={styles.eventName}>{event.title}</strong>
 
-                      <span className={styles.eventCode}>
-                        {event.publicSlug}
-                      </span>
+                      {event.publicSlug ? (
+                        <span className={styles.eventCode}>{event.publicSlug}</span>
+                      ) : null}
+
+                      {event.description ? (
+                        <p className={styles.eventDescription}>{event.description}</p>
+                      ) : null}
                     </td>
+
+                    <td>{formatDate(event.eventStartAt)}</td>
 
                     <td>
                       <span className={statusClassName(event.status)}>
-                        {statusLabel(event.status)}
+                        {getEventStatusLabel(event.status)}
                       </span>
                     </td>
 
@@ -157,17 +166,19 @@ export function OrganizerEventsPage() {
                       <div className={styles.actions}>
                         <NavLink
                           className={styles.secondaryLink}
-                          to={`/organizer/events/${event.id}/registrations`}
+                          to={`/organizer/events/${encodeURIComponent(event.id)}/registrations`}
                         >
                           Заявки
                         </NavLink>
 
-                        <NavLink
-                          className={styles.openLink}
-                          to={`/events/${event.publicSlug}`}
-                        >
-                          Открыть
-                        </NavLink>
+                        {event.publicSlug ? (
+                          <NavLink
+                            className={styles.openLink}
+                            to={`/events/${encodeURIComponent(event.publicSlug)}`}
+                          >
+                            Открыть
+                          </NavLink>
+                        ) : null}
                       </div>
                     </td>
                   </tr>

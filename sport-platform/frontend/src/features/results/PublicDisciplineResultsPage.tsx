@@ -142,7 +142,7 @@ export function PublicDisciplineResultsPage() {
     try {
       const event = await getPublicEventDetails(publicSlug)
 
-      const discipline = event.disciplines.find(
+      const discipline = (event.disciplines ?? []).find(
         (item) => item.id === disciplineId,
       )
 

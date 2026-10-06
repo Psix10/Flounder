@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
 import com.acme.sportplatform.organizations.OrganizationLookup;
+import com.acme.sportplatform.organizations.OrganizationManagementAccess;
 import com.acme.sportplatform.organizations.api.CreateOrganizationRequest;
 import com.acme.sportplatform.organizations.api.OrganizationResponse;
 import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationEntity;
@@ -17,7 +18,10 @@ import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMembe
 import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationRepository;
 
 @Service
-public class OrganizationService implements OrganizationLookup {
+public class OrganizationService implements OrganizationLookup, OrganizationManagementAccess {
+
+    private static final String OWNER = "OWNER";
+    private static final String ADMIN = "ADMIN";
 
     private final OrganizationRepository organizationRepository;
     private final OrganizationMemberRepository organizationMemberRepository;
@@ -37,9 +41,7 @@ public class OrganizationService implements OrganizationLookup {
     }
 
     @Transactional
-    public OrganizationResponse createOrganization(
-            CreateOrganizationRequest request
-    ) {
+    public OrganizationResponse createOrganization(CreateOrganizationRequest request) {
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         OrganizationEntity entity = new OrganizationEntity();
@@ -53,9 +55,7 @@ public class OrganizationService implements OrganizationLookup {
         entity.setCreatedAt(now);
         entity.setUpdatedAt(now);
 
-        OrganizationEntity saved =
-                organizationRepository.save(entity);
-
+        OrganizationEntity saved = organizationRepository.save(entity);
         return mapToResponse(saved);
     }
 
@@ -68,12 +68,10 @@ public class OrganizationService implements OrganizationLookup {
         OrganizationEntity organization;
 
         if (platformAdmin) {
-            organization = organizationRepository
-                    .findById(organizationId)
+            organization = organizationRepository.findById(organizationId)
                     .orElseThrow(this::organizationNotFound);
         } else {
-            organization = organizationRepository
-                    .findByIdAndMemberUserId(
+            organization = organizationRepository.findByIdAndMemberUserId(
                             organizationId,
                             currentUserId
                     )
@@ -91,13 +89,9 @@ public class OrganizationService implements OrganizationLookup {
         List<OrganizationEntity> organizations;
 
         if (platformAdmin) {
-            organizations =
-                    organizationRepository.findAllByOrderByNameAsc();
+            organizations = organizationRepository.findAllByOrderByNameAsc();
         } else {
-            organizations =
-                    organizationRepository.findAllByMemberUserId(
-                            currentUserId
-                    );
+            organizations = organizationRepository.findAllByMemberUserId(currentUserId);
         }
 
         return organizations.stream()
@@ -105,19 +99,14 @@ public class OrganizationService implements OrganizationLookup {
                 .toList();
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public boolean canManageOrganization(
-            UUID organizationId,
-            UUID userId
-    ) {
+    public boolean canManageOrganization(UUID organizationId, UUID userId) {
         return organizationMemberRepository
-                .findByOrganizationIdAndUserId(
-                        organizationId,
-                        userId
-                )
+                .findByOrganizationIdAndUserId(organizationId, userId)
                 .map(member ->
-                        "OWNER".equals(member.getMemberRole())
-                                || "ADMIN".equals(member.getMemberRole())
+                        OWNER.equals(member.getMemberRole())
+                                || ADMIN.equals(member.getMemberRole())
                 )
                 .orElse(false);
     }
@@ -129,9 +118,7 @@ public class OrganizationService implements OrganizationLookup {
         );
     }
 
-    private OrganizationResponse mapToResponse(
-            OrganizationEntity entity
-    ) {
+    private OrganizationResponse mapToResponse(OrganizationEntity entity) {
         return new OrganizationResponse(
                 entity.getId(),
                 entity.getType(),

@@ -168,6 +168,8 @@ export function PaymentPage() {
       return
     }
 
+    const resolvedAccessToken = accessToken
+    const resolvedRegistrationId = registrationId
     let isMounted = true
 
     async function loadPage() {
@@ -175,10 +177,10 @@ export function PaymentPage() {
       setErrorMessage(null)
 
       try {
-        const registrations = await getMyRegistrations(accessToken)
+        const registrations = await getMyRegistrations(resolvedAccessToken)
 
         const ownRegistration = registrations.find(
-          (item) => item.id === registrationId,
+          (item) => item.id === resolvedRegistrationId,
         )
 
         if (!ownRegistration) {
@@ -204,8 +206,8 @@ export function PaymentPage() {
 
         try {
           const loadedPayment = await getPaymentForRegistration(
-            registrationId,
-            accessToken,
+            resolvedRegistrationId,
+            resolvedAccessToken,
           )
 
           if (isMounted) {

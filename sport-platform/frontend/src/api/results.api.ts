@@ -211,11 +211,9 @@ export function changeCompetitionUnitPublication(
   unitId: CompetitionUnitId,
   published: boolean,
   accessToken: string,
-): Promise<void> {
-  return apiFetch<void>(
-    `/api/v1/competition-units/${encodeURIComponent(
-      unitId,
-    )}/publication`,
+): Promise<CompetitionUnitDetailsResponse> {
+  return apiFetch<CompetitionUnitDetailsResponse>(
+    `/api/v1/competition-units/${encodeURIComponent(unitId)}/publication`,
     {
       method: 'POST',
       accessToken,
@@ -247,6 +245,7 @@ export type PublicDisciplineResultEntry = {
   place: number | null
   participantName: string
   clubName: string | null
+  laneOrPosition: number | null
   rawValue: string | null
   resultType: string | null
   status: string

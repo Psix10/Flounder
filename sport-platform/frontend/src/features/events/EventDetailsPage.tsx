@@ -1,14 +1,20 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
-import { getPublicEventDetails } from '../../api/events.api'
+import {
+  getPublicEventDetails,
+  type PublicEventDetails,
+} from '../../api/events.api'
 import { ApiError } from '../../api/http'
 import { ErrorState } from '../../components/ErrorState'
 import { LoadingState } from '../../components/LoadingState'
-import type {
-  DisciplineSettings,
-  PublicEventDetails,
-} from './event.types'
 import styles from './EventDetailsPage.module.css'
+
+type DisciplineSettings = {
+  gender?: string
+  ageGroup?: string
+  distanceMeters?: number
+  poolLengthMeters?: number
+}
 
 function formatDate(value: string | null) {
   if (!value) {
@@ -22,7 +28,11 @@ function formatDate(value: string | null) {
   }).format(new Date(value))
 }
 
-function formatMoney(amount: number, currency: string) {
+function formatMoney(amount: number | null, currency: string | null) {
+  if (amount === null || currency === null || !currency.trim()) {
+    return 'Бесплатно'
+  }
+
   return new Intl.NumberFormat('ru-RU', {
     style: 'currency',
     currency,
@@ -38,7 +48,11 @@ function parseSettings(settingsJson: string | null): DisciplineSettings {
   try {
     const parsed: unknown = JSON.parse(settingsJson)
 
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    if (
+      typeof parsed !== 'object' ||
+      parsed === null ||
+      Array.isArray(parsed)
+    ) {
       return {}
     }
 
@@ -69,7 +83,7 @@ function getAgeGroupLabel(value: string | undefined) {
 }
 
 export function EventDetailsPage() {
-  const { eventCode } = useParams()
+  const { eventCode } = useParams<{ eventCode: string }>()
   const [event, setEvent] = useState<PublicEventDetails | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
