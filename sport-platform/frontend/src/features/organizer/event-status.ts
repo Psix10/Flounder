@@ -1,39 +1,58 @@
-import type { EventStatus } from '../../api/events.api'
+export type EventStatusTone =
+  | 'draft'
+  | 'published'
+  | 'open'
+  | 'closed'
+  | 'live'
+  | 'completed'
+  | 'archived'
+  | 'neutral'
 
-export function normalizeEventStatus(status: EventStatus | null | undefined): string {
-  return String(status ?? '').trim().toUpperCase()
+export function normalizeEventStatus(status?: string | null): string {
+  if (!status) {
+    return 'UNKNOWN'
+  }
+
+  switch (status.trim().toUpperCase()) {
+    case 'REGISTRATIONOPEN':
+      return 'REGISTRATION_OPEN'
+    case 'REGISTRATIONCLOSED':
+      return 'REGISTRATION_CLOSED'
+    default:
+      return status.trim().toUpperCase()
+  }
 }
 
-export function getEventStatusLabel(status: EventStatus): string {
+export function getEventStatusLabel(status?: string | null): string {
   switch (normalizeEventStatus(status)) {
     case 'DRAFT':
       return 'Черновик'
     case 'PUBLISHED':
       return 'Опубликовано'
-    case 'REGISTRATIONOPEN':
+    case 'REGISTRATION_OPEN':
       return 'Регистрация открыта'
-    case 'REGISTRATIONCLOSED':
+    case 'REGISTRATION_CLOSED':
       return 'Регистрация закрыта'
     case 'LIVE':
-      return 'Идёт'
+      return 'В процессе'
     case 'COMPLETED':
       return 'Завершено'
     case 'ARCHIVED':
-      return 'Архив'
+      return 'В архиве'
     default:
-      return status
-    }
+      return status || 'Неизвестно'
+  }
 }
 
-export function getEventStatusTone(status: EventStatus): string {
+export function getEventStatusTone(status?: string | null): EventStatusTone {
   switch (normalizeEventStatus(status)) {
     case 'DRAFT':
       return 'draft'
     case 'PUBLISHED':
       return 'published'
-    case 'REGISTRATIONOPEN':
+    case 'REGISTRATION_OPEN':
       return 'open'
-    case 'REGISTRATIONCLOSED':
+    case 'REGISTRATION_CLOSED':
       return 'closed'
     case 'LIVE':
       return 'live'
@@ -42,23 +61,6 @@ export function getEventStatusTone(status: EventStatus): string {
     case 'ARCHIVED':
       return 'archived'
     default:
-      return 'default'
+      return 'neutral'
   }
-}
-
-export function canPublishEvent(status: EventStatus): boolean {
-  return normalizeEventStatus(status) === 'DRAFT'
-}
-
-export function canOpenRegistration(status: EventStatus): boolean {
-  return normalizeEventStatus(status) === 'PUBLISHED'
-}
-
-export function canCloseRegistration(status: EventStatus): boolean {
-  return normalizeEventStatus(status) === 'REGISTRATIONOPEN'
-}
-
-export function canCompleteEvent(status: EventStatus): boolean {
-  const normalized = normalizeEventStatus(status)
-  return normalized === 'REGISTRATIONCLOSED' || normalized === 'LIVE'
 }

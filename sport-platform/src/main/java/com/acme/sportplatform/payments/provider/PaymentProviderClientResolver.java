@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 
 @Component
 public class PaymentProviderClientResolver {

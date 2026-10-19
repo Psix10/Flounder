@@ -60,42 +60,42 @@ export function OrganizerEventsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-    useEffect(() => {
-      if (!accessToken) {
-        setIsLoading(false)
-        return
-      }
+  useEffect(() => {
+    if (!accessToken) {
+      setIsLoading(false)
+      return
+    }
 
-      const authenticatedAccessToken = accessToken
-      let isMounted = true
+    const authenticatedAccessToken = accessToken
+    let isMounted = true
 
-      async function loadEvents() {
-        setIsLoading(true)
-        setErrorMessage(null)
+    async function loadEvents() {
+      setIsLoading(true)
+      setErrorMessage(null)
 
-        try {
-          const data = await getMyEvents(authenticatedAccessToken)
+      try {
+        const data = await getMyEvents(authenticatedAccessToken)
 
-          if (isMounted) {
-            setEvents(data)
-          }
-        } catch (error) {
-          if (isMounted) {
-            setErrorMessage(getErrorMessage(error))
-          }
-        } finally {
-          if (isMounted) {
-            setIsLoading(false)
-          }
+        if (isMounted) {
+          setEvents(data)
+        }
+      } catch (error) {
+        if (isMounted) {
+          setErrorMessage(getErrorMessage(error))
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
         }
       }
+    }
 
-      void loadEvents()
+    void loadEvents()
 
-      return () => {
-        isMounted = false
-      }
-    }, [accessToken])
+    return () => {
+      isMounted = false
+    }
+  }, [accessToken])
 
   return (
     <section className={styles.page}>
@@ -164,6 +164,13 @@ export function OrganizerEventsPage() {
 
                     <td>
                       <div className={styles.actions}>
+                        <NavLink
+                          className={styles.primaryLink}
+                          to={`/organizer/events/${encodeURIComponent(event.id)}`}
+                        >
+                          Управлять
+                        </NavLink>
+
                         <NavLink
                           className={styles.secondaryLink}
                           to={`/organizer/events/${encodeURIComponent(event.id)}/registrations`}

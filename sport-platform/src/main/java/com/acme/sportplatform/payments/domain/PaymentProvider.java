@@ -1,4 +1,4 @@
-package com.acme.sportplatform.payments;
+package com.acme.sportplatform.payments.domain;
 
 public enum PaymentProvider {
 

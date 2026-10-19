@@ -3,7 +3,7 @@ package com.acme.sportplatform.payments.application;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 
 public record CreatedLocalPayment(
         UUID paymentId,

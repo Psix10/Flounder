@@ -1,0 +1,1 @@
+Functional checks completed; benchmark NOT RUN.

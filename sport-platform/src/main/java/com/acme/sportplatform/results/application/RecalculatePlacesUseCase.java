@@ -66,13 +66,11 @@ public class RecalculatePlacesUseCase {
                 ? List.of()
                 : resultRepository.findByCompetitionUnitEntryIdIn(entryIds);
 
-        boolean hasInvalidPendingResult = allResults.stream()
-                .filter(result ->
-                        ResultStatus.PENDING.name().equals(result.getStatus()))
-                .anyMatch(result ->
-                        parseNumeric(result.getRawValue()) == null);
+        boolean hasInvalidRankableResult = allResults.stream()
+                .filter(this::canBeRanked)
+                .anyMatch(result -> parseNumeric(result.getRawValue()) == null);
 
-        if (hasInvalidPendingResult) {
+        if (hasInvalidRankableResult) {
             throw new BusinessException(
                     "results.invalid_raw_value",
                     "Нельзя пересчитать места: один или несколько результатов имеют неверный формат."
@@ -131,10 +129,16 @@ public class RecalculatePlacesUseCase {
     }
 
     private Comparator<RankedResult> rankedComparator(boolean descending) {
-        Comparator<RankedResult> comparator =
+        Comparator<RankedResult> byValue =
                 Comparator.comparing(RankedResult::value);
 
-        return descending ? comparator.reversed() : comparator;
+        if (descending) {
+            byValue = byValue.reversed();
+        }
+
+        return byValue.thenComparing(
+                ranked -> ranked.result().getId().toString()
+        );
     }
 
     private Double parseNumeric(String rawValue) {
@@ -144,10 +148,11 @@ public class RecalculatePlacesUseCase {
 
         try {
             if (!rawValue.contains(":")) {
-                return Double.parseDouble(rawValue);
+                double value = Double.parseDouble(rawValue);
+                return Double.isFinite(value) ? value : null;
             }
 
-            String[] parts = rawValue.split(":");
+            String[] parts = rawValue.split(":", -1);
 
             if (parts.length != 2) {
                 return null;
@@ -156,11 +161,16 @@ public class RecalculatePlacesUseCase {
             double minutes = Double.parseDouble(parts[0]);
             double seconds = Double.parseDouble(parts[1]);
 
-            if (minutes < 0 || seconds < 0 || seconds >= 60) {
+            if (!Double.isFinite(minutes)
+                    || !Double.isFinite(seconds)
+                    || minutes < 0
+                    || seconds < 0
+                    || seconds >= 60) {
                 return null;
             }
 
-            return minutes * 60 + seconds;
+            double value = minutes * 60 + seconds;
+            return Double.isFinite(value) ? value : null;
         } catch (NumberFormatException exception) {
             return null;
         }

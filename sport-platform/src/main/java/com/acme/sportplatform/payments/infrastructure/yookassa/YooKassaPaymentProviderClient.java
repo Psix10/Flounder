@@ -11,7 +11,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.infrastructure.yookassa.api.YooKassaAmount;
 import com.acme.sportplatform.payments.infrastructure.yookassa.api.YooKassaConfirmation;

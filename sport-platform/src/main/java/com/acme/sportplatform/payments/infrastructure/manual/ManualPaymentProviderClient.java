@@ -2,7 +2,7 @@ package com.acme.sportplatform.payments.infrastructure.manual;
 
 import org.springframework.stereotype.Component;
 
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.provider.PaymentProviderClient;
 import com.acme.sportplatform.payments.provider.ProviderPaymentCommand;

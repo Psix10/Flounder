@@ -2,7 +2,7 @@ package com.acme.sportplatform.payments.provider;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 
 @ConfigurationProperties(prefix = "app.payments")
 public class PaymentProviderProperties {

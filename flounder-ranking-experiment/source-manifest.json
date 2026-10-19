@@ -1,0 +1,22 @@
+{
+  "generated_source_sha256": {
+    "PROVENANCE.md": "21f78c4aa64b3021645d2b6496e64ae69ca47c78eca67f7497901cbb61471dc4",
+    "README.md": "b50c3599d932b923e15a62f627e7d3aeee2c9ffca8084ae4e5b1db65b1bc000f",
+    "RUN.sh": "b92812556fd708f86c8b793e7addfa45b846b4a0305c616b7d4348ea1f32d48d",
+    "pom.xml": "bdbaa6f426f72cd0558bc4aa5c7f41797af44ae98a43913febce0a1215e454f8",
+    "src/main/java/com/acme/research/ranking/NumericContract.java": "afcb81458766efb12f72aab7d44950e011449e04462f821ce38b44a49df78f33",
+    "src/main/java/com/acme/research/ranking/RankingExperiment.java": "30915f2b3b62d64ad536f431ad0a4ecafe06e989f2c167d8cd926753b9301ffb",
+    "src/main/java/com/acme/research/ranking/RuleFailure.java": "f9db5d5ab3c449df791df87059dbcf9bdb9e3d50270efbd2752d41ce50b3982f",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitEntity.java": "7a45d90c60106a7e3a34e963927dba2e2a525b6026180d06e4a1e285c3a80a10",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitEntryEntity.java": "d27279b5bf1fd2eaaa0c4d38bbef3c40c2caf1a3b6cac50daed4cd7a76ec4a57",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitEntryRepository.java": "a0ff2725760f138240f747636d70eef920fb43cce03051a18de770cb81b9db5e",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitRepository.java": "409e9dcef9ccff48a688ad7064162516350ae7db8947782d9ade33ce47ce6496",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/ResultEntity.java": "bea5de3dd7f1015f8b7a3258cf9cac3f3a9b2e79f7031b554dbef5190d159e46",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/ResultRepository.java": "c04002c8c222d9dc0f216cfb668251473064b1ddf4387d4f90c5b8cfe1ac04ae",
+    "src/test/java/com/acme/research/ranking/JdbcMeter.java": "418ba78e3ff8260f229d5ee24fc1d1de82b03fafcdd998c4cb28b5779076d385",
+    "src/test/java/com/acme/research/ranking/RankingComparisonTest.java": "13112755bac143227da75f305f60c738ec93e458a754cbee00f8631c2006836b",
+    "src/test/resources/research-schema.sql": "826b339b106eee45d061a4762770f9438c71a3b5904a85f23d65b52230f59c4a"
+  },
+  "execution_status": "NOT_RUN",
+  "maven_compile_status": "NOT_RUN"
+}

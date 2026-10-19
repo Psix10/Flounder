@@ -8,13 +8,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.acme.sportplatform.competition.domain.EventDisciplineStatus;
 import com.acme.sportplatform.competition.infrastructure.jpa.EventDisciplineEntity;
@@ -27,7 +34,7 @@ import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEnt
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentEntity;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentRepository;
@@ -35,14 +42,6 @@ import com.acme.sportplatform.sports.infrastructure.jpa.DisciplineTemplateEntity
 import com.acme.sportplatform.sports.infrastructure.jpa.DisciplineTemplateRepository;
 import com.acme.sportplatform.support.AbstractPostgresIntegrationTest;
 import com.jayway.jsonpath.JsonPath;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @TestPropertySource(properties = "app.payments.provider=MANUAL")

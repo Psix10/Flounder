@@ -8,7 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentWebhookProcessingStatus;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentWebhookEventEntity;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentWebhookEventRepository;

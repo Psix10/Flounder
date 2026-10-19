@@ -3,8 +3,8 @@ import { apiFetch } from './http'
 export type EventStatus =
   | 'DRAFT'
   | 'PUBLISHED'
-  | 'REGISTRATIONOPEN'
-  | 'REGISTRATIONCLOSED'
+  | 'REGISTRATION_OPEN'
+  | 'REGISTRATION_CLOSED'
   | 'LIVE'
   | 'COMPLETED'
   | 'ARCHIVED'
@@ -12,6 +12,7 @@ export type EventStatus =
 
 export type EventDiscipline = {
   id: string
+  status?: string | null
   code?: string | null
   name: string
   competitionFormat: 'INDIVIDUAL' | 'TEAM' | string
@@ -173,6 +174,34 @@ export async function completeEvent(
 ): Promise<EventResponse> {
   return apiFetch<EventResponse>(
     `/api/v1/events/${encodeURIComponent(id)}/complete`,
+    {
+      method: 'POST',
+      accessToken,
+    },
+  )
+}
+
+export async function getEventDisciplines(
+  eventId: string,
+  accessToken: string,
+): Promise<EventDiscipline[]> {
+  return apiFetch<EventDiscipline[]>(
+    `/api/v1/events/${encodeURIComponent(eventId)}/disciplines`,
+    {
+      accessToken,
+    },
+  )
+}
+
+export async function publishEventDiscipline(
+  eventId: string,
+  disciplineId: string,
+  accessToken: string,
+): Promise<EventDiscipline> {
+  return apiFetch<EventDiscipline>(
+    `/api/v1/events/${encodeURIComponent(
+      eventId,
+    )}/disciplines/${encodeURIComponent(disciplineId)}/publish`,
     {
       method: 'POST',
       accessToken,

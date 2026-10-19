@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.payments.PaymentProvider;
 import com.acme.sportplatform.payments.api.PaymentResponse;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentEntity;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentRepository;

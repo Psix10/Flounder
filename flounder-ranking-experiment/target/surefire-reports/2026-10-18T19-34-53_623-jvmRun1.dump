@@ -1,0 +1,419 @@
+# Created at 2026-10-18T19:38:50.992
+Exiting self fork JVM. Received SHUTDOWN command from Maven shutdown hook.
+Thread dump before exiting the process (39416@psix):
+"main" 
+   java.lang.Thread.State: WAITING
+        at java.base@21.0.12.1/jdk.internal.misc.Unsafe.park(Native Method)
+        at java.base@21.0.12.1/java.util.concurrent.locks.LockSupport.park(LockSupport.java:221)
+        at java.base@21.0.12.1/java.util.concurrent.CompletableFuture$Signaller.block(CompletableFuture.java:1864)
+        at java.base@21.0.12.1/java.util.concurrent.ForkJoinPool.unmanagedBlock(ForkJoinPool.java:3780)
+        at java.base@21.0.12.1/java.util.concurrent.ForkJoinPool.managedBlock(ForkJoinPool.java:3725)
+        at java.base@21.0.12.1/java.util.concurrent.CompletableFuture.waitingGet(CompletableFuture.java:1898)
+        at java.base@21.0.12.1/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:2072)
+        at java.base@21.0.12.1/java.nio.channels.Channels$1.read(Channels.java:164)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:149)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:280)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:250)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:56)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.impl.io.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:331)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:196)
+        at app//com.github.dockerjava.zerodep.HijackingHttpRequestExecutor.execute(HijackingHttpRequestExecutor.java:50)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.InternalExecRuntime.lambda$execute$0(InternalExecRuntime.java:236)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.InternalExecRuntime$$Lambda/0x00000125a42cdd08.execute(Unknown Source)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$InternalConnectionEndpoint.execute(PoolingHttpClientConnectionManager.java:798)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.InternalExecRuntime.execute(InternalExecRuntime.java:233)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.MainClientExec.execute(MainClientExec.java:120)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement$$Lambda/0x00000125a42c10e8.proceed(Unknown Source)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:200)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement$$Lambda/0x00000125a42c10e8.proceed(Unknown Source)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:195)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement$$Lambda/0x00000125a42c10e8.proceed(Unknown Source)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:151)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement$$Lambda/0x00000125a42c10e8.proceed(Unknown Source)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:112)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement$$Lambda/0x00000125a42c10e8.proceed(Unknown Source)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:110)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+        at app//com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+        at app//com.github.dockerjava.zerodep.ApacheDockerHttpClientImpl.execute(ApacheDockerHttpClientImpl.java:189)
+        at app//com.github.dockerjava.zerodep.ZerodepDockerHttpClient.execute(ZerodepDockerHttpClient.java:8)
+        at app//org.testcontainers.dockerclient.HeadersAddingDockerHttpClient.execute(HeadersAddingDockerHttpClient.java:23)
+        at app//org.testcontainers.shaded.com.github.dockerjava.core.DefaultInvocationBuilder.execute(DefaultInvocationBuilder.java:228)
+        at app//org.testcontainers.shaded.com.github.dockerjava.core.DefaultInvocationBuilder.get(DefaultInvocationBuilder.java:202)
+        at app//org.testcontainers.shaded.com.github.dockerjava.core.DefaultInvocationBuilder.get(DefaultInvocationBuilder.java:74)
+        at app//org.testcontainers.shaded.com.github.dockerjava.core.exec.InfoCmdExec.exec(InfoCmdExec.java:24)
+        at app//org.testcontainers.shaded.com.github.dockerjava.core.exec.InfoCmdExec.exec(InfoCmdExec.java:14)
+        at app//org.testcontainers.shaded.com.github.dockerjava.core.command.AbstrDockerCmd.exec(AbstrDockerCmd.java:33)
+        at app//org.testcontainers.dockerclient.DockerClientProviderStrategy.tryOutStrategy(DockerClientProviderStrategy.java:289)
+        at app//org.testcontainers.dockerclient.DockerClientProviderStrategy.lambda$getFirstValidStrategy$5(DockerClientProviderStrategy.java:263)
+        at app//org.testcontainers.dockerclient.DockerClientProviderStrategy$$Lambda/0x00000125a42573b0.test(Unknown Source)
+        at java.base@21.0.12.1/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:178)
+        at java.base@21.0.12.1/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+        at java.base@21.0.12.1/java.util.stream.ReferencePipeline$2$1.accept(ReferencePipeline.java:179)
+        at java.base@21.0.12.1/java.util.ArrayList$ArrayListSpliterator.tryAdvance(ArrayList.java:1685)
+        at java.base@21.0.12.1/java.util.stream.ReferencePipeline.forEachWithCancel(ReferencePipeline.java:129)
+        at java.base@21.0.12.1/java.util.stream.AbstractPipeline.copyIntoWithCancel(AbstractPipeline.java:527)
+        at java.base@21.0.12.1/java.util.stream.AbstractPipeline.copyInto(AbstractPipeline.java:513)
+        at java.base@21.0.12.1/java.util.stream.AbstractPipeline.wrapAndCopyInto(AbstractPipeline.java:499)
+        at java.base@21.0.12.1/java.util.stream.FindOps$FindOp.evaluateSequential(FindOps.java:150)
+        at java.base@21.0.12.1/java.util.stream.AbstractPipeline.evaluate(AbstractPipeline.java:234)
+        at java.base@21.0.12.1/java.util.stream.ReferencePipeline.findFirst(ReferencePipeline.java:647)
+        at app//org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:264)
+        at app//org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:154)
+        at app//org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:196)
+        at app//org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:108)
+        at app//com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+        at app//org.testcontainers.containers.GenericContainer.start(GenericContainer.java:316)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension$StoreAdapter.start(TestcontainersExtension.java:276)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension$StoreAdapter.access$200(TestcontainersExtension.java:263)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension.lambda$startContainers$4(TestcontainersExtension.java:83)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension$$Lambda/0x00000125a418eff8.apply(Unknown Source)
+        at app//org.junit.platform.engine.support.store.NamespacedHierarchicalStore.lambda$getOrComputeIfAbsent$5(NamespacedHierarchicalStore.java:182)
+        at app//org.junit.platform.engine.support.store.NamespacedHierarchicalStore$$Lambda/0x00000125a40d0230.get(Unknown Source)
+        at app//org.junit.platform.engine.support.store.NamespacedHierarchicalStore$MemoizingSupplier.computeValue(NamespacedHierarchicalStore.java:422)
+        at app//org.junit.platform.engine.support.store.NamespacedHierarchicalStore$MemoizingSupplier.get(NamespacedHierarchicalStore.java:411)
+        at app//org.junit.platform.engine.support.store.NamespacedHierarchicalStore$StoredValue.evaluate(NamespacedHierarchicalStore.java:358)
+        at app//org.junit.platform.engine.support.store.NamespacedHierarchicalStore$StoredValue.access$200(NamespacedHierarchicalStore.java:337)
+        at app//org.junit.platform.engine.support.store.NamespacedHierarchicalStore.getOrComputeIfAbsent(NamespacedHierarchicalStore.java:185)
+        at app//org.junit.jupiter.engine.execution.NamespaceAwareStore.lambda$getOrComputeIfAbsent$2(NamespaceAwareStore.java:57)
+        at app//org.junit.jupiter.engine.execution.NamespaceAwareStore$$Lambda/0x00000125a418f240.get(Unknown Source)
+        at app//org.junit.jupiter.engine.execution.NamespaceAwareStore.accessStore(NamespaceAwareStore.java:90)
+        at app//org.junit.jupiter.engine.execution.NamespaceAwareStore.getOrComputeIfAbsent(NamespaceAwareStore.java:57)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension.lambda$startContainers$5(TestcontainersExtension.java:83)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension$$Lambda/0x00000125a418edc0.accept(Unknown Source)
+        at java.base@21.0.12.1/java.util.ArrayList.forEach(ArrayList.java:1596)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension.startContainers(TestcontainersExtension.java:83)
+        at app//org.testcontainers.junit.jupiter.TestcontainersExtension.beforeAll(TestcontainersExtension.java:57)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeBeforeAllCallbacks$12(ClassBasedTestDescriptor.java:401)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor$$Lambda/0x00000125a40cef00.execute(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeBeforeAllCallbacks(ClassBasedTestDescriptor.java:401)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:212)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:84)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:153)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda/0x00000125a40b7728.execute(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda/0x00000125a40b7500.invoke(Unknown Source)
+
+"Reference Handler" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+        at java.base@21.0.12.1/java.lang.ref.Reference.processPendingReferences(Reference.java:246)
+        at java.base@21.0.12.1/java.lang.ref.Reference$ReferenceHandler.run(Reference.java:208)
+
+"Finalizer" 
+   java.lang.Thread.State: WAITING
+        at java.base@21.0.12.1/java.lang.Object.wait0(Native Method)
+        at java.base@21.0.12.1/java.lang.Object.wait(Object.java:366)
+        at java.base@21.0.12.1/java.lang.Object.wait(Object.java:339)
+        at java.base@21.0.12.1/java.lang.ref.NativeReferenceQueue.await(NativeReferenceQueue.java:48)
+        at java.base@21.0.12.1/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:158)
+        at java.base@21.0.12.1/java.lang.ref.NativeReferenceQueue.remove(NativeReferenceQueue.java:89)
+        at java.base@21.0.12.1/java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:173)
+
+"Signal Dispatcher" 
+   java.lang.Thread.State: RUNNABLE
+
+"Attach Listener" 
+   java.lang.Thread.State: RUNNABLE
+
+"Notification Thread" 
+   java.lang.Thread.State: RUNNABLE
+
+"Common-Cleaner" 
+   java.lang.Thread.State: TIMED_WAITING
+        at java.base@21.0.12.1/jdk.internal.misc.Unsafe.park(Native Method)
+        at java.base@21.0.12.1/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+        at java.base@21.0.12.1/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1886)
+        at java.base@21.0.12.1/java.lang.ref.ReferenceQueue.await(ReferenceQueue.java:71)
+        at java.base@21.0.12.1/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:143)
+        at java.base@21.0.12.1/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:218)
+        at java.base@21.0.12.1/jdk.internal.ref.CleanerImpl.run(CleanerImpl.java:140)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+        at java.base@21.0.12.1/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:186)
+
+"surefire-forkedjvm-stream-flusher" 
+   java.lang.Thread.State: TIMED_WAITING
+        at java.base@21.0.12.1/jdk.internal.misc.Unsafe.park(Native Method)
+        at java.base@21.0.12.1/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+        at java.base@21.0.12.1/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1797)
+        at java.base@21.0.12.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1182)
+        at java.base@21.0.12.1/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1070)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"surefire-forkedjvm-command-thread" 
+   java.lang.Thread.State: RUNNABLE
+        at java.management@21.0.12.1/sun.management.ThreadImpl.getThreadInfo1(Native Method)
+        at java.management@21.0.12.1/sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:187)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.generateThreadDump(ForkedBooter.java:579)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.access$600(ForkedBooter.java:79)
+        at app//org.apache.maven.surefire.booter.ForkedBooter$4.update(ForkedBooter.java:315)
+        at app//org.apache.maven.surefire.booter.CommandReader$CommandRunnable.callListeners(CommandReader.java:357)
+        at app//org.apache.maven.surefire.booter.CommandReader$CommandRunnable.exitByConfiguration(CommandReader.java:367)
+        at app//org.apache.maven.surefire.booter.CommandReader$CommandRunnable.run(CommandReader.java:330)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-1" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-2" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-3" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-4" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-5" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-6" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-7" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-8" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-9" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-10" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-11" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-12" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-13" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-14" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-15" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-16" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-17" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-18" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-19" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-20" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-21" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-22" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-23" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-24" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+"Thread-25" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@21.0.12.1/sun.nio.ch.Iocp.getQueuedCompletionStatus(Native Method)
+        at java.base@21.0.12.1/sun.nio.ch.Iocp$EventHandlerTask.run(Iocp.java:323)
+        at java.base@21.0.12.1/sun.nio.ch.AsynchronousChannelGroupImpl$1.run(AsynchronousChannelGroupImpl.java:113)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base@21.0.12.1/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@21.0.12.1/java.lang.Thread.runWith(Thread.java:1596)
+        at java.base@21.0.12.1/java.lang.Thread.run(Thread.java:1583)
+
+
+

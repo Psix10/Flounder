@@ -1,4 +1,4 @@
-package com.acme.sportplatform.admin.web;
+package com.acme.sportplatform.admin;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,0 +1,312 @@
+.page {
+  display: grid;
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  width: fit-content;
+  color: #155e75;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #dbe4ea;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(2rem, 3vw, 3rem);
+  line-height: 1.1;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.description {
+  margin: 1rem 0 0;
+  max-width: 70ch;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #dbe4ea;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+}
+
+.cardTitle {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.stateCard {
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.875rem;
+  color: #475569;
+}
+
+.errorMessage {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  border-radius: 0.875rem;
+  color: #be123c;
+}
+
+.successMessage {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
+  border-radius: 0.875rem;
+  color: #166534;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: #0f766e;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: #115e59;
+  transform: translateY(-1px);
+}
+
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.secondaryLink,
+.openLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.secondaryLink:hover,
+.openLink:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.disciplineList {
+  display: grid;
+  gap: 1rem;
+}
+
+.disciplineCard {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.875rem;
+  background: #f8fafc;
+}
+
+.disciplineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.disciplineTitle {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.disciplineMeta {
+  margin: 0.35rem 0 0;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.disciplineFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.statusDraft {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.statusPublished {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.statusOpen {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.statusClosed {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.statusLive {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.statusCompleted {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.statusArchived {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.statusNeutral {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+  }
+
+  .heroActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .disciplineHeader,
+  .disciplineFooter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .hero,
+  .card {
+    padding: 1.125rem;
+  }
+
+  .actionRow,
+  .heroActions {
+    flex-direction: column;
+  }
+
+  .primaryButton,
+  .secondaryLink,
+  .openLink {
+    width: 100%;
+  }
+}

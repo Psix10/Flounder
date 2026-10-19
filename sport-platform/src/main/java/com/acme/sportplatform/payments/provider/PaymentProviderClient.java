@@ -1,6 +1,6 @@
 package com.acme.sportplatform.payments.provider;
 
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 
 public interface PaymentProviderClient {
 

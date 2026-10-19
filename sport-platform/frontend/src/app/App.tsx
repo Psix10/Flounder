@@ -3,9 +3,6 @@ import { Navigate, Route, Routes } from 'react-router'
 import { AppLayout } from '../components/AppLayout'
 import { RequireRole } from '../components/RequireRole'
 
-import { RegistrationReviewPage } from '../features/admin/RegistrationReviewPage'
-import { SportsAdminPage } from '../features/admin/SportsAdminPage'
-
 import { LoginPage } from '../features/auth/LoginPage'
 import { RegisterPage } from '../features/auth/RegisterPage'
 
@@ -14,6 +11,7 @@ import { EventsPage } from '../features/events/EventsPage'
 
 import { CreateEventPage } from '../features/organizer/CreateEventPage'
 import { OrganizerDashboardPage } from '../features/organizer/OrganizerDashboardPage'
+import { OrganizerEventManagePage } from '../features/organizer/OrganizerEventManagePage'
 import { OrganizerEventsPage } from '../features/organizer/OrganizerEventsPage'
 import { OrganizerLayout } from '../features/organizer/OrganizerLayout'
 import { OrganizerRegistrationsPage } from '../features/organizer/OrganizerRegistrationsPage'
@@ -27,7 +25,6 @@ import { RegistrationPage } from '../features/registrations/RegistrationPage'
 
 import { CreateRegulationPage } from '../features/regulations/CreateRegulationPage'
 
-import { CompetitionUnitsPage } from '../features/results/CompetitionUnitsPage'
 import { JudgePanelPage } from '../features/results/JudgePanelPage'
 import { PublicDisciplineResultsPage } from '../features/results/PublicDisciplineResultsPage'
 
@@ -75,7 +72,7 @@ export default function App() {
         <Route
           element={
             <RequireRole
-              roles={['platformadmin', 'organizer']}
+              roles={['platform_admin', 'organizer']}
             />
           }
         >
@@ -93,6 +90,11 @@ export default function App() {
             />
 
             <Route
+              path="events/:eventId"
+              element={<OrganizerEventManagePage />}
+            />
+
+            <Route
               path="events/:eventId/registrations"
               element={<OrganizerRegistrationsPage />}
             />
@@ -102,18 +104,13 @@ export default function App() {
               element={<CreateRegulationPage />}
             />
           </Route>
-
-          <Route
-            path="admin/registrations/review"
-            element={<RegistrationReviewPage />}
-          />
         </Route>
 
         <Route
           element={
             <RequireRole
               roles={[
-                'platformadmin',
+                'platform_admin',
                 'organizer',
                 'operator',
               ]}
@@ -129,7 +126,7 @@ export default function App() {
         <Route
           element={
             <RequireRole
-              roles={['platformadmin', 'operator']}
+              roles={['platform_admin', 'operator']}
             />
           }
         >
@@ -139,24 +136,8 @@ export default function App() {
           />
 
           <Route
-            path="operator/results"
-            element={<CompetitionUnitsPage />}
-          />
-
-          <Route
             path="operator/competition-units/:unitId"
             element={<JudgePanelPage />}
-          />
-        </Route>
-
-        <Route
-          element={
-            <RequireRole roles={['platformadmin']} />
-          }
-        >
-          <Route
-            path="admin/sports"
-            element={<SportsAdminPage />}
           />
         </Route>
 

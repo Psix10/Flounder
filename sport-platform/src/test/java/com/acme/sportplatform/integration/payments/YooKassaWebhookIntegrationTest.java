@@ -32,7 +32,7 @@ import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEnt
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
-import com.acme.sportplatform.payments.PaymentProvider;
+import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.domain.PaymentWebhookProcessingStatus;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentEntity;

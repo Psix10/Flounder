@@ -26,9 +26,7 @@ export function AppLayout() {
   }
 
   const canManageEvents = isPlatformAdmin || isOrganizer
-  const canReviewRegistrations = isPlatformAdmin || isOrganizer
   const canProcessPayments = isPlatformAdmin || isOperator
-  const canManageResults = isPlatformAdmin || isOperator
 
   return (
     <div className={styles.shell}>
@@ -51,27 +49,6 @@ export function AppLayout() {
           {canManageEvents ? (
             <NavLink className={navLinkClassName} to="/organizer/events">
               Мои события
-            </NavLink>
-          ) : null}
-
-          {canReviewRegistrations ? (
-            <NavLink
-              className={navLinkClassName}
-              to="/admin/registrations/review"
-            >
-              Заявки
-            </NavLink>
-          ) : null}
-
-          {isPlatformAdmin ? (
-            <NavLink className={navLinkClassName} to="/admin/sports">
-              Виды спорта
-            </NavLink>
-          ) : null}
-
-          {canManageResults ? (
-            <NavLink className={navLinkClassName} to="/operator/results">
-              Результаты
             </NavLink>
           ) : null}
 
