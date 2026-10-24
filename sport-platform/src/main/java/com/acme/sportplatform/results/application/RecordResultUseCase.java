@@ -62,6 +62,7 @@ public class RecordResultUseCase {
                         "results.entry_not_found",
                         "Участник заплыва не найден"
                 ));
+
         if (expectedCompetitionUnitId != null
                 && !expectedCompetitionUnitId.equals(entry.getCompetitionUnitId())) {
             throw new BusinessException(
@@ -80,18 +81,12 @@ public class RecordResultUseCase {
         if ("PUBLISHED".equals(unit.getStatus())) {
             throw new BusinessException(
                     "results.unit_published",
-                    "Нельзя изменить результат: заплыв опубликован. Сначала снимите его с публикации."
+                    "Нельзя изменить результат: заплыв опубликован. "
+                            + "Сначала снимите его с публикации."
             );
         }
 
         ResultStatus requestedStatus = parseRequestedStatus(request.status());
-
-        if (requestedStatus == ResultStatus.VALID) {
-            throw new BusinessException(
-                    "results.status_not_allowed",
-                    "Статус VALID назначается только после пересчёта мест."
-            );
-        }
 
         if (requestedStatus == ResultStatus.PENDING
                 && (request.rawValue() == null || request.rawValue().isBlank())) {
@@ -105,23 +100,24 @@ public class RecordResultUseCase {
                 .findByCompetitionUnitEntryId(entry.getId())
                 .orElseGet(ResultEntity::new);
 
+        OffsetDateTime now = OffsetDateTime.now();
+
         if (result.getId() == null) {
             result.setId(UUID.randomUUID());
-            result.setCreatedAt(OffsetDateTime.now());
+            result.setCreatedAt(now);
         }
 
         result.setCompetitionUnitEntryId(entry.getId());
         result.setResultType(resultType);
         result.setRecordedByUserId(recordedByUserId);
-        result.setUpdatedAt(OffsetDateTime.now());
+        result.setUpdatedAt(now);
         result.setFinalPlace(null);
+        result.setStatus(requestedStatus.name());
 
         if (requestedStatus == ResultStatus.PENDING) {
             result.setRawValue(request.rawValue().trim());
-            result.setStatus(ResultStatus.PENDING.name());
         } else {
             result.setRawValue(null);
-            result.setStatus(requestedStatus.name());
         }
 
         ResultEntity saved = resultRepository.save(result);
@@ -134,26 +130,30 @@ public class RecordResultUseCase {
             return ResultStatus.PENDING;
         }
 
-        try {
-            ResultStatus status = ResultStatus.valueOf(
-                    rawStatus.trim().toUpperCase(Locale.ROOT)
+        String normalized = rawStatus.trim().toUpperCase(Locale.ROOT);
+
+        return switch (normalized) {
+            case "PENDING" -> ResultStatus.PENDING;
+
+            case "DNS", "DID_NOT_START" ->
+                    ResultStatus.DID_NOT_START;
+
+            case "DNF", "DID_NOT_FINISH" ->
+                    ResultStatus.DID_NOT_FINISH;
+
+            case "DSQ", "DISQUALIFIED" ->
+                    ResultStatus.DISQUALIFIED;
+
+            case "VALID" -> throw new BusinessException(
+                    "results.status_not_allowed",
+                    "Статус VALID назначается только после пересчёта мест."
             );
 
-            if (status == ResultStatus.PENDING
-                    || status == ResultStatus.DID_NOT_START
-                    || status == ResultStatus.DID_NOT_FINISH
-                    || status == ResultStatus.DISQUALIFIED
-                    || status == ResultStatus.VALID) {
-                return status;
-            }
-        } catch (IllegalArgumentException exception) {
-            // Ниже будет единая бизнес-ошибка.
-        }
-
-        throw new BusinessException(
-                "results.invalid_status",
-                "Допустимые статусы результата: PENDING, DNS, DNF, DSQ."
-        );
+            default -> throw new BusinessException(
+                    "results.invalid_status",
+                    "Допустимые статусы результата: PENDING, DNS, DNF, DSQ."
+            );
+        };
     }
 
     private ResultResponse toResponse(ResultEntity entity) {

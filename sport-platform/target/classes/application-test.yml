@@ -3,6 +3,15 @@ spring:
     activate:
       on-profile: test
 
+  datasource:
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 0
+      idle-timeout: 10000
+      max-lifetime: 20000
+      keepalive-time: 0
+      connection-timeout: 10000
+
   flyway:
     clean-disabled: false
 

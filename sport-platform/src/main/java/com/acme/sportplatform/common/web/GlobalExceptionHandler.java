@@ -35,67 +35,79 @@ public class GlobalExceptionHandler {
             BusinessException ex
     ) {
         HttpStatus status = switch (ex.getCode()) {
-            case "identity.user_already_exists" ->
-                    HttpStatus.CONFLICT;
+                case "identity.user_already_exists" ->
+                        HttpStatus.CONFLICT;
 
-            case "identity.user_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "identity.user_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "identity.role_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "identity.role_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "identity.invalid_credentials" ->
-                    HttpStatus.UNAUTHORIZED;
+                case "identity.invalid_credentials" ->
+                        HttpStatus.UNAUTHORIZED;
 
-            case "sports.sport_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "sports.sport_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "sports.discipline_template_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "sports.discipline_template_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "regulations.template_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "regulations.template_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "regulations.version_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "regulations.version_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "events.public_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "events.public_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "registrations.not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "registrations.not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "payments.not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "payments.not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            case "sports.sport_already_exists" ->
-                    HttpStatus.CONFLICT;
+                case "sports.sport_already_exists" ->
+                        HttpStatus.CONFLICT;
 
-            case "sports.discipline_template_already_exists" ->
-                    HttpStatus.CONFLICT;
+                case "sports.discipline_template_already_exists" ->
+                        HttpStatus.CONFLICT;
 
-            case "regulations.template_already_exists" ->
-                    HttpStatus.CONFLICT;
+                case "regulations.template_already_exists" ->
+                        HttpStatus.CONFLICT;
 
-            case "regulations.version_already_exists" ->
-                    HttpStatus.CONFLICT;
+                case "regulations.version_already_exists" ->
+                        HttpStatus.CONFLICT;
 
-            case "registrations.already_exists" ->
-                    HttpStatus.CONFLICT;
+                case "registrations.already_exists" ->
+                        HttpStatus.CONFLICT;
 
-            case "payments.already_exists" ->
-                    HttpStatus.CONFLICT;
+                case "payments.already_exists" ->
+                        HttpStatus.CONFLICT;
 
-            case "registrations.discipline_limit_reached" ->
-                    HttpStatus.CONFLICT;
+                case "registrations.discipline_limit_reached" ->
+                        HttpStatus.CONFLICT;
 
-            case "results.concurrent_update" ->
-                    HttpStatus.CONFLICT;
+                case "results.concurrent_update" ->
+                        HttpStatus.CONFLICT;
 
-            case "results.public_not_found" ->
-                    HttpStatus.NOT_FOUND;
+                case "results.public_not_found" ->
+                        HttpStatus.NOT_FOUND;
+                
+                case "protocol.event_discipline_not_found" ->
+                        HttpStatus.NOT_FOUND;
 
-            default -> HttpStatus.BAD_REQUEST;
+                case "protocol.already_generated" ->
+                        HttpStatus.CONFLICT;
+
+                case "protocol.no_confirmed_registrations" ->
+                        HttpStatus.CONFLICT;
+
+                case "protocol.regenerate_not_supported_yet" ->
+                        HttpStatus.CONFLICT;
+
+                default -> HttpStatus.BAD_REQUEST;
         };
 
         return ResponseEntity.status(status).body(

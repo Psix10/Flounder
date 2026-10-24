@@ -10,6 +10,9 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.acme.sportplatform.common.exception.BusinessException;
+import com.acme.sportplatform.competition.EventDisciplineLookup;
+import com.acme.sportplatform.competition.EventDisciplineSummary;
 import com.acme.sportplatform.registrations.RegistrationLookup;
 import com.acme.sportplatform.registrations.RegistrationLookupResult;
 import com.acme.sportplatform.results.api.PublicDisciplineResultsResponse;
@@ -32,19 +35,22 @@ public class GetPublicDisciplineResultsUseCase {
     private final ResultRepository resultRepository;
     private final RegistrationLookup registrationLookup;
     private final ObjectMapper objectMapper;
+    private final EventDisciplineLookup eventDisciplineLookup;
 
     public GetPublicDisciplineResultsUseCase(
             CompetitionUnitRepository competitionUnitRepository,
             CompetitionUnitEntryRepository entryRepository,
             ResultRepository resultRepository,
             RegistrationLookup registrationLookup,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            EventDisciplineLookup eventDisciplineLookup
     ) {
         this.competitionUnitRepository = competitionUnitRepository;
         this.entryRepository = entryRepository;
         this.resultRepository = resultRepository;
         this.registrationLookup = registrationLookup;
         this.objectMapper = objectMapper;
+        this.eventDisciplineLookup = eventDisciplineLookup;
     }
 
     @Transactional(readOnly = true)
@@ -52,6 +58,14 @@ public class GetPublicDisciplineResultsUseCase {
             UUID eventId,
             UUID eventDisciplineId
     ) {
+        EventDisciplineSummary discipline = eventDisciplineLookup
+                .findById(eventDisciplineId)
+                .orElseThrow(this::publicNotFound);
+
+        if (!eventId.equals(discipline.eventId())) {
+            throw publicNotFound();
+        }
+
         List<CompetitionUnitEntity> units = competitionUnitRepository
                 .findByEventDisciplineIdAndStatusOrderBySequenceNumberAsc(
                         eventDisciplineId,
@@ -220,5 +234,12 @@ public class GetPublicDisciplineResultsUseCase {
         } catch (Exception exception) {
             return null;
         }
+    }
+
+    private BusinessException publicNotFound() {
+        return new BusinessException(
+                "results.public_not_found",
+                "Published results were not found."
+        );
     }
 }

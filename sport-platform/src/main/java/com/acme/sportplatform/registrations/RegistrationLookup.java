@@ -11,7 +11,7 @@ public interface RegistrationLookup {
 
     Optional<RegistrationLookupResult> findById(UUID registrationId);
 
-    List<RegistrationLookupResult> findByIdIn(
-            Collection<UUID> registrationIds
-    );
+    List<RegistrationLookupResult> findByIdIn(Collection<UUID> registrationIds);
+
+    List<RegistrationLookupResult> findByEventDisciplineId(UUID eventDisciplineId);
 }

@@ -19,9 +19,7 @@ public class RegistrationLookupService implements RegistrationLookup {
 
     private final RegistrationRepository registrationRepository;
 
-    public RegistrationLookupService(
-            RegistrationRepository registrationRepository
-    ) {
+    public RegistrationLookupService(RegistrationRepository registrationRepository) {
         this.registrationRepository = registrationRepository;
     }
 
@@ -34,38 +32,39 @@ public class RegistrationLookupService implements RegistrationLookup {
     }
 
     @Override
-    public Optional<RegistrationLookupResult> findById(
-            UUID registrationId
-    ) {
+    public Optional<RegistrationLookupResult> findById(UUID registrationId) {
         return registrationRepository.findById(registrationId)
                 .map(this::toResult);
     }
 
     @Override
-    public List<RegistrationLookupResult> findByIdIn(
-            Collection<UUID> registrationIds
-    ) {
+    public List<RegistrationLookupResult> findByIdIn(Collection<UUID> registrationIds) {
         if (registrationIds == null || registrationIds.isEmpty()) {
             return List.of();
         }
 
-        return registrationRepository.findByIdIn(
-                        List.copyOf(registrationIds)
-                )
+        return registrationRepository.findByIdIn(List.copyOf(registrationIds))
                 .stream()
                 .map(this::toResult)
                 .toList();
     }
 
-    private RegistrationLookupResult toResult(
-            RegistrationEntity registration
-    ) {
+    @Override
+    public List<RegistrationLookupResult> findByEventDisciplineId(UUID eventDisciplineId) {
+        return registrationRepository.findByEventDisciplineId(eventDisciplineId)
+                .stream()
+                .map(this::toResult)
+                .toList();
+    }
+
+    private RegistrationLookupResult toResult(RegistrationEntity registration) {
         return new RegistrationLookupResult(
                 registration.getId(),
                 registration.getParticipantUserId(),
                 registration.getEventDisciplineId(),
                 registration.getStatus(),
-                registration.getParticipantSnapshot()
+                registration.getParticipantSnapshot(),
+                registration.getRegistrationMeta()
         );
     }
 }
