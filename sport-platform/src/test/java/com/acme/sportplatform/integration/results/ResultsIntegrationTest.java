@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,17 +24,23 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import com.acme.sportplatform.competition.domain.EventDisciplineStatus;
 import com.acme.sportplatform.competition.infrastructure.jpa.EventDisciplineEntity;
 import com.acme.sportplatform.competition.infrastructure.jpa.EventDisciplineRepository;
 import com.acme.sportplatform.events.domain.EventStatus;
 import com.acme.sportplatform.events.infrastructure.persistence.entity.EventEntity;
+import com.acme.sportplatform.events.infrastructure.persistence.repository.EventOperatorAssignmentRepository;
 import com.acme.sportplatform.events.infrastructure.persistence.repository.EventRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.entity.ProfileEntity;
+import com.acme.sportplatform.identity.infrastructure.persistence.entity.RoleEntity;
 import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEntity;
+import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserRoleAssignmentEntity;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
+import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRoleAssignmentRepository;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
@@ -46,6 +53,9 @@ import com.acme.sportplatform.sports.infrastructure.jpa.DisciplineTemplateReposi
 import com.acme.sportplatform.support.AbstractPostgresIntegrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @AutoConfigureMockMvc
 class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
@@ -66,7 +76,13 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
     private ProfileRepository profileRepository;
 
     @Autowired
+    private UserRoleAssignmentRepository userRoleAssignmentRepository;
+
+    @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private EventOperatorAssignmentRepository operatorAssignmentRepository;
 
     @Autowired
     private DisciplineTemplateRepository disciplineTemplateRepository;
@@ -82,6 +98,15 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
 
     @Autowired
     private ResultRepository resultRepository;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private final Map<UUID, PlatformUserPrincipal> operatorsByEvent =
+            new HashMap<>();
 
     @Test
     void shouldRecordResultAndRecalculatePlaces() throws Exception {
@@ -215,6 +240,7 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         );
 
         UUID wrongEventId = createEvent();
+        PlatformUserPrincipal operator = operatorFor(fixture);
 
         for (String route : routes) {
             mockMvc.perform(get(
@@ -222,7 +248,7 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
                             wrongEventId,
                             fixture.disciplineId()
                     )
-                            .with(user(principal("OPERATOR"))))
+                            .with(user(operator)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code")
                             .value("results.public_not_found"));
@@ -232,7 +258,7 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
                             fixture.eventId(),
                             fixture.disciplineId()
                     )
-                            .with(user(principal("OPERATOR"))))
+                            .with(user(operator)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.eventId")
                             .value(fixture.eventId().toString()));
@@ -263,7 +289,7 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
                         "/api/v1/competition-units/{unitId}/recalculate",
                         fixture.unitId()
                 )
-                        .with(user(principal("OPERATOR")))
+                        .with(user(operatorFor(fixture)))
                         .param("rankingStrategy", "ASC"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code")
@@ -491,13 +517,201 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.entries[0].rawValue").value("28.11"));
     }
 
+    @Test
+    void shouldRejectOperatorAssignedToAnotherEvent() throws Exception {
+        Fixture ownEvent = createFixture();
+        Fixture foreignEvent = createFixture();
+
+        PlatformUserPrincipal operator = operatorFor(ownEvent);
+
+        mockMvc.perform(get(
+                        "/api/v1/competition-units/{unitId}",
+                        ownEvent.unitId()
+                )
+                        .with(user(operator)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get(
+                        "/api/v1/competition-units/{unitId}",
+                        foreignEvent.unitId()
+                )
+                        .with(user(operator)))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(get(
+                        "/api/v1/event-disciplines/{disciplineId}/competition-units",
+                        foreignEvent.disciplineId()
+                )
+                        .with(user(operator)))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post("/api/v1/results")
+                        .with(user(operator))
+                        .param("resultType", "TIME")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resultJson(
+                                foreignEvent.entryId(),
+                                "28.11",
+                                "PENDING"
+                        )))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post(
+                        "/api/v1/competition-units/{unitId}/results",
+                        foreignEvent.unitId()
+                )
+                        .with(user(operator))
+                        .param("resultType", "TIME")
+                        .param("rankingStrategy", "ASC")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resultJson(
+                                foreignEvent.entryId(),
+                                "28.11",
+                                "PENDING"
+                        )))
+                .andExpect(status().isForbidden());
+
+        // Свой unitId в URL не должен разрешать запись чужой entry.
+        mockMvc.perform(post(
+                        "/api/v1/competition-units/{unitId}/results",
+                        ownEvent.unitId()
+                )
+                        .with(user(operator))
+                        .param("resultType", "TIME")
+                        .param("rankingStrategy", "ASC")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resultJson(
+                                foreignEvent.entryId(),
+                                "28.11",
+                                "PENDING"
+                        )))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post(
+                        "/api/v1/competition-units/{unitId}/recalculate",
+                        foreignEvent.unitId()
+                )
+                        .with(user(operator))
+                        .param("rankingStrategy", "ASC"))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(post(
+                        "/api/v1/competition-units/{unitId}/publication",
+                        foreignEvent.unitId()
+                )
+                        .with(user(operator))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "published": true
+                                }
+                                """))
+                .andExpect(status().isForbidden());
+
+        assertTrue(
+                resultRepository
+                        .findByCompetitionUnitEntryId(foreignEvent.entryId())
+                        .isEmpty()
+        );
+
+        assertEquals(
+                "DRAFT",
+                competitionUnitRepository.findById(foreignEvent.unitId())
+                        .orElseThrow()
+                        .getStatus()
+        );
+    }
+
+    @Test
+    void shouldRejectResultWriteAfterOperatorAssignmentIsRemoved()
+            throws Exception {
+
+        Fixture fixture = createFixture();
+        PlatformUserPrincipal operator = operatorFor(fixture);
+
+        recordAndRecalculate(fixture, "28.11", "PENDING", "ASC")
+                .andExpect(status().isOk());
+
+        ResultEntity before = findResult(fixture);
+        Long originalVersion = before.getVersion();
+
+        new TransactionTemplate(transactionManager)
+                .executeWithoutResult(transactionStatus ->
+                        operatorAssignmentRepository.deleteAssignment(
+                                fixture.eventId(),
+                                operator.getUserId()
+                        )
+                );
+
+        mockMvc.perform(post("/api/v1/results")
+                        .with(user(operator))
+                        .param("resultType", "TIME")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resultJson(
+                                fixture.entryId(),
+                                "26.50",
+                                "PENDING"
+                        )))
+                .andExpect(status().isForbidden());
+
+        mockMvc.perform(get(
+                        "/api/v1/competition-units/{unitId}",
+                        fixture.unitId()
+                )
+                        .with(user(operator)))
+                .andExpect(status().isForbidden());
+
+        ResultEntity after = findResult(fixture);
+
+        assertEquals("28.11", after.getRawValue());
+        assertEquals("VALID", after.getStatus());
+        assertEquals(Integer.valueOf(1), after.getFinalPlace());
+        assertEquals(originalVersion, after.getVersion());
+    }
+
+    @Test
+    void shouldAllowPlatformAdminToWriteWithoutEventAssignment()
+            throws Exception {
+
+        Fixture fixture = createFixture();
+
+        UserEntity admin = createUser("results-admin");
+        grantGlobalRole(admin.getId(), "PLATFORM_ADMIN");
+
+        PlatformUserPrincipal adminPrincipal =
+                principal(admin, "PLATFORM_ADMIN");
+
+        mockMvc.perform(post(
+                        "/api/v1/competition-units/{unitId}/results",
+                        fixture.unitId()
+                )
+                        .with(user(adminPrincipal))
+                        .param("resultType", "TIME")
+                        .param("rankingStrategy", "ASC")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resultJson(
+                                fixture.entryId(),
+                                "28.11",
+                                "PENDING"
+                        )))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.entries[0].resultStatus").value("VALID"))
+                .andExpect(jsonPath("$.entries[0].finalPlace").value(1));
+
+        assertTrue(
+                operatorAssignmentRepository
+                        .findByEventIdOrderByCreatedAtAscIdAsc(fixture.eventId())
+                        .isEmpty()
+        );
+    }
+
     private ResultActions recordOnly(
             Fixture fixture,
             String rawValue,
             String resultStatus
     ) throws Exception {
         return mockMvc.perform(post("/api/v1/results")
-                .with(user(principal("OPERATOR")))
+                .with(user(operatorFor(fixture)))
                 .param("resultType", "TIME")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(resultJson(
@@ -517,7 +731,7 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
                         "/api/v1/competition-units/{unitId}/results",
                         fixture.unitId()
                 )
-                .with(user(principal("OPERATOR")))
+                .with(user(operatorFor(fixture)))
                 .param("resultType", "TIME")
                 .param("rankingStrategy", rankingStrategy)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -533,7 +747,7 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
                         "/api/v1/competition-units/{unitId}/publication",
                         fixture.unitId()
                 )
-                .with(user(principal("ORGANIZER")))
+                .with(user(operatorFor(fixture)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {
@@ -574,6 +788,87 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         assertEquals(Integer.valueOf(1), saved.getFinalPlace());
         assertEquals(expectedVersion, saved.getVersion());
         assertEquals(expectedUpdatedAt, saved.getUpdatedAt());
+    }
+
+    private PlatformUserPrincipal operatorFor(Fixture fixture) {
+        PlatformUserPrincipal existing =
+                operatorsByEvent.get(fixture.eventId());
+
+        if (existing != null) {
+            return existing;
+        }
+
+        UserEntity operator = createUser("results-operator");
+        grantGlobalRole(operator.getId(), "OPERATOR");
+
+        new TransactionTemplate(transactionManager)
+                .executeWithoutResult(transactionStatus ->
+                        operatorAssignmentRepository.insertIfAbsent(
+                                UUID.randomUUID(),
+                                fixture.eventId(),
+                                operator.getId(),
+                                operator.getId(),
+                                OffsetDateTime.now(ZoneOffset.UTC)
+                        )
+                );
+
+        PlatformUserPrincipal operatorPrincipal =
+                principal(operator, "OPERATOR");
+
+        operatorsByEvent.put(
+                fixture.eventId(),
+                operatorPrincipal
+        );
+
+        return operatorPrincipal;
+    }
+
+    private void grantGlobalRole(UUID userId, String roleCode) {
+        new TransactionTemplate(transactionManager)
+                .executeWithoutResult(transactionStatus -> {
+                    List<RoleEntity> roles = entityManager.createQuery(
+                                    """
+                                    select role
+                                    from RoleEntity role
+                                    where upper(role.code) = :code
+                                    """,
+                                    RoleEntity.class
+                            )
+                            .setParameter("code", roleCode)
+                            .getResultList();
+
+                    RoleEntity role;
+
+                    if (roles.isEmpty()) {
+                        role = new RoleEntity();
+                        role.setCode(roleCode);
+                        role.setName(roleCode);
+
+                        entityManager.persist(role);
+                        entityManager.flush();
+                    } else {
+                        role = roles.get(0);
+                    }
+
+                    UserRoleAssignmentEntity assignment =
+                            new UserRoleAssignmentEntity();
+
+                    assignment.setUserId(userId);
+                    assignment.setRoleId(role.getId());
+
+                    userRoleAssignmentRepository.saveAndFlush(assignment);
+                });
+    }
+
+    private UserEntity createUser(String emailPrefix) {
+        UserEntity user = new UserEntity();
+        user.setEmail(
+                emailPrefix + "-" + UUID.randomUUID() + "@example.com"
+        );
+        user.setPasswordHash("test-password-hash");
+        user.setStatus("active");
+
+        return userRepository.saveAndFlush(user);
     }
 
     private Fixture createFixture() throws Exception {
@@ -628,10 +923,10 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
     private UUID createConfirmedRegistration(UUID disciplineId)
             throws Exception {
 
-        String suffix = UUID.randomUUID().toString();
-
         UserEntity participant = new UserEntity();
-        participant.setEmail("results-" + suffix + "@example.com");
+        participant.setEmail(
+                "results-" + UUID.randomUUID() + "@example.com"
+        );
         participant.setPhone(randomPhone());
         participant.setPasswordHash("test-password-hash");
         participant.setStatus("active");
@@ -652,13 +947,7 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         profileRepository.saveAndFlush(profile);
 
         PlatformUserPrincipal participantPrincipal =
-                new PlatformUserPrincipal(
-                        participant.getId(),
-                        participant.getEmail(),
-                        "",
-                        "active",
-                        List.of(new SimpleGrantedAuthority("ROLE_PARTICIPANT"))
-                );
+                principal(participant, "PARTICIPANT");
 
         String response = mockMvc.perform(post("/api/v1/registrations")
                         .with(user(participantPrincipal))
@@ -770,6 +1059,19 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         discipline.setUpdatedAt(now);
 
         return eventDisciplineRepository.saveAndFlush(discipline).getId();
+    }
+
+    private PlatformUserPrincipal principal(
+            UserEntity user,
+            String role
+    ) {
+        return new PlatformUserPrincipal(
+                user.getId(),
+                user.getEmail(),
+                "",
+                user.getStatus(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + role))
+        );
     }
 
     private PlatformUserPrincipal principal(String role) {

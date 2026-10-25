@@ -31,6 +31,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\config\MethodSecurityConfig.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\config\PasswordConfig.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\api\CreateEventRequest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\api\EventOperatorAssignmentResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\api\EventResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\api\PublicEventDetailsResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\CloseEventRegistrationUseCase.java
@@ -38,17 +39,20 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\CreateEventUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\EventLookupService.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\EventMapper.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\EventOperatorService.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\EventPublicLookupService.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\OpenEventRegistrationUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\application\PublishEventUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\domain\EventStatus.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\EventLookup.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\EventLookupResult.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\EventOperationAccess.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\EventPublicLookup.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\EventPublicLookupResult.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\infrastructure\persistence\entity\EventEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\infrastructure\persistence\repository\EventRepository.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\web\EventController.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\events\web\EventOperatorController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\api\AssignRoleRequest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\api\AuthTokenResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\api\CreateUserRequest.java
@@ -63,6 +67,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\application\GetCurrentUserUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\application\GetUserByIdUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\application\LoginUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\application\OperatorEligibilityLookupService.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\application\ProfileLookupService.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\application\RevokeRoleFromUserUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\application\UpdateUserUseCase.java
@@ -74,11 +79,13 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\domain\UserAlreadyExistsException.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\domain\UserNotFoundException.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\domain\UserRoleAssignmentRepository.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\entity\EventOperatorAssignmentEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\entity\ProfileEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\entity\RoleEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\entity\UserEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\entity\UserRoleAssignmentEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\projection\UserRoleCodeProjection.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\repository\EventOperatorAssignmentRepository.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\repository\ProfileRepository.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\repository\RoleRepository.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\persistence\repository\UserRepository.java
@@ -90,6 +97,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\security\PlatformUserDetailsService.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\security\PlatformUserPrincipal.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\infrastructure\security\SecurityConfig.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\OperatorEligibilityLookup.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\package-info.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\ProfileLookup.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\identity\ProfileLookupResult.java
@@ -255,6 +263,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\RecalculatePlacesUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\RecordResultAndRecalculateUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\RecordResultUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\ResultsAccess.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\ResultsProtocolGatewayService.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\domain\CompetitionUnitStatus.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\domain\ResultStatus.java
@@ -270,6 +279,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\ResultsCompetitionUnitView.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\ResultsProtocolGateway.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\web\PublicResultsController.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\web\PublicStandingsController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\web\ResultsController.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\SportPlatformApplication.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\sports\api\CreateDisciplineTemplateRequest.java

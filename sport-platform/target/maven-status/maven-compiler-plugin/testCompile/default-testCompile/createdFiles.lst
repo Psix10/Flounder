@@ -29,6 +29,8 @@ com\acme\sportplatform\integration\events\EventIntegrationTest.class
 com\acme\sportplatform\integration\results\ResultsIntegrationTest.class
 com\acme\research\ranking\RankingSliceConfiguration.class
 com\acme\sportplatform\integration\identity\RbacIntegrationTest.class
+com\acme\sportplatform\integration\events\EventOperatorIntegrationTest$Fixture.class
 com\acme\research\ranking\JdbcMetrics$Sample.class
+com\acme\sportplatform\integration\events\EventOperatorIntegrationTest.class
 com\acme\sportplatform\integration\payments\ManualPaymentIntegrationTest.class
 OrganizationControllerTest.class

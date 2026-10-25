@@ -34,8 +34,6 @@ import com.acme.sportplatform.results.application.RecalculatePlacesUseCase;
 import com.acme.sportplatform.results.application.RecordResultAndRecalculateUseCase;
 import com.acme.sportplatform.results.application.RecordResultUseCase;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
-import com.acme.sportplatform.results.api.PublicDisciplineStandingsResponse;
-import com.acme.sportplatform.results.application.GetPublicDisciplineStandingsUseCase;
 
 import jakarta.validation.Valid;
 
@@ -78,11 +76,10 @@ public class ResultsController {
         this.getPublicDisciplineResultsUseCase = getPublicDisciplineResultsUseCase;
     }
 
-    /**
-     * Список заплывов, матчей, групп или финалов одной дисциплины.
-     */
     @GetMapping("/event-disciplines/{eventDisciplineId}/competition-units")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER', 'OPERATOR')")
+    @PreAuthorize(
+            "@resultsAccess.canReadDiscipline(#eventDisciplineId, authentication)"
+    )
     public List<CompetitionUnitResponse> listCompetitionUnits(
             @PathVariable UUID eventDisciplineId
     ) {
@@ -100,20 +97,14 @@ public class ResultsController {
                 .toList();
     }
 
-    /**
-     * Внутренний просмотр unit с участниками и черновыми результатами.
-     */
     @GetMapping("/competition-units/{unitId}")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER', 'OPERATOR')")
+    @PreAuthorize("@resultsAccess.canReadUnit(#unitId, authentication)")
     public CompetitionUnitDetailsResponse getUnitDetails(
             @PathVariable UUID unitId
     ) {
         return getCompetitionUnitDetailsUseCase.execute(unitId);
     }
 
-    /**
-     * Публичные результаты опубликованного unit.
-     */
     @GetMapping("/public/competition-units/{unitId}/results")
     public PublicCompetitionUnitResultsResponse getPublicResults(
             @PathVariable UUID unitId
@@ -121,10 +112,6 @@ public class ResultsController {
         return getPublicCompetitionUnitResultsUseCase.execute(unitId);
     }
 
-    /**
-     * Публичные результаты опубликованных unit дисциплины.
-     * Принадлежность дисциплины событию проверяется внутри use case.
-     */
     @GetMapping("/public/events/{eventId}/disciplines/{eventDisciplineId}/results")
     public PublicDisciplineResultsResponse getPublicDisciplineResults(
             @PathVariable UUID eventId,
@@ -136,11 +123,10 @@ public class ResultsController {
         );
     }
 
-    /**
-     * Создание заплыва, матча, группы, финала или другого unit.
-     */
     @PostMapping("/competition-units")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER')")
+    @PreAuthorize(
+            "@resultsAccess.canManageDiscipline(#request.eventDisciplineId(), authentication)"
+    )
     public ResponseEntity<CompetitionUnitResponse> createCompetitionUnit(
             @Valid @RequestBody CreateCompetitionUnitRequest request
     ) {
@@ -152,11 +138,8 @@ public class ResultsController {
                 .body(response);
     }
 
-    /**
-     * Назначение подтверждённой заявки в unit.
-     */
     @PostMapping("/competition-units/{unitId}/entries")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'ORGANIZER')")
+    @PreAuthorize("@resultsAccess.canManageUnit(#unitId, authentication)")
     public ResponseEntity<UUID> assignRegistration(
             @PathVariable UUID unitId,
             @Valid @RequestBody AssignRegistrationRequest request
@@ -172,11 +155,8 @@ public class ResultsController {
                 .body(entryId);
     }
 
-    /**
-     * Запись или обновление результата без автоматического пересчёта мест.
-     */
     @PostMapping("/results")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'OPERATOR')")
+    @PreAuthorize("@resultsAccess.canWriteEntry(#request, authentication)")
     public ResultResponse recordResult(
             @AuthenticationPrincipal(expression = "userId")
             UUID recordedByUserId,
@@ -190,11 +170,11 @@ public class ResultsController {
         );
     }
 
-    /**
-     * Запись результата и пересчёт мест через единый транзакционный use case.
-     */
     @PostMapping("/competition-units/{unitId}/results")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'OPERATOR')")
+    @PreAuthorize(
+            "@resultsAccess.canWriteUnit(#unitId, authentication)"
+            + " and @resultsAccess.canWriteEntry(#request, authentication)"
+    )
     public CompetitionUnitDetailsResponse recordResultAndRecalculate(
             @PathVariable UUID unitId,
             @AuthenticationPrincipal(expression = "userId")
@@ -212,11 +192,8 @@ public class ResultsController {
         );
     }
 
-    /**
-     * Ручной пересчёт мест после внесения нескольких результатов.
-     */
     @PostMapping("/competition-units/{unitId}/recalculate")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'OPERATOR')")
+    @PreAuthorize("@resultsAccess.canWriteUnit(#unitId, authentication)")
     public CompetitionUnitDetailsResponse recalculate(
             @PathVariable UUID unitId,
             @RequestParam String rankingStrategy
@@ -229,11 +206,8 @@ public class ResultsController {
         return getCompetitionUnitDetailsUseCase.execute(unitId);
     }
 
-    /**
-     * Публикация результатов или возврат unit в статус DRAFT.
-     */
     @PostMapping("/competition-units/{unitId}/publication")
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN', 'OPERATOR', 'ORGANIZER', 'JUDGE')")
+    @PreAuthorize("@resultsAccess.canPublishUnit(#unitId, authentication)")
     public ResponseEntity<Void> changePublication(
             @PathVariable UUID unitId,
             @RequestBody PublishCompetitionUnitRequest request
@@ -245,33 +219,4 @@ public class ResultsController {
 
         return ResponseEntity.noContent().build();
     }
-
-        
-        @RestController
-        @RequestMapping("/api/v1/public/events")
-        public class PublicStandingsController {
-
-        private final GetPublicDisciplineStandingsUseCase
-                getPublicDisciplineStandingsUseCase;
-
-        public PublicStandingsController(
-                GetPublicDisciplineStandingsUseCase getPublicDisciplineStandingsUseCase
-        ) {
-                this.getPublicDisciplineStandingsUseCase =
-                        getPublicDisciplineStandingsUseCase;
-        }
-
-        @GetMapping("/{eventId}/disciplines/{eventDisciplineId}/standings")
-        public PublicDisciplineStandingsResponse getStandings(
-                @PathVariable UUID eventId,
-                @PathVariable UUID eventDisciplineId
-        ) {
-                return getPublicDisciplineStandingsUseCase.execute(
-                        eventId,
-                        eventDisciplineId
-                );
-        }
-        }
 }
-
-

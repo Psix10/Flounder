@@ -1,6 +1,7 @@
 com\acme\sportplatform\identity\application\CreateUserUseCase.class
 com\acme\sportplatform\events\application\CloseEventRegistrationUseCase.class
 com\acme\sportplatform\payments\application\ReceiveYooKassaWebhookUseCase.class
+com\acme\sportplatform\events\infrastructure\persistence\entity\EventOperatorAssignmentEntity.class
 com\acme\sportplatform\events\api\EventResponse$DisciplineResponse.class
 com\acme\sportplatform\organizations\OrganizationLookup.class
 com\acme\sportplatform\identity\infrastructure\persistence\entity\UserEntity.class
@@ -24,12 +25,12 @@ ProtocolRuleSetStatus.class
 com\acme\sportplatform\registrations\domain\RegistrationStatus.class
 com\acme\sportplatform\protocol\RegistrationProtocolAccess.class
 GetProtocolRuleSetByIdUseCase.class
+com\acme\sportplatform\results\application\ResultsAccess.class
 ProtocolRuleBlockRepository.class
 com\acme\sportplatform\sports\application\DisciplineTemplateLookupService.class
 com\acme\sportplatform\events\application\PublishEventUseCase.class
 com\acme\sportplatform\payments\infrastructure\yookassa\webhook\YooKassaWebhookPaymentObject.class
 com\acme\sportplatform\results\infrastructure\jpa\ResultRepository.class
-com\acme\sportplatform\results\web\ResultsController$PublicStandingsController.class
 com\acme\sportplatform\regulations\application\RegulationService.class
 com\acme\sportplatform\results\application\RecordResultUseCase.class
 com\acme\sportplatform\organizations\api\VenueResponse.class
@@ -59,11 +60,14 @@ com\acme\sportplatform\registrations\infrastructure\jpa\RegistrationRepository.c
 com\acme\sportplatform\regulations\RegulationVersionLookupResult.class
 com\acme\sportplatform\sports\application\SportService.class
 com\acme\sportplatform\identity\api\UserResponse.class
+com\acme\sportplatform\identity\application\OperatorEligibilityLookupService.class
 com\acme\sportplatform\SportPlatformApplication.class
 com\acme\sportplatform\organizations\api\OrganizationResponse.class
+com\acme\sportplatform\events\infrastructure\persistence\repository\EventOperatorAssignmentRepository.class
 com\acme\sportplatform\payments\application\CreateLocalPaymentForRegistrationUseCase.class
 com\acme\sportplatform\admin\AdminTestController.class
 com\acme\sportplatform\organizations\application\OrganizationRegistrationService.class
+com\acme\sportplatform\results\application\ResultsAccess$Permission.class
 com\acme\sportplatform\organizations\OrganizationManagementAccess.class
 com\acme\sportplatform\payments\infrastructure\yookassa\api\YooKassaConfirmation.class
 com\acme\sportplatform\identity\infrastructure\security\JwtProperties.class
@@ -97,6 +101,7 @@ com\acme\sportplatform\payments\web\PaymentReviewController.class
 com\acme\sportplatform\payments\application\GetPaymentForRegistrationUseCase.class
 com\acme\sportplatform\payments\web\PaymentReviewQueryController.class
 com\acme\sportplatform\payments\web\YooKassaWebhookController.class
+com\acme\sportplatform\results\web\PublicStandingsController.class
 com\acme\sportplatform\organizations\infrastructure\jpa\VenueEntity.class
 com\acme\sportplatform\identity\api\CurrentUserResponse.class
 com\acme\sportplatform\identity\application\RevokeRoleFromUserUseCase.class
@@ -107,6 +112,7 @@ com\acme\sportplatform\registrations\infrastructure\jpa\RegistrationEntity.class
 com\acme\sportplatform\competition\domain\EventDisciplineStatus.class
 com\acme\sportplatform\protocol\CompetitionUnitProtocolAccess$CompetitionUnitProtocolView.class
 com\acme\sportplatform\identity\domain\InvalidCredentialsException.class
+com\acme\sportplatform\events\EventOperationAccess.class
 com\acme\sportplatform\payments\application\GetPaymentForReviewUseCase.class
 com\acme\sportplatform\events\api\CreateEventRequest.class
 com\acme\sportplatform\organizations\api\AddOrganizationMemberRequest.class
@@ -144,9 +150,11 @@ com\acme\sportplatform\events\EventLookupResult.class
 com\acme\sportplatform\sports\api\CreateSportRequest.class
 com\acme\sportplatform\identity\domain\RoleCodes.class
 com\acme\sportplatform\organizations\api\CreateVenueRequest.class
+com\acme\sportplatform\events\api\EventOperatorAssignmentResponse.class
 com\acme\sportplatform\protocol\CompetitionUnitProtocolAccess$AssignmentDraftView.class
 com\acme\sportplatform\registrations\web\RegistrationController.class
 com\acme\sportplatform\regulations\api\RegulationVersionResponse.class
+com\acme\sportplatform\events\application\EventOperatorService.class
 com\acme\sportplatform\results\application\AssignRegistrationToUnitUseCase.class
 com\acme\sportplatform\results\api\PublicDisciplineStandingsResponse.class
 com\acme\sportplatform\registrations\application\GetRegistrationByIdUseCase.class
@@ -181,6 +189,7 @@ com\acme\sportplatform\identity\domain\UserNotFoundException.class
 com\acme\sportplatform\protocol\CompetitionUnitProtocolAccess$SavedCompetitionUnitView.class
 com\acme\sportplatform\results\web\ResultsController.class
 RuleBlockResponse.class
+com\acme\sportplatform\identity\OperatorEligibilityLookup.class
 ProtocolUnitType.class
 com\acme\sportplatform\common\exception\BusinessException.class
 com\acme\sportplatform\registrations\application\ListRegistrationsForReviewUseCase.class
@@ -224,6 +233,7 @@ com\acme\sportplatform\events\web\EventController.class
 com\acme\sportplatform\results\application\GetPublicDisciplineResultsUseCase.class
 com\acme\sportplatform\identity\infrastructure\persistence\repository\UserRepository.class
 ProtocolRuleBlockEntity.class
+com\acme\sportplatform\events\web\EventOperatorController.class
 com\acme\sportplatform\organizations\application\OrganizationService.class
 com\acme\sportplatform\results\infrastructure\jpa\CompetitionUnitEntity.class
 com\acme\sportplatform\regulations\infrastructure\jpa\RegulationVersionEntity.class
