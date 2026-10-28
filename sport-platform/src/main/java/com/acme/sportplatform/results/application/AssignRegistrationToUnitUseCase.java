@@ -12,23 +12,22 @@ import com.acme.sportplatform.registrations.RegistrationLookupResult;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRepository;
-import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
 
 @Service
 public class AssignRegistrationToUnitUseCase {
 
     private static final String CONFIRMED = "CONFIRMED";
 
-    private final CompetitionUnitRepository competitionUnitRepository;
+    private final CompetitionUnitWriteLock competitionUnitWriteLock;
     private final CompetitionUnitEntryRepository entryRepository;
     private final RegistrationLookup registrationLookup;
 
     public AssignRegistrationToUnitUseCase(
-            CompetitionUnitRepository competitionUnitRepository,
+            CompetitionUnitWriteLock competitionUnitWriteLock,
             CompetitionUnitEntryRepository entryRepository,
             RegistrationLookup registrationLookup
     ) {
-        this.competitionUnitRepository = competitionUnitRepository;
+        this.competitionUnitWriteLock = competitionUnitWriteLock;
         this.entryRepository = entryRepository;
         this.registrationLookup = registrationLookup;
     }
@@ -39,12 +38,20 @@ public class AssignRegistrationToUnitUseCase {
             UUID registrationId,
             Integer laneOrPosition
     ) {
-        CompetitionUnitEntity competitionUnit = competitionUnitRepository
-                .findById(competitionUnitId)
-                .orElseThrow(() -> new BusinessException(
+        CompetitionUnitEntity competitionUnit =
+                competitionUnitWriteLock.acquire(
+                        competitionUnitId,
                         "results.competition_unit_not_found",
                         "Заплыв/забег не найден"
-                ));
+                );
+
+        if ("PUBLISHED".equals(competitionUnit.getStatus())) {
+            throw new BusinessException(
+                    "results.unit_published",
+                    "Нельзя назначить участника: заплыв опубликован. "
+                            + "Сначала снимите его с публикации."
+            );
+        }
 
         RegistrationLookupResult registration = registrationLookup
                 .findById(registrationId)

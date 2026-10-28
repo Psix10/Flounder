@@ -28,6 +28,19 @@ public class CompetitionUnitWriteLock {
 
     @Transactional(propagation = Propagation.MANDATORY)
     public CompetitionUnitEntity acquire(UUID unitId) {
+        return acquire(
+                unitId,
+                "results.unit_not_found",
+                "Competition unit not found: " + unitId
+        );
+    }
+
+    @Transactional(propagation = Propagation.MANDATORY)
+    public CompetitionUnitEntity acquire(
+            UUID unitId,
+            String notFoundCode,
+            String notFoundMessage
+    ) {
         List<UUID> lockedIds = jdbcTemplate.query(
                 """
                 SELECT id
@@ -41,8 +54,8 @@ public class CompetitionUnitWriteLock {
 
         if (lockedIds.isEmpty()) {
             throw new BusinessException(
-                    "results.unit_not_found",
-                    "Competition unit not found: " + unitId
+                    notFoundCode,
+                    notFoundMessage
             );
         }
 
@@ -53,8 +66,8 @@ public class CompetitionUnitWriteLock {
 
         if (unit == null) {
             throw new BusinessException(
-                    "results.unit_not_found",
-                    "Competition unit not found: " + unitId
+                    notFoundCode,
+                    notFoundMessage
             );
         }
 
