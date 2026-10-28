@@ -14,34 +14,30 @@ import com.acme.sportplatform.results.domain.ResultStatus;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRepository;
-import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
 import com.acme.sportplatform.results.infrastructure.jpa.ResultEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.ResultRepository;
 
 @Service
 public class PublishCompetitionUnitUseCase {
 
-    private final CompetitionUnitRepository competitionUnitRepository;
+    private final CompetitionUnitWriteLock competitionUnitWriteLock;
     private final CompetitionUnitEntryRepository entryRepository;
     private final ResultRepository resultRepository;
 
     public PublishCompetitionUnitUseCase(
-            CompetitionUnitRepository competitionUnitRepository,
+            CompetitionUnitWriteLock competitionUnitWriteLock,
             CompetitionUnitEntryRepository entryRepository,
             ResultRepository resultRepository
     ) {
-        this.competitionUnitRepository = competitionUnitRepository;
+        this.competitionUnitWriteLock = competitionUnitWriteLock;
         this.entryRepository = entryRepository;
         this.resultRepository = resultRepository;
     }
 
     @Transactional
     public void execute(UUID unitId, boolean published) {
-        CompetitionUnitEntity unit = competitionUnitRepository.findById(unitId)
-                .orElseThrow(() -> new BusinessException(
-                        "results.unit_not_found",
-                        "Competition unit not found: " + unitId
-                ));
+        CompetitionUnitEntity unit =
+                competitionUnitWriteLock.acquire(unitId);
 
         if (!published) {
             if ("DRAFT".equals(unit.getStatus())) {
@@ -98,7 +94,8 @@ public class PublishCompetitionUnitUseCase {
         if (result == null) {
             throw new BusinessException(
                     "results.unit_has_missing_results",
-                    "Нельзя опубликовать: у одного или нескольких участников нет результата."
+                    "Нельзя опубликовать: у одного или нескольких "
+                            + "участников нет результата."
             );
         }
 
@@ -115,7 +112,8 @@ public class PublishCompetitionUnitUseCase {
             if (result.getFinalPlace() == null) {
                 throw new BusinessException(
                         "results.unit_has_unranked_results",
-                        "Нельзя опубликовать: у одного или нескольких участников не рассчитано место."
+                        "Нельзя опубликовать: у одного или нескольких "
+                                + "участников не рассчитано место."
                 );
             }
 

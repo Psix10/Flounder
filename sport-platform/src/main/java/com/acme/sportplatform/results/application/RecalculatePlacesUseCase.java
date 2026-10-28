@@ -1,40 +1,38 @@
 package com.acme.sportplatform.results.application;
 
 import java.time.OffsetDateTime;
-import java.util.Comparator;
-import java.util.List;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.results.domain.ResultStatus;
+import com.acme.sportplatform.results.infrastructure.jdbc.SqlPlacesRecalculator;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
-import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
-import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRepository;
-import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
-import com.acme.sportplatform.results.infrastructure.jpa.ResultEntity;
-import com.acme.sportplatform.results.infrastructure.jpa.ResultRepository;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class RecalculatePlacesUseCase {
 
-    private final CompetitionUnitRepository competitionUnitRepository;
-    private final CompetitionUnitEntryRepository entryRepository;
-    private final ResultRepository resultRepository;
+    private final CompetitionUnitWriteLock competitionUnitWriteLock;
     private final DisciplineResultPolicy disciplineResultPolicy;
+    private final SqlPlacesRecalculator sqlPlacesRecalculator;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public RecalculatePlacesUseCase(
-            CompetitionUnitRepository competitionUnitRepository,
-            CompetitionUnitEntryRepository entryRepository,
-            ResultRepository resultRepository,
-            DisciplineResultPolicy disciplineResultPolicy
+            CompetitionUnitWriteLock competitionUnitWriteLock,
+            DisciplineResultPolicy disciplineResultPolicy,
+            SqlPlacesRecalculator sqlPlacesRecalculator
     ) {
-        this.competitionUnitRepository = competitionUnitRepository;
-        this.entryRepository = entryRepository;
-        this.resultRepository = resultRepository;
+        this.competitionUnitWriteLock = competitionUnitWriteLock;
         this.disciplineResultPolicy = disciplineResultPolicy;
+        this.sqlPlacesRecalculator = sqlPlacesRecalculator;
     }
 
     @Transactional
@@ -44,12 +42,8 @@ public class RecalculatePlacesUseCase {
     ) {
         boolean descending = parseRankingStrategy(rankingStrategy);
 
-        CompetitionUnitEntity unit = competitionUnitRepository
-                .findById(competitionUnitId)
-                .orElseThrow(() -> new BusinessException(
-                        "results.unit_not_found",
-                        "Competition unit not found: " + competitionUnitId
-                ));
+        CompetitionUnitEntity unit =
+                competitionUnitWriteLock.acquire(competitionUnitId);
 
         if ("PUBLISHED".equals(unit.getStatus())) {
             throw new BusinessException(
@@ -64,58 +58,16 @@ public class RecalculatePlacesUseCase {
                 rankingStrategy
         );
 
-        List<CompetitionUnitEntryEntity> entries =
-                entryRepository.findByCompetitionUnitId(competitionUnitId);
+        entityManager.flush();
 
-        List<UUID> entryIds = entries.stream()
-                .map(CompetitionUnitEntryEntity::getId)
-                .toList();
+        sqlPlacesRecalculator.execute(
+                competitionUnitId,
+                descending,
+                OffsetDateTime.now(ZoneOffset.UTC)
+                        .truncatedTo(ChronoUnit.MICROS)
+        );
 
-        List<ResultEntity> allResults = entryIds.isEmpty()
-                ? List.of()
-                : resultRepository.findByCompetitionUnitEntryIdIn(entryIds);
-
-        boolean hasInvalidRankableResult = allResults.stream()
-                .filter(this::canBeRanked)
-                .anyMatch(result -> parseNumeric(result.getRawValue()) == null);
-
-        if (hasInvalidRankableResult) {
-            throw new BusinessException(
-                    "results.invalid_raw_value",
-                    "Нельзя пересчитать места: один или несколько "
-                            + "результатов имеют неверный формат."
-            );
-        }
-
-        OffsetDateTime now = OffsetDateTime.now();
-
-        for (ResultEntity result : allResults) {
-            if (canBeRanked(result)) {
-                result.setFinalPlace(null);
-                result.setUpdatedAt(now);
-            }
-        }
-
-        List<RankedResult> rankedResults = allResults.stream()
-                .filter(this::canBeRanked)
-                .map(result -> new RankedResult(
-                        result,
-                        parseNumeric(result.getRawValue())
-                ))
-                .sorted(rankedComparator(descending))
-                .toList();
-
-        int place = 1;
-
-        for (RankedResult ranked : rankedResults) {
-            ResultEntity result = ranked.result();
-
-            result.setFinalPlace(place++);
-            result.setStatus(ResultStatus.VALID.name());
-            result.setUpdatedAt(now);
-        }
-
-        resultRepository.saveAll(allResults);
+        entityManager.clear();
     }
 
     private boolean parseRankingStrategy(String rankingStrategy) {
@@ -131,64 +83,5 @@ public class RecalculatePlacesUseCase {
                 "results.invalid_ranking_strategy",
                 "rankingStrategy must be ASC or DESC"
         );
-    }
-
-    private boolean canBeRanked(ResultEntity result) {
-        return ResultStatus.PENDING.name().equals(result.getStatus())
-                || ResultStatus.VALID.name().equals(result.getStatus());
-    }
-
-    private Comparator<RankedResult> rankedComparator(boolean descending) {
-        Comparator<RankedResult> byValue =
-                Comparator.comparing(RankedResult::value);
-
-        if (descending) {
-            byValue = byValue.reversed();
-        }
-
-        return byValue.thenComparing(
-                ranked -> ranked.result().getId().toString()
-        );
-    }
-
-    private Double parseNumeric(String rawValue) {
-        if (rawValue == null || rawValue.isBlank()) {
-            return null;
-        }
-
-        try {
-            if (!rawValue.contains(":")) {
-                double value = Double.parseDouble(rawValue);
-                return Double.isFinite(value) ? value : null;
-            }
-
-            String[] parts = rawValue.split(":", -1);
-
-            if (parts.length != 2) {
-                return null;
-            }
-
-            double minutes = Double.parseDouble(parts[0]);
-            double seconds = Double.parseDouble(parts[1]);
-
-            if (!Double.isFinite(minutes)
-                    || !Double.isFinite(seconds)
-                    || minutes < 0
-                    || seconds < 0
-                    || seconds >= 60) {
-                return null;
-            }
-
-            double value = minutes * 60 + seconds;
-            return Double.isFinite(value) ? value : null;
-        } catch (NumberFormatException exception) {
-            return null;
-        }
-    }
-
-    private record RankedResult(
-            ResultEntity result,
-            Double value
-    ) {
     }
 }

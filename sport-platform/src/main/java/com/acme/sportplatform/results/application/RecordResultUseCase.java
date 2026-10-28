@@ -14,7 +14,6 @@ import com.acme.sportplatform.results.domain.ResultStatus;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRepository;
-import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
 import com.acme.sportplatform.results.infrastructure.jpa.ResultEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.ResultRepository;
 
@@ -23,18 +22,18 @@ public class RecordResultUseCase {
 
     private final ResultRepository resultRepository;
     private final CompetitionUnitEntryRepository entryRepository;
-    private final CompetitionUnitRepository competitionUnitRepository;
+    private final CompetitionUnitWriteLock competitionUnitWriteLock;
     private final DisciplineResultPolicy disciplineResultPolicy;
 
     public RecordResultUseCase(
             ResultRepository resultRepository,
             CompetitionUnitEntryRepository entryRepository,
-            CompetitionUnitRepository competitionUnitRepository,
+            CompetitionUnitWriteLock competitionUnitWriteLock,
             DisciplineResultPolicy disciplineResultPolicy
     ) {
         this.resultRepository = resultRepository;
         this.entryRepository = entryRepository;
-        this.competitionUnitRepository = competitionUnitRepository;
+        this.competitionUnitWriteLock = competitionUnitWriteLock;
         this.disciplineResultPolicy = disciplineResultPolicy;
     }
 
@@ -67,19 +66,18 @@ public class RecordResultUseCase {
                 ));
 
         if (expectedCompetitionUnitId != null
-                && !expectedCompetitionUnitId.equals(entry.getCompetitionUnitId())) {
+                && !expectedCompetitionUnitId.equals(
+                        entry.getCompetitionUnitId()
+                )) {
             throw new BusinessException(
                     "results.entry_unit_mismatch",
                     "Участник не принадлежит указанному заплыву или матчу."
             );
         }
 
-        CompetitionUnitEntity unit = competitionUnitRepository
-                .findById(entry.getCompetitionUnitId())
-                .orElseThrow(() -> new BusinessException(
-                        "results.unit_not_found",
-                        "Competition unit not found: " + entry.getCompetitionUnitId()
-                ));
+        CompetitionUnitEntity unit = competitionUnitWriteLock.acquire(
+                entry.getCompetitionUnitId()
+        );
 
         if ("PUBLISHED".equals(unit.getStatus())) {
             throw new BusinessException(
@@ -89,15 +87,17 @@ public class RecordResultUseCase {
             );
         }
 
-        String configuredResultType = disciplineResultPolicy.requireResultType(
-                unit.getEventDisciplineId(),
-                resultType
-        );
+        String configuredResultType =
+                disciplineResultPolicy.requireResultType(
+                        unit.getEventDisciplineId(),
+                        resultType
+                );
 
         ResultStatus requestedStatus = parseRequestedStatus(request.status());
 
         if (requestedStatus == ResultStatus.PENDING
-                && (request.rawValue() == null || request.rawValue().isBlank())) {
+                && (request.rawValue() == null
+                        || request.rawValue().isBlank())) {
             throw new BusinessException(
                     "results.raw_value_required",
                     "Для обычного результата укажите время или количество очков."

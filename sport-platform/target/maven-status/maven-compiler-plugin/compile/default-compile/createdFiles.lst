@@ -85,7 +85,6 @@ com\acme\sportplatform\registrations\application\ReviewRegistrationUseCase$1.cla
 com\acme\sportplatform\payments\infrastructure\yookassa\YooKassaProperties.class
 com\acme\sportplatform\protocol\application\ProtocolGenerationContext.class
 ProtocolGenerationStatus.class
-com\acme\sportplatform\results\application\RecalculatePlacesUseCase$RankedResult.class
 com\acme\sportplatform\results\ResultsProtocolGateway.class
 com\acme\sportplatform\sports\infrastructure\jpa\DisciplineTemplateEntity.class
 com\acme\sportplatform\identity\infrastructure\persistence\repository\projection\UserRoleCodeProjection.class
@@ -107,6 +106,7 @@ com\acme\sportplatform\organizations\infrastructure\jpa\VenueEntity.class
 com\acme\sportplatform\identity\api\CurrentUserResponse.class
 com\acme\sportplatform\identity\application\RevokeRoleFromUserUseCase.class
 com\acme\sportplatform\identity\application\GetUserByIdUseCase.class
+com\acme\sportplatform\results\application\CompetitionUnitWriteLock.class
 com\acme\sportplatform\organizations\api\CreateOrganizationRegistrationRequest.class
 com\acme\sportplatform\config\MethodSecurityConfig.class
 com\acme\sportplatform\registrations\infrastructure\jpa\RegistrationEntity.class
@@ -152,6 +152,7 @@ com\acme\sportplatform\sports\api\CreateSportRequest.class
 com\acme\sportplatform\identity\domain\RoleCodes.class
 com\acme\sportplatform\organizations\api\CreateVenueRequest.class
 com\acme\sportplatform\events\api\EventOperatorAssignmentResponse.class
+com\acme\sportplatform\results\infrastructure\jdbc\SqlPlacesRecalculator.class
 com\acme\sportplatform\protocol\CompetitionUnitProtocolAccess$AssignmentDraftView.class
 com\acme\sportplatform\registrations\web\RegistrationController.class
 com\acme\sportplatform\regulations\api\RegulationVersionResponse.class
@@ -168,6 +169,7 @@ com\acme\sportplatform\payments\provider\PaymentProviderProperties.class
 com\acme\sportplatform\competition\application\PublishEventDisciplineUseCase.class
 com\acme\sportplatform\events\application\CompleteEventUseCase.class
 META-INF\spring-configuration-metadata.json
+com\acme\sportplatform\results\infrastructure\jdbc\SqlPlacesRecalculator$RankingOutcome.class
 com\acme\sportplatform\results\web\PublicResultsController.class
 com\acme\sportplatform\results\application\RecordResultAndRecalculateUseCase.class
 com\acme\sportplatform\events\application\OpenEventRegistrationUseCase.class

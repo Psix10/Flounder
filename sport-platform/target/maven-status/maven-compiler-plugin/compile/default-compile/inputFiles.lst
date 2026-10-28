@@ -254,6 +254,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\RecordResultRequest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\ResultResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\AssignRegistrationToUnitUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\CompetitionUnitWriteLock.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\CreateCompetitionUnitUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\DisciplineResultPolicy.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\GetCompetitionUnitDetailsUseCase.java
@@ -274,6 +275,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\infrastructure\jpa\CompetitionUnitRepository.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\infrastructure\jpa\ResultEntity.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\infrastructure\jpa\ResultRepository.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\infrastructure\jpa\SqlPlacesRecalculator.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\ResultsCompetitionUnitDraft.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\ResultsCompetitionUnitEntryDraft.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\ResultsCompetitionUnitEntryView.java
