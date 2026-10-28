@@ -803,6 +803,487 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         assertEquals(originalRecordedBy, after.getRecordedByUserId());
     }
 
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate rankingJdbc;
+
+    @Autowired
+    private com.acme.sportplatform.results.application.RecalculatePlacesUseCase sqlRecalculate;
+
+    @Autowired
+    private com.acme.sportplatform.results.application.AssignRegistrationToUnitUseCase assignToUnit;
+
+    @Autowired
+    private com.acme.sportplatform.results.application.PublishCompetitionUnitUseCase publishUnit;
+
+    @Test
+    void shouldRejectAssignmentToPublishedUnitWithoutCreatingEntry()
+            throws Exception {
+
+        Fixture fixture = createFixture();
+
+        UUID registrationId = createConfirmedRegistration(
+                fixture.disciplineId()
+        );
+
+        recordAndRecalculate(fixture, "28.11", "PENDING", "ASC")
+                .andExpect(status().isOk());
+
+        publish(fixture)
+                .andExpect(status().isNoContent());
+
+        UserEntity admin = createUser("assignment-admin");
+        grantGlobalRole(admin.getId(), "PLATFORM_ADMIN");
+
+        PlatformUserPrincipal adminPrincipal =
+                principal(admin, "PLATFORM_ADMIN");
+
+        mockMvc.perform(post(
+                        "/api/v1/competition-units/{unitId}/entries",
+                        fixture.unitId()
+                )
+                        .with(user(adminPrincipal))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Map.of(
+                                "registrationId", registrationId,
+                                "laneOrPosition", 2
+                        ))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("results.unit_published"));
+
+        assertEquals(
+                1,
+                entryRepository
+                        .findByCompetitionUnitId(fixture.unitId())
+                        .size()
+        );
+
+        assertTrue(
+                !entryRepository
+                        .existsByCompetitionUnitIdAndRegistrationId(
+                                fixture.unitId(),
+                                registrationId
+                        ),
+                "Участник не должен добавляться в опубликованный заплыв"
+        );
+
+        assertEquals(
+                "PUBLISHED",
+                competitionUnitRepository
+                        .findById(fixture.unitId())
+                        .orElseThrow()
+                        .getStatus()
+        );
+    }
+
+    @Test
+    void shouldRankEquivalentNumericValuesByResultIdAscending() throws Exception {
+        verifySqlTieOrdering("ASC");
+    }
+
+    @Test
+    void shouldRankEquivalentNumericValuesByResultIdDescending() throws Exception {
+        verifySqlTieOrdering("DESC");
+    }
+
+    @Test
+    void shouldLeaveSpecialResultsCompletelyUnchangedDuringSqlRecalculation()
+            throws Exception {
+        Fixture fixture = createFixture();
+        recordOnly(fixture, "28.11", "PENDING").andExpect(status().isOk());
+        Fixture dns = additionalEntry(fixture, 2);
+        Fixture dnf = additionalEntry(fixture, 3);
+        Fixture dsq = additionalEntry(fixture, 4);
+        recordOnly(dns, "ignored", "DNS").andExpect(status().isOk());
+        recordOnly(dnf, "ignored", "DNF").andExpect(status().isOk());
+        recordOnly(dsq, "ignored", "DSQ").andExpect(status().isOk());
+
+        Map<UUID, List<Map<String, Object>>> before = new HashMap<>();
+        for (Fixture special : List.of(dns, dnf, dsq)) {
+            before.put(special.entryId(), entryResultRows(special.entryId()));
+        }
+
+        sqlRecalculate.execute(fixture.unitId(), "ASC");
+
+        assertEquals("VALID", findResult(fixture).getStatus());
+        assertEquals(Integer.valueOf(1), findResult(fixture).getFinalPlace());
+        for (Fixture special : List.of(dns, dnf, dsq)) {
+            assertEquals(before.get(special.entryId()), entryResultRows(special.entryId()));
+        }
+    }
+
+    @Test
+    void shouldRejectMalformedValueWithoutUpdatingAnyResult() throws Exception {
+        Fixture fixture = createFixture();
+        Fixture invalid = additionalEntry(fixture, 2);
+        recordOnly(fixture, "28.11", "PENDING").andExpect(status().isOk());
+        recordOnly(invalid, "01:60", "PENDING").andExpect(status().isOk());
+        List<Map<String, Object>> before = unitResultRows(fixture.unitId());
+
+        mockMvc.perform(post("/api/v1/competition-units/{unitId}/recalculate", fixture.unitId())
+                        .with(user(operatorFor(fixture)))
+                        .param("rankingStrategy", "ASC"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("results.invalid_raw_value"));
+
+        assertEquals(before, unitResultRows(fixture.unitId()));
+    }
+
+    @Test
+    void shouldKeepPlacesAndIncrementVersionOncePerStandaloneRecalculation()
+            throws Exception {
+        Fixture fixture = createFixture();
+        recordOnly(fixture, "28.11", "PENDING").andExpect(status().isOk());
+        ResultEntity before = findResult(fixture);
+        long originalVersion = before.getVersion();
+        OffsetDateTime createdAt = before.getCreatedAt();
+        UUID recordedBy = before.getRecordedByUserId();
+
+        sqlRecalculate.execute(fixture.unitId(), "ASC");
+        ResultEntity first = findResult(fixture);
+        assertEquals(Long.valueOf(originalVersion + 1), first.getVersion());
+        assertEquals(Integer.valueOf(1), first.getFinalPlace());
+        assertEquals("VALID", first.getStatus());
+        assertEquals(createdAt, first.getCreatedAt());
+        assertEquals(recordedBy, first.getRecordedByUserId());
+
+        sqlRecalculate.execute(fixture.unitId(), "ASC");
+        ResultEntity second = findResult(fixture);
+        assertEquals(Long.valueOf(originalVersion + 2), second.getVersion());
+        assertEquals(Integer.valueOf(1), second.getFinalPlace());
+        assertEquals("VALID", second.getStatus());
+        assertEquals("28.11", second.getRawValue());
+        assertEquals(createdAt, second.getCreatedAt());
+        assertEquals(recordedBy, second.getRecordedByUserId());
+    }
+
+    @Test
+    void shouldApplyResearchNumericContractInPostgres() {
+        List<NumericExample> examples = List.of(
+                new NumericExample(null, null),
+                new NumericExample("", null),
+                new NumericExample(" ", null),
+                new NumericExample("NaN", null),
+                new NumericExample("Infinity", null),
+                new NumericExample("-Infinity", null),
+                new NumericExample("1e3", null),
+                new NumericExample("0x1.0p0", null),
+                new NumericExample("1D", null),
+                new NumericExample(".5", null),
+                new NumericExample("1.", null),
+                new NumericExample("12,5", null),
+                new NumericExample("12 ", null),
+                new NumericExample("12\n", null),
+                new NumericExample("1:60", null),
+                new NumericExample("1:-2", null),
+                new NumericExample("1.5:20", null),
+                new NumericExample("1:2:3", null),
+                new NumericExample("1:", null),
+                new NumericExample(":12", null),
+                new NumericExample("9".repeat(51), null),
+                new NumericExample("-1", -1d),
+                new NumericExample("+1.25", 1.25d),
+                new NumericExample("0", 0d),
+                new NumericExample("-0.00", 0d),
+                new NumericExample("58.42", 58.42d),
+                new NumericExample("00:58.42", 58.42d),
+                new NumericExample("1:00", 60d),
+                new NumericExample("01:02.34", 62.34d),
+                new NumericExample("0:0.1", 0.1d)
+        );
+        for (NumericExample example : examples) {
+            Double actual = rankingJdbc.queryForObject(
+                    "SELECT results_numeric_value(?)",
+                    Double.class,
+                    example.raw()
+            );
+            assertEquals(example.expected(), actual, "rawValue=" + example.raw());
+        }
+    }
+
+    @Test
+    void shouldRollbackAllSqlUpdatesWhenDatabaseTriggerFails() throws Exception {
+        Fixture fixture = createFixture();
+        Fixture second = additionalEntry(fixture, 2);
+        recordOnly(fixture, "30.00", "PENDING").andExpect(status().isOk());
+        recordOnly(second, "28.00", "PENDING").andExpect(status().isOk());
+        List<Map<String, Object>> before = unitResultRows(fixture.unitId());
+        String suffix = UUID.randomUUID().toString().replace("-", "");
+        String function = "test_rank_failure_" + suffix;
+        String trigger = "test_rank_trigger_" + suffix;
+        rankingJdbc.execute("""
+                CREATE FUNCTION %s() RETURNS trigger LANGUAGE plpgsql AS $$
+                BEGIN
+                    IF NEW.competition_unit_entry_id = '%s'::uuid
+                       AND NEW.status = 'VALID' THEN
+                        RAISE EXCEPTION 'injected ranking test failure';
+                    END IF;
+                    RETURN NEW;
+                END;
+                $$
+                """.formatted(function, second.entryId()));
+        try {
+            rankingJdbc.execute("CREATE TRIGGER " + trigger
+                    + " BEFORE UPDATE ON results FOR EACH ROW EXECUTE FUNCTION "
+                    + function + "()");
+            org.junit.jupiter.api.Assertions.assertThrows(
+                    org.springframework.dao.DataAccessException.class,
+                    () -> sqlRecalculate.execute(fixture.unitId(), "ASC")
+            );
+            assertEquals(before, unitResultRows(fixture.unitId()));
+        } finally {
+            rankingJdbc.execute("DROP TRIGGER IF EXISTS " + trigger + " ON results");
+            rankingJdbc.execute("DROP FUNCTION IF EXISTS " + function + "()");
+        }
+    }
+
+    @Test
+    void shouldSerializeTwoAssignmentsToTheSameLane() throws Exception {
+        Fixture fixture = createFixture();
+        UUID firstRegistration = createConfirmedRegistration(fixture.disciplineId());
+        UUID secondRegistration = createConfirmedRegistration(fixture.disciplineId());
+        java.util.concurrent.atomic.AtomicReference<UUID> firstEntry =
+                new java.util.concurrent.atomic.AtomicReference<>();
+
+        java.util.concurrent.ExecutionException failure =
+                org.junit.jupiter.api.Assertions.assertThrows(
+                        java.util.concurrent.ExecutionException.class,
+                        () -> withBlockedUnitWorker(
+                                fixture.unitId(),
+                                () -> firstEntry.set(assignToUnit.execute(
+                                        fixture.unitId(), firstRegistration, 2)),
+                                () -> assignToUnit.execute(
+                                        fixture.unitId(), secondRegistration, 2),
+                                () -> { }
+                        )
+                );
+
+        org.junit.jupiter.api.Assertions.assertInstanceOf(
+                com.acme.sportplatform.common.exception.BusinessException.class,
+                failure.getCause()
+        );
+        org.junit.jupiter.api.Assertions.assertNotNull(firstEntry.get());
+        assertTrue(entryRepository.existsByCompetitionUnitIdAndRegistrationId(
+                fixture.unitId(), firstRegistration));
+        assertTrue(!entryRepository.existsByCompetitionUnitIdAndRegistrationId(
+                fixture.unitId(), secondRegistration));
+        long assignedToLane = entryRepository.findByCompetitionUnitId(fixture.unitId())
+                .stream()
+                .filter(entry -> Integer.valueOf(2).equals(entry.getLaneOrPosition()))
+                .count();
+        assertEquals(1L, assignedToLane);
+        assertEquals(2, entryRepository.findByCompetitionUnitId(fixture.unitId()).size());
+    }
+
+    @Test
+    void shouldRejectRecalculationWhenPublicationCommitsBeforeUnitLock()
+            throws Exception {
+        Fixture fixture = createFixture();
+        recordAndRecalculate(fixture, "28.11", "PENDING", "ASC")
+                .andExpect(status().isOk());
+        List<Map<String, Object>> before = unitResultRows(fixture.unitId());
+
+        java.util.concurrent.ExecutionException failure =
+                org.junit.jupiter.api.Assertions.assertThrows(
+                        java.util.concurrent.ExecutionException.class,
+                        () -> withBlockedUnitWorker(
+                                fixture.unitId(),
+                                () -> { },
+                                () -> {
+                                    sqlRecalculate.execute(fixture.unitId(), "ASC");
+                                    return Boolean.TRUE;
+                                },
+                                () -> publishUnit.execute(fixture.unitId(), true)
+                        )
+                );
+
+        org.junit.jupiter.api.Assertions.assertInstanceOf(
+                com.acme.sportplatform.common.exception.BusinessException.class,
+                failure.getCause()
+        );
+        assertEquals("PUBLISHED", competitionUnitRepository
+                .findById(fixture.unitId()).orElseThrow().getStatus());
+        assertEquals(before, unitResultRows(fixture.unitId()));
+    }
+
+    @Test
+    void shouldRankCommittedResultEditAfterWaitingForUnitLock() throws Exception {
+        Fixture fixture = createFixture();
+        Fixture second = additionalEntry(fixture, 2);
+        recordOnly(fixture, "50", "PENDING").andExpect(status().isOk());
+        recordOnly(second, "60", "PENDING").andExpect(status().isOk());
+        long firstVersion = findResult(fixture).getVersion();
+        long secondVersion = findResult(second).getVersion();
+
+        withBlockedUnitWorker(
+                fixture.unitId(),
+                () -> { },
+                () -> {
+                    sqlRecalculate.execute(fixture.unitId(), "ASC");
+                    return Boolean.TRUE;
+                },
+                () -> rankingJdbc.update(
+                        """
+                        UPDATE results
+                        SET raw_value = '70', version = version + 1
+                        WHERE competition_unit_entry_id = ?
+                        """,
+                        fixture.entryId()
+                )
+        );
+
+        ResultEntity firstAfter = findResult(fixture);
+        ResultEntity secondAfter = findResult(second);
+        assertEquals("70", firstAfter.getRawValue());
+        assertEquals("VALID", firstAfter.getStatus());
+        assertEquals(Integer.valueOf(2), firstAfter.getFinalPlace());
+        assertEquals(Long.valueOf(firstVersion + 2), firstAfter.getVersion());
+        assertEquals("60", secondAfter.getRawValue());
+        assertEquals("VALID", secondAfter.getStatus());
+        assertEquals(Integer.valueOf(1), secondAfter.getFinalPlace());
+        assertEquals(Long.valueOf(secondVersion + 1), secondAfter.getVersion());
+    }
+
+    @Test
+    void shouldAllowRecalculationWithoutResultsAndWithNoEntries() throws Exception {
+        Fixture fixture = createFixture();
+        sqlRecalculate.execute(fixture.unitId(), "ASC");
+        assertTrue(unitResultRows(fixture.unitId()).isEmpty());
+        assertEquals(1, entryRepository.findByCompetitionUnitId(fixture.unitId()).size());
+
+        new TransactionTemplate(transactionManager).executeWithoutResult(tx ->
+                entryRepository.deleteById(fixture.entryId()));
+        sqlRecalculate.execute(fixture.unitId(), "ASC");
+        assertTrue(unitResultRows(fixture.unitId()).isEmpty());
+        assertTrue(entryRepository.findByCompetitionUnitId(fixture.unitId()).isEmpty());
+    }
+
+    private void verifySqlTieOrdering(String strategy) throws Exception {
+        Fixture first = createFixture();
+        Fixture second = additionalEntry(first, 2);
+        Fixture third = additionalEntry(first, 3);
+        rankingJdbc.update("UPDATE event_disciplines SET ranking_strategy = ? WHERE id = ?",
+                strategy, first.disciplineId());
+        recordOnly(first, "58.42", "PENDING").andExpect(status().isOk());
+        recordOnly(second, "00:58.42", "PENDING").andExpect(status().isOk());
+        recordOnly(third, "60", "PENDING").andExpect(status().isOk());
+
+        UUID firstId = findResult(first).getId();
+        UUID secondId = findResult(second).getId();
+        boolean firstWinsTie = firstId.toString().compareTo(secondId.toString()) < 0;
+        sqlRecalculate.execute(first.unitId(), strategy);
+
+        int tieStart = "ASC".equals(strategy) ? 1 : 2;
+        assertEquals(Integer.valueOf(firstWinsTie ? tieStart : tieStart + 1),
+                findResult(first).getFinalPlace());
+        assertEquals(Integer.valueOf(firstWinsTie ? tieStart + 1 : tieStart),
+                findResult(second).getFinalPlace());
+        assertEquals(Integer.valueOf("ASC".equals(strategy) ? 3 : 1),
+                findResult(third).getFinalPlace());
+        for (Fixture fixture : List.of(first, second, third)) {
+            assertEquals("VALID", findResult(fixture).getStatus());
+        }
+    }
+
+    private Fixture additionalEntry(Fixture parent, int lane) throws Exception {
+        UUID registrationId = createConfirmedRegistration(parent.disciplineId());
+        CompetitionUnitEntryEntity entry = new CompetitionUnitEntryEntity();
+        entry.setId(UUID.randomUUID());
+        entry.setCompetitionUnitId(parent.unitId());
+        entry.setRegistrationId(registrationId);
+        entry.setLaneOrPosition(lane);
+        entry.setCreatedAt(OffsetDateTime.now(ZoneOffset.UTC));
+        UUID entryId = entryRepository.saveAndFlush(entry).getId();
+        return new Fixture(parent.eventId(), parent.disciplineId(), parent.unitId(), entryId);
+    }
+
+    private List<Map<String, Object>> unitResultRows(UUID unitId) {
+        return rankingJdbc.queryForList("""
+                SELECT r.*
+                FROM results r
+                JOIN competition_unit_entries e ON e.id = r.competition_unit_entry_id
+                WHERE e.competition_unit_id = ?
+                ORDER BY r.id::text COLLATE "C"
+                """, unitId);
+    }
+
+    private List<Map<String, Object>> entryResultRows(UUID entryId) {
+        return rankingJdbc.queryForList(
+                "SELECT * FROM results WHERE competition_unit_entry_id = ?", entryId);
+    }
+
+    private <T> T withBlockedUnitWorker(
+            UUID unitId,
+            Runnable beforeWorker,
+            java.util.function.Supplier<T> worker,
+            Runnable whileBlocked
+    ) throws Exception {
+        assertTrue(!org.springframework.transaction.support.TransactionSynchronizationManager
+                .isActualTransactionActive(),
+                "Concurrency checks must run without an outer test transaction");
+        java.util.concurrent.ExecutorService pool =
+                java.util.concurrent.Executors.newSingleThreadExecutor();
+        java.util.concurrent.atomic.AtomicReference<java.util.concurrent.Future<T>> future =
+                new java.util.concurrent.atomic.AtomicReference<>();
+        java.util.concurrent.atomic.AtomicInteger workerPid =
+                new java.util.concurrent.atomic.AtomicInteger();
+        java.util.concurrent.CountDownLatch ready = new java.util.concurrent.CountDownLatch(1);
+        try {
+            new TransactionTemplate(transactionManager).executeWithoutResult(tx -> {
+                Integer holderPid = rankingJdbc.queryForObject("SELECT pg_backend_pid()", Integer.class);
+                rankingJdbc.queryForObject(
+                        "SELECT id FROM competition_units WHERE id = ? FOR UPDATE",
+                        UUID.class, unitId);
+                beforeWorker.run();
+                future.set(pool.submit(() -> new TransactionTemplate(transactionManager)
+                        .execute(workerTx -> {
+                            rankingJdbc.execute("SET LOCAL lock_timeout = '12s'");
+                            rankingJdbc.execute("SET LOCAL statement_timeout = '15s'");
+                            workerPid.set(rankingJdbc.queryForObject(
+                                    "SELECT pg_backend_pid()", Integer.class));
+                            ready.countDown();
+                            return worker.get();
+                        })));
+                try {
+                    assertTrue(ready.await(8, java.util.concurrent.TimeUnit.SECONDS),
+                            "Worker did not obtain a database connection");
+                    awaitUnitBlock(holderPid, workerPid.get());
+                    whileBlocked.run();
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(ex);
+                }
+            });
+            return future.get().get(20, java.util.concurrent.TimeUnit.SECONDS);
+        } finally {
+            java.util.concurrent.Future<T> submitted = future.get();
+            if (submitted != null && !submitted.isDone()) {
+                submitted.cancel(true);
+            }
+            pool.shutdownNow();
+            assertTrue(pool.awaitTermination(20, java.util.concurrent.TimeUnit.SECONDS),
+                    "Database worker did not finish");
+        }
+    }
+
+    private void awaitUnitBlock(int holderPid, int workerPid) throws InterruptedException {
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(8);
+        while (System.nanoTime() < deadline) {
+            Boolean blocked = rankingJdbc.queryForObject(
+                    "SELECT ? = ANY(pg_blocking_pids(?))",
+                    Boolean.class, holderPid, workerPid);
+            if (Boolean.TRUE.equals(blocked)) {
+                return;
+            }
+            Thread.sleep(20);
+        }
+        org.junit.jupiter.api.Assertions.fail(
+                "Worker " + workerPid + " did not wait for holder " + holderPid);
+    }
+
+    private record NumericExample(String raw, Double expected) {
+    }
+
     private ResultActions recordOnly(
             Fixture fixture,
             String rawValue,

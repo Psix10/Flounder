@@ -7,6 +7,7 @@ com\acme\research\ranking\RankingExperiment$Ranked.class
 com\acme\research\ranking\RankingFixtures.class
 com\acme\research\ranking\JdbcMetrics.class
 com\acme\research\ranking\NumericContract.class
+com\acme\sportplatform\integration\results\ResultsIntegrationTest$NumericExample.class
 com\acme\research\ranking\RankingExperiment.class
 com\acme\sportplatform\integration\payments\YooKassaWebhookIntegrationTest.class
 com\acme\research\ranking\RankingComparisonTest.class
