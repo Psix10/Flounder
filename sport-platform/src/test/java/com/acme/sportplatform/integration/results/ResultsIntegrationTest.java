@@ -705,6 +705,104 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         );
     }
 
+    @Test
+    void shouldRejectResultTypeDifferentFromDiscipline() throws Exception {
+        Fixture fixture = createFixture();
+
+        mockMvc.perform(post("/api/v1/results")
+                        .with(user(operatorFor(fixture)))
+                        .param("resultType", "POINTS")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(resultJson(
+                                fixture.entryId(),
+                                "100",
+                                "PENDING"
+                        )))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("results.result_type_mismatch"));
+
+        assertTrue(
+                resultRepository
+                        .findByCompetitionUnitEntryId(fixture.entryId())
+                        .isEmpty(),
+                "Результат не должен сохраняться при несовпадении resultType"
+        );
+    }
+
+    @Test
+    void shouldRejectRankingStrategyDifferentFromDiscipline()
+            throws Exception {
+
+        Fixture fixture = createFixture();
+
+        recordAndRecalculate(fixture, "28.11", "PENDING", "ASC")
+                .andExpect(status().isOk());
+
+        ResultEntity before = findResult(fixture);
+
+        UUID originalId = before.getId();
+        Long originalVersion = before.getVersion();
+        OffsetDateTime originalUpdatedAt = before.getUpdatedAt();
+        UUID originalRecordedBy = before.getRecordedByUserId();
+
+        mockMvc.perform(post(
+                        "/api/v1/competition-units/{unitId}/recalculate",
+                        fixture.unitId()
+                )
+                        .with(user(operatorFor(fixture)))
+                        .param("rankingStrategy", "DESC"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("results.ranking_strategy_mismatch"));
+
+        assertResultUnchanged(
+                fixture,
+                "28.11",
+                originalVersion,
+                originalUpdatedAt
+        );
+
+        ResultEntity after = findResult(fixture);
+
+        assertEquals(originalId, after.getId());
+        assertEquals(originalRecordedBy, after.getRecordedByUserId());
+    }
+
+    @Test
+    void shouldRollbackResultUpdateWhenRankingDoesNotMatchDiscipline()
+            throws Exception {
+
+        Fixture fixture = createFixture();
+
+        recordAndRecalculate(fixture, "28.11", "PENDING", "ASC")
+                .andExpect(status().isOk());
+
+        ResultEntity before = findResult(fixture);
+
+        UUID originalId = before.getId();
+        Long originalVersion = before.getVersion();
+        OffsetDateTime originalUpdatedAt = before.getUpdatedAt();
+        UUID originalRecordedBy = before.getRecordedByUserId();
+
+        recordAndRecalculate(fixture, "26.50", "PENDING", "DESC")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("results.ranking_strategy_mismatch"));
+
+        assertResultUnchanged(
+                fixture,
+                "28.11",
+                originalVersion,
+                originalUpdatedAt
+        );
+
+        ResultEntity after = findResult(fixture);
+
+        assertEquals(originalId, after.getId());
+        assertEquals(originalRecordedBy, after.getRecordedByUserId());
+    }
+
     private ResultActions recordOnly(
             Fixture fixture,
             String rawValue,

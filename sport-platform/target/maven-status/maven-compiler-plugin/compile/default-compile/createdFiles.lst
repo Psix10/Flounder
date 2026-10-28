@@ -27,6 +27,7 @@ com\acme\sportplatform\protocol\RegistrationProtocolAccess.class
 GetProtocolRuleSetByIdUseCase.class
 com\acme\sportplatform\results\application\ResultsAccess.class
 ProtocolRuleBlockRepository.class
+com\acme\sportplatform\results\application\DisciplineResultPolicy.class
 com\acme\sportplatform\sports\application\DisciplineTemplateLookupService.class
 com\acme\sportplatform\events\application\PublishEventUseCase.class
 com\acme\sportplatform\payments\infrastructure\yookassa\webhook\YooKassaWebhookPaymentObject.class

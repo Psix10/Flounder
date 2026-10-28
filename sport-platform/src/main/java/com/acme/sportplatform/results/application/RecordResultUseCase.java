@@ -24,15 +24,18 @@ public class RecordResultUseCase {
     private final ResultRepository resultRepository;
     private final CompetitionUnitEntryRepository entryRepository;
     private final CompetitionUnitRepository competitionUnitRepository;
+    private final DisciplineResultPolicy disciplineResultPolicy;
 
     public RecordResultUseCase(
             ResultRepository resultRepository,
             CompetitionUnitEntryRepository entryRepository,
-            CompetitionUnitRepository competitionUnitRepository
+            CompetitionUnitRepository competitionUnitRepository,
+            DisciplineResultPolicy disciplineResultPolicy
     ) {
         this.resultRepository = resultRepository;
         this.entryRepository = entryRepository;
         this.competitionUnitRepository = competitionUnitRepository;
+        this.disciplineResultPolicy = disciplineResultPolicy;
     }
 
     @Transactional
@@ -86,6 +89,11 @@ public class RecordResultUseCase {
             );
         }
 
+        String configuredResultType = disciplineResultPolicy.requireResultType(
+                unit.getEventDisciplineId(),
+                resultType
+        );
+
         ResultStatus requestedStatus = parseRequestedStatus(request.status());
 
         if (requestedStatus == ResultStatus.PENDING
@@ -108,7 +116,7 @@ public class RecordResultUseCase {
         }
 
         result.setCompetitionUnitEntryId(entry.getId());
-        result.setResultType(resultType);
+        result.setResultType(configuredResultType);
         result.setRecordedByUserId(recordedByUserId);
         result.setUpdatedAt(now);
         result.setFinalPlace(null);

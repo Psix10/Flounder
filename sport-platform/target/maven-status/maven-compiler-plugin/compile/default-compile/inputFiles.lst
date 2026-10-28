@@ -255,6 +255,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\api\ResultResponse.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\AssignRegistrationToUnitUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\CreateCompetitionUnitUseCase.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\DisciplineResultPolicy.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\GetCompetitionUnitDetailsUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\GetPublicCompetitionUnitResultsUseCase.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\main\java\com\acme\sportplatform\results\application\GetPublicDisciplineResultsUseCase.java

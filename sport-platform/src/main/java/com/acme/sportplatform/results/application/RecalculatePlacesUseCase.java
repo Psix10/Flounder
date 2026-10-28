@@ -23,15 +23,18 @@ public class RecalculatePlacesUseCase {
     private final CompetitionUnitRepository competitionUnitRepository;
     private final CompetitionUnitEntryRepository entryRepository;
     private final ResultRepository resultRepository;
+    private final DisciplineResultPolicy disciplineResultPolicy;
 
     public RecalculatePlacesUseCase(
             CompetitionUnitRepository competitionUnitRepository,
             CompetitionUnitEntryRepository entryRepository,
-            ResultRepository resultRepository
+            ResultRepository resultRepository,
+            DisciplineResultPolicy disciplineResultPolicy
     ) {
         this.competitionUnitRepository = competitionUnitRepository;
         this.entryRepository = entryRepository;
         this.resultRepository = resultRepository;
+        this.disciplineResultPolicy = disciplineResultPolicy;
     }
 
     @Transactional
@@ -51,9 +54,15 @@ public class RecalculatePlacesUseCase {
         if ("PUBLISHED".equals(unit.getStatus())) {
             throw new BusinessException(
                     "results.unit_published",
-                    "Нельзя пересчитать места: заплыв опубликован. Сначала снимите его с публикации."
+                    "Нельзя пересчитать места: заплыв опубликован. "
+                            + "Сначала снимите его с публикации."
             );
         }
+
+        disciplineResultPolicy.requireRankingStrategy(
+                unit.getEventDisciplineId(),
+                rankingStrategy
+        );
 
         List<CompetitionUnitEntryEntity> entries =
                 entryRepository.findByCompetitionUnitId(competitionUnitId);
@@ -73,7 +82,8 @@ public class RecalculatePlacesUseCase {
         if (hasInvalidRankableResult) {
             throw new BusinessException(
                     "results.invalid_raw_value",
-                    "Нельзя пересчитать места: один или несколько результатов имеют неверный формат."
+                    "Нельзя пересчитать места: один или несколько "
+                            + "результатов имеют неверный формат."
             );
         }
 
