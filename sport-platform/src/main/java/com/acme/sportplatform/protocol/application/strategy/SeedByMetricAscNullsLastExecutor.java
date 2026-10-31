@@ -10,7 +10,8 @@ import com.acme.sportplatform.protocol.application.RuleBlockExecutor;
 import com.acme.sportplatform.protocol.application.SeedParticipant;
 
 @Component
-public class SeedByMetricAscNullsLastExecutor implements RuleBlockExecutor {
+public class SeedByMetricAscNullsLastExecutor
+        implements RuleBlockExecutor {
 
     @Override
     public String code() {
@@ -19,11 +20,23 @@ public class SeedByMetricAscNullsLastExecutor implements RuleBlockExecutor {
 
     @Override
     public void apply(ProtocolGenerationContext context) {
-        List<SeedParticipant> sorted = context.getParticipants().stream()
-                .sorted(Comparator.comparing(
+        Comparator<SeedParticipant> comparator =
+                Comparator.comparing(
                         SeedParticipant::seedMetric,
-                        Comparator.nullsLast(Comparator.naturalOrder())
-                ))
+                        Comparator.nullsLast(
+                                Comparator.naturalOrder()
+                        )
+                );
+
+        comparator = comparator.thenComparing(
+                participant ->
+                        participant.registrationId().toString()
+        );
+
+        List<SeedParticipant> sorted = context
+                .getParticipants()
+                .stream()
+                .sorted(comparator)
                 .toList();
 
         context.setParticipants(sorted);
