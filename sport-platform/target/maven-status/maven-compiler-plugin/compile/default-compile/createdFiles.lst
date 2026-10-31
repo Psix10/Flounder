@@ -86,10 +86,13 @@ com\acme\sportplatform\identity\infrastructure\persistence\repository\projection
 com\acme\sportplatform\identity\infrastructure\persistence\entity\ProfileEntity.class
 com\acme\sportplatform\identity\infrastructure\security\JwtConfig.class
 com\acme\sportplatform\regulations\api\RegulationSection.class
+com\acme\sportplatform\competition\application\ProtocolDisciplineLookupService.class
 com\acme\sportplatform\payments\infrastructure\yookassa\api\YooKassaCreatePaymentRequest.class
 com\acme\sportplatform\sports\infrastructure\jpa\SportRepository.class
+com\acme\sportplatform\events\ProtocolEventLookup.class
 com\acme\sportplatform\protocol\application\ProtocolRuleSetMapper.class
 com\acme\sportplatform\competition\infrastructure\jpa\EventDisciplineEntity.class
+com\acme\sportplatform\protocol\infrastructure\jpa\StartProtocolSnapshotEntity.class
 com\acme\sportplatform\payments\infrastructure\jpa\PaymentWebhookEventEntity.class
 com\acme\sportplatform\protocol\CompetitionUnitProtocolAccess$CompetitionUnitDraftView.class
 com\acme\sportplatform\results\api\CreateCompetitionUnitRequest.class
@@ -100,10 +103,13 @@ com\acme\sportplatform\payments\web\YooKassaWebhookController.class
 com\acme\sportplatform\results\web\PublicStandingsController.class
 com\acme\sportplatform\organizations\infrastructure\jpa\VenueEntity.class
 com\acme\sportplatform\identity\api\CurrentUserResponse.class
+com\acme\sportplatform\protocol\application\ResolvedProtocolRules.class
+com\acme\sportplatform\protocol\infrastructure\jpa\StartProtocolSnapshotRepository.class
 com\acme\sportplatform\identity\application\RevokeRoleFromUserUseCase.class
 com\acme\sportplatform\identity\application\GetUserByIdUseCase.class
 com\acme\sportplatform\results\application\CompetitionUnitWriteLock.class
 com\acme\sportplatform\organizations\api\CreateOrganizationRegistrationRequest.class
+com\acme\sportplatform\protocol\application\PublishedProtocolRulesResolver.class
 com\acme\sportplatform\config\MethodSecurityConfig.class
 com\acme\sportplatform\registrations\infrastructure\jpa\RegistrationEntity.class
 com\acme\sportplatform\competition\domain\EventDisciplineStatus.class
@@ -163,6 +169,7 @@ com\acme\sportplatform\organizations\infrastructure\jpa\OrganizationMemberReposi
 com\acme\sportplatform\competition\api\PublicEventListItemResponse.class
 com\acme\sportplatform\identity\application\ProfileLookupService.class
 com\acme\sportplatform\protocol\api\RuleBlockResponse.class
+com\acme\sportplatform\events\application\ProtocolEventLookupService.class
 com\acme\sportplatform\identity\AuthenticatedUserPrincipal.class
 com\acme\sportplatform\protocol\api\GeneratedCompetitionUnitResponse.class
 com\acme\sportplatform\payments\provider\PaymentProviderProperties.class
@@ -174,6 +181,7 @@ com\acme\sportplatform\results\web\PublicResultsController.class
 com\acme\sportplatform\results\application\RecordResultAndRecalculateUseCase.class
 com\acme\sportplatform\events\application\OpenEventRegistrationUseCase.class
 com\acme\sportplatform\competition\application\CreateEventDisciplineUseCase.class
+com\acme\sportplatform\competition\ProtocolDisciplineLookup.class
 com\acme\sportplatform\identity\application\DeleteUserUseCase.class
 com\acme\sportplatform\payments\provider\PaymentProviderClientResolver.class
 com\acme\sportplatform\results\ResultsCompetitionUnitEntryDraft.class
@@ -253,9 +261,11 @@ com\acme\sportplatform\competition\EventDisciplineLookupResult.class
 com\acme\sportplatform\protocol\application\GetProtocolRuleSetByIdUseCase.class
 com\acme\sportplatform\identity\ProfileLookupResult.class
 com\acme\sportplatform\events\EventPublicLookup.class
+com\acme\sportplatform\events\ProtocolEventLookup$View.class
 com\acme\sportplatform\identity\web\UserController.class
 com\acme\sportplatform\registrations\application\CreateRegistrationUseCase.class
 com\acme\sportplatform\competition\infrastructure\jpa\EventDisciplineRepository.class
+com\acme\sportplatform\competition\ProtocolDisciplineLookup$View.class
 com\acme\sportplatform\organizations\infrastructure\jpa\OrganizationMemberEntity.class
 com\acme\sportplatform\registrations\domain\RegistrationReviewDecision.class
 com\acme\sportplatform\payments\infrastructure\jpa\PaymentWebhookEventRepository.class

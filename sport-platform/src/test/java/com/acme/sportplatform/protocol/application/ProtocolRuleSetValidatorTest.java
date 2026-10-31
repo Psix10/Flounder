@@ -1,12 +1,22 @@
 package com.acme.sportplatform.protocol.application;
 
-import java.util.*;
-import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.acme.sportplatform.common.exception.BusinessException;
-import com.acme.sportplatform.protocol.api.*;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.node.*;
+import com.acme.sportplatform.protocol.api.CreateProtocolRuleSetRequest;
+import com.acme.sportplatform.protocol.api.RuleBlockRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
 
@@ -36,35 +46,41 @@ class ProtocolRuleSetValidatorTest {
                         json.readTree("{\"positionOrder\":[2,1]}"))
         ));
     }
-    @Test void shouldAcceptValidBlocksAndSortByIndex() throws Exception {
+    @Test 
+    void shouldAcceptValidBlocksAndSortByIndex() throws Exception {
         List<RuleBlockRequest> blocks = validBlocks();
         Collections.reverse(blocks);
         assertEquals(List.of(0, 1, 2, 3), validator.validate(request(blocks)).stream()
                 .map(RuleBlockRequest::orderIndex).toList());
     }
-    @Test void shouldRejectDuplicatePositions() throws Exception {
+    @Test 
+    void shouldRejectDuplicatePositions() throws Exception {
         List<RuleBlockRequest> blocks = validBlocks();
         blocks.set(3, new RuleBlockRequest(3, "ASSIGN_CENTER_OUT",
                 json.readTree("{\"positionOrder\":[1,1]}")));
         assertThrows(BusinessException.class, () -> validator.validate(request(blocks)));
     }
-    @Test void shouldRejectUnknownExecutor() throws Exception {
+    @Test 
+    void shouldRejectUnknownExecutor() throws Exception {
         List<RuleBlockRequest> blocks = validBlocks();
         blocks.set(0, new RuleBlockRequest(0, "UNKNOWN", json.createObjectNode()));
         assertThrows(BusinessException.class, () -> validator.validate(request(blocks)));
     }
-    @Test void shouldRejectWrongStageOrder() throws Exception {
+    @Test 
+    void shouldRejectWrongStageOrder() throws Exception {
         List<RuleBlockRequest> blocks = validBlocks();
         RuleBlockRequest seed = blocks.get(1);
         blocks.set(1, new RuleBlockRequest(2, seed.executorCode(), seed.config()));
         assertThrows(BusinessException.class, () -> validator.validate(request(blocks)));
     }
-    @Test void shouldRejectUnknownConfigParameter() throws Exception {
+    @Test 
+    void shouldRejectUnknownConfigParameter() throws Exception {
         List<RuleBlockRequest> blocks = validBlocks();
         ((ObjectNode) blocks.get(2).config()).put("capcity", 2);
         assertThrows(BusinessException.class, () -> validator.validate(request(blocks)));
     }
-    @Test void shouldRejectArrayConfig() throws Exception {
+    @Test 
+    void shouldRejectArrayConfig() throws Exception {
         List<RuleBlockRequest> blocks = validBlocks();
         blocks.set(0, new RuleBlockRequest(0, "ELIGIBILITY_CONFIRMED_ONLY", json.createArrayNode()));
         assertThrows(BusinessException.class, () -> validator.validate(request(blocks)));

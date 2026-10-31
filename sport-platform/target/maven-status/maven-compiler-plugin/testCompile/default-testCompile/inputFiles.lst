@@ -16,6 +16,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\identity\UserIdentityIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\payments\ManualPaymentIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\payments\YooKassaWebhookIntegrationTest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\protocol\ConfiguredStartProtocolIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\protocol\ProtocolRuleSetIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\protocol\ProtocolRuleSetPublicationIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\protocol\StartProtocolIntegrationTest.java
@@ -27,6 +28,7 @@ C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportpl
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\sports\DisciplineTemplateIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\integration\sports\SportsIT.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\modulith\ModulithArchitectureTest.java
+C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\protocol\application\ProtocolConfiguredGroupingTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\protocol\application\ProtocolRuleSetValidatorTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\support\AbstractPostgresIntegrationTest.java
 C:\Users\Psixowan\Desktop\Flounder\sport-platform\src\test\java\com\acme\sportplatform\support\JsonPathHelper.java
