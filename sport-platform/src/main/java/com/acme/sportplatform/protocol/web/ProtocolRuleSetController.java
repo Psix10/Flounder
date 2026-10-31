@@ -17,10 +17,13 @@ import com.acme.sportplatform.protocol.application.*;
 public class ProtocolRuleSetController {
     private final CreateProtocolRuleSetUseCase createUseCase;
     private final GetProtocolRuleSetByIdUseCase getUseCase;
+    private final PublishProtocolRuleSetVersionUseCase publishUseCase;
 
     public ProtocolRuleSetController(CreateProtocolRuleSetUseCase createUseCase,
-            GetProtocolRuleSetByIdUseCase getUseCase) {
+            GetProtocolRuleSetByIdUseCase getUseCase,
+            PublishProtocolRuleSetVersionUseCase publishUseCase) {
         this.createUseCase = createUseCase; this.getUseCase = getUseCase;
+        this.publishUseCase = publishUseCase;
     }
 
     @PostMapping
@@ -35,10 +38,20 @@ public class ProtocolRuleSetController {
             @RequestParam(required = false) UUID versionId,
             @AuthenticationPrincipal AuthenticatedUserPrincipal principal,
             Authentication authentication) {
-        boolean admin = authentication != null && authentication.isAuthenticated()
+        return getUseCase.execute(id, versionId, userId(principal), isAdmin(authentication));
+    }
+
+    @PostMapping("/{id}/versions/{versionId}/publish")
+    public ProtocolRuleSetResponse publish(@PathVariable UUID id, @PathVariable UUID versionId,
+            @AuthenticationPrincipal AuthenticatedUserPrincipal principal,
+            Authentication authentication) {
+        return publishUseCase.execute(id, versionId, userId(principal), isAdmin(authentication));
+    }
+
+    private boolean isAdmin(Authentication authentication) {
+        return authentication != null && authentication.isAuthenticated()
                 && authentication.getAuthorities().stream().anyMatch(authority ->
                         "ROLE_PLATFORM_ADMIN".equals(authority.getAuthority()));
-        return getUseCase.execute(id, versionId, userId(principal), admin);
     }
 
     private UUID userId(AuthenticatedUserPrincipal principal) {

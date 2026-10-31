@@ -288,6 +288,7 @@ com\acme\sportplatform\sports\DisciplineTemplateLookup.class
 com\acme\sportplatform\registrations\application\RegistrationMapper.class
 com\acme\sportplatform\regulations\api\RegulationRules.class
 com\acme\sportplatform\identity\application\LoginUseCase.class
+com\acme\sportplatform\protocol\application\PublishProtocolRuleSetVersionUseCase.class
 com\acme\sportplatform\organizations\application\GetVenuesUseCase.class
 com\acme\sportplatform\competition\application\EventDisciplineMapper.class
 com\acme\sportplatform\competition\EventDisciplineLookup.class

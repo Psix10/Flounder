@@ -17,6 +17,7 @@ com\acme\research\ranking\RankingComparisonTest$Observation.class
 com\acme\sportplatform\integration\results\ResultsIntegrationTest$Fixture.class
 com\acme\sportplatform\integration\sports\SportsIntegrationTest.class
 com\acme\sportplatform\support\AbstractPostgresIntegrationTest.class
+com\acme\sportplatform\integration\protocol\ProtocolRuleSetPublicationIntegrationTest.class
 com\acme\sportplatform\integration\competition\CompetitionIntegrationTest.class
 com\acme\sportplatform\integration\payments\ManualPaymentIntegrationTest$RegistrationFixture.class
 com\acme\research\ranking\RankingExperiment$Variant.class
