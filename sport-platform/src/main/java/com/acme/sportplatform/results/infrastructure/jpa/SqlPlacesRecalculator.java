@@ -49,10 +49,8 @@ public class SqlPlacesRecalculator {
                 ranked AS (
                     SELECT
                         id,
-                        row_number() OVER (
-                            ORDER BY
-                                value %s,
-                                id::text COLLATE "C" ASC
+                        rank() OVER (
+                            ORDER BY value %s
                         )::INTEGER AS place
                     FROM parsed
                     WHERE value IS NOT NULL

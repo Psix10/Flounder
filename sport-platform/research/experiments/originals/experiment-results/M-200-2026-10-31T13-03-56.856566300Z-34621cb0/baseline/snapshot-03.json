@@ -1,0 +1,2149 @@
+{
+  "id" : "6c9d71ee-2e7d-438e-bc5d-727466bd7c31",
+  "revision" : 3,
+  "operation" : "REGENERATE",
+  "ruleSetVersionId" : "e0ace20a-fc0b-4069-9975-2d0ea68f9850",
+  "input" : {
+    "rules" : {
+      "order" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+      "blocks" : [ {
+        "config" : { },
+        "orderIndex" : 0,
+        "executorCode" : "ELIGIBILITY_CONFIRMED_ONLY"
+      }, {
+        "config" : {
+          "metricKey" : "seedTimeSeconds"
+        },
+        "orderIndex" : 1,
+        "executorCode" : "SEED_BY_METRIC_ASC_NULLS_LAST"
+      }, {
+        "config" : {
+          "capacity" : 8,
+          "heatOrder" : "SLOWEST_FIRST",
+          "ntPlacement" : "WEAKEST",
+          "partialHeat" : "FIRST",
+          "unitLabelPrefix" : "Heat"
+        },
+        "orderIndex" : 2,
+        "executorCode" : "GROUP_BY_CAPACITY"
+      }, {
+        "config" : {
+          "positionOrder" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+          "allowedPositions" : [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+        },
+        "orderIndex" : 3,
+        "executorCode" : "ASSIGN_CENTER_OUT"
+      } ],
+      "prefix" : "Heat",
+      "allowed" : [ 1, 2, 3, 4, 5, 6, 7, 8 ],
+      "capacity" : 8,
+      "heatOrder" : "SLOWEST_FIRST",
+      "metricKey" : "seedTimeSeconds",
+      "versionId" : "e0ace20a-fc0b-4069-9975-2d0ea68f9850",
+      "partialHeat" : "FIRST"
+    },
+    "participants" : [ {
+      "seedMetric" : 54.18,
+      "registrationId" : "16fc9985-4773-493f-871b-26f56509bafb"
+    }, {
+      "seedMetric" : 31.92,
+      "registrationId" : "4864edbb-d546-43d3-9e8f-c2003303127c"
+    }, {
+      "seedMetric" : 36.32,
+      "registrationId" : "b70dce26-527c-4869-b5b6-2e9c7546e60b"
+    }, {
+      "seedMetric" : 51.34,
+      "registrationId" : "1d1d58d6-2b0d-4ad0-8df7-7f98a6315bcc"
+    }, {
+      "seedMetric" : 55.69,
+      "registrationId" : "b1774853-1358-4579-b8a7-b338c428c72f"
+    }, {
+      "seedMetric" : 43.79,
+      "registrationId" : "11b0610e-876e-419e-8e6a-c6ee7e513874"
+    }, {
+      "seedMetric" : 34.8,
+      "registrationId" : "6bf1234a-b2f0-4ebe-9fe2-ef947e57be0a"
+    }, {
+      "seedMetric" : 33.14,
+      "registrationId" : "10cbcd73-3f35-44f0-b67f-d5e0804fd0b2"
+    }, {
+      "seedMetric" : 41.44,
+      "registrationId" : "58aa7816-1475-4113-95cd-fc0c9bf1ec1f"
+    }, {
+      "seedMetric" : 41.44,
+      "registrationId" : "418dee44-ebe3-494b-9f72-82dac3a0ddad"
+    }, {
+      "seedMetric" : 55.69,
+      "registrationId" : "88f8afd9-6ea6-46f5-a707-40745efe4f2d"
+    }, {
+      "seedMetric" : 63.4,
+      "registrationId" : "240d00aa-0243-4890-858b-deffcf14e64c"
+    }, {
+      "registrationId" : "aba57e56-a82d-4165-8c13-b1bb52a7200d"
+    }, {
+      "seedMetric" : 37.77,
+      "registrationId" : "9cb04006-4e0e-46bd-aace-f69ae4109a01"
+    }, {
+      "seedMetric" : 50.34,
+      "registrationId" : "e647b768-6fe7-4fc0-bdb3-059af245a019"
+    }, {
+      "seedMetric" : 56.9,
+      "registrationId" : "2d1f3298-665e-43d8-9e74-327b53d32eee"
+    }, {
+      "seedMetric" : 30.79,
+      "registrationId" : "5425a7b4-7ad2-4db2-9dad-f8297dc1f58e"
+    }, {
+      "seedMetric" : 33.54,
+      "registrationId" : "a28af0d9-fe01-4cb6-90a5-6a9559ed4190"
+    }, {
+      "seedMetric" : 29.72,
+      "registrationId" : "4cf4783e-1ed0-470a-b42d-d47fdbbe60d1"
+    }, {
+      "seedMetric" : 29.72,
+      "registrationId" : "e0b4210a-9bfa-496d-ab59-b02a554aedb8"
+    }, {
+      "seedMetric" : 46.67,
+      "registrationId" : "e55ac0d1-9e8d-43db-b934-97899f14bd7b"
+    }, {
+      "seedMetric" : 51.48,
+      "registrationId" : "a13f1b0c-5f86-4187-9563-1c9212e1abe3"
+    }, {
+      "seedMetric" : 53.46,
+      "registrationId" : "9295a435-931a-4583-a4da-a1f652bb58d8"
+    }, {
+      "seedMetric" : 37.84,
+      "registrationId" : "71d2da00-b8f7-4475-98e7-bd5f9762bb72"
+    }, {
+      "seedMetric" : 68.39,
+      "registrationId" : "495d18d2-834c-4f1f-a665-d4a871046fb2"
+    }, {
+      "registrationId" : "51f74b41-358f-416e-bc58-becb1ea44efd"
+    }, {
+      "seedMetric" : 67.12,
+      "registrationId" : "ff05b90b-41f4-4af0-8ed3-1e2fed131c3f"
+    }, {
+      "seedMetric" : 68.08,
+      "registrationId" : "333bf2e7-bcfc-4b76-96c6-13d37239eef6"
+    }, {
+      "seedMetric" : 56.31,
+      "registrationId" : "21036c5a-6524-4d5e-b75b-bc15d32c01e8"
+    }, {
+      "seedMetric" : 56.31,
+      "registrationId" : "cb5db32c-9e30-408c-9fc4-012dd7a54e85"
+    }, {
+      "seedMetric" : 51.76,
+      "registrationId" : "cb9d3e85-a6e1-43ea-a30b-61203a98fc35"
+    }, {
+      "seedMetric" : 55.82,
+      "registrationId" : "f55921f4-9062-4530-83ef-a0e064b6a993"
+    }, {
+      "seedMetric" : 38.33,
+      "registrationId" : "94c8d4bd-17c5-464d-be7f-b2cbd99a5c2d"
+    }, {
+      "seedMetric" : 42.07,
+      "registrationId" : "28f22e9c-5e60-4255-bca2-5f7b497504cf"
+    }, {
+      "seedMetric" : 69.39,
+      "registrationId" : "d4e5299b-1cc0-497f-997d-847d8815a205"
+    }, {
+      "seedMetric" : 67.43,
+      "registrationId" : "b4f676ab-a372-4a41-b46a-2866b3171912"
+    }, {
+      "seedMetric" : 44.3,
+      "registrationId" : "e6bb33db-47b7-493b-b2c0-9482dac2c63e"
+    }, {
+      "seedMetric" : 51.54,
+      "registrationId" : "ce14d018-6a8a-49db-9396-91f9484ce5a8"
+    }, {
+      "registrationId" : "c97b7f65-4120-4d17-a5e2-51b4aa93c0ee"
+    }, {
+      "seedMetric" : 34.58,
+      "registrationId" : "1971c0e9-17dc-4bc1-9e80-c603d0d2ded5"
+    }, {
+      "seedMetric" : 61.09,
+      "registrationId" : "157473b9-446f-4a16-b708-35ab531d0824"
+    }, {
+      "seedMetric" : 30.26,
+      "registrationId" : "7826a6a2-a354-4442-b9ee-1d2750ae80cf"
+    }, {
+      "seedMetric" : 67.05,
+      "registrationId" : "59ded43d-f8a0-4691-b376-37c43c1cab2c"
+    }, {
+      "seedMetric" : 45.93,
+      "registrationId" : "99042295-184f-4db9-a905-3a3fdd5c2f4a"
+    }, {
+      "seedMetric" : 60.29,
+      "registrationId" : "79e0abe2-2a84-4bac-8e14-6ed3087c53f7"
+    }, {
+      "seedMetric" : 56.9,
+      "registrationId" : "50217482-17b0-4a95-97d5-a280ed9817dd"
+    }, {
+      "seedMetric" : 45.4,
+      "registrationId" : "4db2c360-1574-4f09-ae27-afb200d64c88"
+    }, {
+      "seedMetric" : 31.59,
+      "registrationId" : "bd82b81b-ec2c-45fd-bf81-4fa4abc35ff8"
+    }, {
+      "seedMetric" : 62.55,
+      "registrationId" : "3bc78b84-f32f-482d-ada5-4365039bb261"
+    }, {
+      "seedMetric" : 62.55,
+      "registrationId" : "daddd76b-301e-4e6d-9175-b0ac7a982c5a"
+    }, {
+      "seedMetric" : 67.47,
+      "registrationId" : "52f24e75-3523-4c20-8e76-22b34c4f7396"
+    }, {
+      "registrationId" : "95e341dc-164e-40cc-acd1-524d2b8e387e"
+    }, {
+      "seedMetric" : 65.25,
+      "registrationId" : "2c724074-c773-4f52-9721-331a3f1879f4"
+    }, {
+      "seedMetric" : 65.13,
+      "registrationId" : "52680225-a05c-4a5d-b620-4e8d1e9fdde9"
+    }, {
+      "seedMetric" : 53.59,
+      "registrationId" : "7bb68953-ab33-44f0-993c-0e4bdc607a6a"
+    }, {
+      "seedMetric" : 42.56,
+      "registrationId" : "ff41b090-8b98-44e4-b283-b01f5e54b321"
+    }, {
+      "seedMetric" : 60.6,
+      "registrationId" : "51b3ee8a-5ae6-4482-8cbd-b373bc213420"
+    }, {
+      "seedMetric" : 65.75,
+      "registrationId" : "5d23f5d2-d230-4374-94f1-786b8512d1c8"
+    }, {
+      "seedMetric" : 28.03,
+      "registrationId" : "524865c9-ccd3-48ca-aba2-ccd0cb5fad4b"
+    }, {
+      "seedMetric" : 28.03,
+      "registrationId" : "47bc03b7-f2a8-49cc-87d6-debc698f916e"
+    }, {
+      "seedMetric" : 51.02,
+      "registrationId" : "817d7f66-5d04-4ef6-a9fd-782f76d90304"
+    }, {
+      "seedMetric" : 53.52,
+      "registrationId" : "6c754b6a-2d1b-46bd-9ad7-ad71b665fab8"
+    }, {
+      "seedMetric" : 26.56,
+      "registrationId" : "35104288-004e-4b8a-a712-e0ee9dc050b2"
+    }, {
+      "seedMetric" : 59.73,
+      "registrationId" : "04c813de-ace1-4dd5-9cb0-55f39b5fc396"
+    }, {
+      "registrationId" : "93441b8b-1a91-4b7c-ab45-00fbcb4fa4aa"
+    }, {
+      "seedMetric" : 28.02,
+      "registrationId" : "262fb5ec-7320-4297-a1f8-ec025ca1e586"
+    }, {
+      "seedMetric" : 69.15,
+      "registrationId" : "9d8950f0-3b62-4eb5-8114-ef70641e4286"
+    }, {
+      "seedMetric" : 49.87,
+      "registrationId" : "974b20ca-40bf-4b5f-9cc2-e2c8c61ef92d"
+    }, {
+      "seedMetric" : 29.57,
+      "registrationId" : "c4b16d59-81fb-44e7-a2d4-2c62a6a580ea"
+    }, {
+      "seedMetric" : 29.57,
+      "registrationId" : "78370ede-b411-42eb-a966-059fbe43d6ad"
+    }, {
+      "seedMetric" : 62.22,
+      "registrationId" : "ee33779d-b47a-42a5-ae97-3ea1725067a0"
+    }, {
+      "seedMetric" : 47.26,
+      "registrationId" : "815473ec-3c58-4a33-99cf-7b3ebdb8f398"
+    }, {
+      "seedMetric" : 55.53,
+      "registrationId" : "5e8e40ae-5ee5-412a-b544-8b15c3831775"
+    }, {
+      "seedMetric" : 38.14,
+      "registrationId" : "775d1748-9295-43ad-b05d-b47c3c1b6092"
+    }, {
+      "seedMetric" : 64.51,
+      "registrationId" : "052be605-daa4-4d97-be3c-6d1db1798638"
+    }, {
+      "seedMetric" : 33.06,
+      "registrationId" : "76d41958-8a3e-4685-b364-33da4c17e13c"
+    }, {
+      "seedMetric" : 47.33,
+      "registrationId" : "fbb5b584-b63e-45b9-88a2-e45337136be3"
+    }, {
+      "registrationId" : "a9855797-e049-43b0-ab1a-d600471e9aa3"
+    }, {
+      "seedMetric" : 29.25,
+      "registrationId" : "8fa0740c-acf9-4ee3-baf7-240355279600"
+    }, {
+      "seedMetric" : 29.25,
+      "registrationId" : "817a133e-8c23-436d-a00f-226866f56184"
+    }, {
+      "seedMetric" : 57.63,
+      "registrationId" : "c95cdc82-330d-41eb-953f-cc22f49b18da"
+    }, {
+      "seedMetric" : 35.77,
+      "registrationId" : "a4e0e325-c206-4f32-b2f6-0863fe70cab8"
+    }, {
+      "seedMetric" : 62.97,
+      "registrationId" : "6e6c8476-188c-4d6e-a911-be5a50eb4354"
+    }, {
+      "seedMetric" : 61.29,
+      "registrationId" : "3cbf0989-63cc-4e41-986d-6e6bb386627d"
+    }, {
+      "seedMetric" : 27.38,
+      "registrationId" : "70572987-248a-4a73-93cd-fd05551c8e7c"
+    }, {
+      "seedMetric" : 67.81,
+      "registrationId" : "bd07d014-dc95-4b5e-9695-9a80f3f2ea2e"
+    }, {
+      "seedMetric" : 64.12,
+      "registrationId" : "a422653d-400e-4ccb-bab1-9ea645c5b3de"
+    }, {
+      "seedMetric" : 55.06,
+      "registrationId" : "b3279d2d-0ecb-4438-ba67-663acb3dea4a"
+    }, {
+      "seedMetric" : 29.66,
+      "registrationId" : "856df67d-f386-461c-83a0-10c902af94a4"
+    }, {
+      "seedMetric" : 29.66,
+      "registrationId" : "53f81ce9-48c1-46f7-8c6b-d5df3b3d935f"
+    }, {
+      "registrationId" : "49098b63-f44c-4771-9a59-c95f7d41206d"
+    }, {
+      "seedMetric" : 42.65,
+      "registrationId" : "0067aff5-93c6-49d4-9f8e-54f445baba1b"
+    }, {
+      "seedMetric" : 44,
+      "registrationId" : "ed1a60f5-41bb-4bce-b015-86b76d61b3a1"
+    }, {
+      "seedMetric" : 42.98,
+      "registrationId" : "caee093d-2889-4b8e-a7ea-c5c5c2693f5a"
+    }, {
+      "seedMetric" : 29.87,
+      "registrationId" : "b58c1dbf-f34f-45b1-b6fa-81ccdf050495"
+    }, {
+      "seedMetric" : 69.21,
+      "registrationId" : "a3737979-daee-4eac-b287-988b703b5a6e"
+    }, {
+      "seedMetric" : 39.63,
+      "registrationId" : "ccb3930b-c9d1-4424-a31f-b8cd3e255208"
+    }, {
+      "seedMetric" : 50.06,
+      "registrationId" : "b8b6da91-ebc4-4af1-81e4-0879248d2622"
+    }, {
+      "seedMetric" : 55.81,
+      "registrationId" : "0ba7b01b-dbae-45d2-9d10-5ce81b187dcf"
+    }, {
+      "seedMetric" : 55.81,
+      "registrationId" : "a6de4ad5-847d-4a01-a6ec-480eba2dec2e"
+    }, {
+      "seedMetric" : 32.92,
+      "registrationId" : "51c1a29d-89e5-468f-aaf9-08454435cd9d"
+    }, {
+      "seedMetric" : 50.57,
+      "registrationId" : "1725e0a0-4278-4ebe-b530-0af40eeff4ce"
+    }, {
+      "seedMetric" : 60.98,
+      "registrationId" : "75070d3c-7a72-41b6-ba3e-ecd965b514f3"
+    }, {
+      "registrationId" : "a0adbda3-37ff-4af1-8da1-68a21ac9025e"
+    }, {
+      "seedMetric" : 28.17,
+      "registrationId" : "a5f233d5-1c28-4d28-9796-d2e6fdb4b82f"
+    }, {
+      "seedMetric" : 37.72,
+      "registrationId" : "ac95528b-921a-4a98-a09a-81b687dcfac0"
+    }, {
+      "seedMetric" : 38.44,
+      "registrationId" : "bf604754-9f0d-4328-ae12-91342d9088b0"
+    }, {
+      "seedMetric" : 33.68,
+      "registrationId" : "57e22af5-10c0-4799-b22e-8c4bfc517f61"
+    }, {
+      "seedMetric" : 63.32,
+      "registrationId" : "9488b7a9-847c-4710-82e7-35d5679d4325"
+    }, {
+      "seedMetric" : 63.32,
+      "registrationId" : "f82d1849-e6bd-43c4-b0cc-2378caf5bf1a"
+    }, {
+      "seedMetric" : 33.9,
+      "registrationId" : "099beb54-e705-4b37-8989-2a0af56bb6f0"
+    }, {
+      "seedMetric" : 69.36,
+      "registrationId" : "370b0c17-ec5f-4b52-818d-11444d19482a"
+    }, {
+      "seedMetric" : 50.25,
+      "registrationId" : "d2f9afa8-7270-4d3b-b7b4-d4c1792b5d07"
+    }, {
+      "seedMetric" : 63.43,
+      "registrationId" : "c3d52fa5-5604-476e-b6f9-a619004bb85c"
+    }, {
+      "seedMetric" : 29.52,
+      "registrationId" : "fdc1a09a-69c9-4dd8-a244-5e508593b07b"
+    }, {
+      "seedMetric" : 27.33,
+      "registrationId" : "58e3676c-2119-42be-b710-fe227d5c76bc"
+    }, {
+      "registrationId" : "e14beddd-863b-4196-9db9-9386ee7a7cbc"
+    }, {
+      "seedMetric" : 29.97,
+      "registrationId" : "3f1039cf-3e8b-41bf-8bcd-deefd3fc1428"
+    }, {
+      "seedMetric" : 32.01,
+      "registrationId" : "f926f5a6-0f94-41bc-aa7f-8e81fd082021"
+    }, {
+      "seedMetric" : 32.01,
+      "registrationId" : "97b80f2e-1460-45f1-8eed-0cf4ea0b2067"
+    }, {
+      "seedMetric" : 34.71,
+      "registrationId" : "1259b5bc-0d1d-4a14-8efd-9594554f2125"
+    }, {
+      "seedMetric" : 35.57,
+      "registrationId" : "dd9f5e07-6bea-45f1-8e0d-8ae60d422330"
+    }, {
+      "seedMetric" : 37.65,
+      "registrationId" : "0cd2f8b5-11e9-4224-ab09-6e297379e003"
+    }, {
+      "seedMetric" : 34.23,
+      "registrationId" : "bbbdbd9c-a924-4743-8819-4c002424656e"
+    }, {
+      "seedMetric" : 33.05,
+      "registrationId" : "55dbcf15-efba-40f5-ab0a-1266634d6ac1"
+    }, {
+      "seedMetric" : 60.2,
+      "registrationId" : "b6b65c0c-b5b4-40b5-9fe8-890f2a782bac"
+    }, {
+      "seedMetric" : 30.2,
+      "registrationId" : "16854c9a-b3f3-4271-80d7-7d57f041d9bf"
+    }, {
+      "seedMetric" : 56.29,
+      "registrationId" : "8098b0e7-6332-4395-af72-72ab87f4d424"
+    }, {
+      "seedMetric" : 51.05,
+      "registrationId" : "7ecd7aef-b092-445f-935c-8998354cf784"
+    }, {
+      "registrationId" : "238d706d-1dce-4a87-b6c2-ff7db5f3c53d"
+    }, {
+      "seedMetric" : 58.94,
+      "registrationId" : "12ae7edd-192f-4abf-9152-4729b463bb08"
+    }, {
+      "seedMetric" : 52.37,
+      "registrationId" : "53cba373-3a95-4dac-8ada-c1c15a46038a"
+    }, {
+      "seedMetric" : 60.36,
+      "registrationId" : "0c647919-dec1-4caa-97ac-e0cc0a906f70"
+    }, {
+      "seedMetric" : 64.08,
+      "registrationId" : "83436d88-2fb3-462f-bf9c-0d448c20361b"
+    }, {
+      "seedMetric" : 51.68,
+      "registrationId" : "dce6befb-5a93-4f82-a815-d65c7da33dfb"
+    }, {
+      "seedMetric" : 63.97,
+      "registrationId" : "09ee7b95-452d-475b-836f-7daf9ea37077"
+    }, {
+      "seedMetric" : 60.6,
+      "registrationId" : "d287e92e-afd8-4a73-8e82-22bba13c624b"
+    }, {
+      "seedMetric" : 26.64,
+      "registrationId" : "8102b1d3-8427-4bcf-ae36-066cba8ce3e2"
+    }, {
+      "seedMetric" : 38.79,
+      "registrationId" : "b4e5522a-0b68-4b1f-8626-14775c5a2816"
+    }, {
+      "seedMetric" : 38.79,
+      "registrationId" : "0832c2a7-28b5-4de0-aee4-271614a083da"
+    }, {
+      "seedMetric" : 63.1,
+      "registrationId" : "2e6f0759-fcc8-4659-90f8-6e66dcf720c0"
+    }, {
+      "seedMetric" : 28.98,
+      "registrationId" : "e21c8b1b-2223-41b1-a238-7508edadda68"
+    }, {
+      "registrationId" : "bf0c091d-4a01-47d8-8254-5a1cdd729761"
+    }, {
+      "seedMetric" : 49.59,
+      "registrationId" : "e0fac29a-1d6f-4dc5-bbdf-999658d9a769"
+    }, {
+      "seedMetric" : 63.19,
+      "registrationId" : "f25fa77c-0b5f-43ed-9989-7bc555aaacdc"
+    }, {
+      "seedMetric" : 56.98,
+      "registrationId" : "07a5a9e6-0375-4e23-8b7f-1f0e09bbc140"
+    }, {
+      "seedMetric" : 52.5,
+      "registrationId" : "c79cda91-9162-47ea-bf0d-924307f58876"
+    }, {
+      "seedMetric" : 47.6,
+      "registrationId" : "9a295640-5da4-4a9e-86f9-82214447c97d"
+    }, {
+      "seedMetric" : 63.59,
+      "registrationId" : "58fb2492-a565-4190-b883-783381784a42"
+    }, {
+      "seedMetric" : 63.59,
+      "registrationId" : "5e63ce94-0fb8-450f-a367-7a3449372eaf"
+    }, {
+      "seedMetric" : 37.64,
+      "registrationId" : "dcd4ff72-f66f-4b0e-85d2-2884879a1740"
+    }, {
+      "seedMetric" : 55.63,
+      "registrationId" : "02d90d46-60ec-44a9-bbeb-976ceef982ea"
+    }, {
+      "seedMetric" : 55.11,
+      "registrationId" : "2a8b9a63-42a5-4337-a2fd-ad607c47cae9"
+    }, {
+      "seedMetric" : 36.71,
+      "registrationId" : "2619b38f-a42e-41a4-b0d6-0c268c1be1ff"
+    }, {
+      "seedMetric" : 60.51,
+      "registrationId" : "3b004f24-7587-4507-ab8a-bdae94fe9ffe"
+    }, {
+      "registrationId" : "4684be06-0992-408a-bf1a-2520a5614558"
+    }, {
+      "seedMetric" : 51.32,
+      "registrationId" : "88c72b0c-70bc-4fc9-becc-6351320af009"
+    }, {
+      "seedMetric" : 63.26,
+      "registrationId" : "54d1ead0-4317-435a-b40c-18e7c7eb6448"
+    }, {
+      "seedMetric" : 47.53,
+      "registrationId" : "dccff537-0e30-4683-983c-d426e60cd968"
+    }, {
+      "seedMetric" : 47.53,
+      "registrationId" : "ddeed24a-e0ec-4ff8-9d88-41c5c7242de5"
+    }, {
+      "seedMetric" : 25.87,
+      "registrationId" : "ede2151f-5404-4ec0-a5aa-ef96a39e1faa"
+    }, {
+      "seedMetric" : 50.32,
+      "registrationId" : "86272277-767f-42d4-928d-16cefa9408ec"
+    }, {
+      "seedMetric" : 51.48,
+      "registrationId" : "5fbbb22a-efaf-4137-9da8-e4de7dd14a5a"
+    }, {
+      "seedMetric" : 61.03,
+      "registrationId" : "e29c32a4-161a-4cfe-8bbe-b1628c163de1"
+    }, {
+      "seedMetric" : 40.36,
+      "registrationId" : "592c12d1-e6eb-4a50-8fd5-bb349bab4ea9"
+    }, {
+      "seedMetric" : 53.48,
+      "registrationId" : "54f2ff64-6cc5-49df-b6a3-21b135bc6a5a"
+    }, {
+      "seedMetric" : 41.73,
+      "registrationId" : "0f28cf84-aa3b-448e-8c3e-87b7d3467ef6"
+    }, {
+      "seedMetric" : 37.1,
+      "registrationId" : "01e9414e-85ee-4dfb-8633-f8da18bbce0e"
+    }, {
+      "registrationId" : "fe9cd573-5274-4121-b936-71172c136011"
+    }, {
+      "seedMetric" : 60.54,
+      "registrationId" : "bffa31b2-c5ec-4f49-b502-3c123832ca67"
+    }, {
+      "seedMetric" : 53.66,
+      "registrationId" : "c785356b-c703-4469-af33-83e8f38f0ecd"
+    }, {
+      "seedMetric" : 46.4,
+      "registrationId" : "936431f3-db2a-4eba-a8b7-faf8b8214929"
+    }, {
+      "seedMetric" : 48.28,
+      "registrationId" : "6a94b900-b302-43a6-9fc5-8a686eab0430"
+    }, {
+      "seedMetric" : 53.49,
+      "registrationId" : "9f8dcacc-c39a-4791-bdab-0b851a51269b"
+    }, {
+      "seedMetric" : 42.59,
+      "registrationId" : "d68b9981-6ba0-4f7e-9ed6-f6121ec9dcba"
+    }, {
+      "seedMetric" : 48.22,
+      "registrationId" : "ef2dab8b-cd43-4b58-b25e-4877d2a20bc2"
+    }, {
+      "seedMetric" : 29.11,
+      "registrationId" : "4df8bd2c-84de-4dd6-9d93-3cf66e0a24f3"
+    }, {
+      "seedMetric" : 65.54,
+      "registrationId" : "866720fa-ed1e-4bf0-9e94-b6fd89136bd7"
+    }, {
+      "seedMetric" : 56.98,
+      "registrationId" : "6aad4f5f-058a-4e0a-9733-07597a67dfd1"
+    }, {
+      "seedMetric" : 56.98,
+      "registrationId" : "4f3cf5cf-3222-4c75-98dc-7477c4a67d21"
+    }, {
+      "seedMetric" : 25.94,
+      "registrationId" : "dfeb87f4-5cd6-45be-a6e3-ee7619a2d0b0"
+    }, {
+      "registrationId" : "16ae1e7e-dec9-46a0-9413-0bd6473c289d"
+    }, {
+      "seedMetric" : 60.53,
+      "registrationId" : "1666fd2c-073a-4f0f-852d-090849852125"
+    }, {
+      "seedMetric" : 53.59,
+      "registrationId" : "7df19a34-967b-43f3-8b62-1ec26cf85528"
+    }, {
+      "seedMetric" : 58.75,
+      "registrationId" : "beeb3e87-cf39-4a96-90e3-acbd4a8951d6"
+    }, {
+      "seedMetric" : 63.06,
+      "registrationId" : "3f9cecf5-74a6-4491-bd59-836648691640"
+    }, {
+      "seedMetric" : 39.85,
+      "registrationId" : "ba20115f-8f68-4ff9-9e35-7e9ce9890534"
+    }, {
+      "seedMetric" : 60.81,
+      "registrationId" : "809b1017-9475-422e-917b-a6ad4ab74574"
+    }, {
+      "seedMetric" : 34.32,
+      "registrationId" : "77fa0098-b9ee-4456-9dd8-03776ad7653c"
+    }, {
+      "seedMetric" : 34.32,
+      "registrationId" : "981fa928-3a47-4396-853d-e14534ef6e5e"
+    }, {
+      "seedMetric" : 49.1,
+      "registrationId" : "5302f34f-e22f-4f59-b3f2-ec316c538b30"
+    }, {
+      "seedMetric" : 48.04,
+      "registrationId" : "0bdfd471-87e3-495e-8668-cb2dce1b0303"
+    }, {
+      "seedMetric" : 43.13,
+      "registrationId" : "1094a588-6249-43f4-8f30-02f772a2c703"
+    }, {
+      "seedMetric" : 34.6,
+      "registrationId" : "ad62611d-2aaa-4819-866a-553c084a5239"
+    }, {
+      "registrationId" : "bb462ea5-a6b6-46ee-8134-0f6d00a16279"
+    }, {
+      "seedMetric" : 69.84,
+      "registrationId" : "129555ec-eefc-46d1-a038-bf5776402a92"
+    }, {
+      "seedMetric" : 58.18,
+      "registrationId" : "f76af250-c3f4-4698-b557-d0ef9645ba03"
+    }, {
+      "seedMetric" : 69.91,
+      "registrationId" : "b505143f-d716-4d7a-a628-461db48773b7"
+    }, {
+      "seedMetric" : 68.25,
+      "registrationId" : "94b4ec34-6e8c-4801-a848-accdb348ff8e"
+    }, {
+      "seedMetric" : 68.25,
+      "registrationId" : "4763d62b-494c-4333-80b4-e0fcf3ff18fa"
+    } ],
+    "schemaVersion" : 1,
+    "ruleSetVersionId" : "e0ace20a-fc0b-4069-9975-2d0ea68f9850",
+    "confirmedRegistrations" : [ {
+      "registrationId" : "16fc9985-4773-493f-871b-26f56509bafb",
+      "registrationMeta" : "{\"seedTimeSeconds\": 54.18, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "4864edbb-d546-43d3-9e8f-c2003303127c",
+      "registrationMeta" : "{\"seedTimeSeconds\": 31.92, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b70dce26-527c-4869-b5b6-2e9c7546e60b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 36.32, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "1d1d58d6-2b0d-4ad0-8df7-7f98a6315bcc",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.34, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b1774853-1358-4579-b8a7-b338c428c72f",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.69, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "11b0610e-876e-419e-8e6a-c6ee7e513874",
+      "registrationMeta" : "{\"seedTimeSeconds\": 43.79, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "6bf1234a-b2f0-4ebe-9fe2-ef947e57be0a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 34.8, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "10cbcd73-3f35-44f0-b67f-d5e0804fd0b2",
+      "registrationMeta" : "{\"seedTimeSeconds\": 33.14, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "58aa7816-1475-4113-95cd-fc0c9bf1ec1f",
+      "registrationMeta" : "{\"seedTimeSeconds\": 41.44, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "418dee44-ebe3-494b-9f72-82dac3a0ddad",
+      "registrationMeta" : "{\"seedTimeSeconds\": 41.44, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "88f8afd9-6ea6-46f5-a707-40745efe4f2d",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.69, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "240d00aa-0243-4890-858b-deffcf14e64c",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.4, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "aba57e56-a82d-4165-8c13-b1bb52a7200d",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "9cb04006-4e0e-46bd-aace-f69ae4109a01",
+      "registrationMeta" : "{\"seedTimeSeconds\": 37.77, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e647b768-6fe7-4fc0-bdb3-059af245a019",
+      "registrationMeta" : "{\"seedTimeSeconds\": 50.34, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "2d1f3298-665e-43d8-9e74-327b53d32eee",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.9, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "5425a7b4-7ad2-4db2-9dad-f8297dc1f58e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 30.79, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a28af0d9-fe01-4cb6-90a5-6a9559ed4190",
+      "registrationMeta" : "{\"seedTimeSeconds\": 33.54, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "4cf4783e-1ed0-470a-b42d-d47fdbbe60d1",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.72, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e0b4210a-9bfa-496d-ab59-b02a554aedb8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.72, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e55ac0d1-9e8d-43db-b934-97899f14bd7b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 46.67, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a13f1b0c-5f86-4187-9563-1c9212e1abe3",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.48, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "9295a435-931a-4583-a4da-a1f652bb58d8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 53.46, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "71d2da00-b8f7-4475-98e7-bd5f9762bb72",
+      "registrationMeta" : "{\"seedTimeSeconds\": 37.84, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "495d18d2-834c-4f1f-a665-d4a871046fb2",
+      "registrationMeta" : "{\"seedTimeSeconds\": 68.39, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "51f74b41-358f-416e-bc58-becb1ea44efd",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ff05b90b-41f4-4af0-8ed3-1e2fed131c3f",
+      "registrationMeta" : "{\"seedTimeSeconds\": 67.12, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "333bf2e7-bcfc-4b76-96c6-13d37239eef6",
+      "registrationMeta" : "{\"seedTimeSeconds\": 68.08, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "21036c5a-6524-4d5e-b75b-bc15d32c01e8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.31, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "cb5db32c-9e30-408c-9fc4-012dd7a54e85",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.31, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "cb9d3e85-a6e1-43ea-a30b-61203a98fc35",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.76, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "f55921f4-9062-4530-83ef-a0e064b6a993",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.82, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "94c8d4bd-17c5-464d-be7f-b2cbd99a5c2d",
+      "registrationMeta" : "{\"seedTimeSeconds\": 38.33, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "28f22e9c-5e60-4255-bca2-5f7b497504cf",
+      "registrationMeta" : "{\"seedTimeSeconds\": 42.07, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "d4e5299b-1cc0-497f-997d-847d8815a205",
+      "registrationMeta" : "{\"seedTimeSeconds\": 69.39, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b4f676ab-a372-4a41-b46a-2866b3171912",
+      "registrationMeta" : "{\"seedTimeSeconds\": 67.43, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e6bb33db-47b7-493b-b2c0-9482dac2c63e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 44.3, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ce14d018-6a8a-49db-9396-91f9484ce5a8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.54, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "c97b7f65-4120-4d17-a5e2-51b4aa93c0ee",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "1971c0e9-17dc-4bc1-9e80-c603d0d2ded5",
+      "registrationMeta" : "{\"seedTimeSeconds\": 34.58, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "157473b9-446f-4a16-b708-35ab531d0824",
+      "registrationMeta" : "{\"seedTimeSeconds\": 61.09, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "7826a6a2-a354-4442-b9ee-1d2750ae80cf",
+      "registrationMeta" : "{\"seedTimeSeconds\": 30.26, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "59ded43d-f8a0-4691-b376-37c43c1cab2c",
+      "registrationMeta" : "{\"seedTimeSeconds\": 67.05, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "99042295-184f-4db9-a905-3a3fdd5c2f4a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 45.93, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "79e0abe2-2a84-4bac-8e14-6ed3087c53f7",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.29, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "50217482-17b0-4a95-97d5-a280ed9817dd",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.9, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "4db2c360-1574-4f09-ae27-afb200d64c88",
+      "registrationMeta" : "{\"seedTimeSeconds\": 45.4, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "bd82b81b-ec2c-45fd-bf81-4fa4abc35ff8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 31.59, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "3bc78b84-f32f-482d-ada5-4365039bb261",
+      "registrationMeta" : "{\"seedTimeSeconds\": 62.55, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "daddd76b-301e-4e6d-9175-b0ac7a982c5a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 62.55, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "52f24e75-3523-4c20-8e76-22b34c4f7396",
+      "registrationMeta" : "{\"seedTimeSeconds\": 67.47, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "95e341dc-164e-40cc-acd1-524d2b8e387e",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "2c724074-c773-4f52-9721-331a3f1879f4",
+      "registrationMeta" : "{\"seedTimeSeconds\": 65.25, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "52680225-a05c-4a5d-b620-4e8d1e9fdde9",
+      "registrationMeta" : "{\"seedTimeSeconds\": 65.13, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "7bb68953-ab33-44f0-993c-0e4bdc607a6a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 53.59, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ff41b090-8b98-44e4-b283-b01f5e54b321",
+      "registrationMeta" : "{\"seedTimeSeconds\": 42.56, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "51b3ee8a-5ae6-4482-8cbd-b373bc213420",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.6, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "5d23f5d2-d230-4374-94f1-786b8512d1c8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 65.75, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "524865c9-ccd3-48ca-aba2-ccd0cb5fad4b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 28.03, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "47bc03b7-f2a8-49cc-87d6-debc698f916e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 28.03, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "817d7f66-5d04-4ef6-a9fd-782f76d90304",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.02, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "6c754b6a-2d1b-46bd-9ad7-ad71b665fab8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 53.52, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "35104288-004e-4b8a-a712-e0ee9dc050b2",
+      "registrationMeta" : "{\"seedTimeSeconds\": 26.56, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "04c813de-ace1-4dd5-9cb0-55f39b5fc396",
+      "registrationMeta" : "{\"seedTimeSeconds\": 59.73, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "93441b8b-1a91-4b7c-ab45-00fbcb4fa4aa",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "262fb5ec-7320-4297-a1f8-ec025ca1e586",
+      "registrationMeta" : "{\"seedTimeSeconds\": 28.02, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "9d8950f0-3b62-4eb5-8114-ef70641e4286",
+      "registrationMeta" : "{\"seedTimeSeconds\": 69.15, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "974b20ca-40bf-4b5f-9cc2-e2c8c61ef92d",
+      "registrationMeta" : "{\"seedTimeSeconds\": 49.87, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "c4b16d59-81fb-44e7-a2d4-2c62a6a580ea",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.57, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "78370ede-b411-42eb-a966-059fbe43d6ad",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.57, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ee33779d-b47a-42a5-ae97-3ea1725067a0",
+      "registrationMeta" : "{\"seedTimeSeconds\": 62.22, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "815473ec-3c58-4a33-99cf-7b3ebdb8f398",
+      "registrationMeta" : "{\"seedTimeSeconds\": 47.26, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "5e8e40ae-5ee5-412a-b544-8b15c3831775",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.53, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "775d1748-9295-43ad-b05d-b47c3c1b6092",
+      "registrationMeta" : "{\"seedTimeSeconds\": 38.14, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "052be605-daa4-4d97-be3c-6d1db1798638",
+      "registrationMeta" : "{\"seedTimeSeconds\": 64.51, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "76d41958-8a3e-4685-b364-33da4c17e13c",
+      "registrationMeta" : "{\"seedTimeSeconds\": 33.06, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "fbb5b584-b63e-45b9-88a2-e45337136be3",
+      "registrationMeta" : "{\"seedTimeSeconds\": 47.33, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a9855797-e049-43b0-ab1a-d600471e9aa3",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "8fa0740c-acf9-4ee3-baf7-240355279600",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.25, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "817a133e-8c23-436d-a00f-226866f56184",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.25, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "c95cdc82-330d-41eb-953f-cc22f49b18da",
+      "registrationMeta" : "{\"seedTimeSeconds\": 57.63, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a4e0e325-c206-4f32-b2f6-0863fe70cab8",
+      "registrationMeta" : "{\"seedTimeSeconds\": 35.77, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "6e6c8476-188c-4d6e-a911-be5a50eb4354",
+      "registrationMeta" : "{\"seedTimeSeconds\": 62.97, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "3cbf0989-63cc-4e41-986d-6e6bb386627d",
+      "registrationMeta" : "{\"seedTimeSeconds\": 61.29, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "70572987-248a-4a73-93cd-fd05551c8e7c",
+      "registrationMeta" : "{\"seedTimeSeconds\": 27.38, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "bd07d014-dc95-4b5e-9695-9a80f3f2ea2e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 67.81, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a422653d-400e-4ccb-bab1-9ea645c5b3de",
+      "registrationMeta" : "{\"seedTimeSeconds\": 64.12, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b3279d2d-0ecb-4438-ba67-663acb3dea4a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.06, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "856df67d-f386-461c-83a0-10c902af94a4",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.66, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "53f81ce9-48c1-46f7-8c6b-d5df3b3d935f",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.66, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "49098b63-f44c-4771-9a59-c95f7d41206d",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "0067aff5-93c6-49d4-9f8e-54f445baba1b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 42.65, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ed1a60f5-41bb-4bce-b015-86b76d61b3a1",
+      "registrationMeta" : "{\"seedTimeSeconds\": 44.0, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "caee093d-2889-4b8e-a7ea-c5c5c2693f5a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 42.98, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b58c1dbf-f34f-45b1-b6fa-81ccdf050495",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.87, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a3737979-daee-4eac-b287-988b703b5a6e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 69.21, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ccb3930b-c9d1-4424-a31f-b8cd3e255208",
+      "registrationMeta" : "{\"seedTimeSeconds\": 39.63, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b8b6da91-ebc4-4af1-81e4-0879248d2622",
+      "registrationMeta" : "{\"seedTimeSeconds\": 50.06, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "0ba7b01b-dbae-45d2-9d10-5ce81b187dcf",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.81, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a6de4ad5-847d-4a01-a6ec-480eba2dec2e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.81, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "51c1a29d-89e5-468f-aaf9-08454435cd9d",
+      "registrationMeta" : "{\"seedTimeSeconds\": 32.92, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "1725e0a0-4278-4ebe-b530-0af40eeff4ce",
+      "registrationMeta" : "{\"seedTimeSeconds\": 50.57, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "75070d3c-7a72-41b6-ba3e-ecd965b514f3",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.98, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a0adbda3-37ff-4af1-8da1-68a21ac9025e",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "a5f233d5-1c28-4d28-9796-d2e6fdb4b82f",
+      "registrationMeta" : "{\"seedTimeSeconds\": 28.17, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ac95528b-921a-4a98-a09a-81b687dcfac0",
+      "registrationMeta" : "{\"seedTimeSeconds\": 37.72, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "bf604754-9f0d-4328-ae12-91342d9088b0",
+      "registrationMeta" : "{\"seedTimeSeconds\": 38.44, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "57e22af5-10c0-4799-b22e-8c4bfc517f61",
+      "registrationMeta" : "{\"seedTimeSeconds\": 33.68, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "9488b7a9-847c-4710-82e7-35d5679d4325",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.32, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "f82d1849-e6bd-43c4-b0cc-2378caf5bf1a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.32, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "099beb54-e705-4b37-8989-2a0af56bb6f0",
+      "registrationMeta" : "{\"seedTimeSeconds\": 33.9, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "370b0c17-ec5f-4b52-818d-11444d19482a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 69.36, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "d2f9afa8-7270-4d3b-b7b4-d4c1792b5d07",
+      "registrationMeta" : "{\"seedTimeSeconds\": 50.25, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "c3d52fa5-5604-476e-b6f9-a619004bb85c",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.43, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "fdc1a09a-69c9-4dd8-a244-5e508593b07b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.52, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "58e3676c-2119-42be-b710-fe227d5c76bc",
+      "registrationMeta" : "{\"seedTimeSeconds\": 27.33, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e14beddd-863b-4196-9db9-9386ee7a7cbc",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "3f1039cf-3e8b-41bf-8bcd-deefd3fc1428",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.97, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "f926f5a6-0f94-41bc-aa7f-8e81fd082021",
+      "registrationMeta" : "{\"seedTimeSeconds\": 32.01, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "97b80f2e-1460-45f1-8eed-0cf4ea0b2067",
+      "registrationMeta" : "{\"seedTimeSeconds\": 32.01, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "1259b5bc-0d1d-4a14-8efd-9594554f2125",
+      "registrationMeta" : "{\"seedTimeSeconds\": 34.71, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "dd9f5e07-6bea-45f1-8e0d-8ae60d422330",
+      "registrationMeta" : "{\"seedTimeSeconds\": 35.57, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "0cd2f8b5-11e9-4224-ab09-6e297379e003",
+      "registrationMeta" : "{\"seedTimeSeconds\": 37.65, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "bbbdbd9c-a924-4743-8819-4c002424656e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 34.23, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "55dbcf15-efba-40f5-ab0a-1266634d6ac1",
+      "registrationMeta" : "{\"seedTimeSeconds\": 33.05, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b6b65c0c-b5b4-40b5-9fe8-890f2a782bac",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.2, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "16854c9a-b3f3-4271-80d7-7d57f041d9bf",
+      "registrationMeta" : "{\"seedTimeSeconds\": 30.2, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "8098b0e7-6332-4395-af72-72ab87f4d424",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.29, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "7ecd7aef-b092-445f-935c-8998354cf784",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.05, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "238d706d-1dce-4a87-b6c2-ff7db5f3c53d",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "12ae7edd-192f-4abf-9152-4729b463bb08",
+      "registrationMeta" : "{\"seedTimeSeconds\": 58.94, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "53cba373-3a95-4dac-8ada-c1c15a46038a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 52.37, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "0c647919-dec1-4caa-97ac-e0cc0a906f70",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.36, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "83436d88-2fb3-462f-bf9c-0d448c20361b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 64.08, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "dce6befb-5a93-4f82-a815-d65c7da33dfb",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.68, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "09ee7b95-452d-475b-836f-7daf9ea37077",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.97, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "d287e92e-afd8-4a73-8e82-22bba13c624b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.6, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "8102b1d3-8427-4bcf-ae36-066cba8ce3e2",
+      "registrationMeta" : "{\"seedTimeSeconds\": 26.64, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b4e5522a-0b68-4b1f-8626-14775c5a2816",
+      "registrationMeta" : "{\"seedTimeSeconds\": 38.79, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "0832c2a7-28b5-4de0-aee4-271614a083da",
+      "registrationMeta" : "{\"seedTimeSeconds\": 38.79, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "2e6f0759-fcc8-4659-90f8-6e66dcf720c0",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.1, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e21c8b1b-2223-41b1-a238-7508edadda68",
+      "registrationMeta" : "{\"seedTimeSeconds\": 28.98, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "bf0c091d-4a01-47d8-8254-5a1cdd729761",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e0fac29a-1d6f-4dc5-bbdf-999658d9a769",
+      "registrationMeta" : "{\"seedTimeSeconds\": 49.59, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "f25fa77c-0b5f-43ed-9989-7bc555aaacdc",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.19, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "07a5a9e6-0375-4e23-8b7f-1f0e09bbc140",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.98, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "c79cda91-9162-47ea-bf0d-924307f58876",
+      "registrationMeta" : "{\"seedTimeSeconds\": 52.5, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "9a295640-5da4-4a9e-86f9-82214447c97d",
+      "registrationMeta" : "{\"seedTimeSeconds\": 47.6, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "58fb2492-a565-4190-b883-783381784a42",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.59, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "5e63ce94-0fb8-450f-a367-7a3449372eaf",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.59, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "dcd4ff72-f66f-4b0e-85d2-2884879a1740",
+      "registrationMeta" : "{\"seedTimeSeconds\": 37.64, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "02d90d46-60ec-44a9-bbeb-976ceef982ea",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.63, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "2a8b9a63-42a5-4337-a2fd-ad607c47cae9",
+      "registrationMeta" : "{\"seedTimeSeconds\": 55.11, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "2619b38f-a42e-41a4-b0d6-0c268c1be1ff",
+      "registrationMeta" : "{\"seedTimeSeconds\": 36.71, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "3b004f24-7587-4507-ab8a-bdae94fe9ffe",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.51, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "4684be06-0992-408a-bf1a-2520a5614558",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "88c72b0c-70bc-4fc9-becc-6351320af009",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.32, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "54d1ead0-4317-435a-b40c-18e7c7eb6448",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.26, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "dccff537-0e30-4683-983c-d426e60cd968",
+      "registrationMeta" : "{\"seedTimeSeconds\": 47.53, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ddeed24a-e0ec-4ff8-9d88-41c5c7242de5",
+      "registrationMeta" : "{\"seedTimeSeconds\": 47.53, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ede2151f-5404-4ec0-a5aa-ef96a39e1faa",
+      "registrationMeta" : "{\"seedTimeSeconds\": 25.87, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "86272277-767f-42d4-928d-16cefa9408ec",
+      "registrationMeta" : "{\"seedTimeSeconds\": 50.32, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "5fbbb22a-efaf-4137-9da8-e4de7dd14a5a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 51.48, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "e29c32a4-161a-4cfe-8bbe-b1628c163de1",
+      "registrationMeta" : "{\"seedTimeSeconds\": 61.03, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "592c12d1-e6eb-4a50-8fd5-bb349bab4ea9",
+      "registrationMeta" : "{\"seedTimeSeconds\": 40.36, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "54f2ff64-6cc5-49df-b6a3-21b135bc6a5a",
+      "registrationMeta" : "{\"seedTimeSeconds\": 53.48, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "0f28cf84-aa3b-448e-8c3e-87b7d3467ef6",
+      "registrationMeta" : "{\"seedTimeSeconds\": 41.73, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "01e9414e-85ee-4dfb-8633-f8da18bbce0e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 37.1, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "fe9cd573-5274-4121-b936-71172c136011",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "bffa31b2-c5ec-4f49-b502-3c123832ca67",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.54, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "c785356b-c703-4469-af33-83e8f38f0ecd",
+      "registrationMeta" : "{\"seedTimeSeconds\": 53.66, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "936431f3-db2a-4eba-a8b7-faf8b8214929",
+      "registrationMeta" : "{\"seedTimeSeconds\": 46.4, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "6a94b900-b302-43a6-9fc5-8a686eab0430",
+      "registrationMeta" : "{\"seedTimeSeconds\": 48.28, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "9f8dcacc-c39a-4791-bdab-0b851a51269b",
+      "registrationMeta" : "{\"seedTimeSeconds\": 53.49, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "d68b9981-6ba0-4f7e-9ed6-f6121ec9dcba",
+      "registrationMeta" : "{\"seedTimeSeconds\": 42.59, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ef2dab8b-cd43-4b58-b25e-4877d2a20bc2",
+      "registrationMeta" : "{\"seedTimeSeconds\": 48.22, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "4df8bd2c-84de-4dd6-9d93-3cf66e0a24f3",
+      "registrationMeta" : "{\"seedTimeSeconds\": 29.11, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "866720fa-ed1e-4bf0-9e94-b6fd89136bd7",
+      "registrationMeta" : "{\"seedTimeSeconds\": 65.54, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "6aad4f5f-058a-4e0a-9733-07597a67dfd1",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.98, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "4f3cf5cf-3222-4c75-98dc-7477c4a67d21",
+      "registrationMeta" : "{\"seedTimeSeconds\": 56.98, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "dfeb87f4-5cd6-45be-a6e3-ee7619a2d0b0",
+      "registrationMeta" : "{\"seedTimeSeconds\": 25.94, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "16ae1e7e-dec9-46a0-9413-0bd6473c289d",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "1666fd2c-073a-4f0f-852d-090849852125",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.53, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "7df19a34-967b-43f3-8b62-1ec26cf85528",
+      "registrationMeta" : "{\"seedTimeSeconds\": 53.59, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "beeb3e87-cf39-4a96-90e3-acbd4a8951d6",
+      "registrationMeta" : "{\"seedTimeSeconds\": 58.75, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "3f9cecf5-74a6-4491-bd59-836648691640",
+      "registrationMeta" : "{\"seedTimeSeconds\": 63.06, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ba20115f-8f68-4ff9-9e35-7e9ce9890534",
+      "registrationMeta" : "{\"seedTimeSeconds\": 39.85, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "809b1017-9475-422e-917b-a6ad4ab74574",
+      "registrationMeta" : "{\"seedTimeSeconds\": 60.81, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "77fa0098-b9ee-4456-9dd8-03776ad7653c",
+      "registrationMeta" : "{\"seedTimeSeconds\": 34.32, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "981fa928-3a47-4396-853d-e14534ef6e5e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 34.32, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "5302f34f-e22f-4f59-b3f2-ec316c538b30",
+      "registrationMeta" : "{\"seedTimeSeconds\": 49.1, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "0bdfd471-87e3-495e-8668-cb2dce1b0303",
+      "registrationMeta" : "{\"seedTimeSeconds\": 48.04, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "1094a588-6249-43f4-8f30-02f772a2c703",
+      "registrationMeta" : "{\"seedTimeSeconds\": 43.13, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "ad62611d-2aaa-4819-866a-553c084a5239",
+      "registrationMeta" : "{\"seedTimeSeconds\": 34.6, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "bb462ea5-a6b6-46ee-8134-0f6d00a16279",
+      "registrationMeta" : "{\"seedTimeSeconds\": null, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "129555ec-eefc-46d1-a038-bf5776402a92",
+      "registrationMeta" : "{\"seedTimeSeconds\": 69.84, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "f76af250-c3f4-4698-b557-d0ef9645ba03",
+      "registrationMeta" : "{\"seedTimeSeconds\": 58.18, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "b505143f-d716-4d7a-a628-461db48773b7",
+      "registrationMeta" : "{\"seedTimeSeconds\": 69.91, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "94b4ec34-6e8c-4801-a848-accdb348ff8e",
+      "registrationMeta" : "{\"seedTimeSeconds\": 68.25, \"emergencyContactPhone\": \"+79990000000\"}"
+    }, {
+      "registrationId" : "4763d62b-494c-4333-80b4-e0fcf3ff18fa",
+      "registrationMeta" : "{\"seedTimeSeconds\": 68.25, \"emergencyContactPhone\": \"+79990000000\"}"
+    } ]
+  },
+  "protocol" : {
+    "units" : [ {
+      "label" : "Heat 1",
+      "assignments" : [ {
+        "laneOrPosition" : 4,
+        "registrationId" : "a0adbda3-37ff-4af1-8da1-68a21ac9025e"
+      }, {
+        "laneOrPosition" : 5,
+        "registrationId" : "a9855797-e049-43b0-ab1a-d600471e9aa3"
+      }, {
+        "laneOrPosition" : 3,
+        "registrationId" : "aba57e56-a82d-4165-8c13-b1bb52a7200d"
+      }, {
+        "laneOrPosition" : 6,
+        "registrationId" : "bb462ea5-a6b6-46ee-8134-0f6d00a16279"
+      }, {
+        "laneOrPosition" : 2,
+        "registrationId" : "bf0c091d-4a01-47d8-8254-5a1cdd729761"
+      }, {
+        "laneOrPosition" : 7,
+        "registrationId" : "c97b7f65-4120-4d17-a5e2-51b4aa93c0ee"
+      }, {
+        "laneOrPosition" : 1,
+        "registrationId" : "e14beddd-863b-4196-9db9-9386ee7a7cbc"
+      }, {
+        "laneOrPosition" : 8,
+        "registrationId" : "fe9cd573-5274-4121-b936-71172c136011"
+      } ],
+      "sequenceNumber" : 1,
+      "competitionUnitId" : "5cc0560c-444b-4db9-89df-de020d1d657e"
+    }, {
+      "label" : "Heat 2",
+      "assignments" : [ {
+        "seedMetric" : 69.91,
+        "laneOrPosition" : 4,
+        "registrationId" : "b505143f-d716-4d7a-a628-461db48773b7"
+      }, {
+        "laneOrPosition" : 5,
+        "registrationId" : "16ae1e7e-dec9-46a0-9413-0bd6473c289d"
+      }, {
+        "laneOrPosition" : 3,
+        "registrationId" : "238d706d-1dce-4a87-b6c2-ff7db5f3c53d"
+      }, {
+        "laneOrPosition" : 6,
+        "registrationId" : "4684be06-0992-408a-bf1a-2520a5614558"
+      }, {
+        "laneOrPosition" : 2,
+        "registrationId" : "49098b63-f44c-4771-9a59-c95f7d41206d"
+      }, {
+        "laneOrPosition" : 7,
+        "registrationId" : "51f74b41-358f-416e-bc58-becb1ea44efd"
+      }, {
+        "laneOrPosition" : 1,
+        "registrationId" : "93441b8b-1a91-4b7c-ab45-00fbcb4fa4aa"
+      }, {
+        "laneOrPosition" : 8,
+        "registrationId" : "95e341dc-164e-40cc-acd1-524d2b8e387e"
+      } ],
+      "sequenceNumber" : 2,
+      "competitionUnitId" : "c0ea0a75-d9cb-44f8-a293-0db07d19cc88"
+    }, {
+      "label" : "Heat 3",
+      "assignments" : [ {
+        "seedMetric" : 68.25,
+        "laneOrPosition" : 4,
+        "registrationId" : "4763d62b-494c-4333-80b4-e0fcf3ff18fa"
+      }, {
+        "seedMetric" : 68.25,
+        "laneOrPosition" : 5,
+        "registrationId" : "94b4ec34-6e8c-4801-a848-accdb348ff8e"
+      }, {
+        "seedMetric" : 68.39,
+        "laneOrPosition" : 3,
+        "registrationId" : "495d18d2-834c-4f1f-a665-d4a871046fb2"
+      }, {
+        "seedMetric" : 69.15,
+        "laneOrPosition" : 6,
+        "registrationId" : "9d8950f0-3b62-4eb5-8114-ef70641e4286"
+      }, {
+        "seedMetric" : 69.21,
+        "laneOrPosition" : 2,
+        "registrationId" : "a3737979-daee-4eac-b287-988b703b5a6e"
+      }, {
+        "seedMetric" : 69.36,
+        "laneOrPosition" : 7,
+        "registrationId" : "370b0c17-ec5f-4b52-818d-11444d19482a"
+      }, {
+        "seedMetric" : 69.39,
+        "laneOrPosition" : 1,
+        "registrationId" : "d4e5299b-1cc0-497f-997d-847d8815a205"
+      }, {
+        "seedMetric" : 69.84,
+        "laneOrPosition" : 8,
+        "registrationId" : "129555ec-eefc-46d1-a038-bf5776402a92"
+      } ],
+      "sequenceNumber" : 3,
+      "competitionUnitId" : "4c30d07a-2026-4b7e-8dd8-06dad7ae6d70"
+    }, {
+      "label" : "Heat 4",
+      "assignments" : [ {
+        "seedMetric" : 65.54,
+        "laneOrPosition" : 4,
+        "registrationId" : "866720fa-ed1e-4bf0-9e94-b6fd89136bd7"
+      }, {
+        "seedMetric" : 65.75,
+        "laneOrPosition" : 5,
+        "registrationId" : "5d23f5d2-d230-4374-94f1-786b8512d1c8"
+      }, {
+        "seedMetric" : 67.05,
+        "laneOrPosition" : 3,
+        "registrationId" : "59ded43d-f8a0-4691-b376-37c43c1cab2c"
+      }, {
+        "seedMetric" : 67.12,
+        "laneOrPosition" : 6,
+        "registrationId" : "ff05b90b-41f4-4af0-8ed3-1e2fed131c3f"
+      }, {
+        "seedMetric" : 67.43,
+        "laneOrPosition" : 2,
+        "registrationId" : "b4f676ab-a372-4a41-b46a-2866b3171912"
+      }, {
+        "seedMetric" : 67.47,
+        "laneOrPosition" : 7,
+        "registrationId" : "52f24e75-3523-4c20-8e76-22b34c4f7396"
+      }, {
+        "seedMetric" : 67.81,
+        "laneOrPosition" : 1,
+        "registrationId" : "bd07d014-dc95-4b5e-9695-9a80f3f2ea2e"
+      }, {
+        "seedMetric" : 68.08,
+        "laneOrPosition" : 8,
+        "registrationId" : "333bf2e7-bcfc-4b76-96c6-13d37239eef6"
+      } ],
+      "sequenceNumber" : 4,
+      "competitionUnitId" : "75d94bc6-7d9d-4d14-a41e-f8d3b40792fa"
+    }, {
+      "label" : "Heat 5",
+      "assignments" : [ {
+        "seedMetric" : 63.59,
+        "laneOrPosition" : 4,
+        "registrationId" : "58fb2492-a565-4190-b883-783381784a42"
+      }, {
+        "seedMetric" : 63.59,
+        "laneOrPosition" : 5,
+        "registrationId" : "5e63ce94-0fb8-450f-a367-7a3449372eaf"
+      }, {
+        "seedMetric" : 63.97,
+        "laneOrPosition" : 3,
+        "registrationId" : "09ee7b95-452d-475b-836f-7daf9ea37077"
+      }, {
+        "seedMetric" : 64.08,
+        "laneOrPosition" : 6,
+        "registrationId" : "83436d88-2fb3-462f-bf9c-0d448c20361b"
+      }, {
+        "seedMetric" : 64.12,
+        "laneOrPosition" : 2,
+        "registrationId" : "a422653d-400e-4ccb-bab1-9ea645c5b3de"
+      }, {
+        "seedMetric" : 64.51,
+        "laneOrPosition" : 7,
+        "registrationId" : "052be605-daa4-4d97-be3c-6d1db1798638"
+      }, {
+        "seedMetric" : 65.13,
+        "laneOrPosition" : 1,
+        "registrationId" : "52680225-a05c-4a5d-b620-4e8d1e9fdde9"
+      }, {
+        "seedMetric" : 65.25,
+        "laneOrPosition" : 8,
+        "registrationId" : "2c724074-c773-4f52-9721-331a3f1879f4"
+      } ],
+      "sequenceNumber" : 5,
+      "competitionUnitId" : "9fb28edc-13bb-44fc-a48b-6fab1e222f1b"
+    }, {
+      "label" : "Heat 6",
+      "assignments" : [ {
+        "seedMetric" : 63.06,
+        "laneOrPosition" : 4,
+        "registrationId" : "3f9cecf5-74a6-4491-bd59-836648691640"
+      }, {
+        "seedMetric" : 63.1,
+        "laneOrPosition" : 5,
+        "registrationId" : "2e6f0759-fcc8-4659-90f8-6e66dcf720c0"
+      }, {
+        "seedMetric" : 63.19,
+        "laneOrPosition" : 3,
+        "registrationId" : "f25fa77c-0b5f-43ed-9989-7bc555aaacdc"
+      }, {
+        "seedMetric" : 63.26,
+        "laneOrPosition" : 6,
+        "registrationId" : "54d1ead0-4317-435a-b40c-18e7c7eb6448"
+      }, {
+        "seedMetric" : 63.32,
+        "laneOrPosition" : 2,
+        "registrationId" : "9488b7a9-847c-4710-82e7-35d5679d4325"
+      }, {
+        "seedMetric" : 63.32,
+        "laneOrPosition" : 7,
+        "registrationId" : "f82d1849-e6bd-43c4-b0cc-2378caf5bf1a"
+      }, {
+        "seedMetric" : 63.4,
+        "laneOrPosition" : 1,
+        "registrationId" : "240d00aa-0243-4890-858b-deffcf14e64c"
+      }, {
+        "seedMetric" : 63.43,
+        "laneOrPosition" : 8,
+        "registrationId" : "c3d52fa5-5604-476e-b6f9-a619004bb85c"
+      } ],
+      "sequenceNumber" : 6,
+      "competitionUnitId" : "f476e027-1412-4eb4-9028-833fa64055c8"
+    }, {
+      "label" : "Heat 7",
+      "assignments" : [ {
+        "seedMetric" : 60.98,
+        "laneOrPosition" : 4,
+        "registrationId" : "75070d3c-7a72-41b6-ba3e-ecd965b514f3"
+      }, {
+        "seedMetric" : 61.03,
+        "laneOrPosition" : 5,
+        "registrationId" : "e29c32a4-161a-4cfe-8bbe-b1628c163de1"
+      }, {
+        "seedMetric" : 61.09,
+        "laneOrPosition" : 3,
+        "registrationId" : "157473b9-446f-4a16-b708-35ab531d0824"
+      }, {
+        "seedMetric" : 61.29,
+        "laneOrPosition" : 6,
+        "registrationId" : "3cbf0989-63cc-4e41-986d-6e6bb386627d"
+      }, {
+        "seedMetric" : 62.22,
+        "laneOrPosition" : 2,
+        "registrationId" : "ee33779d-b47a-42a5-ae97-3ea1725067a0"
+      }, {
+        "seedMetric" : 62.55,
+        "laneOrPosition" : 7,
+        "registrationId" : "3bc78b84-f32f-482d-ada5-4365039bb261"
+      }, {
+        "seedMetric" : 62.55,
+        "laneOrPosition" : 1,
+        "registrationId" : "daddd76b-301e-4e6d-9175-b0ac7a982c5a"
+      }, {
+        "seedMetric" : 62.97,
+        "laneOrPosition" : 8,
+        "registrationId" : "6e6c8476-188c-4d6e-a911-be5a50eb4354"
+      } ],
+      "sequenceNumber" : 7,
+      "competitionUnitId" : "e505d3ba-9c37-42f4-bc2e-a1e082de23bc"
+    }, {
+      "label" : "Heat 8",
+      "assignments" : [ {
+        "seedMetric" : 60.29,
+        "laneOrPosition" : 4,
+        "registrationId" : "79e0abe2-2a84-4bac-8e14-6ed3087c53f7"
+      }, {
+        "seedMetric" : 60.36,
+        "laneOrPosition" : 5,
+        "registrationId" : "0c647919-dec1-4caa-97ac-e0cc0a906f70"
+      }, {
+        "seedMetric" : 60.51,
+        "laneOrPosition" : 3,
+        "registrationId" : "3b004f24-7587-4507-ab8a-bdae94fe9ffe"
+      }, {
+        "seedMetric" : 60.53,
+        "laneOrPosition" : 6,
+        "registrationId" : "1666fd2c-073a-4f0f-852d-090849852125"
+      }, {
+        "seedMetric" : 60.54,
+        "laneOrPosition" : 2,
+        "registrationId" : "bffa31b2-c5ec-4f49-b502-3c123832ca67"
+      }, {
+        "seedMetric" : 60.6,
+        "laneOrPosition" : 7,
+        "registrationId" : "51b3ee8a-5ae6-4482-8cbd-b373bc213420"
+      }, {
+        "seedMetric" : 60.6,
+        "laneOrPosition" : 1,
+        "registrationId" : "d287e92e-afd8-4a73-8e82-22bba13c624b"
+      }, {
+        "seedMetric" : 60.81,
+        "laneOrPosition" : 8,
+        "registrationId" : "809b1017-9475-422e-917b-a6ad4ab74574"
+      } ],
+      "sequenceNumber" : 8,
+      "competitionUnitId" : "c3b954dc-6aad-4497-93de-6eed81d9cb62"
+    }, {
+      "label" : "Heat 9",
+      "assignments" : [ {
+        "seedMetric" : 56.98,
+        "laneOrPosition" : 4,
+        "registrationId" : "4f3cf5cf-3222-4c75-98dc-7477c4a67d21"
+      }, {
+        "seedMetric" : 56.98,
+        "laneOrPosition" : 5,
+        "registrationId" : "6aad4f5f-058a-4e0a-9733-07597a67dfd1"
+      }, {
+        "seedMetric" : 57.63,
+        "laneOrPosition" : 3,
+        "registrationId" : "c95cdc82-330d-41eb-953f-cc22f49b18da"
+      }, {
+        "seedMetric" : 58.18,
+        "laneOrPosition" : 6,
+        "registrationId" : "f76af250-c3f4-4698-b557-d0ef9645ba03"
+      }, {
+        "seedMetric" : 58.75,
+        "laneOrPosition" : 2,
+        "registrationId" : "beeb3e87-cf39-4a96-90e3-acbd4a8951d6"
+      }, {
+        "seedMetric" : 58.94,
+        "laneOrPosition" : 7,
+        "registrationId" : "12ae7edd-192f-4abf-9152-4729b463bb08"
+      }, {
+        "seedMetric" : 59.73,
+        "laneOrPosition" : 1,
+        "registrationId" : "04c813de-ace1-4dd5-9cb0-55f39b5fc396"
+      }, {
+        "seedMetric" : 60.2,
+        "laneOrPosition" : 8,
+        "registrationId" : "b6b65c0c-b5b4-40b5-9fe8-890f2a782bac"
+      } ],
+      "sequenceNumber" : 9,
+      "competitionUnitId" : "753f73df-2fe9-4b59-8b10-8789202ed3f1"
+    }, {
+      "label" : "Heat 10",
+      "assignments" : [ {
+        "seedMetric" : 55.81,
+        "laneOrPosition" : 4,
+        "registrationId" : "a6de4ad5-847d-4a01-a6ec-480eba2dec2e"
+      }, {
+        "seedMetric" : 55.82,
+        "laneOrPosition" : 5,
+        "registrationId" : "f55921f4-9062-4530-83ef-a0e064b6a993"
+      }, {
+        "seedMetric" : 56.29,
+        "laneOrPosition" : 3,
+        "registrationId" : "8098b0e7-6332-4395-af72-72ab87f4d424"
+      }, {
+        "seedMetric" : 56.31,
+        "laneOrPosition" : 6,
+        "registrationId" : "21036c5a-6524-4d5e-b75b-bc15d32c01e8"
+      }, {
+        "seedMetric" : 56.31,
+        "laneOrPosition" : 2,
+        "registrationId" : "cb5db32c-9e30-408c-9fc4-012dd7a54e85"
+      }, {
+        "seedMetric" : 56.9,
+        "laneOrPosition" : 7,
+        "registrationId" : "2d1f3298-665e-43d8-9e74-327b53d32eee"
+      }, {
+        "seedMetric" : 56.9,
+        "laneOrPosition" : 1,
+        "registrationId" : "50217482-17b0-4a95-97d5-a280ed9817dd"
+      }, {
+        "seedMetric" : 56.98,
+        "laneOrPosition" : 8,
+        "registrationId" : "07a5a9e6-0375-4e23-8b7f-1f0e09bbc140"
+      } ],
+      "sequenceNumber" : 10,
+      "competitionUnitId" : "4096881c-9353-47ec-ab98-d2baf8fc7493"
+    }, {
+      "label" : "Heat 11",
+      "assignments" : [ {
+        "seedMetric" : 54.18,
+        "laneOrPosition" : 4,
+        "registrationId" : "16fc9985-4773-493f-871b-26f56509bafb"
+      }, {
+        "seedMetric" : 55.06,
+        "laneOrPosition" : 5,
+        "registrationId" : "b3279d2d-0ecb-4438-ba67-663acb3dea4a"
+      }, {
+        "seedMetric" : 55.11,
+        "laneOrPosition" : 3,
+        "registrationId" : "2a8b9a63-42a5-4337-a2fd-ad607c47cae9"
+      }, {
+        "seedMetric" : 55.53,
+        "laneOrPosition" : 6,
+        "registrationId" : "5e8e40ae-5ee5-412a-b544-8b15c3831775"
+      }, {
+        "seedMetric" : 55.63,
+        "laneOrPosition" : 2,
+        "registrationId" : "02d90d46-60ec-44a9-bbeb-976ceef982ea"
+      }, {
+        "seedMetric" : 55.69,
+        "laneOrPosition" : 7,
+        "registrationId" : "88f8afd9-6ea6-46f5-a707-40745efe4f2d"
+      }, {
+        "seedMetric" : 55.69,
+        "laneOrPosition" : 1,
+        "registrationId" : "b1774853-1358-4579-b8a7-b338c428c72f"
+      }, {
+        "seedMetric" : 55.81,
+        "laneOrPosition" : 8,
+        "registrationId" : "0ba7b01b-dbae-45d2-9d10-5ce81b187dcf"
+      } ],
+      "sequenceNumber" : 11,
+      "competitionUnitId" : "26741aa5-d8ab-4ffb-8790-95ba57cd10ba"
+    }, {
+      "label" : "Heat 12",
+      "assignments" : [ {
+        "seedMetric" : 52.5,
+        "laneOrPosition" : 4,
+        "registrationId" : "c79cda91-9162-47ea-bf0d-924307f58876"
+      }, {
+        "seedMetric" : 53.46,
+        "laneOrPosition" : 5,
+        "registrationId" : "9295a435-931a-4583-a4da-a1f652bb58d8"
+      }, {
+        "seedMetric" : 53.48,
+        "laneOrPosition" : 3,
+        "registrationId" : "54f2ff64-6cc5-49df-b6a3-21b135bc6a5a"
+      }, {
+        "seedMetric" : 53.49,
+        "laneOrPosition" : 6,
+        "registrationId" : "9f8dcacc-c39a-4791-bdab-0b851a51269b"
+      }, {
+        "seedMetric" : 53.52,
+        "laneOrPosition" : 2,
+        "registrationId" : "6c754b6a-2d1b-46bd-9ad7-ad71b665fab8"
+      }, {
+        "seedMetric" : 53.59,
+        "laneOrPosition" : 7,
+        "registrationId" : "7bb68953-ab33-44f0-993c-0e4bdc607a6a"
+      }, {
+        "seedMetric" : 53.59,
+        "laneOrPosition" : 1,
+        "registrationId" : "7df19a34-967b-43f3-8b62-1ec26cf85528"
+      }, {
+        "seedMetric" : 53.66,
+        "laneOrPosition" : 8,
+        "registrationId" : "c785356b-c703-4469-af33-83e8f38f0ecd"
+      } ],
+      "sequenceNumber" : 12,
+      "competitionUnitId" : "11f137ba-4069-4545-856d-b05236a9d7c9"
+    }, {
+      "label" : "Heat 13",
+      "assignments" : [ {
+        "seedMetric" : 51.32,
+        "laneOrPosition" : 4,
+        "registrationId" : "88c72b0c-70bc-4fc9-becc-6351320af009"
+      }, {
+        "seedMetric" : 51.34,
+        "laneOrPosition" : 5,
+        "registrationId" : "1d1d58d6-2b0d-4ad0-8df7-7f98a6315bcc"
+      }, {
+        "seedMetric" : 51.48,
+        "laneOrPosition" : 3,
+        "registrationId" : "5fbbb22a-efaf-4137-9da8-e4de7dd14a5a"
+      }, {
+        "seedMetric" : 51.48,
+        "laneOrPosition" : 6,
+        "registrationId" : "a13f1b0c-5f86-4187-9563-1c9212e1abe3"
+      }, {
+        "seedMetric" : 51.54,
+        "laneOrPosition" : 2,
+        "registrationId" : "ce14d018-6a8a-49db-9396-91f9484ce5a8"
+      }, {
+        "seedMetric" : 51.68,
+        "laneOrPosition" : 7,
+        "registrationId" : "dce6befb-5a93-4f82-a815-d65c7da33dfb"
+      }, {
+        "seedMetric" : 51.76,
+        "laneOrPosition" : 1,
+        "registrationId" : "cb9d3e85-a6e1-43ea-a30b-61203a98fc35"
+      }, {
+        "seedMetric" : 52.37,
+        "laneOrPosition" : 8,
+        "registrationId" : "53cba373-3a95-4dac-8ada-c1c15a46038a"
+      } ],
+      "sequenceNumber" : 13,
+      "competitionUnitId" : "b5ec5ce8-9388-4912-b385-54b3fc1c7d57"
+    }, {
+      "label" : "Heat 14",
+      "assignments" : [ {
+        "seedMetric" : 49.87,
+        "laneOrPosition" : 4,
+        "registrationId" : "974b20ca-40bf-4b5f-9cc2-e2c8c61ef92d"
+      }, {
+        "seedMetric" : 50.06,
+        "laneOrPosition" : 5,
+        "registrationId" : "b8b6da91-ebc4-4af1-81e4-0879248d2622"
+      }, {
+        "seedMetric" : 50.25,
+        "laneOrPosition" : 3,
+        "registrationId" : "d2f9afa8-7270-4d3b-b7b4-d4c1792b5d07"
+      }, {
+        "seedMetric" : 50.32,
+        "laneOrPosition" : 6,
+        "registrationId" : "86272277-767f-42d4-928d-16cefa9408ec"
+      }, {
+        "seedMetric" : 50.34,
+        "laneOrPosition" : 2,
+        "registrationId" : "e647b768-6fe7-4fc0-bdb3-059af245a019"
+      }, {
+        "seedMetric" : 50.57,
+        "laneOrPosition" : 7,
+        "registrationId" : "1725e0a0-4278-4ebe-b530-0af40eeff4ce"
+      }, {
+        "seedMetric" : 51.02,
+        "laneOrPosition" : 1,
+        "registrationId" : "817d7f66-5d04-4ef6-a9fd-782f76d90304"
+      }, {
+        "seedMetric" : 51.05,
+        "laneOrPosition" : 8,
+        "registrationId" : "7ecd7aef-b092-445f-935c-8998354cf784"
+      } ],
+      "sequenceNumber" : 14,
+      "competitionUnitId" : "c69d7e2e-4db6-4b72-bf7f-f631420a622c"
+    }, {
+      "label" : "Heat 15",
+      "assignments" : [ {
+        "seedMetric" : 47.53,
+        "laneOrPosition" : 4,
+        "registrationId" : "dccff537-0e30-4683-983c-d426e60cd968"
+      }, {
+        "seedMetric" : 47.53,
+        "laneOrPosition" : 5,
+        "registrationId" : "ddeed24a-e0ec-4ff8-9d88-41c5c7242de5"
+      }, {
+        "seedMetric" : 47.6,
+        "laneOrPosition" : 3,
+        "registrationId" : "9a295640-5da4-4a9e-86f9-82214447c97d"
+      }, {
+        "seedMetric" : 48.04,
+        "laneOrPosition" : 6,
+        "registrationId" : "0bdfd471-87e3-495e-8668-cb2dce1b0303"
+      }, {
+        "seedMetric" : 48.22,
+        "laneOrPosition" : 2,
+        "registrationId" : "ef2dab8b-cd43-4b58-b25e-4877d2a20bc2"
+      }, {
+        "seedMetric" : 48.28,
+        "laneOrPosition" : 7,
+        "registrationId" : "6a94b900-b302-43a6-9fc5-8a686eab0430"
+      }, {
+        "seedMetric" : 49.1,
+        "laneOrPosition" : 1,
+        "registrationId" : "5302f34f-e22f-4f59-b3f2-ec316c538b30"
+      }, {
+        "seedMetric" : 49.59,
+        "laneOrPosition" : 8,
+        "registrationId" : "e0fac29a-1d6f-4dc5-bbdf-999658d9a769"
+      } ],
+      "sequenceNumber" : 15,
+      "competitionUnitId" : "b5c7c816-a1d1-4a08-b8e9-3ddc40303108"
+    }, {
+      "label" : "Heat 16",
+      "assignments" : [ {
+        "seedMetric" : 44,
+        "laneOrPosition" : 4,
+        "registrationId" : "ed1a60f5-41bb-4bce-b015-86b76d61b3a1"
+      }, {
+        "seedMetric" : 44.3,
+        "laneOrPosition" : 5,
+        "registrationId" : "e6bb33db-47b7-493b-b2c0-9482dac2c63e"
+      }, {
+        "seedMetric" : 45.4,
+        "laneOrPosition" : 3,
+        "registrationId" : "4db2c360-1574-4f09-ae27-afb200d64c88"
+      }, {
+        "seedMetric" : 45.93,
+        "laneOrPosition" : 6,
+        "registrationId" : "99042295-184f-4db9-a905-3a3fdd5c2f4a"
+      }, {
+        "seedMetric" : 46.4,
+        "laneOrPosition" : 2,
+        "registrationId" : "936431f3-db2a-4eba-a8b7-faf8b8214929"
+      }, {
+        "seedMetric" : 46.67,
+        "laneOrPosition" : 7,
+        "registrationId" : "e55ac0d1-9e8d-43db-b934-97899f14bd7b"
+      }, {
+        "seedMetric" : 47.26,
+        "laneOrPosition" : 1,
+        "registrationId" : "815473ec-3c58-4a33-99cf-7b3ebdb8f398"
+      }, {
+        "seedMetric" : 47.33,
+        "laneOrPosition" : 8,
+        "registrationId" : "fbb5b584-b63e-45b9-88a2-e45337136be3"
+      } ],
+      "sequenceNumber" : 16,
+      "competitionUnitId" : "d7ef9fd5-dd88-453f-9c1e-17ee572b13b3"
+    }, {
+      "label" : "Heat 17",
+      "assignments" : [ {
+        "seedMetric" : 41.73,
+        "laneOrPosition" : 4,
+        "registrationId" : "0f28cf84-aa3b-448e-8c3e-87b7d3467ef6"
+      }, {
+        "seedMetric" : 42.07,
+        "laneOrPosition" : 5,
+        "registrationId" : "28f22e9c-5e60-4255-bca2-5f7b497504cf"
+      }, {
+        "seedMetric" : 42.56,
+        "laneOrPosition" : 3,
+        "registrationId" : "ff41b090-8b98-44e4-b283-b01f5e54b321"
+      }, {
+        "seedMetric" : 42.59,
+        "laneOrPosition" : 6,
+        "registrationId" : "d68b9981-6ba0-4f7e-9ed6-f6121ec9dcba"
+      }, {
+        "seedMetric" : 42.65,
+        "laneOrPosition" : 2,
+        "registrationId" : "0067aff5-93c6-49d4-9f8e-54f445baba1b"
+      }, {
+        "seedMetric" : 42.98,
+        "laneOrPosition" : 7,
+        "registrationId" : "caee093d-2889-4b8e-a7ea-c5c5c2693f5a"
+      }, {
+        "seedMetric" : 43.13,
+        "laneOrPosition" : 1,
+        "registrationId" : "1094a588-6249-43f4-8f30-02f772a2c703"
+      }, {
+        "seedMetric" : 43.79,
+        "laneOrPosition" : 8,
+        "registrationId" : "11b0610e-876e-419e-8e6a-c6ee7e513874"
+      } ],
+      "sequenceNumber" : 17,
+      "competitionUnitId" : "0dade213-797a-4752-aa7e-3a1c24f45f02"
+    }, {
+      "label" : "Heat 18",
+      "assignments" : [ {
+        "seedMetric" : 38.44,
+        "laneOrPosition" : 4,
+        "registrationId" : "bf604754-9f0d-4328-ae12-91342d9088b0"
+      }, {
+        "seedMetric" : 38.79,
+        "laneOrPosition" : 5,
+        "registrationId" : "0832c2a7-28b5-4de0-aee4-271614a083da"
+      }, {
+        "seedMetric" : 38.79,
+        "laneOrPosition" : 3,
+        "registrationId" : "b4e5522a-0b68-4b1f-8626-14775c5a2816"
+      }, {
+        "seedMetric" : 39.63,
+        "laneOrPosition" : 6,
+        "registrationId" : "ccb3930b-c9d1-4424-a31f-b8cd3e255208"
+      }, {
+        "seedMetric" : 39.85,
+        "laneOrPosition" : 2,
+        "registrationId" : "ba20115f-8f68-4ff9-9e35-7e9ce9890534"
+      }, {
+        "seedMetric" : 40.36,
+        "laneOrPosition" : 7,
+        "registrationId" : "592c12d1-e6eb-4a50-8fd5-bb349bab4ea9"
+      }, {
+        "seedMetric" : 41.44,
+        "laneOrPosition" : 1,
+        "registrationId" : "418dee44-ebe3-494b-9f72-82dac3a0ddad"
+      }, {
+        "seedMetric" : 41.44,
+        "laneOrPosition" : 8,
+        "registrationId" : "58aa7816-1475-4113-95cd-fc0c9bf1ec1f"
+      } ],
+      "sequenceNumber" : 18,
+      "competitionUnitId" : "9e48112a-a36b-477f-aa5a-a7cd31bf7c36"
+    }, {
+      "label" : "Heat 19",
+      "assignments" : [ {
+        "seedMetric" : 37.1,
+        "laneOrPosition" : 4,
+        "registrationId" : "01e9414e-85ee-4dfb-8633-f8da18bbce0e"
+      }, {
+        "seedMetric" : 37.64,
+        "laneOrPosition" : 5,
+        "registrationId" : "dcd4ff72-f66f-4b0e-85d2-2884879a1740"
+      }, {
+        "seedMetric" : 37.65,
+        "laneOrPosition" : 3,
+        "registrationId" : "0cd2f8b5-11e9-4224-ab09-6e297379e003"
+      }, {
+        "seedMetric" : 37.72,
+        "laneOrPosition" : 6,
+        "registrationId" : "ac95528b-921a-4a98-a09a-81b687dcfac0"
+      }, {
+        "seedMetric" : 37.77,
+        "laneOrPosition" : 2,
+        "registrationId" : "9cb04006-4e0e-46bd-aace-f69ae4109a01"
+      }, {
+        "seedMetric" : 37.84,
+        "laneOrPosition" : 7,
+        "registrationId" : "71d2da00-b8f7-4475-98e7-bd5f9762bb72"
+      }, {
+        "seedMetric" : 38.14,
+        "laneOrPosition" : 1,
+        "registrationId" : "775d1748-9295-43ad-b05d-b47c3c1b6092"
+      }, {
+        "seedMetric" : 38.33,
+        "laneOrPosition" : 8,
+        "registrationId" : "94c8d4bd-17c5-464d-be7f-b2cbd99a5c2d"
+      } ],
+      "sequenceNumber" : 19,
+      "competitionUnitId" : "929baa45-aee6-49fc-8f20-dcb48bfe2fa1"
+    }, {
+      "label" : "Heat 20",
+      "assignments" : [ {
+        "seedMetric" : 34.58,
+        "laneOrPosition" : 4,
+        "registrationId" : "1971c0e9-17dc-4bc1-9e80-c603d0d2ded5"
+      }, {
+        "seedMetric" : 34.6,
+        "laneOrPosition" : 5,
+        "registrationId" : "ad62611d-2aaa-4819-866a-553c084a5239"
+      }, {
+        "seedMetric" : 34.71,
+        "laneOrPosition" : 3,
+        "registrationId" : "1259b5bc-0d1d-4a14-8efd-9594554f2125"
+      }, {
+        "seedMetric" : 34.8,
+        "laneOrPosition" : 6,
+        "registrationId" : "6bf1234a-b2f0-4ebe-9fe2-ef947e57be0a"
+      }, {
+        "seedMetric" : 35.57,
+        "laneOrPosition" : 2,
+        "registrationId" : "dd9f5e07-6bea-45f1-8e0d-8ae60d422330"
+      }, {
+        "seedMetric" : 35.77,
+        "laneOrPosition" : 7,
+        "registrationId" : "a4e0e325-c206-4f32-b2f6-0863fe70cab8"
+      }, {
+        "seedMetric" : 36.32,
+        "laneOrPosition" : 1,
+        "registrationId" : "b70dce26-527c-4869-b5b6-2e9c7546e60b"
+      }, {
+        "seedMetric" : 36.71,
+        "laneOrPosition" : 8,
+        "registrationId" : "2619b38f-a42e-41a4-b0d6-0c268c1be1ff"
+      } ],
+      "sequenceNumber" : 20,
+      "competitionUnitId" : "1ce41c51-53ad-4918-8e73-802d6fe1eaee"
+    }, {
+      "label" : "Heat 21",
+      "assignments" : [ {
+        "seedMetric" : 33.06,
+        "laneOrPosition" : 4,
+        "registrationId" : "76d41958-8a3e-4685-b364-33da4c17e13c"
+      }, {
+        "seedMetric" : 33.14,
+        "laneOrPosition" : 5,
+        "registrationId" : "10cbcd73-3f35-44f0-b67f-d5e0804fd0b2"
+      }, {
+        "seedMetric" : 33.54,
+        "laneOrPosition" : 3,
+        "registrationId" : "a28af0d9-fe01-4cb6-90a5-6a9559ed4190"
+      }, {
+        "seedMetric" : 33.68,
+        "laneOrPosition" : 6,
+        "registrationId" : "57e22af5-10c0-4799-b22e-8c4bfc517f61"
+      }, {
+        "seedMetric" : 33.9,
+        "laneOrPosition" : 2,
+        "registrationId" : "099beb54-e705-4b37-8989-2a0af56bb6f0"
+      }, {
+        "seedMetric" : 34.23,
+        "laneOrPosition" : 7,
+        "registrationId" : "bbbdbd9c-a924-4743-8819-4c002424656e"
+      }, {
+        "seedMetric" : 34.32,
+        "laneOrPosition" : 1,
+        "registrationId" : "77fa0098-b9ee-4456-9dd8-03776ad7653c"
+      }, {
+        "seedMetric" : 34.32,
+        "laneOrPosition" : 8,
+        "registrationId" : "981fa928-3a47-4396-853d-e14534ef6e5e"
+      } ],
+      "sequenceNumber" : 21,
+      "competitionUnitId" : "125b25b1-b20a-44d4-b126-a8bf75eb2dd3"
+    }, {
+      "label" : "Heat 22",
+      "assignments" : [ {
+        "seedMetric" : 30.26,
+        "laneOrPosition" : 4,
+        "registrationId" : "7826a6a2-a354-4442-b9ee-1d2750ae80cf"
+      }, {
+        "seedMetric" : 30.79,
+        "laneOrPosition" : 5,
+        "registrationId" : "5425a7b4-7ad2-4db2-9dad-f8297dc1f58e"
+      }, {
+        "seedMetric" : 31.59,
+        "laneOrPosition" : 3,
+        "registrationId" : "bd82b81b-ec2c-45fd-bf81-4fa4abc35ff8"
+      }, {
+        "seedMetric" : 31.92,
+        "laneOrPosition" : 6,
+        "registrationId" : "4864edbb-d546-43d3-9e8f-c2003303127c"
+      }, {
+        "seedMetric" : 32.01,
+        "laneOrPosition" : 2,
+        "registrationId" : "97b80f2e-1460-45f1-8eed-0cf4ea0b2067"
+      }, {
+        "seedMetric" : 32.01,
+        "laneOrPosition" : 7,
+        "registrationId" : "f926f5a6-0f94-41bc-aa7f-8e81fd082021"
+      }, {
+        "seedMetric" : 32.92,
+        "laneOrPosition" : 1,
+        "registrationId" : "51c1a29d-89e5-468f-aaf9-08454435cd9d"
+      }, {
+        "seedMetric" : 33.05,
+        "laneOrPosition" : 8,
+        "registrationId" : "55dbcf15-efba-40f5-ab0a-1266634d6ac1"
+      } ],
+      "sequenceNumber" : 22,
+      "competitionUnitId" : "f0a7fb34-89c6-4d07-8a41-51e5e38d461f"
+    }, {
+      "label" : "Heat 23",
+      "assignments" : [ {
+        "seedMetric" : 29.57,
+        "laneOrPosition" : 4,
+        "registrationId" : "c4b16d59-81fb-44e7-a2d4-2c62a6a580ea"
+      }, {
+        "seedMetric" : 29.66,
+        "laneOrPosition" : 5,
+        "registrationId" : "53f81ce9-48c1-46f7-8c6b-d5df3b3d935f"
+      }, {
+        "seedMetric" : 29.66,
+        "laneOrPosition" : 3,
+        "registrationId" : "856df67d-f386-461c-83a0-10c902af94a4"
+      }, {
+        "seedMetric" : 29.72,
+        "laneOrPosition" : 6,
+        "registrationId" : "4cf4783e-1ed0-470a-b42d-d47fdbbe60d1"
+      }, {
+        "seedMetric" : 29.72,
+        "laneOrPosition" : 2,
+        "registrationId" : "e0b4210a-9bfa-496d-ab59-b02a554aedb8"
+      }, {
+        "seedMetric" : 29.87,
+        "laneOrPosition" : 7,
+        "registrationId" : "b58c1dbf-f34f-45b1-b6fa-81ccdf050495"
+      }, {
+        "seedMetric" : 29.97,
+        "laneOrPosition" : 1,
+        "registrationId" : "3f1039cf-3e8b-41bf-8bcd-deefd3fc1428"
+      }, {
+        "seedMetric" : 30.2,
+        "laneOrPosition" : 8,
+        "registrationId" : "16854c9a-b3f3-4271-80d7-7d57f041d9bf"
+      } ],
+      "sequenceNumber" : 23,
+      "competitionUnitId" : "7f71294c-f218-474b-bdd9-7e48ca6e5eef"
+    }, {
+      "label" : "Heat 24",
+      "assignments" : [ {
+        "seedMetric" : 28.03,
+        "laneOrPosition" : 4,
+        "registrationId" : "524865c9-ccd3-48ca-aba2-ccd0cb5fad4b"
+      }, {
+        "seedMetric" : 28.17,
+        "laneOrPosition" : 5,
+        "registrationId" : "a5f233d5-1c28-4d28-9796-d2e6fdb4b82f"
+      }, {
+        "seedMetric" : 28.98,
+        "laneOrPosition" : 3,
+        "registrationId" : "e21c8b1b-2223-41b1-a238-7508edadda68"
+      }, {
+        "seedMetric" : 29.11,
+        "laneOrPosition" : 6,
+        "registrationId" : "4df8bd2c-84de-4dd6-9d93-3cf66e0a24f3"
+      }, {
+        "seedMetric" : 29.25,
+        "laneOrPosition" : 2,
+        "registrationId" : "817a133e-8c23-436d-a00f-226866f56184"
+      }, {
+        "seedMetric" : 29.25,
+        "laneOrPosition" : 7,
+        "registrationId" : "8fa0740c-acf9-4ee3-baf7-240355279600"
+      }, {
+        "seedMetric" : 29.52,
+        "laneOrPosition" : 1,
+        "registrationId" : "fdc1a09a-69c9-4dd8-a244-5e508593b07b"
+      }, {
+        "seedMetric" : 29.57,
+        "laneOrPosition" : 8,
+        "registrationId" : "78370ede-b411-42eb-a966-059fbe43d6ad"
+      } ],
+      "sequenceNumber" : 24,
+      "competitionUnitId" : "cfdef761-1e04-4f28-8c4d-1713ad5611b1"
+    }, {
+      "label" : "Heat 25",
+      "assignments" : [ {
+        "seedMetric" : 25.87,
+        "laneOrPosition" : 4,
+        "registrationId" : "ede2151f-5404-4ec0-a5aa-ef96a39e1faa"
+      }, {
+        "seedMetric" : 25.94,
+        "laneOrPosition" : 5,
+        "registrationId" : "dfeb87f4-5cd6-45be-a6e3-ee7619a2d0b0"
+      }, {
+        "seedMetric" : 26.56,
+        "laneOrPosition" : 3,
+        "registrationId" : "35104288-004e-4b8a-a712-e0ee9dc050b2"
+      }, {
+        "seedMetric" : 26.64,
+        "laneOrPosition" : 6,
+        "registrationId" : "8102b1d3-8427-4bcf-ae36-066cba8ce3e2"
+      }, {
+        "seedMetric" : 27.33,
+        "laneOrPosition" : 2,
+        "registrationId" : "58e3676c-2119-42be-b710-fe227d5c76bc"
+      }, {
+        "seedMetric" : 27.38,
+        "laneOrPosition" : 7,
+        "registrationId" : "70572987-248a-4a73-93cd-fd05551c8e7c"
+      }, {
+        "seedMetric" : 28.02,
+        "laneOrPosition" : 1,
+        "registrationId" : "262fb5ec-7320-4297-a1f8-ec025ca1e586"
+      }, {
+        "seedMetric" : 28.03,
+        "laneOrPosition" : 8,
+        "registrationId" : "47bc03b7-f2a8-49cc-87d6-debc698f916e"
+      } ],
+      "sequenceNumber" : 25,
+      "competitionUnitId" : "70bd635d-2ada-4857-b290-d563bf4abf72"
+    } ],
+    "eventDisciplineId" : "926a1b1b-1616-48f6-88df-a6e0286ac8dc"
+  }
+}

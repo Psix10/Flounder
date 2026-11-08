@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "M-200",
+  "scenario": "withdrawal",
+  "attempt": 2,
+  "operator": "operator01",
+  "method": "Excel-correction-after-feedback",
+  "startedAt": "2026-10-31T14:40:56.830594+00:00",
+  "finishedAt": "2026-10-31T14:42:42.098900+00:00",
+  "elapsedNanoseconds": 105267560400,
+  "elapsedSeconds": 105.2675604,
+  "measured": true,
+  "previousAttempt": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\manual-updates\\M-200\\addition\\attempts\\attempt-002",
+  "timingScope": "Read prepared changes, manually update/check/save CSV; template setup and automatic validation excluded",
+  "passed": true,
+  "violationCount": 0,
+  "violations": []
+}

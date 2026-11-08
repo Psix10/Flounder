@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "M-200",
+  "scenario": "addition",
+  "attempt": 2,
+  "operator": "operator01",
+  "method": "Excel-correction-after-feedback",
+  "startedAt": "2026-10-31T14:31:24.239099+00:00",
+  "finishedAt": "2026-10-31T14:31:37.241077+00:00",
+  "elapsedNanoseconds": 13001875100,
+  "elapsedSeconds": 13.0018751,
+  "measured": true,
+  "previousAttempt": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\manual-baseline\\M-200-run-01\\attempts\\attempt-001",
+  "timingScope": "Read prepared changes, manually update/check/save CSV; template setup and automatic validation excluded"
+}

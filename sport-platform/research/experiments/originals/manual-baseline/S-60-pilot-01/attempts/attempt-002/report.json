@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "S-60",
+  "scenario": "baseline",
+  "attempt": 2,
+  "operator": "operator01",
+  "method": "Excel-correction-after-feedback",
+  "startedAt": "2026-10-31T13:55:02.792628+00:00",
+  "finishedAt": "2026-10-31T13:56:06.619177+00:00",
+  "elapsedNanoseconds": 63825792600,
+  "elapsedSeconds": 63.8257926,
+  "measured": true,
+  "passed": false,
+  "violationCount": 2,
+  "violations": [
+    "Heat 1: seed grouping/order mismatch",
+    "Heat 2: seed grouping/order mismatch"
+  ],
+  "timingScope": "Human reading, sorting, assigning, checking, saving CSV and confirming completion; validation excluded",
+  "comparableTo": "One initial-generation task only; not an end-to-end automated workflow comparison"
+}

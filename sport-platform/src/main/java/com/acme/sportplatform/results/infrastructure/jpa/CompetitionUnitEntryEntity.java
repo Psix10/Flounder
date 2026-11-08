@@ -27,6 +27,18 @@ public class CompetitionUnitEntryEntity {
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
+    @Column(name = "category_code", length = 80)
+    private String categoryCode;
+
+    @Column(name = "seeding_group_code", length = 80)
+    private String seedingGroupCode;
+
+    public String getCategoryCode() { return categoryCode; }
+    public void setCategoryCode(String value) { categoryCode = value; }
+
+    public String getSeedingGroupCode() { return seedingGroupCode; }
+    public void setSeedingGroupCode(String value) { seedingGroupCode = value; }
+
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 

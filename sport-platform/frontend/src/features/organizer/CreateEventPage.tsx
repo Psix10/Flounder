@@ -12,6 +12,8 @@ import {
 } from '../../api/organizations.api'
 import {
   getRegulationVersions,
+  getRegulationTemplates,
+  type RegulationTemplateResponse,
   type RegulationVersionResponse,
 } from '../../api/regulations.api'
 import {
@@ -247,6 +249,7 @@ export function CreateEventPage() {
   >([])
   const [venues, setVenues] = useState<VenueResponse[]>([])
   const [sports, setSports] = useState<SportResponse[]>([])
+  const [regulationTemplates, setRegulationTemplates] = useState<RegulationTemplateResponse[]>([])
   const [regulationVersions, setRegulationVersions] =
     useState<RegulationVersionResponse[]>([])
 
@@ -269,11 +272,13 @@ export function CreateEventPage() {
           loadedVenues,
           loadedSports,
           loadedRegulationVersions,
+          loadedRegulationTemplates,
         ] = await Promise.all([
           getOrganizations(authenticatedAccessToken),
           getVenues(authenticatedAccessToken),
           getSports(authenticatedAccessToken),
           getRegulationVersions(authenticatedAccessToken),
+          getRegulationTemplates(authenticatedAccessToken),
         ])
 
         if (!isMounted) {
@@ -288,6 +293,7 @@ export function CreateEventPage() {
         setVenues(loadedVenues)
         setSports(loadedSports.filter((sport) => sport.isActive))
         setRegulationVersions(publishedRegulationVersions)
+        setRegulationTemplates(loadedRegulationTemplates)
 
         if (
           createdRegulationVersionId &&
@@ -298,6 +304,8 @@ export function CreateEventPage() {
           setForm((current) => ({
             ...current,
             regulationVersionId: createdRegulationVersionId,
+            sportId: loadedRegulationTemplates.find((template) => template.id ===
+              publishedRegulationVersions.find((v) => v.id === createdRegulationVersionId)?.regulationTemplateId)?.sportId ?? current.sportId,
           }))
         }
       } catch (error) {
@@ -325,6 +333,7 @@ export function CreateEventPage() {
     setForm((current) => ({
       ...current,
       [field]: value,
+      ...(field === 'sportId' ? { regulationVersionId: '' } : {}),
     }))
 
     setErrors((current) => ({
@@ -783,13 +792,15 @@ export function CreateEventPage() {
                     Выберите версию регламента
                   </option>
 
-                  {regulationVersions.map(
+                  {regulationVersions.filter((version) => regulationTemplates.some(
+                    (template) => template.id === version.regulationTemplateId && template.sportId === form.sportId,
+                  )).map(
                     (regulationVersion) => (
                       <option
                         key={regulationVersion.id}
                         value={regulationVersion.id}
                       >
-                        {formatRegulationVersionLabel(
+                        {regulationTemplates.find((t) => t.id === regulationVersion.regulationTemplateId)?.name ?? 'Регламент'} · {formatRegulationVersionLabel(
                           regulationVersion,
                         )}
                       </option>
@@ -797,9 +808,11 @@ export function CreateEventPage() {
                   )}
                 </select>
 
-                {regulationVersions.length === 0 ? (
+                {!regulationVersions.some((version) => regulationTemplates.some(
+                  (template) => template.id === version.regulationTemplateId && template.sportId === form.sportId,
+                )) ? (
                   <p className={styles.fieldHint}>
-                    Нет опубликованных регламентов.
+                    Для выбранного вида спорта нет опубликованных регламентов.
                     Создайте и опубликуйте версию, чтобы
                     использовать её в мероприятии.
                   </p>

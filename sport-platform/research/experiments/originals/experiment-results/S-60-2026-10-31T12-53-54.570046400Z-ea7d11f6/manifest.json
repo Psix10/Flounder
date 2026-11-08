@@ -1,0 +1,37 @@
+{
+  "schemaVersion" : 1,
+  "label" : "S-60",
+  "seed" : 424242,
+  "baseSize" : 60,
+  "repetitions" : 3,
+  "fixtureDurationMs" : 2271.7076,
+  "timingScope" : "MockMvc generation request including DB and snapshot; excludes fixture and response parsing",
+  "ruleSetVersionId" : "9080fc3d-d14e-4cd0-bd72-7d2725f8fc19",
+  "eventDisciplineId" : "7b14fbf4-dc6d-46ab-9738-3bce559f9223",
+  "scenarios" : [ {
+    "name" : "baseline",
+    "input" : "baseline/input.json",
+    "protocols" : [ "baseline/protocol-01.json", "baseline/protocol-02.json", "baseline/protocol-03.json" ],
+    "snapshots" : [ "baseline/snapshot-01.json", "baseline/snapshot-02.json", "baseline/snapshot-03.json" ]
+  }, {
+    "name" : "no_change",
+    "input" : "no_change/input.json",
+    "protocols" : [ "no_change/protocol-01.json", "no_change/protocol-02.json", "no_change/protocol-03.json" ],
+    "snapshots" : [ "no_change/snapshot-01.json", "no_change/snapshot-02.json", "no_change/snapshot-03.json" ]
+  }, {
+    "name" : "addition",
+    "input" : "addition/input.json",
+    "protocols" : [ "addition/protocol-01.json", "addition/protocol-02.json", "addition/protocol-03.json" ],
+    "snapshots" : [ "addition/snapshot-01.json", "addition/snapshot-02.json", "addition/snapshot-03.json" ]
+  }, {
+    "name" : "withdrawal",
+    "input" : "withdrawal/input.json",
+    "protocols" : [ "withdrawal/protocol-01.json", "withdrawal/protocol-02.json", "withdrawal/protocol-03.json" ],
+    "snapshots" : [ "withdrawal/snapshot-01.json", "withdrawal/snapshot-02.json", "withdrawal/snapshot-03.json" ]
+  }, {
+    "name" : "seed_change",
+    "input" : "seed_change/input.json",
+    "protocols" : [ "seed_change/protocol-01.json", "seed_change/protocol-02.json", "seed_change/protocol-03.json" ],
+    "snapshots" : [ "seed_change/snapshot-01.json", "seed_change/snapshot-02.json", "seed_change/snapshot-03.json" ]
+  } ]
+}

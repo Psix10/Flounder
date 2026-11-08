@@ -1,0 +1,59 @@
+{
+  "complete" : true,
+  "expectedMeasurements" : 15,
+  "actualMeasurements" : 15,
+  "allMeasuredResultsCorrect" : true,
+  "overallAssessment" : "EXPLORATORY",
+  "percentileMethod" : "nearest-rank; each scenario separately; errors remain in denominator",
+  "scenarios" : [ {
+    "scenario" : "baseline",
+    "runs" : 3,
+    "correctRuns" : 3,
+    "correctWithin5s" : 3,
+    "qualifiedShare" : 1.0,
+    "p50Ms" : 306.9834,
+    "p95Ms" : 369.119,
+    "maxMs" : 369.119,
+    "assessment" : "EXPLORATORY"
+  }, {
+    "scenario" : "nochange",
+    "runs" : 3,
+    "correctRuns" : 3,
+    "correctWithin5s" : 3,
+    "qualifiedShare" : 1.0,
+    "p50Ms" : 296.9365,
+    "p95Ms" : 318.3297,
+    "maxMs" : 318.3297,
+    "assessment" : "EXPLORATORY"
+  }, {
+    "scenario" : "seedchange",
+    "runs" : 3,
+    "correctRuns" : 3,
+    "correctWithin5s" : 3,
+    "qualifiedShare" : 1.0,
+    "p50Ms" : 269.4341,
+    "p95Ms" : 290.1007,
+    "maxMs" : 290.1007,
+    "assessment" : "EXPLORATORY"
+  }, {
+    "scenario" : "withdrawal",
+    "runs" : 3,
+    "correctRuns" : 3,
+    "correctWithin5s" : 3,
+    "qualifiedShare" : 1.0,
+    "p50Ms" : 251.9994,
+    "p95Ms" : 252.2714,
+    "maxMs" : 252.2714,
+    "assessment" : "EXPLORATORY"
+  }, {
+    "scenario" : "addition",
+    "runs" : 3,
+    "correctRuns" : 3,
+    "correctWithin5s" : 3,
+    "qualifiedShare" : 1.0,
+    "p50Ms" : 288.0845,
+    "p95Ms" : 314.4719,
+    "maxMs" : 314.4719,
+    "assessment" : "EXPLORATORY"
+  } ]
+}

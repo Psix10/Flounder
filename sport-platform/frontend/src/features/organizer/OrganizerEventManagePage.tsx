@@ -14,6 +14,7 @@ import {
 } from '../../api/events.api'
 import { ApiError } from '../../api/http'
 import { useAuth } from '../../app/providers/AuthProvider'
+import { CreateEventDisciplineForm } from './CreateEventDisciplineForm'
 import {
   getDisciplineStatusLabel,
   getDisciplineStatusTone,
@@ -106,23 +107,37 @@ export function OrganizerEventManagePage() {
   const [actionMessage, setActionMessage] = useState<string | null>(null)
   const [publishingId, setPublishingId] = useState<string | null>(null)
   const [eventAction, setEventAction] = useState<EventAction | null>(null)
+  const [isCreatingDiscipline, setIsCreatingDiscipline] = useState(false)
 
   useEffect(() => {
+    let isMounted = true
+
+    setEvent(null)
+    setDisciplines([])
+    setErrorMessage(null)
+    setActionMessage(null)
+
     if (!eventId || !accessToken) {
       setIsLoading(false)
+      setErrorMessage(
+        !eventId
+          ? 'Не указан идентификатор мероприятия.'
+          : 'Для управления мероприятием необходимо войти в аккаунт.',
+      )
+
       return
     }
 
-    let isMounted = true
+    const resolvedEventId = eventId
+    const resolvedAccessToken = accessToken
 
     async function loadData() {
       setIsLoading(true)
-      setErrorMessage(null)
 
       try {
         const [eventData, disciplinesData] = await Promise.all([
-          getEventById(eventId, accessToken),
-          getEventDisciplines(eventId, accessToken),
+          getEventById(resolvedEventId, resolvedAccessToken),
+          getEventDisciplines(resolvedEventId, resolvedAccessToken),
         ])
 
         if (!isMounted) {
@@ -151,8 +166,13 @@ export function OrganizerEventManagePage() {
     }
   }, [eventId, accessToken])
 
+  const isActionBusy =
+    eventAction !== null ||
+    publishingId !== null ||
+    isCreatingDiscipline
+
   async function handlePublishDiscipline(disciplineId: string) {
-    if (!eventId || !accessToken) {
+    if (!eventId || !accessToken || isActionBusy) {
       return
     }
 
@@ -184,7 +204,7 @@ export function OrganizerEventManagePage() {
   }
 
   async function handleEventAction(action: EventAction) {
-    if (!eventId || !accessToken || !event) {
+    if (!eventId || !accessToken || !event || isActionBusy) {
       return
     }
 
@@ -201,17 +221,14 @@ export function OrganizerEventManagePage() {
           updatedEvent = await publishEvent(eventId, accessToken)
           successMessage = 'Мероприятие опубликовано.'
           break
-
         case 'open-registration':
           updatedEvent = await openEventRegistration(eventId, accessToken)
           successMessage = 'Регистрация открыта.'
           break
-
         case 'close-registration':
           updatedEvent = await closeEventRegistration(eventId, accessToken)
           successMessage = 'Регистрация закрыта.'
           break
-
         case 'complete':
           updatedEvent = await completeEvent(eventId, accessToken)
           successMessage = 'Мероприятие завершено.'
@@ -229,6 +246,27 @@ export function OrganizerEventManagePage() {
     }
   }
 
+  function handleDisciplineCreated(discipline: EventDiscipline) {
+    setDisciplines((current) => {
+      const alreadyExists = current.some(
+        (item) => item.id === discipline.id,
+      )
+
+      if (alreadyExists) {
+        return current.map((item) =>
+          item.id === discipline.id ? discipline : item,
+        )
+      }
+
+      return [...current, discipline]
+    })
+
+    setErrorMessage(null)
+    setActionMessage(
+      'Дисциплина добавлена. Теперь её можно опубликовать.',
+    )
+  }
+
   const eventStatus = normalizeEventStatus(event?.status)
 
   return (
@@ -238,7 +276,9 @@ export function OrganizerEventManagePage() {
       </NavLink>
 
       {isLoading ? (
-        <div className={styles.stateCard}>Загружаем мероприятие…</div>
+        <div className={styles.stateCard} role="status">
+          Загружаем мероприятие…
+        </div>
       ) : null}
 
       {errorMessage ? (
@@ -297,12 +337,19 @@ export function OrganizerEventManagePage() {
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>Статус мероприятия</h2>
 
+            {eventStatus === 'DRAFT' ? (
+              <div className={styles.stateCard}>
+                Перед публикацией добавьте дисциплины мероприятия.
+                После публикации добавление дисциплин недоступно.
+              </div>
+            ) : null}
+
             <div className={styles.actionRow}>
               {eventStatus === 'DRAFT' ? (
                 <button
                   type="button"
                   className={styles.primaryButton}
-                  disabled={eventAction === 'publish'}
+                  disabled={isActionBusy}
                   onClick={() => void handleEventAction('publish')}
                 >
                   {eventAction === 'publish'
@@ -315,7 +362,7 @@ export function OrganizerEventManagePage() {
                 <button
                   type="button"
                   className={styles.primaryButton}
-                  disabled={eventAction === 'open-registration'}
+                  disabled={isActionBusy}
                   onClick={() =>
                     void handleEventAction('open-registration')
                   }
@@ -330,7 +377,7 @@ export function OrganizerEventManagePage() {
                 <button
                   type="button"
                   className={styles.primaryButton}
-                  disabled={eventAction === 'close-registration'}
+                  disabled={isActionBusy}
                   onClick={() =>
                     void handleEventAction('close-registration')
                   }
@@ -346,7 +393,7 @@ export function OrganizerEventManagePage() {
                 <button
                   type="button"
                   className={styles.primaryButton}
-                  disabled={eventAction === 'complete'}
+                  disabled={isActionBusy}
                   onClick={() => void handleEventAction('complete')}
                 >
                   {eventAction === 'complete'
@@ -360,6 +407,28 @@ export function OrganizerEventManagePage() {
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>Дисциплины</h2>
 
+            {eventStatus === 'DRAFT' && accessToken ? (
+              <CreateEventDisciplineForm
+                key={`${event.id}:${event.sportId}`}
+                eventId={event.id}
+                sportId={event.sportId}
+                accessToken={accessToken}
+                disabled={
+                  eventAction !== null || publishingId !== null
+                }
+                existingCodes={disciplines.map(
+                  (discipline) => discipline.code ?? '',
+                )}
+                onBusyChange={setIsCreatingDiscipline}
+                onCreated={handleDisciplineCreated}
+              />
+            ) : eventStatus !== 'DRAFT' ? (
+              <div className={styles.stateCard}>
+                Добавление дисциплин доступно только в черновике
+                мероприятия. Программу нужно настроить до публикации.
+              </div>
+            ) : null}
+
             {disciplines.length === 0 ? (
               <div className={styles.stateCard}>
                 Для этого мероприятия пока нет дисциплин.
@@ -367,7 +436,14 @@ export function OrganizerEventManagePage() {
             ) : (
               <div className={styles.disciplineList}>
                 {disciplines.map((discipline) => {
-                  const disciplineStatus = discipline.status || 'UNKNOWN'
+                  const disciplineStatus = (
+                    discipline.status || 'UNKNOWN'
+                  ).toUpperCase()
+
+                  const resultsSearch = new URLSearchParams({
+                    disciplineId: discipline.id,
+                    eventId: event.id,
+                  }).toString()
 
                   return (
                     <article
@@ -379,6 +455,7 @@ export function OrganizerEventManagePage() {
                           <h3 className={styles.disciplineTitle}>
                             {discipline.name}
                           </h3>
+
                           <p className={styles.disciplineMeta}>
                             Код: {discipline.code || '—'} · Формат:{' '}
                             {discipline.competitionFormat}
@@ -400,13 +477,44 @@ export function OrganizerEventManagePage() {
                           {discipline.participantLimit ?? '—'}
                         </span>
 
+                        <NavLink
+                          className={styles.secondaryLink}
+                          to={`/organizer/events/${encodeURIComponent(
+                            event.id,
+                          )}/disciplines/${encodeURIComponent(
+                            discipline.id,
+                          )}/standings`}
+                        >
+                          Зачёт и подтверждение итогов
+                        </NavLink>
+
+                        <NavLink
+                          className={styles.secondaryLink}
+                          to={`/organizer/events/${encodeURIComponent(
+                            event.id,
+                          )}/disciplines/${encodeURIComponent(
+                            discipline.id,
+                          )}/start-protocol`}
+                        >
+                          Стартовый протокол
+                        </NavLink>
+
+                        <NavLink
+                          className={styles.secondaryLink}
+                          to={`/operator/results?${resultsSearch}`}
+                        >
+                          Ввод результатов
+                        </NavLink>
+
                         {disciplineStatus === 'DRAFT' ? (
                           <button
                             type="button"
                             className={styles.primaryButton}
-                            disabled={publishingId === discipline.id}
+                            disabled={isActionBusy}
                             onClick={() =>
-                              void handlePublishDiscipline(discipline.id)
+                              void handlePublishDiscipline(
+                                discipline.id,
+                              )
                             }
                           >
                             {publishingId === discipline.id

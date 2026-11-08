@@ -1,0 +1,258 @@
+{
+  "schemaVersion" : 1,
+  "capacity" : 8,
+  "heatOrder" : "SLOWEST_FIRST",
+  "partialHeat" : "FIRST",
+  "ntPlacement" : "WEAKEST",
+  "positionOrder" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+  "allowedPositions" : [ 1, 2, 3, 4, 5, 6, 7, 8 ],
+  "registrations" : [ {
+    "registrationId" : "1e20b1b6-6e80-4535-8dac-35645f1b7cab",
+    "status" : "REJECTED",
+    "seedMetric" : 54.18
+  }, {
+    "registrationId" : "476b7dbb-9390-410c-aafc-0c381ef4cef2",
+    "status" : "REJECTED",
+    "seedMetric" : 31.92
+  }, {
+    "registrationId" : "30c46d7b-c87a-4d80-a500-25ae67b75745",
+    "status" : "CONFIRMED",
+    "seedMetric" : 36.32
+  }, {
+    "registrationId" : "f32929e0-2811-42c0-ac65-e0db2bbd5b04",
+    "status" : "CONFIRMED",
+    "seedMetric" : 51.34
+  }, {
+    "registrationId" : "abdfc450-1473-4b6f-9783-6942ca4dc9bb",
+    "status" : "CONFIRMED",
+    "seedMetric" : 55.69
+  }, {
+    "registrationId" : "c2a4f606-3ff6-4cfd-aea4-7e2a3409a2eb",
+    "status" : "CONFIRMED",
+    "seedMetric" : 43.79
+  }, {
+    "registrationId" : "9cac9d21-88bb-414b-844e-198ba3ef278d",
+    "status" : "CONFIRMED",
+    "seedMetric" : 34.8
+  }, {
+    "registrationId" : "f5fdc750-3065-412a-803a-0dbe8fc5c6dc",
+    "status" : "CONFIRMED",
+    "seedMetric" : 33.14
+  }, {
+    "registrationId" : "8a898010-6f55-4eb7-9008-4d4a0c99828b",
+    "status" : "CONFIRMED",
+    "seedMetric" : 41.44
+  }, {
+    "registrationId" : "37d07129-4917-4df9-b816-c0efcdfd9c15",
+    "status" : "CONFIRMED",
+    "seedMetric" : 41.44
+  }, {
+    "registrationId" : "019ca293-5716-45bb-aa02-c3900efcb27f",
+    "status" : "CONFIRMED",
+    "seedMetric" : 55.69
+  }, {
+    "registrationId" : "dbb0ea2b-dc7e-40f5-9bc1-8f36899a4ba5",
+    "status" : "CONFIRMED",
+    "seedMetric" : 63.4
+  }, {
+    "registrationId" : "335c59bc-33b2-456d-97cb-8c29c6279ed9",
+    "status" : "CONFIRMED"
+  }, {
+    "registrationId" : "9560b131-e8e3-4cc6-915e-22cd951b18d9",
+    "status" : "CONFIRMED",
+    "seedMetric" : 37.77
+  }, {
+    "registrationId" : "8ea4991c-da3f-4c81-ab3a-b7ccb695ca32",
+    "status" : "CONFIRMED",
+    "seedMetric" : 50.34
+  }, {
+    "registrationId" : "790519c9-dbc9-4630-a142-6d95276be8fd",
+    "status" : "CONFIRMED",
+    "seedMetric" : 56.9
+  }, {
+    "registrationId" : "60441f61-8382-4e6b-aea8-758e2a90efd1",
+    "status" : "CONFIRMED",
+    "seedMetric" : 30.79
+  }, {
+    "registrationId" : "c20b5898-29e8-421c-93d2-6949beb433e6",
+    "status" : "CONFIRMED",
+    "seedMetric" : 33.54
+  }, {
+    "registrationId" : "34d20233-f6a4-42f9-a25b-3bb4c1a5cc8d",
+    "status" : "CONFIRMED",
+    "seedMetric" : 29.72
+  }, {
+    "registrationId" : "cd3e4468-ca50-4e42-a12b-55719e31e3a3",
+    "status" : "CONFIRMED",
+    "seedMetric" : 29.72
+  }, {
+    "registrationId" : "99f8ccb8-0316-4312-9739-f3f3c9aba6db",
+    "status" : "CONFIRMED",
+    "seedMetric" : 46.67
+  }, {
+    "registrationId" : "e16c07db-f696-4273-8369-8810affc38f3",
+    "status" : "CONFIRMED",
+    "seedMetric" : 51.48
+  }, {
+    "registrationId" : "572f931d-5403-4f46-af7a-64d78a8c7987",
+    "status" : "CONFIRMED",
+    "seedMetric" : 53.46
+  }, {
+    "registrationId" : "e4712208-392e-406d-b646-f85bcfaa5614",
+    "status" : "CONFIRMED",
+    "seedMetric" : 37.84
+  }, {
+    "registrationId" : "d6275141-4997-4461-881f-daa189e663a7",
+    "status" : "CONFIRMED",
+    "seedMetric" : 68.39
+  }, {
+    "registrationId" : "6d92541e-6730-4b43-9ccc-76f4c7ad8227",
+    "status" : "CONFIRMED"
+  }, {
+    "registrationId" : "41b0bbd8-a2a1-4a3b-9cfc-2ac480bb1c41",
+    "status" : "CONFIRMED",
+    "seedMetric" : 67.12
+  }, {
+    "registrationId" : "681c9e37-0480-4979-b155-0fbef1381dd3",
+    "status" : "CONFIRMED",
+    "seedMetric" : 68.08
+  }, {
+    "registrationId" : "ac01a23c-a4c6-4bcc-9725-cb627c2ec473",
+    "status" : "CONFIRMED",
+    "seedMetric" : 56.31
+  }, {
+    "registrationId" : "60da4046-f75c-4710-a724-2e7fc78c840e",
+    "status" : "CONFIRMED",
+    "seedMetric" : 56.31
+  }, {
+    "registrationId" : "9e385ec6-8457-4ca7-8b9b-c2d1bd119e65",
+    "status" : "CONFIRMED",
+    "seedMetric" : 51.76
+  }, {
+    "registrationId" : "e5fab6a9-1a01-4b77-982c-37e360f675e3",
+    "status" : "CONFIRMED",
+    "seedMetric" : 55.82
+  }, {
+    "registrationId" : "780ab4f0-ef72-4287-8188-8968ef48e502",
+    "status" : "CONFIRMED",
+    "seedMetric" : 38.33
+  }, {
+    "registrationId" : "d2d578ce-1a98-494c-9fe0-a7ed41b33a62",
+    "status" : "CONFIRMED",
+    "seedMetric" : 42.07
+  }, {
+    "registrationId" : "6c100960-e845-4175-8fd1-244d27bf3060",
+    "status" : "CONFIRMED",
+    "seedMetric" : 69.39
+  }, {
+    "registrationId" : "f36ca86d-229c-4099-b698-506883a21729",
+    "status" : "CONFIRMED",
+    "seedMetric" : 67.43
+  }, {
+    "registrationId" : "042b7a44-01c3-4eaf-aeb4-fc3efcb92337",
+    "status" : "CONFIRMED",
+    "seedMetric" : 44.3
+  }, {
+    "registrationId" : "70114934-44ad-428b-b03d-0b0358eb3e69",
+    "status" : "CONFIRMED",
+    "seedMetric" : 51.54
+  }, {
+    "registrationId" : "804c957c-d1e3-41a2-b4c3-7871ff3ff6c1",
+    "status" : "CONFIRMED"
+  }, {
+    "registrationId" : "d3786339-ad69-4f24-9a2e-66b093cfb7f5",
+    "status" : "CONFIRMED",
+    "seedMetric" : 34.58
+  }, {
+    "registrationId" : "cde17640-2c04-441e-8678-0b8712ff467a",
+    "status" : "CONFIRMED",
+    "seedMetric" : 61.09
+  }, {
+    "registrationId" : "d06f68df-8da7-4ed9-87a1-015128a09295",
+    "status" : "CONFIRMED",
+    "seedMetric" : 30.26
+  }, {
+    "registrationId" : "17b79ce1-dd35-40ed-9ce2-b0deb3b5432a",
+    "status" : "CONFIRMED",
+    "seedMetric" : 67.05
+  }, {
+    "registrationId" : "f1cdb31a-9f68-4121-b09a-417071544e92",
+    "status" : "CONFIRMED",
+    "seedMetric" : 45.93
+  }, {
+    "registrationId" : "76aae820-fcb9-45a2-aa54-311c59f74c5c",
+    "status" : "CONFIRMED",
+    "seedMetric" : 60.29
+  }, {
+    "registrationId" : "712dbb87-c9fa-478b-9f6c-2b45dc7bd5db",
+    "status" : "CONFIRMED",
+    "seedMetric" : 56.9
+  }, {
+    "registrationId" : "b7d66c20-0bdb-4776-94cd-4a8c11ca96f8",
+    "status" : "CONFIRMED",
+    "seedMetric" : 45.4
+  }, {
+    "registrationId" : "dcc8f23e-32ba-4177-8733-b0aef892005b",
+    "status" : "CONFIRMED",
+    "seedMetric" : 31.59
+  }, {
+    "registrationId" : "44a93bd2-fcb4-451b-b3f2-e48cb96147f4",
+    "status" : "CONFIRMED",
+    "seedMetric" : 62.55
+  }, {
+    "registrationId" : "17130da2-8be0-4e07-8436-6b1d2553f3a9",
+    "status" : "CONFIRMED",
+    "seedMetric" : 62.55
+  }, {
+    "registrationId" : "0840725b-1ac3-438e-8188-b639a7682630",
+    "status" : "CONFIRMED",
+    "seedMetric" : 67.47
+  }, {
+    "registrationId" : "94521b10-1e98-4622-8db9-9a457eed1251",
+    "status" : "CONFIRMED"
+  }, {
+    "registrationId" : "24cb819d-0a5f-4709-b9a7-211fea83f825",
+    "status" : "CONFIRMED",
+    "seedMetric" : 65.25
+  }, {
+    "registrationId" : "a34b0d55-7764-45c6-ae20-d69a151d147c",
+    "status" : "CONFIRMED",
+    "seedMetric" : 65.13
+  }, {
+    "registrationId" : "a9678e74-f1ce-4db6-8886-0b13b10705bb",
+    "status" : "CONFIRMED",
+    "seedMetric" : 53.59
+  }, {
+    "registrationId" : "a2e52218-3fcf-4996-aa7d-9c825555110e",
+    "status" : "CONFIRMED",
+    "seedMetric" : 42.56
+  }, {
+    "registrationId" : "7af87c72-1cd1-4129-b5f5-a202566f1ef9",
+    "status" : "CONFIRMED",
+    "seedMetric" : 60.6
+  }, {
+    "registrationId" : "1446a9e1-6d32-4ed9-9324-e98d86965152",
+    "status" : "CONFIRMED",
+    "seedMetric" : 65.75
+  }, {
+    "registrationId" : "412e054d-1780-41d2-bc3a-d47b31b46f9e",
+    "status" : "CONFIRMED",
+    "seedMetric" : 28.03
+  }, {
+    "registrationId" : "b0215178-589f-4587-9641-26504dc6a32e",
+    "status" : "CONFIRMED",
+    "seedMetric" : 28.03
+  }, {
+    "registrationId" : "da334e8a-7a0b-4380-b3fa-1d7ce1649e72",
+    "status" : "CONFIRMED",
+    "seedMetric" : 44.04
+  }, {
+    "registrationId" : "c961ed22-244b-467e-904d-2f8f219d06a8",
+    "status" : "CONFIRMED",
+    "seedMetric" : 34.61
+  }, {
+    "registrationId" : "e82b6a9e-7489-4620-a366-e3fd944ee8ee",
+    "status" : "CONFIRMED",
+    "seedMetric" : 39.63
+  } ]
+}

@@ -1,25 +1,26 @@
+import { readApiFailure } from '../lib/standings-ui.mjs'
+import type { FieldViolation } from '../lib/standings-ui.mjs'
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export class ApiError extends Error {
   public readonly status: number
   public readonly code?: string
+  public readonly violations: FieldViolation[]
 
   constructor(
     status: number,
     message: string,
     code?: string,
+    violations: FieldViolation[] = [],
   ) {
     super(message)
 
     this.name = 'ApiError'
     this.status = status
     this.code = code
+    this.violations = violations
   }
-}
-
-type ApiErrorResponse = {
-  code?: string
-  message?: string
 }
 
 type ApiFetchOptions = RequestInit & {
@@ -58,19 +59,16 @@ export async function apiFetch<T>(
   })
 
   if (!response.ok) {
-    let payload: ApiErrorResponse | undefined
+    let payload: unknown
 
     try {
-      payload = (await response.json()) as ApiErrorResponse
+      payload = await response.json()
     } catch {
       payload = undefined
     }
 
-    throw new ApiError(
-      response.status,
-      payload?.message ?? `Request failed with HTTP ${response.status}`,
-      payload?.code,
-    )
+    const failure = readApiFailure(payload, response.status)
+    throw new ApiError(response.status, failure.message, failure.code, failure.violations)
   }
 
   if (response.status === 204) {

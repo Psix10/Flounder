@@ -208,3 +208,30 @@ export async function publishEventDiscipline(
     },
   )
 }
+
+export type CreateEventDisciplineRequest = {
+  disciplineTemplateId: string
+  code: string
+  name: string
+  participantLimit?: number | null
+  entryFeeAmount: number
+  entryFeeCurrency: string
+}
+
+export async function createEventDiscipline(
+  eventId: string,
+  request: CreateEventDisciplineRequest,
+  accessToken: string,
+): Promise<EventDiscipline> {
+  return apiFetch<EventDiscipline>(
+    `/api/v1/events/${encodeURIComponent(eventId)}/disciplines`,
+    {
+      method: 'POST',
+      accessToken,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    },
+  )
+}

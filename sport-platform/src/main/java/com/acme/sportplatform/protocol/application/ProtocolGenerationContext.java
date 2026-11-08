@@ -1,5 +1,7 @@
 package com.acme.sportplatform.protocol.application;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 public class ProtocolGenerationContext {
     private final UUID eventDisciplineId;
     private final int unitCapacity;
@@ -26,13 +28,22 @@ public class ProtocolGenerationContext {
         this.participants = new ArrayList<>(participants);
     }
     public UUID getEventDisciplineId() { return eventDisciplineId; }
+    
     public int getUnitCapacity() { return unitCapacity; }
+
     public String getUnitLabelPrefix() { return unitLabelPrefix; }
+
     public List<Integer> getPositionOrder() { return positionOrder; }
+
     public List<Integer> getAllowedPositions() { return allowedPositions; }
+    
     public String getHeatOrder() { return heatOrder; }
+
     public String getPartialHeat() { return partialHeat; }
+
     public List<SeedParticipant> getParticipants() { return participants; }
+
     public void setParticipants(List<SeedParticipant> value) { participants = new ArrayList<>(value); }
+    
     public List<List<GeneratedAssignment>> getGroupedAssignments() { return groupedAssignments; }
 }

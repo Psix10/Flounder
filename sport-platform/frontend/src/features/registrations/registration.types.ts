@@ -1,8 +1,17 @@
+export type CorrectionHistoryItem = {
+  reviewNote: string | null
+  reviewedAt: string | null
+  reviewedByUserId: string | null
+  reply: string
+  repliedAt: string
+}
+
 export type RegistrationMeta = {
   emergencyContactName: string
   emergencyContactPhone: string
   medicalCertificate: boolean
   agreeToRules: boolean
+  correctionHistory?: CorrectionHistoryItem[]
 }
 
 export type ParticipantSnapshot = {
@@ -20,6 +29,14 @@ export type ParticipantSnapshot = {
 export type CreateRegistrationRequest = {
   eventDisciplineId: string
   registrationMeta: RegistrationMeta
+}
+
+export type ResubmitRegistrationRequest = {
+  reply: string
+  emergencyContactName: string
+  emergencyContactPhone: string
+  medicalCertificate: boolean
+  agreeToRules: boolean
 }
 
 export type RegistrationStatus =

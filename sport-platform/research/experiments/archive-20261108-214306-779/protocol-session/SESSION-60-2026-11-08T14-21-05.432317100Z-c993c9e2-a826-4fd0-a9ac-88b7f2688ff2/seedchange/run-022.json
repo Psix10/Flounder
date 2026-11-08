@@ -1,0 +1,1309 @@
+{
+  "input" : {
+    "command" : {
+      "eventId" : "ca01e4c8-e19f-4b49-a224-20e572b26766",
+      "sessions" : [ {
+        "id" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "breaks" : [ ],
+        "window" : {
+          "end" : "2026-11-28T15:30:00Z",
+          "start" : "2026-11-28T09:30:00Z"
+        }
+      } ],
+      "regenerate" : true,
+      "disciplines" : [ {
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+        "heatDuration" : "PT2M",
+        "durationBasis" : "Explicit synthetic planning duration",
+        "ruleSetVersionId" : "42eb6cd6-7ae8-464a-899b-a5b9e12cb825"
+      }, {
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+        "heatDuration" : "PT2M",
+        "durationBasis" : "Explicit synthetic planning duration",
+        "ruleSetVersionId" : "42eb6cd6-7ae8-464a-899b-a5b9e12cb825"
+      } ],
+      "timingPolicy" : {
+        "origin" : "EXPERIMENTAL",
+        "changeover" : "PT30S",
+        "minimumRest" : "PT10M",
+        "sourceDescription" : "Synthetic experiment: not an official regulation"
+      }
+    },
+    "disciplines" : [ {
+      "rules" : {
+        "order" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+        "blocks" : [ {
+          "config" : { },
+          "orderIndex" : 0,
+          "executorCode" : "ELIGIBILITY_CONFIRMED_ONLY"
+        }, {
+          "config" : {
+            "metricKey" : "seedTimeSeconds"
+          },
+          "orderIndex" : 1,
+          "executorCode" : "SEED_BY_METRIC_ASC_NULLS_LAST"
+        }, {
+          "config" : {
+            "capacity" : 8,
+            "heatOrder" : "SLOWEST_FIRST",
+            "ntPlacement" : "WEAKEST",
+            "partialHeat" : "FIRST",
+            "unitLabelPrefix" : "Заход"
+          },
+          "orderIndex" : 2,
+          "executorCode" : "GROUP_BY_CAPACITY"
+        }, {
+          "config" : {
+            "positionOrder" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+            "allowedPositions" : [ 4, 5, 3, 6, 2, 7, 1, 8 ]
+          },
+          "orderIndex" : 3,
+          "executorCode" : "ASSIGN_CENTER_OUT"
+        } ],
+        "prefix" : "Заход",
+        "allowed" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+        "capacity" : 8,
+        "heatOrder" : "SLOWEST_FIRST",
+        "metricKey" : "seedTimeSeconds",
+        "versionId" : "42eb6cd6-7ae8-464a-899b-a5b9e12cb825",
+        "partialHeat" : "FIRST"
+      },
+      "prepared" : {
+        "units" : [ {
+          "label" : "Заход 1",
+          "assignments" : [ {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 4,
+            "registrationId" : "11aff686-3f52-41ab-92ec-6b9b704d80e0"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 5,
+            "registrationId" : "843d7f10-c235-4037-bc14-1b75b27e91d7"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 3,
+            "registrationId" : "97913189-0073-4b24-9c57-5b37a083c554"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 6,
+            "registrationId" : "d6ac41fc-b844-453c-9477-616640dadea0"
+          }, {
+            "laneOrPosition" : 2,
+            "registrationId" : "8ee9db34-81e9-4cb1-a5e5-db89ec7ea993"
+          }, {
+            "laneOrPosition" : 7,
+            "registrationId" : "d83e8329-94e2-4318-993b-4bfbaf7324d8"
+          } ],
+          "sequenceNumber" : 1,
+          "competitionUnitId" : "af80e4f7-7972-470f-9444-d5ebb710da73"
+        }, {
+          "label" : "Заход 2",
+          "assignments" : [ {
+            "seedMetric" : 31,
+            "laneOrPosition" : 4,
+            "registrationId" : "f656a591-8e11-4ca4-b88d-2cf028a2db9e"
+          }, {
+            "seedMetric" : 31.25,
+            "laneOrPosition" : 5,
+            "registrationId" : "472f9556-312c-44af-99cc-9f3b69534fd2"
+          }, {
+            "seedMetric" : 31.5,
+            "laneOrPosition" : 3,
+            "registrationId" : "6ea6b2da-2a91-4cbd-9db4-53414f1ae135"
+          }, {
+            "seedMetric" : 31.75,
+            "laneOrPosition" : 6,
+            "registrationId" : "3b311b9a-f9b3-4567-87bb-f2508e06443c"
+          }, {
+            "seedMetric" : 32,
+            "laneOrPosition" : 2,
+            "registrationId" : "4d100870-c6b2-4c21-95a5-0396fe1a51c1"
+          }, {
+            "seedMetric" : 32.25,
+            "laneOrPosition" : 7,
+            "registrationId" : "183f5295-ffbf-4b0b-ac87-c5084f98ddce"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 1,
+            "registrationId" : "0c9596c6-f823-4760-a7a5-5f63f8c601bc"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 8,
+            "registrationId" : "1036e499-c04c-4f7a-96c0-186aaab1c60e"
+          } ],
+          "sequenceNumber" : 2,
+          "competitionUnitId" : "56f88cca-3d70-460c-b4a8-3beeb22f0385"
+        }, {
+          "label" : "Заход 3",
+          "assignments" : [ {
+            "seedMetric" : 28.75,
+            "laneOrPosition" : 4,
+            "registrationId" : "9b162dd6-8e72-45f1-b94d-a2b2124fd60a"
+          }, {
+            "seedMetric" : 29,
+            "laneOrPosition" : 5,
+            "registrationId" : "725199ac-621e-47b5-9361-9402c0066ebc"
+          }, {
+            "seedMetric" : 29.25,
+            "laneOrPosition" : 3,
+            "registrationId" : "c2a9ba9d-9318-4260-8540-ac6a3e6cda4a"
+          }, {
+            "seedMetric" : 29.5,
+            "laneOrPosition" : 6,
+            "registrationId" : "172ea052-8fbc-432d-b69c-cbf038a41c11"
+          }, {
+            "seedMetric" : 29.75,
+            "laneOrPosition" : 2,
+            "registrationId" : "5902f864-7b94-4631-8f8e-fcac03e34e52"
+          }, {
+            "seedMetric" : 30.25,
+            "laneOrPosition" : 7,
+            "registrationId" : "c4d96bb5-6f22-4c6e-b683-e043cf212ecc"
+          }, {
+            "seedMetric" : 30.5,
+            "laneOrPosition" : 1,
+            "registrationId" : "0a2a4337-55e5-464d-aee6-c2ad1d6cd2b0"
+          }, {
+            "seedMetric" : 30.75,
+            "laneOrPosition" : 8,
+            "registrationId" : "6ddcb285-0b0e-4bd7-8b6f-4f4210e21e07"
+          } ],
+          "sequenceNumber" : 3,
+          "competitionUnitId" : "c387e23f-3108-4ea9-bfd2-329c40eaab73"
+        }, {
+          "label" : "Заход 4",
+          "assignments" : [ {
+            "seedMetric" : 26.5,
+            "laneOrPosition" : 4,
+            "registrationId" : "d3e45a52-75a2-4f8b-8f2d-6ff572bfe4d0"
+          }, {
+            "seedMetric" : 26.75,
+            "laneOrPosition" : 5,
+            "registrationId" : "97d9c706-1ff8-4c99-a51e-d13770af2cae"
+          }, {
+            "seedMetric" : 27,
+            "laneOrPosition" : 3,
+            "registrationId" : "aa8d3bd9-90f5-46d7-a001-f31beb124563"
+          }, {
+            "seedMetric" : 27.25,
+            "laneOrPosition" : 6,
+            "registrationId" : "0acdd61e-40a6-4566-b95f-fc0578ad09c9"
+          }, {
+            "seedMetric" : 27.75,
+            "laneOrPosition" : 2,
+            "registrationId" : "da2b5484-ee04-4d96-883b-7a8729568dd7"
+          }, {
+            "seedMetric" : 28,
+            "laneOrPosition" : 7,
+            "registrationId" : "1c1f7436-7149-48f4-9bbf-92538b3f6b0f"
+          }, {
+            "seedMetric" : 28.25,
+            "laneOrPosition" : 1,
+            "registrationId" : "02bf7f2c-89ee-4bf6-9876-66c1bf1199e3"
+          }, {
+            "seedMetric" : 28.5,
+            "laneOrPosition" : 8,
+            "registrationId" : "026d11d1-e86e-40f1-bf9c-94fc9ae59c52"
+          } ],
+          "sequenceNumber" : 4,
+          "competitionUnitId" : "0013ee95-ddeb-479f-9355-e6340bb3df5b"
+        } ],
+        "participants" : [ {
+          "seedMetric" : 99.99,
+          "registrationId" : "0c9596c6-f823-4760-a7a5-5f63f8c601bc"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "1036e499-c04c-4f7a-96c0-186aaab1c60e"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "843d7f10-c235-4037-bc14-1b75b27e91d7"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "97913189-0073-4b24-9c57-5b37a083c554"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "d6ac41fc-b844-453c-9477-616640dadea0"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "11aff686-3f52-41ab-92ec-6b9b704d80e0"
+        }, {
+          "seedMetric" : 26.5,
+          "registrationId" : "d3e45a52-75a2-4f8b-8f2d-6ff572bfe4d0"
+        }, {
+          "seedMetric" : 26.75,
+          "registrationId" : "97d9c706-1ff8-4c99-a51e-d13770af2cae"
+        }, {
+          "registrationId" : "d83e8329-94e2-4318-993b-4bfbaf7324d8"
+        }, {
+          "seedMetric" : 27,
+          "registrationId" : "aa8d3bd9-90f5-46d7-a001-f31beb124563"
+        }, {
+          "seedMetric" : 27.25,
+          "registrationId" : "0acdd61e-40a6-4566-b95f-fc0578ad09c9"
+        }, {
+          "registrationId" : "8ee9db34-81e9-4cb1-a5e5-db89ec7ea993"
+        }, {
+          "seedMetric" : 27.75,
+          "registrationId" : "da2b5484-ee04-4d96-883b-7a8729568dd7"
+        }, {
+          "seedMetric" : 28.75,
+          "registrationId" : "9b162dd6-8e72-45f1-b94d-a2b2124fd60a"
+        }, {
+          "seedMetric" : 29,
+          "registrationId" : "725199ac-621e-47b5-9361-9402c0066ebc"
+        }, {
+          "seedMetric" : 28,
+          "registrationId" : "1c1f7436-7149-48f4-9bbf-92538b3f6b0f"
+        }, {
+          "seedMetric" : 28.25,
+          "registrationId" : "02bf7f2c-89ee-4bf6-9876-66c1bf1199e3"
+        }, {
+          "seedMetric" : 28.5,
+          "registrationId" : "026d11d1-e86e-40f1-bf9c-94fc9ae59c52"
+        }, {
+          "seedMetric" : 29.5,
+          "registrationId" : "172ea052-8fbc-432d-b69c-cbf038a41c11"
+        }, {
+          "seedMetric" : 29.75,
+          "registrationId" : "5902f864-7b94-4631-8f8e-fcac03e34e52"
+        }, {
+          "seedMetric" : 30.25,
+          "registrationId" : "c4d96bb5-6f22-4c6e-b683-e043cf212ecc"
+        }, {
+          "seedMetric" : 29.25,
+          "registrationId" : "c2a9ba9d-9318-4260-8540-ac6a3e6cda4a"
+        }, {
+          "seedMetric" : 30.5,
+          "registrationId" : "0a2a4337-55e5-464d-aee6-c2ad1d6cd2b0"
+        }, {
+          "seedMetric" : 30.75,
+          "registrationId" : "6ddcb285-0b0e-4bd7-8b6f-4f4210e21e07"
+        }, {
+          "seedMetric" : 31,
+          "registrationId" : "f656a591-8e11-4ca4-b88d-2cf028a2db9e"
+        }, {
+          "seedMetric" : 31.25,
+          "registrationId" : "472f9556-312c-44af-99cc-9f3b69534fd2"
+        }, {
+          "seedMetric" : 31.5,
+          "registrationId" : "6ea6b2da-2a91-4cbd-9db4-53414f1ae135"
+        }, {
+          "seedMetric" : 31.75,
+          "registrationId" : "3b311b9a-f9b3-4567-87bb-f2508e06443c"
+        }, {
+          "seedMetric" : 32,
+          "registrationId" : "4d100870-c6b2-4c21-95a5-0396fe1a51c1"
+        }, {
+          "seedMetric" : 32.25,
+          "registrationId" : "183f5295-ffbf-4b0b-ac87-c5084f98ddce"
+        } ],
+        "eventDisciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3"
+      },
+      "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+      "confirmedRegistrations" : [ {
+        "registrationId" : "0c9596c6-f823-4760-a7a5-5f63f8c601bc",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 0\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete0\"}",
+        "participantProfileId" : "9ecd0937-9883-4318-b807-a47aa38c980c"
+      }, {
+        "registrationId" : "1036e499-c04c-4f7a-96c0-186aaab1c60e",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 1\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete1\"}",
+        "participantProfileId" : "3c93036c-17bd-446a-845a-2057e3796255"
+      }, {
+        "registrationId" : "843d7f10-c235-4037-bc14-1b75b27e91d7",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 2\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete2\"}",
+        "participantProfileId" : "0e2dc2fc-3b6e-49c7-8457-55e477ba5f40"
+      }, {
+        "registrationId" : "97913189-0073-4b24-9c57-5b37a083c554",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 3\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete3\"}",
+        "participantProfileId" : "9c3d93c1-c814-4823-8049-b5046b027e6f"
+      }, {
+        "registrationId" : "d6ac41fc-b844-453c-9477-616640dadea0",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 4\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete4\"}",
+        "participantProfileId" : "644e440b-0998-4495-beff-ada463330732"
+      }, {
+        "registrationId" : "11aff686-3f52-41ab-92ec-6b9b704d80e0",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 5\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete5\"}",
+        "participantProfileId" : "6d526e03-c909-41d6-aafb-375c8f6c5c6b"
+      }, {
+        "registrationId" : "d3e45a52-75a2-4f8b-8f2d-6ff572bfe4d0",
+        "registrationMeta" : "{\"seedTimeSeconds\": 26.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 6\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete6\"}",
+        "participantProfileId" : "4e792bbf-3663-4458-a2b1-5a7c174a4799"
+      }, {
+        "registrationId" : "97d9c706-1ff8-4c99-a51e-d13770af2cae",
+        "registrationMeta" : "{\"seedTimeSeconds\": 26.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 7\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete7\"}",
+        "participantProfileId" : "26a151bf-17df-499f-937f-ae3ff87d3731"
+      }, {
+        "registrationId" : "d83e8329-94e2-4318-993b-4bfbaf7324d8",
+        "registrationMeta" : "{}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 8\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete20\"}",
+        "participantProfileId" : "fef7e225-4699-4889-a606-3be40b99292a"
+      }, {
+        "registrationId" : "aa8d3bd9-90f5-46d7-a001-f31beb124563",
+        "registrationMeta" : "{\"seedTimeSeconds\": 27.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 8\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete8\"}",
+        "participantProfileId" : "f954c604-eddb-480e-a55c-a6cd7ffaeda0"
+      }, {
+        "registrationId" : "0acdd61e-40a6-4566-b95f-fc0578ad09c9",
+        "registrationMeta" : "{\"seedTimeSeconds\": 27.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 9\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete9\"}",
+        "participantProfileId" : "63d7367e-baa8-40fd-9782-f105ef27e897"
+      }, {
+        "registrationId" : "8ee9db34-81e9-4cb1-a5e5-db89ec7ea993",
+        "registrationMeta" : "{}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 10\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete10\"}",
+        "participantProfileId" : "264dee55-523e-4133-8f63-8560e527869b"
+      }, {
+        "registrationId" : "da2b5484-ee04-4d96-883b-7a8729568dd7",
+        "registrationMeta" : "{\"seedTimeSeconds\": 27.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 11\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete11\"}",
+        "participantProfileId" : "b0c5ef73-b9f6-4345-a9cc-4974c3bd0442"
+      }, {
+        "registrationId" : "9b162dd6-8e72-45f1-b94d-a2b2124fd60a",
+        "registrationMeta" : "{\"seedTimeSeconds\": 28.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 3\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete15\"}",
+        "participantProfileId" : "e01e3df1-53f9-4fa0-9c85-d1ae66a8591c"
+      }, {
+        "registrationId" : "725199ac-621e-47b5-9361-9402c0066ebc",
+        "registrationMeta" : "{\"seedTimeSeconds\": 29.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 4\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete16\"}",
+        "participantProfileId" : "33a928bc-8804-4c52-b4da-a4ef6f254be0"
+      }, {
+        "registrationId" : "1c1f7436-7149-48f4-9bbf-92538b3f6b0f",
+        "registrationMeta" : "{\"seedTimeSeconds\": 28.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 0\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete12\"}",
+        "participantProfileId" : "06c97163-f24e-4a02-896a-97f27f375d75"
+      }, {
+        "registrationId" : "02bf7f2c-89ee-4bf6-9876-66c1bf1199e3",
+        "registrationMeta" : "{\"seedTimeSeconds\": 28.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 1\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete13\"}",
+        "participantProfileId" : "48d3d92c-1eca-458e-9e3f-5a80336e10b4"
+      }, {
+        "registrationId" : "026d11d1-e86e-40f1-bf9c-94fc9ae59c52",
+        "registrationMeta" : "{\"seedTimeSeconds\": 28.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 2\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete14\"}",
+        "participantProfileId" : "e88dad3e-f069-45ab-a3c4-503cff1f0370"
+      }, {
+        "registrationId" : "172ea052-8fbc-432d-b69c-cbf038a41c11",
+        "registrationMeta" : "{\"seedTimeSeconds\": 29.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 6\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete18\"}",
+        "participantProfileId" : "9a55d919-57e2-4e5e-858b-53f1ac51436d"
+      }, {
+        "registrationId" : "5902f864-7b94-4631-8f8e-fcac03e34e52",
+        "registrationMeta" : "{\"seedTimeSeconds\": 29.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 7\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete19\"}",
+        "participantProfileId" : "c7ba0943-e689-4b7d-b97a-95631f058486"
+      }, {
+        "registrationId" : "c4d96bb5-6f22-4c6e-b683-e043cf212ecc",
+        "registrationMeta" : "{\"seedTimeSeconds\": 30.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 9\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete21\"}",
+        "participantProfileId" : "c7840a9a-25cd-4e85-b4f7-31fbe49f4289"
+      }, {
+        "registrationId" : "c2a9ba9d-9318-4260-8540-ac6a3e6cda4a",
+        "registrationMeta" : "{\"seedTimeSeconds\": 29.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 5\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete17\"}",
+        "participantProfileId" : "9c111c85-ad50-4a20-8e59-333582156ffa"
+      }, {
+        "registrationId" : "0a2a4337-55e5-464d-aee6-c2ad1d6cd2b0",
+        "registrationMeta" : "{\"seedTimeSeconds\": 30.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 10\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete22\"}",
+        "participantProfileId" : "c25edf6a-bcf8-48cc-ada9-50d8a0588870"
+      }, {
+        "registrationId" : "6ddcb285-0b0e-4bd7-8b6f-4f4210e21e07",
+        "registrationMeta" : "{\"seedTimeSeconds\": 30.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 11\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete23\"}",
+        "participantProfileId" : "595794fa-3630-4447-8b98-0e3e70ae6454"
+      }, {
+        "registrationId" : "f656a591-8e11-4ca4-b88d-2cf028a2db9e",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 0\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete24\"}",
+        "participantProfileId" : "88ab4404-a89b-49ea-a17d-dbcd6501cdc9"
+      }, {
+        "registrationId" : "472f9556-312c-44af-99cc-9f3b69534fd2",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 1\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete25\"}",
+        "participantProfileId" : "3fb69320-1cc2-49cc-bcc9-b58131926fe0"
+      }, {
+        "registrationId" : "6ea6b2da-2a91-4cbd-9db4-53414f1ae135",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 2\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete26\"}",
+        "participantProfileId" : "d5db2c47-d3e3-48eb-9764-63b2f39ad485"
+      }, {
+        "registrationId" : "3b311b9a-f9b3-4567-87bb-f2508e06443c",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 3\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete27\"}",
+        "participantProfileId" : "ed708a05-9ed5-42c3-a37c-02379b0c1631"
+      }, {
+        "registrationId" : "4d100870-c6b2-4c21-95a5-0396fe1a51c1",
+        "registrationMeta" : "{\"seedTimeSeconds\": 32.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 4\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete28\"}",
+        "participantProfileId" : "0893f4ae-d0ab-4b67-b37f-a7395b871267"
+      }, {
+        "registrationId" : "183f5295-ffbf-4b0b-ac87-c5084f98ddce",
+        "registrationMeta" : "{\"seedTimeSeconds\": 32.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 5\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete29\"}",
+        "participantProfileId" : "e31abc8d-5609-4e69-ad12-f3190cd0e35d"
+      } ],
+      "effectiveRuleSetVersionId" : "42eb6cd6-7ae8-464a-899b-a5b9e12cb825"
+    }, {
+      "rules" : {
+        "order" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+        "blocks" : [ {
+          "config" : { },
+          "orderIndex" : 0,
+          "executorCode" : "ELIGIBILITY_CONFIRMED_ONLY"
+        }, {
+          "config" : {
+            "metricKey" : "seedTimeSeconds"
+          },
+          "orderIndex" : 1,
+          "executorCode" : "SEED_BY_METRIC_ASC_NULLS_LAST"
+        }, {
+          "config" : {
+            "capacity" : 8,
+            "heatOrder" : "SLOWEST_FIRST",
+            "ntPlacement" : "WEAKEST",
+            "partialHeat" : "FIRST",
+            "unitLabelPrefix" : "Заход"
+          },
+          "orderIndex" : 2,
+          "executorCode" : "GROUP_BY_CAPACITY"
+        }, {
+          "config" : {
+            "positionOrder" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+            "allowedPositions" : [ 4, 5, 3, 6, 2, 7, 1, 8 ]
+          },
+          "orderIndex" : 3,
+          "executorCode" : "ASSIGN_CENTER_OUT"
+        } ],
+        "prefix" : "Заход",
+        "allowed" : [ 4, 5, 3, 6, 2, 7, 1, 8 ],
+        "capacity" : 8,
+        "heatOrder" : "SLOWEST_FIRST",
+        "metricKey" : "seedTimeSeconds",
+        "versionId" : "42eb6cd6-7ae8-464a-899b-a5b9e12cb825",
+        "partialHeat" : "FIRST"
+      },
+      "prepared" : {
+        "units" : [ {
+          "label" : "Заход 1",
+          "assignments" : [ {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 4,
+            "registrationId" : "7afe2f8d-d108-421b-9e8f-d3a60ad41764"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 5,
+            "registrationId" : "8c6b2e3f-aada-47e2-9eea-1fde869d47cb"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 3,
+            "registrationId" : "8cccc680-66d5-4f42-aaac-28083b40a27c"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 6,
+            "registrationId" : "bcd8f79e-74fb-4c66-b5f4-6955c0def656"
+          }, {
+            "laneOrPosition" : 2,
+            "registrationId" : "b4c8dd90-415c-4d4e-a960-f4843fbe8383"
+          }, {
+            "laneOrPosition" : 7,
+            "registrationId" : "ea9bba39-afe6-467d-aac3-0e83c45915f2"
+          } ],
+          "sequenceNumber" : 1,
+          "competitionUnitId" : "a68f068f-c2fc-4ac7-8720-80cb73fb57ba"
+        }, {
+          "label" : "Заход 2",
+          "assignments" : [ {
+            "seedMetric" : 33,
+            "laneOrPosition" : 4,
+            "registrationId" : "a2b80e6d-b668-4301-a5a4-73ec77be277b"
+          }, {
+            "seedMetric" : 33.25,
+            "laneOrPosition" : 5,
+            "registrationId" : "b7d351a4-c4ba-414f-bc73-89fca424ad4f"
+          }, {
+            "seedMetric" : 33.5,
+            "laneOrPosition" : 3,
+            "registrationId" : "f8bf9726-f8eb-4933-bcb7-861a99921b16"
+          }, {
+            "seedMetric" : 33.75,
+            "laneOrPosition" : 6,
+            "registrationId" : "f15319cb-27c3-4722-a933-2b6c69061a20"
+          }, {
+            "seedMetric" : 34,
+            "laneOrPosition" : 2,
+            "registrationId" : "3ff4ff92-e226-44b1-b46f-4db9aeef9815"
+          }, {
+            "seedMetric" : 34.25,
+            "laneOrPosition" : 7,
+            "registrationId" : "8aced7fa-0c70-4748-8cab-183ebed4ffe7"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 1,
+            "registrationId" : "2f153b12-2e1a-4489-8b9e-354a8af16738"
+          }, {
+            "seedMetric" : 99.99,
+            "laneOrPosition" : 8,
+            "registrationId" : "4e211910-0c3c-4d3f-8f4c-8ea831e3c1d3"
+          } ],
+          "sequenceNumber" : 2,
+          "competitionUnitId" : "d00c0cae-cf6d-4d86-b8cd-83f14917faf5"
+        }, {
+          "label" : "Заход 3",
+          "assignments" : [ {
+            "seedMetric" : 30.75,
+            "laneOrPosition" : 4,
+            "registrationId" : "817fb9ab-090d-4f4b-8fca-1f908f3f1d39"
+          }, {
+            "seedMetric" : 31,
+            "laneOrPosition" : 5,
+            "registrationId" : "b68e01a7-a5a5-4ef1-a5ac-c9c7e59e21d7"
+          }, {
+            "seedMetric" : 31.25,
+            "laneOrPosition" : 3,
+            "registrationId" : "a27c446e-36f8-4866-82a4-22cfae1913c7"
+          }, {
+            "seedMetric" : 31.5,
+            "laneOrPosition" : 6,
+            "registrationId" : "8d914fad-84bd-42ee-809b-d47933997346"
+          }, {
+            "seedMetric" : 31.75,
+            "laneOrPosition" : 2,
+            "registrationId" : "e2595f91-314f-44a2-bf6f-5f531714051c"
+          }, {
+            "seedMetric" : 32.25,
+            "laneOrPosition" : 7,
+            "registrationId" : "4cce9214-a095-4512-b235-3c7c7c3659d3"
+          }, {
+            "seedMetric" : 32.5,
+            "laneOrPosition" : 1,
+            "registrationId" : "1b5e0a97-f7a8-4aab-8377-507c0131e659"
+          }, {
+            "seedMetric" : 32.75,
+            "laneOrPosition" : 8,
+            "registrationId" : "dfa1287f-9d8b-4465-b8a8-22629c1c06fa"
+          } ],
+          "sequenceNumber" : 3,
+          "competitionUnitId" : "e8b8ec33-e091-4a3f-836d-6501202dfea6"
+        }, {
+          "label" : "Заход 4",
+          "assignments" : [ {
+            "seedMetric" : 28.5,
+            "laneOrPosition" : 4,
+            "registrationId" : "cf57db48-6317-4f01-8240-630adff438c7"
+          }, {
+            "seedMetric" : 28.75,
+            "laneOrPosition" : 5,
+            "registrationId" : "20ec0181-0171-4da7-a143-565db9464576"
+          }, {
+            "seedMetric" : 29,
+            "laneOrPosition" : 3,
+            "registrationId" : "1d16bbe0-da44-4808-bca7-b2406ca3d199"
+          }, {
+            "seedMetric" : 29.25,
+            "laneOrPosition" : 6,
+            "registrationId" : "046aec57-ea77-4ee0-be49-c7286eec4e0d"
+          }, {
+            "seedMetric" : 29.75,
+            "laneOrPosition" : 2,
+            "registrationId" : "7937b2c1-3173-4a0d-8a8f-c729fbb101ab"
+          }, {
+            "seedMetric" : 30,
+            "laneOrPosition" : 7,
+            "registrationId" : "31d0742a-3af1-4ccc-bdaf-d512b9ccfb3c"
+          }, {
+            "seedMetric" : 30.25,
+            "laneOrPosition" : 1,
+            "registrationId" : "7c7d9ae1-7923-4599-b704-873a219b48c0"
+          }, {
+            "seedMetric" : 30.5,
+            "laneOrPosition" : 8,
+            "registrationId" : "105f4b0b-896f-4552-9627-49ea68310fd9"
+          } ],
+          "sequenceNumber" : 4,
+          "competitionUnitId" : "4f840dbd-bbff-4f22-99a1-1ff0c6c39a22"
+        } ],
+        "participants" : [ {
+          "seedMetric" : 99.99,
+          "registrationId" : "2f153b12-2e1a-4489-8b9e-354a8af16738"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "7afe2f8d-d108-421b-9e8f-d3a60ad41764"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "8c6b2e3f-aada-47e2-9eea-1fde869d47cb"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "bcd8f79e-74fb-4c66-b5f4-6955c0def656"
+        }, {
+          "seedMetric" : 28.75,
+          "registrationId" : "20ec0181-0171-4da7-a143-565db9464576"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "8cccc680-66d5-4f42-aaac-28083b40a27c"
+        }, {
+          "seedMetric" : 99.99,
+          "registrationId" : "4e211910-0c3c-4d3f-8f4c-8ea831e3c1d3"
+        }, {
+          "seedMetric" : 28.5,
+          "registrationId" : "cf57db48-6317-4f01-8240-630adff438c7"
+        }, {
+          "seedMetric" : 29.75,
+          "registrationId" : "7937b2c1-3173-4a0d-8a8f-c729fbb101ab"
+        }, {
+          "seedMetric" : 29,
+          "registrationId" : "1d16bbe0-da44-4808-bca7-b2406ca3d199"
+        }, {
+          "seedMetric" : 29.25,
+          "registrationId" : "046aec57-ea77-4ee0-be49-c7286eec4e0d"
+        }, {
+          "registrationId" : "ea9bba39-afe6-467d-aac3-0e83c45915f2"
+        }, {
+          "seedMetric" : 30.5,
+          "registrationId" : "105f4b0b-896f-4552-9627-49ea68310fd9"
+        }, {
+          "seedMetric" : 30.75,
+          "registrationId" : "817fb9ab-090d-4f4b-8fca-1f908f3f1d39"
+        }, {
+          "seedMetric" : 30,
+          "registrationId" : "31d0742a-3af1-4ccc-bdaf-d512b9ccfb3c"
+        }, {
+          "seedMetric" : 30.25,
+          "registrationId" : "7c7d9ae1-7923-4599-b704-873a219b48c0"
+        }, {
+          "seedMetric" : 31.5,
+          "registrationId" : "8d914fad-84bd-42ee-809b-d47933997346"
+        }, {
+          "seedMetric" : 31.75,
+          "registrationId" : "e2595f91-314f-44a2-bf6f-5f531714051c"
+        }, {
+          "registrationId" : "b4c8dd90-415c-4d4e-a960-f4843fbe8383"
+        }, {
+          "seedMetric" : 32.25,
+          "registrationId" : "4cce9214-a095-4512-b235-3c7c7c3659d3"
+        }, {
+          "seedMetric" : 31,
+          "registrationId" : "b68e01a7-a5a5-4ef1-a5ac-c9c7e59e21d7"
+        }, {
+          "seedMetric" : 31.25,
+          "registrationId" : "a27c446e-36f8-4866-82a4-22cfae1913c7"
+        }, {
+          "seedMetric" : 32.5,
+          "registrationId" : "1b5e0a97-f7a8-4aab-8377-507c0131e659"
+        }, {
+          "seedMetric" : 32.75,
+          "registrationId" : "dfa1287f-9d8b-4465-b8a8-22629c1c06fa"
+        }, {
+          "seedMetric" : 33.75,
+          "registrationId" : "f15319cb-27c3-4722-a933-2b6c69061a20"
+        }, {
+          "seedMetric" : 33,
+          "registrationId" : "a2b80e6d-b668-4301-a5a4-73ec77be277b"
+        }, {
+          "seedMetric" : 33.25,
+          "registrationId" : "b7d351a4-c4ba-414f-bc73-89fca424ad4f"
+        }, {
+          "seedMetric" : 33.5,
+          "registrationId" : "f8bf9726-f8eb-4933-bcb7-861a99921b16"
+        }, {
+          "seedMetric" : 34,
+          "registrationId" : "3ff4ff92-e226-44b1-b46f-4db9aeef9815"
+        }, {
+          "seedMetric" : 34.25,
+          "registrationId" : "8aced7fa-0c70-4748-8cab-183ebed4ffe7"
+        } ],
+        "eventDisciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976"
+      },
+      "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+      "confirmedRegistrations" : [ {
+        "registrationId" : "2f153b12-2e1a-4489-8b9e-354a8af16738",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 0\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete0\"}",
+        "participantProfileId" : "9ecd0937-9883-4318-b807-a47aa38c980c"
+      }, {
+        "registrationId" : "7afe2f8d-d108-421b-9e8f-d3a60ad41764",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 1\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete1\"}",
+        "participantProfileId" : "3c93036c-17bd-446a-845a-2057e3796255"
+      }, {
+        "registrationId" : "8c6b2e3f-aada-47e2-9eea-1fde869d47cb",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 2\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete2\"}",
+        "participantProfileId" : "0e2dc2fc-3b6e-49c7-8457-55e477ba5f40"
+      }, {
+        "registrationId" : "bcd8f79e-74fb-4c66-b5f4-6955c0def656",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 3\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete3\"}",
+        "participantProfileId" : "9c3d93c1-c814-4823-8049-b5046b027e6f"
+      }, {
+        "registrationId" : "20ec0181-0171-4da7-a143-565db9464576",
+        "registrationMeta" : "{\"seedTimeSeconds\": 28.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 7\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete7\"}",
+        "participantProfileId" : "26a151bf-17df-499f-937f-ae3ff87d3731"
+      }, {
+        "registrationId" : "8cccc680-66d5-4f42-aaac-28083b40a27c",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 4\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete4\"}",
+        "participantProfileId" : "644e440b-0998-4495-beff-ada463330732"
+      }, {
+        "registrationId" : "4e211910-0c3c-4d3f-8f4c-8ea831e3c1d3",
+        "registrationMeta" : "{\"seedTimeSeconds\": 99.99}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 5\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete5\"}",
+        "participantProfileId" : "6d526e03-c909-41d6-aafb-375c8f6c5c6b"
+      }, {
+        "registrationId" : "cf57db48-6317-4f01-8240-630adff438c7",
+        "registrationMeta" : "{\"seedTimeSeconds\": 28.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 6\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete6\"}",
+        "participantProfileId" : "4e792bbf-3663-4458-a2b1-5a7c174a4799"
+      }, {
+        "registrationId" : "7937b2c1-3173-4a0d-8a8f-c729fbb101ab",
+        "registrationMeta" : "{\"seedTimeSeconds\": 29.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 11\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete11\"}",
+        "participantProfileId" : "b0c5ef73-b9f6-4345-a9cc-4974c3bd0442"
+      }, {
+        "registrationId" : "1d16bbe0-da44-4808-bca7-b2406ca3d199",
+        "registrationMeta" : "{\"seedTimeSeconds\": 29.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 8\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete8\"}",
+        "participantProfileId" : "f954c604-eddb-480e-a55c-a6cd7ffaeda0"
+      }, {
+        "registrationId" : "046aec57-ea77-4ee0-be49-c7286eec4e0d",
+        "registrationMeta" : "{\"seedTimeSeconds\": 29.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 9\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete9\"}",
+        "participantProfileId" : "63d7367e-baa8-40fd-9782-f105ef27e897"
+      }, {
+        "registrationId" : "ea9bba39-afe6-467d-aac3-0e83c45915f2",
+        "registrationMeta" : "{}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 10\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete10\"}",
+        "participantProfileId" : "264dee55-523e-4133-8f63-8560e527869b"
+      }, {
+        "registrationId" : "105f4b0b-896f-4552-9627-49ea68310fd9",
+        "registrationMeta" : "{\"seedTimeSeconds\": 30.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 2\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete14\"}",
+        "participantProfileId" : "e88dad3e-f069-45ab-a3c4-503cff1f0370"
+      }, {
+        "registrationId" : "817fb9ab-090d-4f4b-8fca-1f908f3f1d39",
+        "registrationMeta" : "{\"seedTimeSeconds\": 30.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 3\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete15\"}",
+        "participantProfileId" : "e01e3df1-53f9-4fa0-9c85-d1ae66a8591c"
+      }, {
+        "registrationId" : "31d0742a-3af1-4ccc-bdaf-d512b9ccfb3c",
+        "registrationMeta" : "{\"seedTimeSeconds\": 30.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 0\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete12\"}",
+        "participantProfileId" : "06c97163-f24e-4a02-896a-97f27f375d75"
+      }, {
+        "registrationId" : "7c7d9ae1-7923-4599-b704-873a219b48c0",
+        "registrationMeta" : "{\"seedTimeSeconds\": 30.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 1\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete13\"}",
+        "participantProfileId" : "48d3d92c-1eca-458e-9e3f-5a80336e10b4"
+      }, {
+        "registrationId" : "8d914fad-84bd-42ee-809b-d47933997346",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 6\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete18\"}",
+        "participantProfileId" : "9a55d919-57e2-4e5e-858b-53f1ac51436d"
+      }, {
+        "registrationId" : "e2595f91-314f-44a2-bf6f-5f531714051c",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 7\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete19\"}",
+        "participantProfileId" : "c7ba0943-e689-4b7d-b97a-95631f058486"
+      }, {
+        "registrationId" : "b4c8dd90-415c-4d4e-a960-f4843fbe8383",
+        "registrationMeta" : "{}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 8\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete20\"}",
+        "participantProfileId" : "fef7e225-4699-4889-a606-3be40b99292a"
+      }, {
+        "registrationId" : "4cce9214-a095-4512-b235-3c7c7c3659d3",
+        "registrationMeta" : "{\"seedTimeSeconds\": 32.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 9\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete21\"}",
+        "participantProfileId" : "c7840a9a-25cd-4e85-b4f7-31fbe49f4289"
+      }, {
+        "registrationId" : "b68e01a7-a5a5-4ef1-a5ac-c9c7e59e21d7",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 4\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete16\"}",
+        "participantProfileId" : "33a928bc-8804-4c52-b4da-a4ef6f254be0"
+      }, {
+        "registrationId" : "a27c446e-36f8-4866-82a4-22cfae1913c7",
+        "registrationMeta" : "{\"seedTimeSeconds\": 31.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 5\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete17\"}",
+        "participantProfileId" : "9c111c85-ad50-4a20-8e59-333582156ffa"
+      }, {
+        "registrationId" : "1b5e0a97-f7a8-4aab-8377-507c0131e659",
+        "registrationMeta" : "{\"seedTimeSeconds\": 32.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 10\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete22\"}",
+        "participantProfileId" : "c25edf6a-bcf8-48cc-ada9-50d8a0588870"
+      }, {
+        "registrationId" : "dfa1287f-9d8b-4465-b8a8-22629c1c06fa",
+        "registrationMeta" : "{\"seedTimeSeconds\": 32.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 11\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete23\"}",
+        "participantProfileId" : "595794fa-3630-4447-8b98-0e3e70ae6454"
+      }, {
+        "registrationId" : "f15319cb-27c3-4722-a933-2b6c69061a20",
+        "registrationMeta" : "{\"seedTimeSeconds\": 33.75}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 3\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete27\"}",
+        "participantProfileId" : "ed708a05-9ed5-42c3-a37c-02379b0c1631"
+      }, {
+        "registrationId" : "a2b80e6d-b668-4301-a5a4-73ec77be277b",
+        "registrationMeta" : "{\"seedTimeSeconds\": 33.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 0\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete24\"}",
+        "participantProfileId" : "88ab4404-a89b-49ea-a17d-dbcd6501cdc9"
+      }, {
+        "registrationId" : "b7d351a4-c4ba-414f-bc73-89fca424ad4f",
+        "registrationMeta" : "{\"seedTimeSeconds\": 33.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 1\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete25\"}",
+        "participantProfileId" : "3fb69320-1cc2-49cc-bcc9-b58131926fe0"
+      }, {
+        "registrationId" : "f8bf9726-f8eb-4933-bcb7-861a99921b16",
+        "registrationMeta" : "{\"seedTimeSeconds\": 33.5}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 2\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete26\"}",
+        "participantProfileId" : "d5db2c47-d3e3-48eb-9764-63b2f39ad485"
+      }, {
+        "registrationId" : "3ff4ff92-e226-44b1-b46f-4db9aeef9815",
+        "registrationMeta" : "{\"seedTimeSeconds\": 34.0}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 4\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete28\"}",
+        "participantProfileId" : "0893f4ae-d0ab-4b67-b37f-a7395b871267"
+      }, {
+        "registrationId" : "8aced7fa-0c70-4748-8cab-183ebed4ffe7",
+        "registrationMeta" : "{\"seedTimeSeconds\": 34.25}",
+        "participantSnapshot" : "{\"gender\": \"MALE\", \"clubName\": \"Synthetic club 5\", \"lastName\": \"Synthetic\", \"birthDate\": \"2004-05-10\", \"firstName\": \"Athlete29\"}",
+        "participantProfileId" : "e31abc8d-5609-4e69-ad12-f3190cd0e35d"
+      } ],
+      "effectiveRuleSetVersionId" : "42eb6cd6-7ae8-464a-899b-a5b9e12cb825"
+    } ],
+    "schemaVersion" : 1,
+    "schedulerInput" : {
+      "heats" : [ {
+        "id" : "af80e4f7-7972-470f-9444-d5ebb710da73",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "6d526e03-c909-41d6-aafb-375c8f6c5c6b", "0e2dc2fc-3b6e-49c7-8457-55e477ba5f40", "9c3d93c1-c814-4823-8049-b5046b027e6f", "644e440b-0998-4495-beff-ada463330732", "264dee55-523e-4133-8f63-8560e527869b", "fef7e225-4699-4889-a606-3be40b99292a" ],
+        "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+        "durationBasis" : "Explicit synthetic planning duration"
+      }, {
+        "id" : "56f88cca-3d70-460c-b4a8-3beeb22f0385",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "88ab4404-a89b-49ea-a17d-dbcd6501cdc9", "3fb69320-1cc2-49cc-bcc9-b58131926fe0", "d5db2c47-d3e3-48eb-9764-63b2f39ad485", "ed708a05-9ed5-42c3-a37c-02379b0c1631", "0893f4ae-d0ab-4b67-b37f-a7395b871267", "e31abc8d-5609-4e69-ad12-f3190cd0e35d", "9ecd0937-9883-4318-b807-a47aa38c980c", "3c93036c-17bd-446a-845a-2057e3796255" ],
+        "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+        "durationBasis" : "Explicit synthetic planning duration"
+      }, {
+        "id" : "c387e23f-3108-4ea9-bfd2-329c40eaab73",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "e01e3df1-53f9-4fa0-9c85-d1ae66a8591c", "33a928bc-8804-4c52-b4da-a4ef6f254be0", "9c111c85-ad50-4a20-8e59-333582156ffa", "9a55d919-57e2-4e5e-858b-53f1ac51436d", "c7ba0943-e689-4b7d-b97a-95631f058486", "c7840a9a-25cd-4e85-b4f7-31fbe49f4289", "c25edf6a-bcf8-48cc-ada9-50d8a0588870", "595794fa-3630-4447-8b98-0e3e70ae6454" ],
+        "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+        "durationBasis" : "Explicit synthetic planning duration"
+      }, {
+        "id" : "0013ee95-ddeb-479f-9355-e6340bb3df5b",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "4e792bbf-3663-4458-a2b1-5a7c174a4799", "26a151bf-17df-499f-937f-ae3ff87d3731", "f954c604-eddb-480e-a55c-a6cd7ffaeda0", "63d7367e-baa8-40fd-9782-f105ef27e897", "b0c5ef73-b9f6-4345-a9cc-4974c3bd0442", "06c97163-f24e-4a02-896a-97f27f375d75", "48d3d92c-1eca-458e-9e3f-5a80336e10b4", "e88dad3e-f069-45ab-a3c4-503cff1f0370" ],
+        "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+        "durationBasis" : "Explicit synthetic planning duration"
+      }, {
+        "id" : "a68f068f-c2fc-4ac7-8720-80cb73fb57ba",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "3c93036c-17bd-446a-845a-2057e3796255", "0e2dc2fc-3b6e-49c7-8457-55e477ba5f40", "644e440b-0998-4495-beff-ada463330732", "9c3d93c1-c814-4823-8049-b5046b027e6f", "fef7e225-4699-4889-a606-3be40b99292a", "264dee55-523e-4133-8f63-8560e527869b" ],
+        "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+        "durationBasis" : "Explicit synthetic planning duration"
+      }, {
+        "id" : "d00c0cae-cf6d-4d86-b8cd-83f14917faf5",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "88ab4404-a89b-49ea-a17d-dbcd6501cdc9", "3fb69320-1cc2-49cc-bcc9-b58131926fe0", "d5db2c47-d3e3-48eb-9764-63b2f39ad485", "ed708a05-9ed5-42c3-a37c-02379b0c1631", "0893f4ae-d0ab-4b67-b37f-a7395b871267", "e31abc8d-5609-4e69-ad12-f3190cd0e35d", "9ecd0937-9883-4318-b807-a47aa38c980c", "6d526e03-c909-41d6-aafb-375c8f6c5c6b" ],
+        "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+        "durationBasis" : "Explicit synthetic planning duration"
+      }, {
+        "id" : "e8b8ec33-e091-4a3f-836d-6501202dfea6",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "e01e3df1-53f9-4fa0-9c85-d1ae66a8591c", "33a928bc-8804-4c52-b4da-a4ef6f254be0", "9c111c85-ad50-4a20-8e59-333582156ffa", "9a55d919-57e2-4e5e-858b-53f1ac51436d", "c7ba0943-e689-4b7d-b97a-95631f058486", "c7840a9a-25cd-4e85-b4f7-31fbe49f4289", "c25edf6a-bcf8-48cc-ada9-50d8a0588870", "595794fa-3630-4447-8b98-0e3e70ae6454" ],
+        "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+        "durationBasis" : "Explicit synthetic planning duration"
+      }, {
+        "id" : "4f840dbd-bbff-4f22-99a1-1ff0c6c39a22",
+        "duration" : "PT2M",
+        "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "athleteIds" : [ "4e792bbf-3663-4458-a2b1-5a7c174a4799", "26a151bf-17df-499f-937f-ae3ff87d3731", "f954c604-eddb-480e-a55c-a6cd7ffaeda0", "63d7367e-baa8-40fd-9782-f105ef27e897", "b0c5ef73-b9f6-4345-a9cc-4974c3bd0442", "06c97163-f24e-4a02-896a-97f27f375d75", "48d3d92c-1eca-458e-9e3f-5a80336e10b4", "e88dad3e-f069-45ab-a3c4-503cff1f0370" ],
+        "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+        "durationBasis" : "Explicit synthetic planning duration"
+      } ],
+      "policy" : {
+        "origin" : "EXPERIMENTAL",
+        "changeover" : "PT30S",
+        "minimumRest" : "PT10M",
+        "sourceDescription" : "Synthetic experiment: not an official regulation"
+      },
+      "sessions" : [ {
+        "id" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+        "breaks" : [ ],
+        "window" : {
+          "end" : "2026-11-28T15:30:00Z",
+          "start" : "2026-11-28T09:30:00Z"
+        }
+      } ]
+    }
+  },
+  "protocol" : {
+    "eventId" : "ca01e4c8-e19f-4b49-a224-20e572b26766",
+    "schedule" : [ {
+      "end" : "2026-11-28T09:32:00Z",
+      "start" : "2026-11-28T09:30:00Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "08e5c1cd-777d-4cd4-ae19-10576f152549",
+      "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+      "sequenceNumber" : 1,
+      "temporaryHeatId" : "af80e4f7-7972-470f-9444-d5ebb710da73"
+    }, {
+      "end" : "2026-11-28T09:34:30Z",
+      "start" : "2026-11-28T09:32:30Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "10f14189-4221-4783-93c4-eb835ba38b1e",
+      "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+      "sequenceNumber" : 2,
+      "temporaryHeatId" : "56f88cca-3d70-460c-b4a8-3beeb22f0385"
+    }, {
+      "end" : "2026-11-28T09:37:00Z",
+      "start" : "2026-11-28T09:35:00Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "0e4b8b99-8a22-4543-8039-96a06fe99c40",
+      "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+      "sequenceNumber" : 3,
+      "temporaryHeatId" : "c387e23f-3108-4ea9-bfd2-329c40eaab73"
+    }, {
+      "end" : "2026-11-28T09:39:30Z",
+      "start" : "2026-11-28T09:37:30Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "6ab396f5-b779-4bd8-a778-f039988d285f",
+      "disciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3",
+      "sequenceNumber" : 4,
+      "temporaryHeatId" : "0013ee95-ddeb-479f-9355-e6340bb3df5b"
+    }, {
+      "end" : "2026-11-28T09:46:30Z",
+      "start" : "2026-11-28T09:44:30Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "633f518a-05e7-4da5-b8d0-54aa41a8a14d",
+      "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+      "sequenceNumber" : 1,
+      "temporaryHeatId" : "a68f068f-c2fc-4ac7-8720-80cb73fb57ba"
+    }, {
+      "end" : "2026-11-28T09:49:00Z",
+      "start" : "2026-11-28T09:47:00Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "785a7c9e-5c39-4dd0-a444-f897d4468d4b",
+      "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+      "sequenceNumber" : 2,
+      "temporaryHeatId" : "d00c0cae-cf6d-4d86-b8cd-83f14917faf5"
+    }, {
+      "end" : "2026-11-28T09:51:30Z",
+      "start" : "2026-11-28T09:49:30Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "5d1db970-9e54-4b35-bfc8-38b86458d157",
+      "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+      "sequenceNumber" : 3,
+      "temporaryHeatId" : "e8b8ec33-e091-4a3f-836d-6501202dfea6"
+    }, {
+      "end" : "2026-11-28T09:54:00Z",
+      "start" : "2026-11-28T09:52:00Z",
+      "sessionId" : "6a3f8598-5eff-46bc-a6f6-8ebdcd96cb64",
+      "savedHeatId" : "fc53bdd5-709d-46ea-9f95-f24e57b81ddc",
+      "disciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976",
+      "sequenceNumber" : 4,
+      "temporaryHeatId" : "4f840dbd-bbff-4f22-99a1-1ff0c6c39a22"
+    } ],
+    "revisionNo" : 117,
+    "snapshotId" : "4709a44e-d2be-4fa1-b11d-7ff6524cc4f0",
+    "disciplines" : [ {
+      "units" : [ {
+        "label" : "Заход 1",
+        "assignments" : [ {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 4,
+          "registrationId" : "11aff686-3f52-41ab-92ec-6b9b704d80e0"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 5,
+          "registrationId" : "843d7f10-c235-4037-bc14-1b75b27e91d7"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 3,
+          "registrationId" : "97913189-0073-4b24-9c57-5b37a083c554"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 6,
+          "registrationId" : "d6ac41fc-b844-453c-9477-616640dadea0"
+        }, {
+          "laneOrPosition" : 2,
+          "registrationId" : "8ee9db34-81e9-4cb1-a5e5-db89ec7ea993"
+        }, {
+          "laneOrPosition" : 7,
+          "registrationId" : "d83e8329-94e2-4318-993b-4bfbaf7324d8"
+        } ],
+        "sequenceNumber" : 1,
+        "competitionUnitId" : "08e5c1cd-777d-4cd4-ae19-10576f152549"
+      }, {
+        "label" : "Заход 2",
+        "assignments" : [ {
+          "seedMetric" : 31,
+          "laneOrPosition" : 4,
+          "registrationId" : "f656a591-8e11-4ca4-b88d-2cf028a2db9e"
+        }, {
+          "seedMetric" : 31.25,
+          "laneOrPosition" : 5,
+          "registrationId" : "472f9556-312c-44af-99cc-9f3b69534fd2"
+        }, {
+          "seedMetric" : 31.5,
+          "laneOrPosition" : 3,
+          "registrationId" : "6ea6b2da-2a91-4cbd-9db4-53414f1ae135"
+        }, {
+          "seedMetric" : 31.75,
+          "laneOrPosition" : 6,
+          "registrationId" : "3b311b9a-f9b3-4567-87bb-f2508e06443c"
+        }, {
+          "seedMetric" : 32,
+          "laneOrPosition" : 2,
+          "registrationId" : "4d100870-c6b2-4c21-95a5-0396fe1a51c1"
+        }, {
+          "seedMetric" : 32.25,
+          "laneOrPosition" : 7,
+          "registrationId" : "183f5295-ffbf-4b0b-ac87-c5084f98ddce"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 1,
+          "registrationId" : "0c9596c6-f823-4760-a7a5-5f63f8c601bc"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 8,
+          "registrationId" : "1036e499-c04c-4f7a-96c0-186aaab1c60e"
+        } ],
+        "sequenceNumber" : 2,
+        "competitionUnitId" : "10f14189-4221-4783-93c4-eb835ba38b1e"
+      }, {
+        "label" : "Заход 3",
+        "assignments" : [ {
+          "seedMetric" : 28.75,
+          "laneOrPosition" : 4,
+          "registrationId" : "9b162dd6-8e72-45f1-b94d-a2b2124fd60a"
+        }, {
+          "seedMetric" : 29,
+          "laneOrPosition" : 5,
+          "registrationId" : "725199ac-621e-47b5-9361-9402c0066ebc"
+        }, {
+          "seedMetric" : 29.25,
+          "laneOrPosition" : 3,
+          "registrationId" : "c2a9ba9d-9318-4260-8540-ac6a3e6cda4a"
+        }, {
+          "seedMetric" : 29.5,
+          "laneOrPosition" : 6,
+          "registrationId" : "172ea052-8fbc-432d-b69c-cbf038a41c11"
+        }, {
+          "seedMetric" : 29.75,
+          "laneOrPosition" : 2,
+          "registrationId" : "5902f864-7b94-4631-8f8e-fcac03e34e52"
+        }, {
+          "seedMetric" : 30.25,
+          "laneOrPosition" : 7,
+          "registrationId" : "c4d96bb5-6f22-4c6e-b683-e043cf212ecc"
+        }, {
+          "seedMetric" : 30.5,
+          "laneOrPosition" : 1,
+          "registrationId" : "0a2a4337-55e5-464d-aee6-c2ad1d6cd2b0"
+        }, {
+          "seedMetric" : 30.75,
+          "laneOrPosition" : 8,
+          "registrationId" : "6ddcb285-0b0e-4bd7-8b6f-4f4210e21e07"
+        } ],
+        "sequenceNumber" : 3,
+        "competitionUnitId" : "0e4b8b99-8a22-4543-8039-96a06fe99c40"
+      }, {
+        "label" : "Заход 4",
+        "assignments" : [ {
+          "seedMetric" : 26.5,
+          "laneOrPosition" : 4,
+          "registrationId" : "d3e45a52-75a2-4f8b-8f2d-6ff572bfe4d0"
+        }, {
+          "seedMetric" : 26.75,
+          "laneOrPosition" : 5,
+          "registrationId" : "97d9c706-1ff8-4c99-a51e-d13770af2cae"
+        }, {
+          "seedMetric" : 27,
+          "laneOrPosition" : 3,
+          "registrationId" : "aa8d3bd9-90f5-46d7-a001-f31beb124563"
+        }, {
+          "seedMetric" : 27.25,
+          "laneOrPosition" : 6,
+          "registrationId" : "0acdd61e-40a6-4566-b95f-fc0578ad09c9"
+        }, {
+          "seedMetric" : 27.75,
+          "laneOrPosition" : 2,
+          "registrationId" : "da2b5484-ee04-4d96-883b-7a8729568dd7"
+        }, {
+          "seedMetric" : 28,
+          "laneOrPosition" : 7,
+          "registrationId" : "1c1f7436-7149-48f4-9bbf-92538b3f6b0f"
+        }, {
+          "seedMetric" : 28.25,
+          "laneOrPosition" : 1,
+          "registrationId" : "02bf7f2c-89ee-4bf6-9876-66c1bf1199e3"
+        }, {
+          "seedMetric" : 28.5,
+          "laneOrPosition" : 8,
+          "registrationId" : "026d11d1-e86e-40f1-bf9c-94fc9ae59c52"
+        } ],
+        "sequenceNumber" : 4,
+        "competitionUnitId" : "6ab396f5-b779-4bd8-a778-f039988d285f"
+      } ],
+      "eventDisciplineId" : "2933a42e-8341-47d3-84b4-84941ce64fc3"
+    }, {
+      "units" : [ {
+        "label" : "Заход 1",
+        "assignments" : [ {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 4,
+          "registrationId" : "7afe2f8d-d108-421b-9e8f-d3a60ad41764"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 5,
+          "registrationId" : "8c6b2e3f-aada-47e2-9eea-1fde869d47cb"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 3,
+          "registrationId" : "8cccc680-66d5-4f42-aaac-28083b40a27c"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 6,
+          "registrationId" : "bcd8f79e-74fb-4c66-b5f4-6955c0def656"
+        }, {
+          "laneOrPosition" : 2,
+          "registrationId" : "b4c8dd90-415c-4d4e-a960-f4843fbe8383"
+        }, {
+          "laneOrPosition" : 7,
+          "registrationId" : "ea9bba39-afe6-467d-aac3-0e83c45915f2"
+        } ],
+        "sequenceNumber" : 1,
+        "competitionUnitId" : "633f518a-05e7-4da5-b8d0-54aa41a8a14d"
+      }, {
+        "label" : "Заход 2",
+        "assignments" : [ {
+          "seedMetric" : 33,
+          "laneOrPosition" : 4,
+          "registrationId" : "a2b80e6d-b668-4301-a5a4-73ec77be277b"
+        }, {
+          "seedMetric" : 33.25,
+          "laneOrPosition" : 5,
+          "registrationId" : "b7d351a4-c4ba-414f-bc73-89fca424ad4f"
+        }, {
+          "seedMetric" : 33.5,
+          "laneOrPosition" : 3,
+          "registrationId" : "f8bf9726-f8eb-4933-bcb7-861a99921b16"
+        }, {
+          "seedMetric" : 33.75,
+          "laneOrPosition" : 6,
+          "registrationId" : "f15319cb-27c3-4722-a933-2b6c69061a20"
+        }, {
+          "seedMetric" : 34,
+          "laneOrPosition" : 2,
+          "registrationId" : "3ff4ff92-e226-44b1-b46f-4db9aeef9815"
+        }, {
+          "seedMetric" : 34.25,
+          "laneOrPosition" : 7,
+          "registrationId" : "8aced7fa-0c70-4748-8cab-183ebed4ffe7"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 1,
+          "registrationId" : "2f153b12-2e1a-4489-8b9e-354a8af16738"
+        }, {
+          "seedMetric" : 99.99,
+          "laneOrPosition" : 8,
+          "registrationId" : "4e211910-0c3c-4d3f-8f4c-8ea831e3c1d3"
+        } ],
+        "sequenceNumber" : 2,
+        "competitionUnitId" : "785a7c9e-5c39-4dd0-a444-f897d4468d4b"
+      }, {
+        "label" : "Заход 3",
+        "assignments" : [ {
+          "seedMetric" : 30.75,
+          "laneOrPosition" : 4,
+          "registrationId" : "817fb9ab-090d-4f4b-8fca-1f908f3f1d39"
+        }, {
+          "seedMetric" : 31,
+          "laneOrPosition" : 5,
+          "registrationId" : "b68e01a7-a5a5-4ef1-a5ac-c9c7e59e21d7"
+        }, {
+          "seedMetric" : 31.25,
+          "laneOrPosition" : 3,
+          "registrationId" : "a27c446e-36f8-4866-82a4-22cfae1913c7"
+        }, {
+          "seedMetric" : 31.5,
+          "laneOrPosition" : 6,
+          "registrationId" : "8d914fad-84bd-42ee-809b-d47933997346"
+        }, {
+          "seedMetric" : 31.75,
+          "laneOrPosition" : 2,
+          "registrationId" : "e2595f91-314f-44a2-bf6f-5f531714051c"
+        }, {
+          "seedMetric" : 32.25,
+          "laneOrPosition" : 7,
+          "registrationId" : "4cce9214-a095-4512-b235-3c7c7c3659d3"
+        }, {
+          "seedMetric" : 32.5,
+          "laneOrPosition" : 1,
+          "registrationId" : "1b5e0a97-f7a8-4aab-8377-507c0131e659"
+        }, {
+          "seedMetric" : 32.75,
+          "laneOrPosition" : 8,
+          "registrationId" : "dfa1287f-9d8b-4465-b8a8-22629c1c06fa"
+        } ],
+        "sequenceNumber" : 3,
+        "competitionUnitId" : "5d1db970-9e54-4b35-bfc8-38b86458d157"
+      }, {
+        "label" : "Заход 4",
+        "assignments" : [ {
+          "seedMetric" : 28.5,
+          "laneOrPosition" : 4,
+          "registrationId" : "cf57db48-6317-4f01-8240-630adff438c7"
+        }, {
+          "seedMetric" : 28.75,
+          "laneOrPosition" : 5,
+          "registrationId" : "20ec0181-0171-4da7-a143-565db9464576"
+        }, {
+          "seedMetric" : 29,
+          "laneOrPosition" : 3,
+          "registrationId" : "1d16bbe0-da44-4808-bca7-b2406ca3d199"
+        }, {
+          "seedMetric" : 29.25,
+          "laneOrPosition" : 6,
+          "registrationId" : "046aec57-ea77-4ee0-be49-c7286eec4e0d"
+        }, {
+          "seedMetric" : 29.75,
+          "laneOrPosition" : 2,
+          "registrationId" : "7937b2c1-3173-4a0d-8a8f-c729fbb101ab"
+        }, {
+          "seedMetric" : 30,
+          "laneOrPosition" : 7,
+          "registrationId" : "31d0742a-3af1-4ccc-bdaf-d512b9ccfb3c"
+        }, {
+          "seedMetric" : 30.25,
+          "laneOrPosition" : 1,
+          "registrationId" : "7c7d9ae1-7923-4599-b704-873a219b48c0"
+        }, {
+          "seedMetric" : 30.5,
+          "laneOrPosition" : 8,
+          "registrationId" : "105f4b0b-896f-4552-9627-49ea68310fd9"
+        } ],
+        "sequenceNumber" : 4,
+        "competitionUnitId" : "fc53bdd5-709d-46ea-9f95-f24e57b81ddc"
+      } ],
+      "eventDisciplineId" : "e3de6e3e-8e9b-4541-9a31-16c184b3c976"
+    } ]
+  }
+}

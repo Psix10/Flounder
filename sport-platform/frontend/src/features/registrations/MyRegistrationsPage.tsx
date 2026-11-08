@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
+
 import { ApiError } from '../../api/http'
 import { getMyRegistrations } from '../../api/registrations.api'
 import { useAuth } from '../../app/providers/AuthProvider'
 import { ErrorState } from '../../components/ErrorState'
 import { LoadingState } from '../../components/LoadingState'
+import { RegistrationCorrectionForm } from './RegistrationCorrectionForm'
+import { RegistrationCorrectionHistory } from './RegistrationCorrectionHistory'
 import type {
   Registration,
   RegistrationStatus,
@@ -12,11 +15,17 @@ import type {
 import styles from './MyRegistrationsPage.module.css'
 
 function formatDate(value: string) {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return '—'
+  }
+
   return new Intl.DateTimeFormat('ru-RU', {
     dateStyle: 'long',
     timeStyle: 'short',
     timeZone: 'Europe/Moscow',
-  }).format(new Date(value))
+  }).format(date)
 }
 
 function getStatusLabel(status: RegistrationStatus) {
@@ -28,7 +37,7 @@ function getStatusLabel(status: RegistrationStatus) {
     CANCELLED: 'Отменена',
   }
 
-  return labels[status]
+  return labels[status] ?? status
 }
 
 function getStatusClassName(status: RegistrationStatus) {
@@ -40,7 +49,7 @@ function getStatusClassName(status: RegistrationStatus) {
     CANCELLED: styles.statusCancelled,
   }
 
-  return `${styles.statusBadge} ${classes[status]}`
+  return `${styles.statusBadge} ${classes[status] ?? ''}`
 }
 
 function getParticipantName(registration: Registration) {
@@ -53,11 +62,11 @@ function getParticipantName(registration: Registration) {
 function getStatusHint(status: RegistrationStatus) {
   const hints: Record<RegistrationStatus, string | null> = {
     SUBMITTED:
-      'Организатор проверяет данные заявки. Оплата станет доступна после подтверждения.',
+      'Организатор проверяет заявку. Если вы отправили исправления, дождитесь повторного рассмотрения.',
     CONFIRMED:
       'Заявка подтверждена. Перейдите к оплате участия.',
     NEEDS_CORRECTION:
-      'Организатор запросил уточнение данных. Ознакомьтесь с комментарием и свяжитесь с организатором при необходимости.',
+      'Прочитайте замечание организатора, внесите исправления и отправьте заявку на повторную проверку через форму ниже.',
     REJECTED:
       'Заявка отклонена. Оплата для неё недоступна.',
     CANCELLED:
@@ -76,7 +85,7 @@ function getStatusHintClassName(status: RegistrationStatus) {
     CANCELLED: styles.hintCancelled,
   }
 
-  return `${styles.statusHint} ${classes[status]}`
+  return `${styles.statusHint} ${classes[status] ?? ''}`
 }
 
 export function MyRegistrationsPage() {
@@ -87,52 +96,78 @@ export function MyRegistrationsPage() {
   const [registrations, setRegistrations] = useState<Registration[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  async function loadRegistrations() {
-    if (!accessToken) {
-      setIsLoading(false)
-      return
-    }
-
-    setIsLoading(true)
-    setErrorMessage(null)
-
-    try {
-      const response = await getMyRegistrations(accessToken)
-      setRegistrations(response)
-    } catch (error) {
-      const message =
-        error instanceof ApiError && error.status === 401
-          ? 'Сессия истекла. Войдите снова.'
-          : error instanceof ApiError
-            ? error.message
-            : 'Не удалось загрузить ваши заявки.'
-
-      setErrorMessage(message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
-    void loadRegistrations()
-  }, [accessToken])
+    let active = true
+
+    async function load() {
+      if (!accessToken) {
+        setRegistrations([])
+        setIsLoading(false)
+        return
+      }
+
+      setIsLoading(true)
+      setErrorMessage(null)
+
+      try {
+        const response = await getMyRegistrations(accessToken)
+
+        if (active) {
+          setRegistrations(response)
+        }
+      } catch (error) {
+        if (active) {
+          setErrorMessage(
+            error instanceof ApiError && error.status === 401
+              ? 'Сессия истекла. Войдите снова.'
+              : error instanceof ApiError
+                ? error.message
+                : 'Не удалось загрузить ваши заявки.',
+          )
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void load()
+
+    return () => {
+      active = false
+    }
+  }, [accessToken, reloadKey])
+
+  function handleUpdated(updated: Registration) {
+    setRegistrations((current) =>
+      current.map((registration) =>
+        registration.id === updated.id ? updated : registration,
+      ),
+    )
+    setSuccessMessage(
+      'Исправления отправлены. Заявка снова находится на рассмотрении.',
+    )
+  }
 
   const createdRegistrationId = searchParams.get('created')
 
   return (
     <section className={styles.page}>
       <p className={styles.eyebrow}>Личный кабинет</p>
-
       <h1 className={styles.title}>Мои заявки</h1>
 
       <p className={styles.description}>
         Здесь отображается актуальный статус ваших заявок на соревнования.
       </p>
 
-      {createdRegistrationId ? (
+      {successMessage || createdRegistrationId ? (
         <div className={styles.successBanner} role="status">
-          Заявка успешно отправлена и добавлена в список.
+          {successMessage ??
+            'Заявка успешно отправлена и добавлена в список.'}
         </div>
       ) : null}
 
@@ -143,16 +178,14 @@ export function MyRegistrationsPage() {
       {!isLoading && errorMessage ? (
         <ErrorState
           message={errorMessage}
-          onRetry={() => void loadRegistrations()}
+          onRetry={() => setReloadKey((value) => value + 1)}
         />
       ) : null}
 
       {!isLoading && !errorMessage && registrations.length === 0 ? (
         <div className={styles.emptyState}>
           <h2>Заявок пока нет</h2>
-
           <p>Выберите соревнование и подайте первую заявку.</p>
-
           <Link className={styles.primaryButton} to="/">
             Найти соревнование
           </Link>
@@ -169,7 +202,6 @@ export function MyRegistrationsPage() {
                 <div className={styles.cardHeader}>
                   <div>
                     <p className={styles.cardLabel}>Заявка</p>
-
                     <h2 className={styles.participantName}>
                       {getParticipantName(registration)}
                     </h2>
@@ -184,14 +216,16 @@ export function MyRegistrationsPage() {
 
                 <dl className={styles.facts}>
                   <div>
-                    <dt>Отправлена</dt>
+                    <dt>Последняя отправка</dt>
                     <dd>{formatDate(registration.submittedAt)}</dd>
                   </div>
 
                   {registration.participantSnapshot.clubName ? (
                     <div>
                       <dt>Клуб</dt>
-                      <dd>{registration.participantSnapshot.clubName}</dd>
+                      <dd>
+                        {registration.participantSnapshot.clubName}
+                      </dd>
                     </div>
                   ) : null}
 
@@ -220,11 +254,27 @@ export function MyRegistrationsPage() {
                   </div>
                 ) : null}
 
+                <RegistrationCorrectionHistory
+                  items={registration.registrationMeta?.correctionHistory}
+                />
+
+                {registration.status === 'NEEDS_CORRECTION' &&
+                accessToken ? (
+                  <RegistrationCorrectionForm
+                    key={`${registration.id}:${registration.updatedAt}`}
+                    registration={registration}
+                    accessToken={accessToken}
+                    onUpdated={handleUpdated}
+                  />
+                ) : null}
+
                 {registration.status === 'CONFIRMED' ? (
                   <div className={styles.actions}>
                     <Link
                       className={styles.primaryButton}
-                      to={`/my/registrations/${registration.id}/payment`}
+                      to={`/my/registrations/${encodeURIComponent(
+                        registration.id,
+                      )}/payment`}
                     >
                       Перейти к оплате
                     </Link>

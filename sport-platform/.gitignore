@@ -29,3 +29,10 @@ frontend/dist/
 *.pid
 *.h2.db
 *.mv.db
+# Local environment, build output and UI backups
+/.env
+/.env.local
+/target/
+/frontend/node_modules/
+/frontend/dist/
+/standings-layout-backup-*/

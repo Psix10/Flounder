@@ -877,13 +877,13 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     @Test
-    void shouldRankEquivalentNumericValuesByResultIdAscending() throws Exception {
-        verifySqlTieOrdering("ASC");
+    void shouldAssignSharedPlacesToEquivalentNumericValuesAscending() throws Exception {
+        verifySqlSharedPlaces("ASC");
     }
 
     @Test
-    void shouldRankEquivalentNumericValuesByResultIdDescending() throws Exception {
-        verifySqlTieOrdering("DESC");
+    void shouldAssignSharedPlacesToEquivalentNumericValuesDescending() throws Exception {
+        verifySqlSharedPlaces("DESC");
     }
 
     @Test
@@ -1158,32 +1158,82 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         assertTrue(entryRepository.findByCompetitionUnitId(fixture.unitId()).isEmpty());
     }
 
-    private void verifySqlTieOrdering(String strategy) throws Exception {
-        Fixture first = createFixture();
-        Fixture second = additionalEntry(first, 2);
-        Fixture third = additionalEntry(first, 3);
-        rankingJdbc.update("UPDATE event_disciplines SET ranking_strategy = ? WHERE id = ?",
-                strategy, first.disciplineId());
-        recordOnly(first, "58.42", "PENDING").andExpect(status().isOk());
-        recordOnly(second, "00:58.42", "PENDING").andExpect(status().isOk());
-        recordOnly(third, "60", "PENDING").andExpect(status().isOk());
+        private void verifySqlSharedPlaces(String strategy) throws Exception {
+                Fixture first = createFixture();
+                Fixture second = additionalEntry(first, 2);
+                Fixture third = additionalEntry(first, 3);
+                Fixture fourth = additionalEntry(first, 4);
 
-        UUID firstId = findResult(first).getId();
-        UUID secondId = findResult(second).getId();
-        boolean firstWinsTie = firstId.toString().compareTo(secondId.toString()) < 0;
-        sqlRecalculate.execute(first.unitId(), strategy);
+                rankingJdbc.update(
+                        """
+                        UPDATE event_disciplines
+                        SET ranking_strategy = ?
+                        WHERE id = ?
+                        """,
+                        strategy,
+                        first.disciplineId()
+                );
 
-        int tieStart = "ASC".equals(strategy) ? 1 : 2;
-        assertEquals(Integer.valueOf(firstWinsTie ? tieStart : tieStart + 1),
-                findResult(first).getFinalPlace());
-        assertEquals(Integer.valueOf(firstWinsTie ? tieStart + 1 : tieStart),
-                findResult(second).getFinalPlace());
-        assertEquals(Integer.valueOf("ASC".equals(strategy) ? 3 : 1),
-                findResult(third).getFinalPlace());
-        for (Fixture fixture : List.of(first, second, third)) {
-            assertEquals("VALID", findResult(fixture).getStatus());
-        }
-    }
+                recordOnly(first, "58.42", "PENDING")
+                        .andExpect(status().isOk());
+
+                recordOnly(second, "00:58.42", "PENDING")
+                        .andExpect(status().isOk());
+
+                recordOnly(third, "60", "PENDING")
+                        .andExpect(status().isOk());
+
+                recordOnly(fourth, "50", "PENDING")
+                        .andExpect(status().isOk());
+
+                sqlRecalculate.execute(first.unitId(), strategy);
+
+                ResultEntity firstAfter = findResult(first);
+                ResultEntity secondAfter = findResult(second);
+                ResultEntity thirdAfter = findResult(third);
+                ResultEntity fourthAfter = findResult(fourth);
+
+                assertEquals(
+                        Integer.valueOf(2),
+                        firstAfter.getFinalPlace(),
+                        "Первый результат 58.42 должен занимать общее второе место"
+                );
+
+                assertEquals(
+                        Integer.valueOf(2),
+                        secondAfter.getFinalPlace(),
+                        "Эквивалентный результат 00:58.42 должен занимать то же место"
+                );
+
+                boolean ascending = "ASC".equals(strategy);
+
+                assertEquals(
+                        Integer.valueOf(ascending ? 4 : 1),
+                        thirdAfter.getFinalPlace(),
+                        "Результат 60 должен учитывать направление ранжирования "
+                                + "и пропуск места после равенства"
+                );
+
+                assertEquals(
+                        Integer.valueOf(ascending ? 1 : 4),
+                        fourthAfter.getFinalPlace(),
+                        "Результат 50 должен учитывать направление ранжирования "
+                                + "и пропуск места после равенства"
+                );
+
+                for (Fixture fixture : List.of(first, second, third, fourth)) {
+                        assertEquals(
+                                "VALID",
+                                findResult(fixture).getStatus(),
+                                "После SQL-пересчёта результат должен быть учтён"
+                        );
+                }
+
+                assertEquals("58.42", firstAfter.getRawValue());
+                assertEquals("00:58.42", secondAfter.getRawValue());
+                assertEquals("60", thirdAfter.getRawValue());
+                assertEquals("50", fourthAfter.getRawValue());
+                }
 
     private Fixture additionalEntry(Fixture parent, int lane) throws Exception {
         UUID registrationId = createConfirmedRegistration(parent.disciplineId());

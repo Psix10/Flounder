@@ -30,11 +30,12 @@ public class ProtocolRuleSetValidator {
             if (!block.config().isObject()) throw error(
                     "protocol.invalid_rule_config", "Config must be a JSON object");
         }
-        keys(blocks.get(0).config(), Set.of());
+        ProtocolEligibilityPolicy.parse(blocks.get(0).config());
         JsonNode seed = blocks.get(1).config();
         keys(seed, Set.of("metricKey")); text(seed, "metricKey", 100);
         JsonNode group = blocks.get(2).config();
-        keys(group, Set.of("capacity", "unitLabelPrefix", "heatOrder", "partialHeat", "ntPlacement"));
+        keys(group, Set.of("capacity", "unitLabelPrefix", "heatOrder", "partialHeat", "ntPlacement", "categories"));
+        ProtocolCategoryPolicy.parse(group);
         JsonNode n = group.path("capacity");
         if (!n.isIntegralNumber() || !n.canConvertToInt() || n.intValue() < 1 || n.intValue() > 1024) {
             throw error("protocol.invalid_rule_config", "Capacity must be an integer in 1..1024");

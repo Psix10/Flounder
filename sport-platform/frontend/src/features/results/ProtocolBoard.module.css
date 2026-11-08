@@ -1,0 +1,28 @@
+.page { width: 100%; max-width: 1200px; margin: 0 auto; padding: 24px 12px; color: var(--color-text); }
+.page h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 16px 0; }
+.card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 20px; margin: 18px 0; box-shadow: var(--shadow-card); overflow-wrap: anywhere; }
+.card h2 { margin-top: 0; font-size: 1.2rem; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 16px 0; }
+.button, .link { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--color-primary); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-primary); padding: 10px 14px; font-weight: 600; text-align: center; }
+.button[aria-pressed='true'] { color: white; background: var(--color-primary); }
+.button:disabled { opacity: .55; cursor: not-allowed; }
+.primary { background: var(--color-primary); color: white; }
+.danger { border-color: var(--color-danger); color: var(--color-danger); }
+.hint { color: var(--color-text-muted); line-height: 1.6; }
+.notice { background: var(--color-primary-soft); padding: 14px; border-radius: var(--radius-sm); line-height: 1.6; }
+.error { background: var(--color-danger-soft); color: var(--color-danger); padding: 14px; border-radius: var(--radius-sm); overflow-wrap: anywhere; }
+.success { color: #14663c; background: #e9f8ee; padding: 14px; border-radius: var(--radius-sm); }
+.field { display: grid; gap: 8px; margin: 14px 0; }
+.field textarea, .field select { width: 100%; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: white; color: var(--color-text); }
+.checkbox { display: flex; gap: 12px; align-items: flex-start; line-height: 1.6; margin: 16px 0; }
+.checkbox input { margin-top: 6px; flex-shrink: 0; }
+.tableWrap { overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.table { width: 100%; min-width: 900px; border-collapse: collapse; font-size: .92rem; }
+.table th, .table td { border-bottom: 1px solid var(--color-border); padding: 12px; text-align: left; vertical-align: top; }
+.table th { background: var(--color-surface-muted); }
+.table tbody tr:last-child td { border-bottom: 0; }
+.history { list-style: none; padding: 0; display: grid; gap: 16px; }
+.history li { border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 14px; }
+.history p { margin: 8px 0; }
+.meta { display: grid; gap: 8px; line-height: 1.6; }
+@media (max-width: 600px) { .card { padding: 14px; } .toolbar .button { flex: 1 1 auto; } }

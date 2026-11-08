@@ -139,25 +139,26 @@ public class ResultsAccess {
                 .orElse(false);
     }
 
-    private boolean checkEvent(
-            UUID eventId,
-            UUID userId,
-            Authentication authentication,
-            Permission permission
-    ) {
+        private boolean checkEvent(
+                UUID eventId,
+                UUID userId,
+                Authentication authentication,
+                Permission permission
+        ) {
         if (hasRole(authentication, "PLATFORM_ADMIN")) {
-            return true;
+                return true;
         }
 
         boolean organizerAllowed =
                 permission == Permission.READ
                         || permission == Permission.MANAGE
+                        || permission == Permission.WRITE
                         || permission == Permission.PUBLISH;
 
         if (organizerAllowed
                 && hasRole(authentication, "ORGANIZER")
                 && eventOperationAccess.canManageEvent(eventId, userId)) {
-            return true;
+                return true;
         }
 
         boolean operatorAllowed =
@@ -171,7 +172,7 @@ public class ResultsAccess {
                         eventId,
                         userId
                 );
-    }
+        }
 
     private UUID currentUserId(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "M-200",
+  "scenario": "addition",
+  "attempt": 1,
+  "operator": "operator01",
+  "method": "Excel-update-sort-copy",
+  "startedAt": "2026-10-31T14:26:00.603997+00:00",
+  "finishedAt": "2026-10-31T14:29:38.742926+00:00",
+  "elapsedNanoseconds": 218137512800,
+  "elapsedSeconds": 218.1375128,
+  "measured": true,
+  "previousAttempt": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\manual-baseline\\M-200-run-01\\attempts\\attempt-001",
+  "timingScope": "Read prepared changes, manually update/check/save CSV; template setup and automatic validation excluded",
+  "passed": false,
+  "violationCount": 1,
+  "violations": [
+    "Unknown participant: "
+  ]
+}

@@ -1,0 +1,13 @@
+n,strategy,variant,jdbc_executions,jdbc_batch_executions,batch_items_submitted,resultset_rows_consumed
+8,ASC,JAVA,13,0,0,19
+8,ASC,SQL,4,0,0,4
+8,DESC,JAVA,13,0,0,19
+8,DESC,SQL,4,0,0,4
+64,ASC,JAVA,64,0,0,131
+64,ASC,SQL,4,0,0,4
+64,DESC,JAVA,64,0,0,131
+64,DESC,SQL,4,0,0,4
+256,ASC,JAVA,238,0,0,515
+256,ASC,SQL,4,0,0,4
+256,DESC,JAVA,238,0,0,515
+256,DESC,SQL,4,0,0,4

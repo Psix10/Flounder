@@ -1,31 +1,36 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
+
 import { ApiError } from '../../api/http'
-import { useAuth } from '../../app/providers/AuthProvider'
 import {
   getCompetitionUnitsByDiscipline,
   type CompetitionUnitResponse,
 } from '../../api/results.api'
+import { useAuth } from '../../app/providers/AuthProvider'
 import styles from './CompetitionUnitsPage.module.css'
 
-function getErrorMessage(error: unknown) {
+function getErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
+    if (error.status === 401) {
+      return 'Сессия истекла. Войдите в систему снова.'
+    }
+
     if (error.status === 403) {
-      return 'У вашей учётной записи нет прав на просмотр результатов.'
+      return 'Нет прав на просмотр результатов этой дисциплины.'
     }
 
     if (error.status === 404) {
       return 'Дисциплина не найдена.'
     }
 
-    return error.message
+    return error.message || 'Не удалось загрузить заходы.'
   }
 
-  return 'Не удалось загрузить соревновательные единицы.'
+  return 'Не удалось загрузить заходы.'
 }
 
-function unitStatusLabel(status: string) {
+function unitStatusLabel(status: string): string {
   const labels: Record<string, string> = {
     DRAFT: 'Черновик',
     PUBLISHED: 'Опубликовано',
@@ -34,17 +39,25 @@ function unitStatusLabel(status: string) {
   return labels[status] ?? status
 }
 
-function unitStatusClassName(status: string) {
+function unitStatusClassName(status: string): string {
   const classes: Record<string, string> = {
     DRAFT: styles.statusDraft,
     PUBLISHED: styles.statusPublished,
   }
 
-  return `${styles.statusBadge} ${classes[status] ?? styles.statusNeutral}`
+  return `${styles.statusBadge} ${
+    classes[status] ?? styles.statusNeutral
+  }`
 }
 
-function formatDate(value: string | null) {
+function formatDate(value: string | null): string {
   if (!value) {
+    return 'Не назначено'
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
     return 'Не назначено'
   }
 
@@ -52,15 +65,44 @@ function formatDate(value: string | null) {
     dateStyle: 'medium',
     timeStyle: 'short',
     timeZone: 'Europe/Moscow',
-  }).format(new Date(value))
+  }).format(date)
 }
 
 export function CompetitionUnitsPage() {
+  const [searchParams] = useSearchParams()
   const { session } = useAuth()
-  const navigate = useNavigate()
-  const accessToken = session?.accessToken
 
-  const [eventDisciplineId, setEventDisciplineId] = useState('')
+  const sourceDisciplineId = searchParams.get('disciplineId') ?? ''
+  const sourceEventId = searchParams.get('eventId') ?? ''
+
+  return (
+    <CompetitionUnitsContent
+      key={`${sourceEventId}:${sourceDisciplineId}:${
+        session?.accessToken ?? ''
+      }`}
+      initialDisciplineId={sourceDisciplineId}
+      sourceEventId={sourceEventId}
+      accessToken={session?.accessToken}
+    />
+  )
+}
+
+type CompetitionUnitsContentProps = {
+  initialDisciplineId: string
+  sourceEventId: string
+  accessToken?: string
+}
+
+function CompetitionUnitsContent({
+  initialDisciplineId,
+  sourceEventId,
+  accessToken,
+}: CompetitionUnitsContentProps) {
+  const navigate = useNavigate()
+
+  const [eventDisciplineId, setEventDisciplineId] = useState(
+    initialDisciplineId,
+  )
   const [units, setUnits] = useState<CompetitionUnitResponse[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [hasLoaded, setHasLoaded] = useState(false)
@@ -69,20 +111,27 @@ export function CompetitionUnitsPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    const normalizedDisciplineId = eventDisciplineId.trim()
+    if (isLoading) {
+      return
+    }
 
     if (!accessToken) {
       navigate('/login', { replace: true })
       return
     }
 
+    const normalizedDisciplineId = eventDisciplineId.trim()
+
     if (!normalizedDisciplineId) {
+      setUnits([])
+      setHasLoaded(false)
       setErrorMessage('Введите ID дисциплины.')
       return
     }
 
     setIsLoading(true)
     setHasLoaded(false)
+    setUnits([])
     setErrorMessage(null)
 
     try {
@@ -103,17 +152,25 @@ export function CompetitionUnitsPage() {
 
   return (
     <section className={styles.page}>
-      <Link className={styles.backLink} to="/operator/payments">
-        ← К панели оператора
+      <Link
+        className={styles.backLink}
+        to={
+          sourceEventId
+            ? `/organizer/events/${encodeURIComponent(sourceEventId)}`
+            : '/'
+        }
+      >
+        {sourceEventId ? '← К мероприятию' : '← На главную'}
       </Link>
 
-      <p className={styles.eyebrow}>Оператор</p>
+      <p className={styles.eyebrow}>Управление результатами</p>
 
-      <h1 className={styles.title}>Результаты</h1>
+      <h1 className={styles.title}>Заходы и результаты</h1>
 
       <p className={styles.description}>
-        Введите идентификатор дисциплины, чтобы открыть список заплывов,
-        матчей, групп или финалов.
+        {initialDisciplineId
+          ? 'Дисциплина уже выбрана. Нажмите «Открыть», затем выберите нужный заход.'
+          : 'Введите идентификатор дисциплины, чтобы открыть список заплывов, матчей, групп или финалов.'}
       </p>
 
       <form className={styles.searchForm} onSubmit={handleSubmit}>
@@ -123,7 +180,12 @@ export function CompetitionUnitsPage() {
           <input
             autoComplete="off"
             disabled={isLoading}
-            onChange={(event) => setEventDisciplineId(event.target.value)}
+            onChange={(event) => {
+              setEventDisciplineId(event.target.value)
+              setUnits([])
+              setHasLoaded(false)
+              setErrorMessage(null)
+            }}
             placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
             spellCheck={false}
             type="text"
@@ -133,7 +195,7 @@ export function CompetitionUnitsPage() {
 
         <button
           className={styles.submitButton}
-          disabled={isLoading}
+          disabled={isLoading || !eventDisciplineId.trim()}
           type="submit"
         >
           {isLoading ? 'Загружаем…' : 'Открыть'}
@@ -146,12 +208,18 @@ export function CompetitionUnitsPage() {
         </p>
       ) : null}
 
+      {isLoading ? (
+        <div className={styles.stateCard} role="status">
+          Загружаем заходы…
+        </div>
+      ) : null}
+
       {hasLoaded && units.length === 0 ? (
         <div className={styles.stateCard}>
           <h2>Соревновательных единиц пока нет</h2>
           <p>
-            Организатор должен создать заплыв, матч, группу или финал для этой
-            дисциплины.
+            Для выбранной дисциплины ещё не созданы заплывы, матчи,
+            группы или финалы.
           </p>
         </div>
       ) : null}
@@ -179,7 +247,9 @@ export function CompetitionUnitsPage() {
 
                 <Link
                   className={styles.openLink}
-                  to={`/operator/competition-units/${unit.id}`}
+                  to={`/operator/competition-units/${encodeURIComponent(
+                    unit.id,
+                  )}`}
                 >
                   Открыть результаты
                 </Link>

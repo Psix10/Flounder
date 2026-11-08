@@ -191,7 +191,9 @@ public class GetPublicDisciplineResultsUseCase {
                 clubName(participantSnapshot),
                 result == null ? null : result.getRawValue(),
                 result == null ? null : result.getResultType(),
-                result == null ? "PENDING" : result.getStatus()
+                result == null ? "PENDING" : result.getStatus(),
+                entry.getCategoryCode(),
+                entry.getSeedingGroupCode()
         );
     }
 

@@ -8,6 +8,12 @@ public record RegistrationLookupResult(
         UUID eventDisciplineId,
         String status,
         String participantSnapshot,
-        String registrationMeta
+        String registrationMeta,
+        UUID participantProfileId
 ) {
+    /** Compatibility constructor: profile identity is unknown, never inferred from other IDs. */
+    public RegistrationLookupResult(UUID id, UUID participantUserId, UUID eventDisciplineId,
+                                    String status, String participantSnapshot, String registrationMeta) {
+        this(id, participantUserId, eventDisciplineId, status, participantSnapshot, registrationMeta, null);
+    }
 }

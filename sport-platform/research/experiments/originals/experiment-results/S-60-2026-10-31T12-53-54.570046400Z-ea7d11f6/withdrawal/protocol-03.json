@@ -1,0 +1,286 @@
+{
+  "eventDisciplineId" : "7b14fbf4-dc6d-46ab-9738-3bce559f9223",
+  "unitCount" : 8,
+  "assignmentCount" : 61,
+  "units" : [ {
+    "competitionUnitId" : "3917148b-210f-430c-9196-ee671c3f4601",
+    "label" : "Heat 1",
+    "sequenceNumber" : 1,
+    "assignments" : [ {
+      "registrationId" : "6c100960-e845-4175-8fd1-244d27bf3060",
+      "laneOrPosition" : 4,
+      "seedMetric" : 69.39
+    }, {
+      "registrationId" : "335c59bc-33b2-456d-97cb-8c29c6279ed9",
+      "laneOrPosition" : 5
+    }, {
+      "registrationId" : "6d92541e-6730-4b43-9ccc-76f4c7ad8227",
+      "laneOrPosition" : 3
+    }, {
+      "registrationId" : "804c957c-d1e3-41a2-b4c3-7871ff3ff6c1",
+      "laneOrPosition" : 6
+    }, {
+      "registrationId" : "94521b10-1e98-4622-8db9-9a457eed1251",
+      "laneOrPosition" : 2
+    } ]
+  }, {
+    "competitionUnitId" : "b4daa662-1dd8-4ac4-8a19-cf4edf15eaf6",
+    "label" : "Heat 2",
+    "sequenceNumber" : 2,
+    "assignments" : [ {
+      "registrationId" : "24cb819d-0a5f-4709-b9a7-211fea83f825",
+      "laneOrPosition" : 4,
+      "seedMetric" : 65.25
+    }, {
+      "registrationId" : "1446a9e1-6d32-4ed9-9324-e98d86965152",
+      "laneOrPosition" : 5,
+      "seedMetric" : 65.75
+    }, {
+      "registrationId" : "17b79ce1-dd35-40ed-9ce2-b0deb3b5432a",
+      "laneOrPosition" : 3,
+      "seedMetric" : 67.05
+    }, {
+      "registrationId" : "41b0bbd8-a2a1-4a3b-9cfc-2ac480bb1c41",
+      "laneOrPosition" : 6,
+      "seedMetric" : 67.12
+    }, {
+      "registrationId" : "f36ca86d-229c-4099-b698-506883a21729",
+      "laneOrPosition" : 2,
+      "seedMetric" : 67.43
+    }, {
+      "registrationId" : "0840725b-1ac3-438e-8188-b639a7682630",
+      "laneOrPosition" : 7,
+      "seedMetric" : 67.47
+    }, {
+      "registrationId" : "681c9e37-0480-4979-b155-0fbef1381dd3",
+      "laneOrPosition" : 1,
+      "seedMetric" : 68.08
+    }, {
+      "registrationId" : "d6275141-4997-4461-881f-daa189e663a7",
+      "laneOrPosition" : 8,
+      "seedMetric" : 68.39
+    } ]
+  }, {
+    "competitionUnitId" : "7a56f55d-9775-4925-984b-62466a446f29",
+    "label" : "Heat 3",
+    "sequenceNumber" : 3,
+    "assignments" : [ {
+      "registrationId" : "790519c9-dbc9-4630-a142-6d95276be8fd",
+      "laneOrPosition" : 4,
+      "seedMetric" : 56.9
+    }, {
+      "registrationId" : "76aae820-fcb9-45a2-aa54-311c59f74c5c",
+      "laneOrPosition" : 5,
+      "seedMetric" : 60.29
+    }, {
+      "registrationId" : "7af87c72-1cd1-4129-b5f5-a202566f1ef9",
+      "laneOrPosition" : 3,
+      "seedMetric" : 60.6
+    }, {
+      "registrationId" : "cde17640-2c04-441e-8678-0b8712ff467a",
+      "laneOrPosition" : 6,
+      "seedMetric" : 61.09
+    }, {
+      "registrationId" : "17130da2-8be0-4e07-8436-6b1d2553f3a9",
+      "laneOrPosition" : 2,
+      "seedMetric" : 62.55
+    }, {
+      "registrationId" : "44a93bd2-fcb4-451b-b3f2-e48cb96147f4",
+      "laneOrPosition" : 7,
+      "seedMetric" : 62.55
+    }, {
+      "registrationId" : "dbb0ea2b-dc7e-40f5-9bc1-8f36899a4ba5",
+      "laneOrPosition" : 1,
+      "seedMetric" : 63.4
+    }, {
+      "registrationId" : "a34b0d55-7764-45c6-ae20-d69a151d147c",
+      "laneOrPosition" : 8,
+      "seedMetric" : 65.13
+    } ]
+  }, {
+    "competitionUnitId" : "e72f0979-b056-438c-a262-82d587fdb71e",
+    "label" : "Heat 4",
+    "sequenceNumber" : 4,
+    "assignments" : [ {
+      "registrationId" : "572f931d-5403-4f46-af7a-64d78a8c7987",
+      "laneOrPosition" : 4,
+      "seedMetric" : 53.46
+    }, {
+      "registrationId" : "a9678e74-f1ce-4db6-8886-0b13b10705bb",
+      "laneOrPosition" : 5,
+      "seedMetric" : 53.59
+    }, {
+      "registrationId" : "019ca293-5716-45bb-aa02-c3900efcb27f",
+      "laneOrPosition" : 3,
+      "seedMetric" : 55.69
+    }, {
+      "registrationId" : "abdfc450-1473-4b6f-9783-6942ca4dc9bb",
+      "laneOrPosition" : 6,
+      "seedMetric" : 55.69
+    }, {
+      "registrationId" : "e5fab6a9-1a01-4b77-982c-37e360f675e3",
+      "laneOrPosition" : 2,
+      "seedMetric" : 55.82
+    }, {
+      "registrationId" : "60da4046-f75c-4710-a724-2e7fc78c840e",
+      "laneOrPosition" : 7,
+      "seedMetric" : 56.31
+    }, {
+      "registrationId" : "ac01a23c-a4c6-4bcc-9725-cb627c2ec473",
+      "laneOrPosition" : 1,
+      "seedMetric" : 56.31
+    }, {
+      "registrationId" : "712dbb87-c9fa-478b-9f6c-2b45dc7bd5db",
+      "laneOrPosition" : 8,
+      "seedMetric" : 56.9
+    } ]
+  }, {
+    "competitionUnitId" : "94881efb-e119-4526-b74e-383b96227016",
+    "label" : "Heat 5",
+    "sequenceNumber" : 5,
+    "assignments" : [ {
+      "registrationId" : "b7d66c20-0bdb-4776-94cd-4a8c11ca96f8",
+      "laneOrPosition" : 4,
+      "seedMetric" : 45.4
+    }, {
+      "registrationId" : "f1cdb31a-9f68-4121-b09a-417071544e92",
+      "laneOrPosition" : 5,
+      "seedMetric" : 45.93
+    }, {
+      "registrationId" : "99f8ccb8-0316-4312-9739-f3f3c9aba6db",
+      "laneOrPosition" : 3,
+      "seedMetric" : 46.67
+    }, {
+      "registrationId" : "8ea4991c-da3f-4c81-ab3a-b7ccb695ca32",
+      "laneOrPosition" : 6,
+      "seedMetric" : 50.34
+    }, {
+      "registrationId" : "f32929e0-2811-42c0-ac65-e0db2bbd5b04",
+      "laneOrPosition" : 2,
+      "seedMetric" : 51.34
+    }, {
+      "registrationId" : "e16c07db-f696-4273-8369-8810affc38f3",
+      "laneOrPosition" : 7,
+      "seedMetric" : 51.48
+    }, {
+      "registrationId" : "70114934-44ad-428b-b03d-0b0358eb3e69",
+      "laneOrPosition" : 1,
+      "seedMetric" : 51.54
+    }, {
+      "registrationId" : "9e385ec6-8457-4ca7-8b9b-c2d1bd119e65",
+      "laneOrPosition" : 8,
+      "seedMetric" : 51.76
+    } ]
+  }, {
+    "competitionUnitId" : "4b382c76-d44f-4312-b076-3ec8c8892a94",
+    "label" : "Heat 6",
+    "sequenceNumber" : 6,
+    "assignments" : [ {
+      "registrationId" : "e82b6a9e-7489-4620-a366-e3fd944ee8ee",
+      "laneOrPosition" : 4,
+      "seedMetric" : 39.63
+    }, {
+      "registrationId" : "37d07129-4917-4df9-b816-c0efcdfd9c15",
+      "laneOrPosition" : 5,
+      "seedMetric" : 41.44
+    }, {
+      "registrationId" : "8a898010-6f55-4eb7-9008-4d4a0c99828b",
+      "laneOrPosition" : 3,
+      "seedMetric" : 41.44
+    }, {
+      "registrationId" : "d2d578ce-1a98-494c-9fe0-a7ed41b33a62",
+      "laneOrPosition" : 6,
+      "seedMetric" : 42.07
+    }, {
+      "registrationId" : "a2e52218-3fcf-4996-aa7d-9c825555110e",
+      "laneOrPosition" : 2,
+      "seedMetric" : 42.56
+    }, {
+      "registrationId" : "c2a4f606-3ff6-4cfd-aea4-7e2a3409a2eb",
+      "laneOrPosition" : 7,
+      "seedMetric" : 43.79
+    }, {
+      "registrationId" : "da334e8a-7a0b-4380-b3fa-1d7ce1649e72",
+      "laneOrPosition" : 1,
+      "seedMetric" : 44.04
+    }, {
+      "registrationId" : "042b7a44-01c3-4eaf-aeb4-fc3efcb92337",
+      "laneOrPosition" : 8,
+      "seedMetric" : 44.3
+    } ]
+  }, {
+    "competitionUnitId" : "3cd3b1f4-edf8-4928-84c0-ae161e9d4f43",
+    "label" : "Heat 7",
+    "sequenceNumber" : 7,
+    "assignments" : [ {
+      "registrationId" : "c20b5898-29e8-421c-93d2-6949beb433e6",
+      "laneOrPosition" : 4,
+      "seedMetric" : 33.54
+    }, {
+      "registrationId" : "d3786339-ad69-4f24-9a2e-66b093cfb7f5",
+      "laneOrPosition" : 5,
+      "seedMetric" : 34.58
+    }, {
+      "registrationId" : "c961ed22-244b-467e-904d-2f8f219d06a8",
+      "laneOrPosition" : 3,
+      "seedMetric" : 34.61
+    }, {
+      "registrationId" : "9cac9d21-88bb-414b-844e-198ba3ef278d",
+      "laneOrPosition" : 6,
+      "seedMetric" : 34.8
+    }, {
+      "registrationId" : "30c46d7b-c87a-4d80-a500-25ae67b75745",
+      "laneOrPosition" : 2,
+      "seedMetric" : 36.32
+    }, {
+      "registrationId" : "9560b131-e8e3-4cc6-915e-22cd951b18d9",
+      "laneOrPosition" : 7,
+      "seedMetric" : 37.77
+    }, {
+      "registrationId" : "e4712208-392e-406d-b646-f85bcfaa5614",
+      "laneOrPosition" : 1,
+      "seedMetric" : 37.84
+    }, {
+      "registrationId" : "780ab4f0-ef72-4287-8188-8968ef48e502",
+      "laneOrPosition" : 8,
+      "seedMetric" : 38.33
+    } ]
+  }, {
+    "competitionUnitId" : "28c270c2-d24c-40db-98f1-a84fda677df5",
+    "label" : "Heat 8",
+    "sequenceNumber" : 8,
+    "assignments" : [ {
+      "registrationId" : "412e054d-1780-41d2-bc3a-d47b31b46f9e",
+      "laneOrPosition" : 4,
+      "seedMetric" : 28.03
+    }, {
+      "registrationId" : "b0215178-589f-4587-9641-26504dc6a32e",
+      "laneOrPosition" : 5,
+      "seedMetric" : 28.03
+    }, {
+      "registrationId" : "34d20233-f6a4-42f9-a25b-3bb4c1a5cc8d",
+      "laneOrPosition" : 3,
+      "seedMetric" : 29.72
+    }, {
+      "registrationId" : "cd3e4468-ca50-4e42-a12b-55719e31e3a3",
+      "laneOrPosition" : 6,
+      "seedMetric" : 29.72
+    }, {
+      "registrationId" : "d06f68df-8da7-4ed9-87a1-015128a09295",
+      "laneOrPosition" : 2,
+      "seedMetric" : 30.26
+    }, {
+      "registrationId" : "60441f61-8382-4e6b-aea8-758e2a90efd1",
+      "laneOrPosition" : 7,
+      "seedMetric" : 30.79
+    }, {
+      "registrationId" : "dcc8f23e-32ba-4177-8733-b0aef892005b",
+      "laneOrPosition" : 1,
+      "seedMetric" : 31.59
+    }, {
+      "registrationId" : "f5fdc750-3065-412a-803a-0dbe8fc5c6dc",
+      "laneOrPosition" : 8,
+      "seedMetric" : 33.14
+    } ]
+  } ]
+}

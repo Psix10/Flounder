@@ -20,7 +20,16 @@ public record PublicDisciplineStandingsResponse(
             String clubName,
             String rawValue,
             String resultType,
-            String status
+            String status,
+            String categoryCode,
+            String seedingGroupCode,
+            Integer categoryPlace
     ) {
+        public EntryView(Integer overallPlace, UUID competitionUnitId, String competitionUnitLabel,
+                Integer unitPlace, String participantName, String clubName,
+                String rawValue, String resultType, String status) {
+            this(overallPlace, competitionUnitId, competitionUnitLabel, unitPlace, participantName,
+                    clubName, rawValue, resultType, status, null, null, null);
+        }
     }
 }

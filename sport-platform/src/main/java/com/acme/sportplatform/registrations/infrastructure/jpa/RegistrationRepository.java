@@ -5,6 +5,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import jakarta.persistence.LockModeType;
 
 public interface RegistrationRepository
         extends JpaRepository<RegistrationEntity, UUID> {
@@ -34,4 +39,8 @@ public interface RegistrationRepository
         );
 
         List<RegistrationEntity> findByIdIn(List<UUID> ids);
+
+        @Lock(LockModeType.PESSIMISTIC_WRITE)
+        @Query("select r from RegistrationEntity r where r.id = :id")
+        Optional<RegistrationEntity> findForUpdate(@Param("id") UUID id);
 }

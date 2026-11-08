@@ -6,6 +6,11 @@ import java.util.UUID;
 public record GeneratedAssignmentResponse(
         UUID registrationId,
         Integer laneOrPosition,
-        BigDecimal seedMetric
+        BigDecimal seedMetric,
+        String categoryCode,
+        String seedingGroupCode
 ) {
+    public GeneratedAssignmentResponse(UUID registrationId, Integer laneOrPosition, BigDecimal seedMetric) {
+        this(registrationId, laneOrPosition, seedMetric, null, null);
+    }
 }

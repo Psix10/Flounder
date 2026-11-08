@@ -1,0 +1,6 @@
+scenario,runs,correct_runs,correct_within_5s,qualified_share,p50_ms,p95_ms,max_ms,assessment
+baseline,30,30,30,1.0,209.627,272.5821,282.2453,MET
+nochange,30,30,30,1.0,216.1614,254.1897,257.4031,MET
+seedchange,30,30,30,1.0,211.5646,256.4078,268.9688,MET
+withdrawal,30,30,30,1.0,192.5197,247.2927,254.5846,MET
+addition,30,30,30,1.0,249.1411,319.2898,347.4507,MET

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "M-200",
+  "scenario": "seed_change",
+  "attempt": 1,
+  "operator": "operator01",
+  "method": "Excel-update-sort-copy",
+  "startedAt": "2026-10-31T14:45:15.532816+00:00",
+  "finishedAt": "2026-10-31T14:48:16.795715+00:00",
+  "elapsedNanoseconds": 181262078500,
+  "elapsedSeconds": 181.2620785,
+  "measured": true,
+  "previousAttempt": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\manual-updates\\M-200\\withdrawal\\attempts\\attempt-002",
+  "timingScope": "Read prepared changes, manually update/check/save CSV; template setup and automatic validation excluded",
+  "passed": true,
+  "violationCount": 0,
+  "violations": []
+}

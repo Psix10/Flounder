@@ -3,6 +3,7 @@ import type {
   CreateRegistrationRequest,
   Registration,
   RegistrationStatus,
+  ResubmitRegistrationRequest,
 } from '../features/registrations/registration.types'
 
 export type RegistrationReviewDecision =
@@ -92,6 +93,26 @@ export function getRegistration(
     `/api/v1/registrations/${encodeURIComponent(id)}`,
     {
       accessToken,
+    },
+  )
+}
+
+
+
+export function resubmitRegistration(
+  registrationId: string,
+  request: ResubmitRegistrationRequest,
+  accessToken: string,
+): Promise<Registration> {
+  return apiFetch<Registration>(
+    `/api/v1/registrations/${encodeURIComponent(registrationId)}/resubmit`,
+    {
+      method: 'POST',
+      accessToken,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
     },
   )
 }

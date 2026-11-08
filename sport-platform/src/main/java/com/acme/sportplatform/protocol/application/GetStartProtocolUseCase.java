@@ -39,7 +39,9 @@ public class GetStartProtocolUseCase {
                                 .map(assignment -> new GeneratedAssignmentResponse(
                                         assignment.registrationId(),
                                         assignment.laneOrPosition(),
-                                        null
+                                        null,
+                                        assignment.categoryCode(),
+                                        assignment.seedingGroupCode()
                                 ))
                                 .toList()
                 ))

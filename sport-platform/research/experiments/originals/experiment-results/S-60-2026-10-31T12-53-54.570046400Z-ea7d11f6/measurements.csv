@@ -1,0 +1,16 @@
+scenario,repetition,operation,duration_ms,unit_count,assignment_count,revision
+baseline,1,GENERATE,173.703900,8,60,1
+baseline,2,REGENERATE,118.640700,8,60,2
+baseline,3,REGENERATE,122.023200,8,60,3
+no_change,1,REGENERATE,127.081400,8,60,4
+no_change,2,REGENERATE,109.744600,8,60,5
+no_change,3,REGENERATE,106.299400,8,60,6
+addition,1,REGENERATE,134.924500,8,63,7
+addition,2,REGENERATE,89.912900,8,63,8
+addition,3,REGENERATE,98.892200,8,63,9
+withdrawal,1,REGENERATE,95.274600,8,61,10
+withdrawal,2,REGENERATE,96.643400,8,61,11
+withdrawal,3,REGENERATE,96.895700,8,61,12
+seed_change,1,REGENERATE,131.115200,8,61,13
+seed_change,2,REGENERATE,75.791200,8,61,14
+seed_change,3,REGENERATE,95.667700,8,61,15

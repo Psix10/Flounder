@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "purpose": "DOCUMENTATION_ONLY_NOT_YET_LOADED_BY_BACKEND",
+  "origin": "EXPERIMENTAL",
+  "sourceDescription": "Demonstration values only; not SPb, Perm or ILS regulations",
+  "minimumRestSeconds": 600,
+  "changeoverSeconds": 30,
+  "restBasis": "previous planned heat end to next heat start for the same athlete identity",
+  "session": {
+    "start": "2026-11-22T09:30:00+03:00",
+    "end": "2026-11-22T10:30:00+03:00",
+    "breaks": []
+  },
+  "exampleHeatDurationSeconds": 120,
+  "durationBasis": "explicit demonstration planning duration; production estimates and NT policy not implemented"
+}

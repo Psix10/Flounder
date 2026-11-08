@@ -14,12 +14,11 @@ public class ProtocolDisciplineLookupService implements ProtocolDisciplineLookup
     public ProtocolDisciplineLookupService(ProtocolEventLookup events) { this.events = events; }
     @Override @Transactional(propagation = Propagation.MANDATORY)
     public View lock(UUID id) {
-        EventDisciplineEntity discipline = entityManager.find(EventDisciplineEntity.class, id);
-        if (discipline == null) throw new BusinessException(
-                "protocol.discipline_not_found", "Event discipline not found");
-        entityManager.refresh(discipline, LockModeType.PESSIMISTIC_WRITE);
-        var event = events.getById(discipline.getEventId());
-        return new View(id, event.sportId(), event.organizationId(),
-                discipline.getCompetitionFormat(), discipline.getUnitType());
+        EventDisciplineEntity discipline=entityManager.find(EventDisciplineEntity.class,id);
+        if(discipline==null) throw new BusinessException("protocol.discipline_not_found","Event discipline not found");
+        entityManager.refresh(discipline,LockModeType.PESSIMISTIC_WRITE);
+        var event=events.getById(discipline.getEventId());
+        return new View(id,event.sportId(),event.organizationId(),discipline.getCompetitionFormat(),
+                discipline.getUnitType(),discipline.getEventId());
     }
 }

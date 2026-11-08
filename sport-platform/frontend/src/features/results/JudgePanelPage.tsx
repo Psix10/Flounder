@@ -43,6 +43,10 @@ const RESULT_STATUS_OPTIONS: Array<{
 
 function getErrorMessage(error: unknown, fallback: string) {
   if (error instanceof ApiError) {
+    if (error.code === 'results.discipline_finalized') {
+      return 'Итог дисциплины подтверждён. Организатор должен снять финализацию перед изменением или снятием заплыва с публикации.'
+    }
+
     if (error.status === 401) {
       return 'Сессия истекла. Войдите в систему снова.'
     }

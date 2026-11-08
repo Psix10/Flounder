@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "S-60",
+  "scenario": "baseline",
+  "attempt": 3,
+  "operator": "operator01",
+  "method": "Excel-resubmission-after-wrong-file",
+  "startedAt": "2026-10-31T13:57:35.674406+00:00",
+  "finishedAt": "2026-10-31T13:59:05.067113+00:00",
+  "elapsedNanoseconds": 89391672400,
+  "elapsedSeconds": 89.3916724,
+  "measured": true,
+  "passed": true,
+  "violationCount": 0,
+  "violations": [],
+  "timingScope": "Human reading, sorting, assigning, checking, saving CSV and confirming completion; validation excluded",
+  "comparableTo": "One initial-generation task only; not an end-to-end automated workflow comparison"
+}

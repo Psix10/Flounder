@@ -20,13 +20,20 @@ import { OperatorPaymentsPage } from '../features/payments/OperatorPaymentsPage'
 import { OperatorRegistrationPage } from '../features/payments/OperatorRegistrationPage'
 import { PaymentPage } from '../features/payments/PaymentPage'
 
+import { StartProtocolPage } from '../features/protocol/StartProtocolPage'
+
 import { MyRegistrationsPage } from '../features/registrations/MyRegistrationsPage'
 import { RegistrationPage } from '../features/registrations/RegistrationPage'
 
 import { CreateRegulationPage } from '../features/regulations/CreateRegulationPage'
 
+import { CompetitionUnitsPage } from '../features/results/CompetitionUnitsPage'
 import { JudgePanelPage } from '../features/results/JudgePanelPage'
 import { PublicDisciplineResultsPage } from '../features/results/PublicDisciplineResultsPage'
+import {
+  OrganizerStandingsPage,
+  PublicStandingsPage,
+} from '../features/results/StandingsPage'
 
 export default function App() {
   return (
@@ -44,10 +51,24 @@ export default function App() {
           element={<PublicDisciplineResultsPage />}
         />
 
-        <Route path="login" element={<LoginPage />} />
-        <Route path="register" element={<RegisterPage />} />
+        <Route
+          path="events/:publicSlug/disciplines/:disciplineId/standings"
+          element={<PublicStandingsPage />}
+        />
 
-        <Route element={<RequireRole roles={['participant']} />}>
+        <Route
+          path="login"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="register"
+          element={<RegisterPage />}
+        />
+
+        <Route
+          element={<RequireRole roles={['participant']} />}
+        >
           <Route
             path="events/:eventCode/disciplines/:disciplineId/register"
             element={<RegistrationPage />}
@@ -76,8 +97,14 @@ export default function App() {
             />
           }
         >
-          <Route path="organizer" element={<OrganizerLayout />}>
-            <Route index element={<OrganizerDashboardPage />} />
+          <Route
+            path="organizer"
+            element={<OrganizerLayout />}
+          >
+            <Route
+              index
+              element={<OrganizerDashboardPage />}
+            />
 
             <Route
               path="events"
@@ -97,6 +124,16 @@ export default function App() {
             <Route
               path="events/:eventId/registrations"
               element={<OrganizerRegistrationsPage />}
+            />
+
+            <Route
+              path="events/:eventId/disciplines/:disciplineId/standings"
+              element={<OrganizerStandingsPage />}
+            />
+
+            <Route
+              path="events/:eventId/disciplines/:disciplineId/start-protocol"
+              element={<StartProtocolPage />}
             />
 
             <Route
@@ -121,6 +158,16 @@ export default function App() {
             path="operator/registrations/:registrationId"
             element={<OperatorRegistrationPage />}
           />
+
+          <Route
+            path="operator/results"
+            element={<CompetitionUnitsPage />}
+          />
+
+          <Route
+            path="operator/competition-units/:unitId"
+            element={<JudgePanelPage />}
+          />
         </Route>
 
         <Route
@@ -133,11 +180,6 @@ export default function App() {
           <Route
             path="operator/payments"
             element={<OperatorPaymentsPage />}
-          />
-
-          <Route
-            path="operator/competition-units/:unitId"
-            element={<JudgePanelPage />}
           />
         </Route>
 

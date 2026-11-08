@@ -53,7 +53,9 @@ public class StartProtocolController {
                                 .map(assignment -> new GeneratedAssignmentResponse(
                                         assignment.registrationId(),
                                         assignment.laneOrPosition(),
-                                        assignment.seedMetric()
+                                        assignment.seedMetric(),
+                                        assignment.categoryCode(),
+                                        assignment.seedingGroupCode()
                                 ))
                                 .toList()
                 ))

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "M-200",
+  "scenario": "withdrawal",
+  "attempt": 1,
+  "operator": "operator01",
+  "method": "Excel-update-sort-copy",
+  "startedAt": "2026-10-31T14:32:42.527510+00:00",
+  "finishedAt": "2026-10-31T14:39:00.136737+00:00",
+  "elapsedNanoseconds": 377606993700,
+  "elapsedSeconds": 377.6069937,
+  "measured": true,
+  "previousAttempt": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\manual-updates\\M-200\\addition\\attempts\\attempt-002",
+  "timingScope": "Read prepared changes, manually update/check/save CSV; template setup and automatic validation excluded",
+  "passed": false,
+  "violationCount": 1,
+  "violations": [
+    "Heat sequence must be unique and contiguous from 1"
+  ]
+}

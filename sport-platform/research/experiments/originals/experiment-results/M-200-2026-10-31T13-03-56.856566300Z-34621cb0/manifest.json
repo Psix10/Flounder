@@ -1,0 +1,37 @@
+{
+  "schemaVersion" : 1,
+  "label" : "M-200",
+  "seed" : 424242,
+  "baseSize" : 200,
+  "repetitions" : 10,
+  "fixtureDurationMs" : 4916.875,
+  "timingScope" : "MockMvc generation request including DB and snapshot; excludes fixture and response parsing",
+  "ruleSetVersionId" : "e0ace20a-fc0b-4069-9975-2d0ea68f9850",
+  "eventDisciplineId" : "926a1b1b-1616-48f6-88df-a6e0286ac8dc",
+  "scenarios" : [ {
+    "name" : "baseline",
+    "input" : "baseline/input.json",
+    "protocols" : [ "baseline/protocol-01.json", "baseline/protocol-02.json", "baseline/protocol-03.json", "baseline/protocol-04.json", "baseline/protocol-05.json", "baseline/protocol-06.json", "baseline/protocol-07.json", "baseline/protocol-08.json", "baseline/protocol-09.json", "baseline/protocol-10.json" ],
+    "snapshots" : [ "baseline/snapshot-01.json", "baseline/snapshot-02.json", "baseline/snapshot-03.json", "baseline/snapshot-04.json", "baseline/snapshot-05.json", "baseline/snapshot-06.json", "baseline/snapshot-07.json", "baseline/snapshot-08.json", "baseline/snapshot-09.json", "baseline/snapshot-10.json" ]
+  }, {
+    "name" : "no_change",
+    "input" : "no_change/input.json",
+    "protocols" : [ "no_change/protocol-01.json", "no_change/protocol-02.json", "no_change/protocol-03.json", "no_change/protocol-04.json", "no_change/protocol-05.json", "no_change/protocol-06.json", "no_change/protocol-07.json", "no_change/protocol-08.json", "no_change/protocol-09.json", "no_change/protocol-10.json" ],
+    "snapshots" : [ "no_change/snapshot-01.json", "no_change/snapshot-02.json", "no_change/snapshot-03.json", "no_change/snapshot-04.json", "no_change/snapshot-05.json", "no_change/snapshot-06.json", "no_change/snapshot-07.json", "no_change/snapshot-08.json", "no_change/snapshot-09.json", "no_change/snapshot-10.json" ]
+  }, {
+    "name" : "addition",
+    "input" : "addition/input.json",
+    "protocols" : [ "addition/protocol-01.json", "addition/protocol-02.json", "addition/protocol-03.json", "addition/protocol-04.json", "addition/protocol-05.json", "addition/protocol-06.json", "addition/protocol-07.json", "addition/protocol-08.json", "addition/protocol-09.json", "addition/protocol-10.json" ],
+    "snapshots" : [ "addition/snapshot-01.json", "addition/snapshot-02.json", "addition/snapshot-03.json", "addition/snapshot-04.json", "addition/snapshot-05.json", "addition/snapshot-06.json", "addition/snapshot-07.json", "addition/snapshot-08.json", "addition/snapshot-09.json", "addition/snapshot-10.json" ]
+  }, {
+    "name" : "withdrawal",
+    "input" : "withdrawal/input.json",
+    "protocols" : [ "withdrawal/protocol-01.json", "withdrawal/protocol-02.json", "withdrawal/protocol-03.json", "withdrawal/protocol-04.json", "withdrawal/protocol-05.json", "withdrawal/protocol-06.json", "withdrawal/protocol-07.json", "withdrawal/protocol-08.json", "withdrawal/protocol-09.json", "withdrawal/protocol-10.json" ],
+    "snapshots" : [ "withdrawal/snapshot-01.json", "withdrawal/snapshot-02.json", "withdrawal/snapshot-03.json", "withdrawal/snapshot-04.json", "withdrawal/snapshot-05.json", "withdrawal/snapshot-06.json", "withdrawal/snapshot-07.json", "withdrawal/snapshot-08.json", "withdrawal/snapshot-09.json", "withdrawal/snapshot-10.json" ]
+  }, {
+    "name" : "seed_change",
+    "input" : "seed_change/input.json",
+    "protocols" : [ "seed_change/protocol-01.json", "seed_change/protocol-02.json", "seed_change/protocol-03.json", "seed_change/protocol-04.json", "seed_change/protocol-05.json", "seed_change/protocol-06.json", "seed_change/protocol-07.json", "seed_change/protocol-08.json", "seed_change/protocol-09.json", "seed_change/protocol-10.json" ],
+    "snapshots" : [ "seed_change/snapshot-01.json", "seed_change/snapshot-02.json", "seed_change/snapshot-03.json", "seed_change/snapshot-04.json", "seed_change/snapshot-05.json", "seed_change/snapshot-06.json", "seed_change/snapshot-07.json", "seed_change/snapshot-08.json", "seed_change/snapshot-09.json", "seed_change/snapshot-10.json" ]
+  } ]
+}

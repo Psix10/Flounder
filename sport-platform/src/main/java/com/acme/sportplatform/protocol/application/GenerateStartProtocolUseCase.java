@@ -28,20 +28,20 @@ public class GenerateStartProtocolUseCase {
     private final ProtocolDisciplineLookup disciplines;
     private final PublishedProtocolRulesResolver resolver;
     private final StartProtocolSnapshotRepository snapshots;
+    private final BoundRegulationRules boundRules;
     public GenerateStartProtocolUseCase(EventProtocolAccess events, RegistrationProtocolAccess registrations,
             CompetitionUnitProtocolAccess units, RuleExecutorRegistry registry, ObjectMapper json,
             ProtocolDisciplineLookup disciplines, PublishedProtocolRulesResolver resolver,
-            StartProtocolSnapshotRepository snapshots) {
+            StartProtocolSnapshotRepository snapshots, BoundRegulationRules boundRules) {
         this.events = events; this.registrations = registrations; this.units = units;
         this.registry = registry; this.json = json; this.disciplines = disciplines;
-        this.resolver = resolver; this.snapshots = snapshots;
+        this.resolver = resolver; this.snapshots = snapshots; this.boundRules = boundRules;
     }
-
     @Transactional
     public ProtocolGenerationResult execute(UUID disciplineId, GenerateStartProtocolRequest request) {
         var discipline = disciplines.lock(disciplineId);
         var published = events.getPublishedEventDiscipline(disciplineId);
-        UUID selectedVersion = request == null ? null : request.ruleSetVersionId();
+        UUID selectedVersion = boundRules.resolve(discipline, request == null ? null : request.ruleSetVersionId());
         UUID actorId = null;
         ResolvedProtocolRules rules;
         JsonNode legacySettings = null;
@@ -63,48 +63,42 @@ public class GenerateStartProtocolUseCase {
             legacySettings = object(published.settingsJson(), "protocol.invalid_settings").path("protocol");
             rules = legacy(legacySettings);
         }
-        if (units.hasCompetitionUnits(disciplineId)) {
-            boolean regenerate = request != null && Boolean.TRUE.equals(request.regenerate());
+        boolean existing = units.hasCompetitionUnits(disciplineId);
+        boolean requestedRegeneration = request != null && Boolean.TRUE.equals(request.regenerate());
+        if (existing) {
             boolean allowed = selectedVersion != null
                     || legacySettings.path("allowRegenerate").asBoolean(false);
-            if (!regenerate || !allowed) throw error("protocol.already_generated",
+            if (!requestedRegeneration || !allowed) throw error("protocol.already_generated",
                     "Start protocol has already been generated for this discipline");
-            throw error("protocol.regenerate_not_supported_yet", "Regeneration is not supported yet");
+            if (selectedVersion == null) throw error("protocol.regenerate_not_supported_yet",
+                    "Select a published rule version to regenerate a versioned protocol");
+            if (snapshots.findFirstByEventDisciplineIdOrderByRevisionNoDesc(disciplineId).isEmpty()) {
+                throw error("protocol.regeneration_requires_snapshot",
+                        "Only a protocol with a saved generation snapshot can be regenerated");
+            }
         }
         var confirmed = registrations.findConfirmedByEventDisciplineId(disciplineId);
         if (confirmed.isEmpty()) throw error("protocol.no_confirmed_registrations",
-                "No confirmed registrations found for this discipline");
-        List<SeedParticipant> participants = confirmed.stream().map(reg -> new SeedParticipant(
-                reg.registrationId(), metric(reg.registrationMeta(), rules.metricKey()))).toList();
+                "No confirmed registrations found; existing protocol has not been replaced");
+        var prepared = new PrepareStartProtocol(registry, json).prepare(disciplineId, rules, confirmed);
+        var participants = prepared.participants();
         Map<UUID, BigDecimal> metrics = new HashMap<>();
-        for (SeedParticipant p : participants) {
-            if (p.registrationId() == null || metrics.containsKey(p.registrationId())) throw error(
-                    "protocol.invalid_participants", "Registration IDs must be present and unique");
-            metrics.put(p.registrationId(), p.seedMetric());
-        }
-        var context = new ProtocolGenerationContext(disciplineId, rules.capacity(), rules.prefix(),
-                rules.order(), rules.allowed(), rules.heatOrder(), rules.partialHeat(), participants);
-        for (RuleBlockRequest block : rules.blocks()) registry.get(block.executorCode()).apply(context);
-        validateOutput(context, metrics.keySet());
-        List<CompetitionUnitProtocolAccess.CompetitionUnitDraftView> drafts = new ArrayList<>();
-        for (int i = 0; i < context.getGroupedAssignments().size(); i++) {
-            var assignments = context.getGroupedAssignments().get(i).stream().map(a ->
-                    new CompetitionUnitProtocolAccess.AssignmentDraftView(a.registrationId(), a.laneOrPosition())).toList();
-            drafts.add(new CompetitionUnitProtocolAccess.CompetitionUnitDraftView(
-                    rules.prefix() + " " + (i + 1), i + 1, "DRAFT", assignments));
-        }
-        var saved = units.createDraftStartProtocol(disciplineId, drafts);
+        for (SeedParticipant participant : participants) metrics.put(participant.registrationId(), participant.seedMetric());
+        var drafts = prepared.toDrafts();
+        var saved = existing
+                ? units.replaceDraftStartProtocol(disciplineId, drafts)
+                : units.createDraftStartProtocol(disciplineId, drafts);
         var result = new ProtocolGenerationResult(disciplineId, saved.stream().map(u ->
                 new GeneratedCompetitionUnit(u.competitionUnitId(), u.label(), u.sequenceNumber(),
                         u.assignments().stream().map(a -> new GeneratedAssignment(a.registrationId(),
-                                a.laneOrPosition(), metrics.get(a.registrationId()))).toList())).toList());
+                                a.laneOrPosition(), metrics.get(a.registrationId()), a.categoryCode(), a.seedingGroupCode())).toList())).toList());
         if (selectedVersion != null) {
             StartProtocolSnapshotEntity snapshot = new StartProtocolSnapshotEntity();
             snapshot.setId(UUID.randomUUID()); snapshot.setEventDisciplineId(disciplineId);
             snapshot.setRuleSetVersionId(selectedVersion);
             int revision = snapshots.findFirstByEventDisciplineIdOrderByRevisionNoDesc(disciplineId)
                     .map(s -> s.getRevisionNo() + 1).orElse(1);
-            snapshot.setRevisionNo(revision); snapshot.setOperation("GENERATE");
+            snapshot.setRevisionNo(revision); snapshot.setOperation(existing ? "REGENERATE" : "GENERATE");
             ObjectNode input = json.createObjectNode();
             input.put("schemaVersion", 1); input.put("ruleSetVersionId", selectedVersion.toString());
             input.set("rules", json.valueToTree(rules));
@@ -116,7 +110,6 @@ public class GenerateStartProtocolUseCase {
         }
         return result;
     }
-
     private ResolvedProtocolRules legacy(JsonNode node) {
         JsonNode capacityNode = node.path("unitCapacity");
         if (!capacityNode.isIntegralNumber() || !capacityNode.canConvertToInt()
@@ -124,8 +117,7 @@ public class GenerateStartProtocolUseCase {
             throw error("protocol.invalid_settings", "unitCapacity must be an integer in 1..1024");
         }
         int capacity = capacityNode.intValue();
-        String key = node.path("seedMetricKey").asText(null);
-        String prefix = node.path("unitLabelPrefix").asText("Heat");
+        String key = node.path("seedMetricKey").asText(null), prefix = node.path("unitLabelPrefix").asText("Heat");
         if (key == null || key.isBlank() || prefix.isBlank() || prefix.length() > 80) {
             throw error("protocol.invalid_settings", "Invalid seedMetricKey or unitLabelPrefix");
         }
@@ -160,28 +152,6 @@ public class GenerateStartProtocolUseCase {
         if (node == null || !node.isObject()) throw error(errorCode, "Expected a JSON object");
         return node;
     }
-    private BigDecimal metric(String raw, String key) {
-        JsonNode value = object(raw, "protocol.invalid_seed_metric").path(key);
-        if (value.isMissingNode() || value.isNull()) return null;
-        if (!value.isNumber()) throw error("protocol.invalid_seed_metric", "Seed metric must be numeric");
-        return value.decimalValue();
-    }
-    private void validateOutput(ProtocolGenerationContext context, Set<UUID> expected) {
-        Set<UUID> actual = new HashSet<>(); Set<Integer> allowed = new HashSet<>(context.getAllowedPositions());
-        for (var group : context.getGroupedAssignments()) {
-            if (group.isEmpty() || group.size() > context.getUnitCapacity()) throw invalidOutput();
-            Set<Integer> occupied = new HashSet<>();
-            for (int i = 0; i < group.size(); i++) {
-                var a = group.get(i);
-                if (!expected.contains(a.registrationId()) || !actual.add(a.registrationId())
-                        || !allowed.contains(a.laneOrPosition()) || !occupied.add(a.laneOrPosition())
-                        || !Objects.equals(a.laneOrPosition(), context.getPositionOrder().get(i))) throw invalidOutput();
-            }
-        }
-        if (!actual.equals(expected)) throw invalidOutput();
-    }
-    private BusinessException invalidOutput() {
-        return error("protocol.invalid_generated_assignments", "Generated assignments violate invariants");
-    }
     private BusinessException error(String code, String message) { return new BusinessException(code, message); }
 }
+

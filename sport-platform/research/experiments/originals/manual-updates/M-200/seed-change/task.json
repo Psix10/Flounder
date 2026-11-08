@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "MANUAL_UPDATE",
+  "scenario": "seed_change",
+  "label": "M-200",
+  "participantCount": 208,
+  "sourceRun": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\experiment-results\\M-200-2026-10-31T13-03-56.856566300Z-34621cb0",
+  "previousAttempt": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\manual-updates\\M-200\\withdrawal\\attempts\\attempt-002",
+  "changeCount": 1
+}

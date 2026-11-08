@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "label": "M-200",
+  "passed": true,
+  "checkedProtocols": 50,
+  "violationCount": 0,
+  "violations": [],
+  "timingScope": "MockMvc generation request including DB and snapshot; excludes fixture and response parsing",
+  "summary": [
+    {
+      "scenario": "baseline",
+      "operation": "GENERATE",
+      "samples": 1,
+      "min_ms": 343.0414,
+      "median_ms": 343.0414,
+      "p95_ms": 343.0414,
+      "max_ms": 343.0414
+    },
+    {
+      "scenario": "baseline",
+      "operation": "REGENERATE",
+      "samples": 9,
+      "min_ms": 213.2096,
+      "median_ms": 284.9549,
+      "p95_ms": 315.87972,
+      "max_ms": 317.794
+    },
+    {
+      "scenario": "no_change",
+      "operation": "REGENERATE",
+      "samples": 10,
+      "min_ms": 208.0614,
+      "median_ms": 253.549,
+      "p95_ms": 313.770345,
+      "max_ms": 319.4187
+    },
+    {
+      "scenario": "addition",
+      "operation": "REGENERATE",
+      "samples": 10,
+      "min_ms": 202.2861,
+      "median_ms": 237.43795,
+      "p95_ms": 276.93724,
+      "max_ms": 289.39
+    },
+    {
+      "scenario": "withdrawal",
+      "operation": "REGENERATE",
+      "samples": 10,
+      "min_ms": 187.7903,
+      "median_ms": 207.29585,
+      "p95_ms": 273.53682,
+      "max_ms": 286.4844
+    },
+    {
+      "scenario": "seed_change",
+      "operation": "REGENERATE",
+      "samples": 10,
+      "min_ms": 176.1367,
+      "median_ms": 205.555,
+      "p95_ms": 233.64460999999997,
+      "max_ms": 236.8937
+    }
+  ],
+  "limitations": [
+    "No manual baseline; no speedup claim.",
+    "MockMvc timing excludes real network and fixture setup.",
+    "Small samples and warm-up effects are not controlled.",
+    "Equal-metric ties may swap identities across fresh runs; within-run stability is checked.",
+    "Single-threaded, single-discipline synthetic scenario."
+  ]
+}

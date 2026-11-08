@@ -1,20 +1,33 @@
 package com.acme.research.ranking;
 
 import java.util.Map;
+
 import javax.sql.DataSource;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import com.zaxxer.hikari.HikariDataSource;
-import org.springframework.context.annotation.*;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.orm.jpa.*;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.orm.jpa.persistenceunit.PersistenceManagedTypes;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.testcontainers.postgresql.PostgreSQLContainer;
-import com.acme.sportplatform.results.infrastructure.jpa.*;
+
+import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
+import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
+import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRepository;
+import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitRepository;
+import com.acme.sportplatform.results.infrastructure.jpa.ResultEntity;
+import com.acme.sportplatform.results.infrastructure.jpa.ResultRepository;
+import com.zaxxer.hikari.HikariDataSource;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 @Configuration(proxyBeanMethods = false)
 class RankingSliceConfiguration {
@@ -35,8 +48,12 @@ class RankingSliceConfiguration {
     }
     @Bean @Primary DataSource dataSource(HikariDataSource pool) {
         DataSource ds = JdbcMetrics.wrap(pool);
-        new ResourceDatabasePopulator(new ClassPathResource("ranking-experiment/schema.sql"))
-                .execute(ds);
+        new ResourceDatabasePopulator(
+                new ClassPathResource("ranking-experiment/schema.sql"),
+                new ClassPathResource(
+                        "db/migration/V027__protocol_assignment_categories.sql"
+                )
+        ).execute(ds);
         return ds;
     }
     @Bean JdbcTemplate jdbcTemplate(DataSource dataSource) {

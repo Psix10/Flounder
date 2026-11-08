@@ -1,0 +1,2038 @@
+{
+  "schemaVersion" : 1,
+  "dataset" : "SESSION-200",
+  "baselineEntries" : 200,
+  "baselineUniqueAthletes" : 100,
+  "disciplines" : 2,
+  "changeFraction" : 0.2,
+  "reserveEntries" : 40,
+  "runsPerScenario" : 30,
+  "warmupsPerScenario" : 3,
+  "javaVersion" : "21.0.12.1",
+  "os" : "Windows 11",
+  "arch" : "amd64",
+  "availableProcessors" : 24,
+  "maxHeapBytes" : 8535408640,
+  "postgresVersion" : "16.14 (Debian 16.14-1.pgdg13+1)",
+  "sourceRevision" : "332054e5a27a41a9df625a03abf9d66b12271a8b",
+  "workingTreeDirty" : "True",
+  "measurementBoundary" : "Spring useCase.execute including transaction commit; excludes fixture setup, external validation and file IO; no HTTP",
+  "sourceSha256" : {
+    "pom.xml" : "1858305deb1529d5e9bcd7ab769103bd5add07609f7fdb6a28213f8b1b1723ad",
+    "src/main/java/com/acme/sportplatform/SportPlatformApplication.java" : "b6f4090e37d3642cf0ffe76b81301a426c5312f96022dd9df4f68dbaccddf1a7",
+    "src/main/java/com/acme/sportplatform/admin/AdminTestController.java" : "428bc03526439c9087efc5a397a4b44ede26f0cb193be940e676983e09ff02d7",
+    "src/main/java/com/acme/sportplatform/common/api/ApiErrorResponse.java" : "31fb18addc91d030f84ef719367b54acb6644dff537b18ab38a8e95f9931dc2e",
+    "src/main/java/com/acme/sportplatform/common/api/SecurityErrorResponse.java" : "4fea44566120c0c086981d93b97f5493b89fa93d83bcc2d579a67a928a10aa0a",
+    "src/main/java/com/acme/sportplatform/common/exception/BusinessException.java" : "41451a01a5a86e6a72ab8b704f926005763e448aa39e1080880c9d1936799b1c",
+    "src/main/java/com/acme/sportplatform/common/exception/package-info.java" : "beb582dea64585f222bd99ec5c7f3eeebf649f5289a4743460a6497b167d0efc",
+    "src/main/java/com/acme/sportplatform/common/health/AppHealthController.java" : "a158de74666647f3d48d5e2b0609d742cfedb6ece8c54468bce6054f70ebc150",
+    "src/main/java/com/acme/sportplatform/common/web/GlobalExceptionHandler.java" : "6ebbdfe4f5329ebdb3e11bc95d7d0ca64f90bfccf4a893fd1b6c83a0f91de097",
+    "src/main/java/com/acme/sportplatform/common/web/RestAccessDeniedHandler.java" : "0cd4bd1d0930793895289cf9db4e3bd0267a20486dc67bc6d468e7891923c956",
+    "src/main/java/com/acme/sportplatform/common/web/RestAuthenticationEntryPoint.java" : "c5d95a845a0abc24aa5a82bfc82569bbf2b54b45aa62019abea7a935ad44decd",
+    "src/main/java/com/acme/sportplatform/common/web/package-info.java" : "d7978fd4df9a2928b7c6f1314d2190592901a699e03c394fa9dde4680587be41",
+    "src/main/java/com/acme/sportplatform/competition/EventDisciplineLookup.java" : "783c6fdad90a5d457c9df0200f0694f0bdb12e471d73d051d05d8302821a9f2d",
+    "src/main/java/com/acme/sportplatform/competition/EventDisciplineLookupResult.java" : "0bee52b0c992f0f7a92385f88e5076c7a479b87b800e3ee299c8930e51d7ffeb",
+    "src/main/java/com/acme/sportplatform/competition/EventDisciplineSummary.java" : "05a89857b32309b62ca8555882bc4c75d95beeaa446772f46302de03b88ed477",
+    "src/main/java/com/acme/sportplatform/competition/ProtocolDisciplineLookup.java" : "edd1c652683b00e09a0ff603d3d2b46c084985d6cf3a64b365bc13bee3e61094",
+    "src/main/java/com/acme/sportplatform/competition/api/CreateEventDisciplineRequest.java" : "97e0a804614ebd6bb195ed5933700cec7ac140b61482d2db6a7891519be561ce",
+    "src/main/java/com/acme/sportplatform/competition/api/EventDisciplineResponse.java" : "eedf3611e211ffa3e278a4822bd3fe94b4ea0ce9f47364d4f1a4894d2e7565f6",
+    "src/main/java/com/acme/sportplatform/competition/api/PublicEventDetailsResponse.java" : "f401b7d36aefafb8625a24df5c6ab42a99f48d9b164e9d5751fc9c10ba16cabd",
+    "src/main/java/com/acme/sportplatform/competition/api/PublicEventDisciplineResponse.java" : "361f43d8882af71b9e5672e8ff6eac121d43925db88570575eaa2f7006c107c3",
+    "src/main/java/com/acme/sportplatform/competition/api/PublicEventListItemResponse.java" : "a19e0070a41b32e83f090427f4a01f18b162f67bd1d9cdf035d3a479628b364d",
+    "src/main/java/com/acme/sportplatform/competition/application/CreateEventDisciplineUseCase.java" : "6e30ab5e6ffc73d1beeb52b6d49653a445a87e205cd836b5d039883d70ef2344",
+    "src/main/java/com/acme/sportplatform/competition/application/EventDisciplineLookupService.java" : "5081241b791d53daac7277b5224c609c7b7e7974931f4ab0d5c64674b98b74ab",
+    "src/main/java/com/acme/sportplatform/competition/application/EventDisciplineMapper.java" : "fb847c099d0926d49ed6874c7a4d129860565d717c82d1d5d8940b708ad69794",
+    "src/main/java/com/acme/sportplatform/competition/application/ListEventDisciplinesUseCase.java" : "1974c5925d680b7fbeb2651e36718b06b2c1a53a327adb6ef1bd065a8ee1d29f",
+    "src/main/java/com/acme/sportplatform/competition/application/ProtocolDisciplineLookupService.java" : "1efa9f0883518f318e55524adfc3583a42e5f081153c749177d21f39d4dd81eb",
+    "src/main/java/com/acme/sportplatform/competition/application/PublicEventCatalogQueryService.java" : "5953fa6647d72a8364136f5ef21af04ddc57dc388c9f0935a47d8d136ce682a7",
+    "src/main/java/com/acme/sportplatform/competition/application/PublishEventDisciplineUseCase.java" : "7d6325ed146c3e230e4df03c2be22133fbbe42e4a4bebd8a55452b4117d16b33",
+    "src/main/java/com/acme/sportplatform/competition/domain/EventDisciplineStatus.java" : "d741f00532aacc60840ab1279eb808599cdd92120650eea11f978b278035d8c7",
+    "src/main/java/com/acme/sportplatform/competition/infrastructure/jpa/EventDisciplineEntity.java" : "a15a230df809edc17a31772d579f78ad4a139270016dd012de5fc05ea4cc4806",
+    "src/main/java/com/acme/sportplatform/competition/infrastructure/jpa/EventDisciplineRepository.java" : "d0e103e610caa02200ec9f9cf8c023fce1bc03bbfc54d2f54d71094bd65132cf",
+    "src/main/java/com/acme/sportplatform/competition/web/CompetitionController.java" : "1a4c34a29b4cc13a35a234e8a7ff679ce57a61a35a451c3ea861811b7c66759e",
+    "src/main/java/com/acme/sportplatform/competition/web/PublicEventController.java" : "15ea42a5fcb50e91ef613f36edfca42f58cff96c3056b0fd223185bb7dc0fbdb",
+    "src/main/java/com/acme/sportplatform/config/CorsConfig.java" : "6402cb65cf7012affd7217296ab990bef6392a8520512368eca8843157f1e58b",
+    "src/main/java/com/acme/sportplatform/config/MethodSecurityConfig.java" : "068722ba659fbdd3b3760ec4211133f66995f6e8a675929ee5f7f201729cd556",
+    "src/main/java/com/acme/sportplatform/config/PasswordConfig.java" : "7cb8dd284d3d981df82d9399fa5589ba94c6feef82509dd28d872d48ca2a8165",
+    "src/main/java/com/acme/sportplatform/events/EventLookup.java" : "adf722ff09153df02adac50f6a72e28e95430195f74e6822578b23271ada033b",
+    "src/main/java/com/acme/sportplatform/events/EventLookupResult.java" : "ca9cf8ec09d35dee7721b94b7ffefedbe3d56b9ba3f8e82e5a6f9eedf962c9fe",
+    "src/main/java/com/acme/sportplatform/events/EventOperationAccess.java" : "b30785e9fc8f4b4cf929d7fbbeb2083c648e8d8f96d3369fc66664b538feb88c",
+    "src/main/java/com/acme/sportplatform/events/EventPublicLookup.java" : "bde3fe8b7fcad4511961d1e109bbf2c24ce7f749f99cf46eb78cbb82c08e0441",
+    "src/main/java/com/acme/sportplatform/events/EventPublicLookupResult.java" : "5bcdc401c66f9662981351d53b6fbe90a87324888dbd9c4dec2ac5fced8dd9c9",
+    "src/main/java/com/acme/sportplatform/events/ProtocolEventLookup.java" : "15c68de3f711b3ca70c996a5c479a2fd1e20de1a45776d58255412a5f15c156a",
+    "src/main/java/com/acme/sportplatform/events/api/CreateEventRequest.java" : "4f49bf0a354b90501243e376e7ea4e91ae0d77d065cc572abac87fc3d29b9972",
+    "src/main/java/com/acme/sportplatform/events/api/EventOperatorAssignmentResponse.java" : "44848e08f1f91c494bb0f2ae277962486933c8525f0488d34f97ba0c636568bf",
+    "src/main/java/com/acme/sportplatform/events/api/EventResponse.java" : "61a00932cdaa5d58f3c7b9544303b214dfb2cb5abc88807c8f9eac2d41352f26",
+    "src/main/java/com/acme/sportplatform/events/api/PublicEventDetailsResponse.java" : "90aef1bf17c51517533448302650d8e18ec3210fb7199dece578eeaa7ccffc7b",
+    "src/main/java/com/acme/sportplatform/events/application/CloseEventRegistrationUseCase.java" : "d58717cc3da3a657cc75374543aa79703c0322b61ac3ad2f637ba9e80c8d3255",
+    "src/main/java/com/acme/sportplatform/events/application/CompleteEventUseCase.java" : "4e44e2ac8d6aa975ffd5ca4d6022196e494cea6792934117db34d50814d51fab",
+    "src/main/java/com/acme/sportplatform/events/application/CreateEventUseCase.java" : "5185f95ea464af3157c72727cb50427e08e47f58eccc8f7fcafbaf0feee52112",
+    "src/main/java/com/acme/sportplatform/events/application/EventLookupService.java" : "3b3553734400ca1a2e37663a04f876f1d63d096ce40f09825fd67c5b41028d49",
+    "src/main/java/com/acme/sportplatform/events/application/EventMapper.java" : "48af1e4a591b0f1928ed218d2b230c8876c070ea9da938f18ea64e3e1cd96509",
+    "src/main/java/com/acme/sportplatform/events/application/EventOperatorService.java" : "6b8bd23e1bdecd9092395ccad1abf0e24872c28e9571f3dd49d31e24da8a42ed",
+    "src/main/java/com/acme/sportplatform/events/application/EventPublicLookupService.java" : "72cb2e713b471b1854e39562eff5aac9eb41e58a2d303915a6314caeb95f17f0",
+    "src/main/java/com/acme/sportplatform/events/application/OpenEventRegistrationUseCase.java" : "1cbda873f65ae7a981ad0be4c362025cbe71f5ae6f9d3722897085391adcaf2e",
+    "src/main/java/com/acme/sportplatform/events/application/ProtocolEventLookupService.java" : "ffcc3774d230cce5fd08ed343a2d9f74757195b35fa5d74cb3932ae282eee147",
+    "src/main/java/com/acme/sportplatform/events/application/PublishEventUseCase.java" : "a2cd2ecdb799f4a1ac38df07bf3c2b997fa45f90575ecda6aba971915d806e41",
+    "src/main/java/com/acme/sportplatform/events/domain/EventStatus.java" : "a2597d2492ade5eb0f57b4a582ef18cc5f822f92e61981798a05e5a8871e7058",
+    "src/main/java/com/acme/sportplatform/events/infrastructure/persistence/entity/EventEntity.java" : "3ed9634a17bc6f08e2dd7362572325e4cefe0878927f1a6df6f6bd5fd0229af4",
+    "src/main/java/com/acme/sportplatform/events/infrastructure/persistence/repository/EventRepository.java" : "b1b6b912284476c0d50804cd9af4b2f00cc6440f79bfffddfa85f38db3944c4a",
+    "src/main/java/com/acme/sportplatform/events/web/EventController.java" : "931ecbc37f4f4e8d107f40ffea75bb8a00adcdfa4a78bab9be5c9de512915057",
+    "src/main/java/com/acme/sportplatform/events/web/EventOperatorController.java" : "3af41a38b21040730a8346208fb5d3bff7a03888305f33f2278da38817b7e6a5",
+    "src/main/java/com/acme/sportplatform/identity/AuthenticatedUserPrincipal.java" : "5e9cec0a74368f7ae97a777234191f4e3d96ba37d58dc2b1fcb907e402857736",
+    "src/main/java/com/acme/sportplatform/identity/OperatorEligibilityLookup.java" : "c8cf52f356ebf7c40a870b9083c7d4f44c8a4494c26d72baaf859055bb18dd73",
+    "src/main/java/com/acme/sportplatform/identity/ProfileLookup.java" : "3bbdc08b7cd07fc42c669447db0d80cfb56badf28d2cab3cafd8832a60a99a49",
+    "src/main/java/com/acme/sportplatform/identity/ProfileLookupResult.java" : "6cc5abe82098bb099d0f748cbd30815dcb65ea0cbeb5eac985c08bf2511f0a08",
+    "src/main/java/com/acme/sportplatform/identity/api/AssignRoleRequest.java" : "9e619302c8b4a33dcf55617355281a6905add7a454c0f862e008bfd4abdb4a6f",
+    "src/main/java/com/acme/sportplatform/identity/api/AuthTokenResponse.java" : "b20d764374f7c461435a5a4ebee3433e57824bd55fd9f26b015ca05135760ed4",
+    "src/main/java/com/acme/sportplatform/identity/api/CreateUserRequest.java" : "ce6e1d880c4d25ba7befce46a384dddd9df7217a9194e241a8e68165f6b57ecf",
+    "src/main/java/com/acme/sportplatform/identity/api/CurrentUserResponse.java" : "fd5fb117dfdd22ec84c67328630502f19aca3b5e48d701465b96e78791a41f66",
+    "src/main/java/com/acme/sportplatform/identity/api/LoginRequest.java" : "7ca3dc37bd3bfda0490ff54965e0091acf9921b3476470f6ba2c372bb5aeb5e4",
+    "src/main/java/com/acme/sportplatform/identity/api/UpdateUserRequest.java" : "7d5716fa102a836443a64f82a895b2fe34010de5d58acd9abbd39152832739b2",
+    "src/main/java/com/acme/sportplatform/identity/api/UserDetailsResponse.java" : "c7ee14fb840d7b5e23cdb192a0e808a1e9dc5e67375cecc5ac3c59e9eb1e1408",
+    "src/main/java/com/acme/sportplatform/identity/api/UserResponse.java" : "82e559aee4ab12beda355c491e4a1d20a4e754b8495003368bb8086e6087c518",
+    "src/main/java/com/acme/sportplatform/identity/application/AssignRoleToUserUseCase.java" : "2c3f5e8f4be29e24e5a503816166a5438634d3cf1b5a101627b817671e408bf6",
+    "src/main/java/com/acme/sportplatform/identity/application/CreateUserUseCase.java" : "64eff79f18c3d48d9588bb3d1c5b5100604c1ff0dd174dc8a2e61c7ef9f26d45",
+    "src/main/java/com/acme/sportplatform/identity/application/DeleteUserUseCase.java" : "90f6675572d12550fcc7bb531f6e3bebc5baad117f50820de6736f2e245ae0e4",
+    "src/main/java/com/acme/sportplatform/identity/application/GetCurrentUserUseCase.java" : "ce7f19c0d16d147d398670b2b4eed349b7a58649dcb08765257a39b59db11dd5",
+    "src/main/java/com/acme/sportplatform/identity/application/GetUserByIdUseCase.java" : "050b02f18dcd58603e0484ee30b68a343447abc4c5f06474b814528aba9a5666",
+    "src/main/java/com/acme/sportplatform/identity/application/LoginUseCase.java" : "15fa97ae546881749127194f9bf2968bd5a0a3865825b235d1bdc959c0a2d37f",
+    "src/main/java/com/acme/sportplatform/identity/application/OperatorEligibilityLookupService.java" : "f4ae93bee02b40114aeacbfadd47b175002864a2b4938001920105891044657c",
+    "src/main/java/com/acme/sportplatform/identity/application/ProfileLookupService.java" : "ce980fc983cd140e570938488d33e6fe54a7df5633038cb2588df59851362168",
+    "src/main/java/com/acme/sportplatform/identity/application/RevokeRoleFromUserUseCase.java" : "10931181a2c12e97aeaa054c895e9182c5ff30fcfaff6c7a0df996be2dbb73d5",
+    "src/main/java/com/acme/sportplatform/identity/application/UpdateUserUseCase.java" : "117f31756c5f6f036e1f7c880d1f056abd3f406365c3d0cfada31e1750ed4bc3",
+    "src/main/java/com/acme/sportplatform/identity/domain/ExpiredTokenException.java" : "39bfe021b294f14289c1076624bbbb23d9cae509372faf6f06d7d084e6aa4fa9",
+    "src/main/java/com/acme/sportplatform/identity/domain/InvalidCredentialsException.java" : "ab919c1f5e6956a9c039a75e5522a520d9fc67bf334ee04607ada8601ef70034",
+    "src/main/java/com/acme/sportplatform/identity/domain/InvalidTokenException.java" : "1e08289458472eea0b6a7be515c9555af51d27077b7afad4711aee66b90ec4af",
+    "src/main/java/com/acme/sportplatform/identity/domain/RoleCodes.java" : "38776f5c28911429c6583b59008ea8d83644d8ad153dac7d3c1862949290b303",
+    "src/main/java/com/acme/sportplatform/identity/domain/UserAlreadyExistsException.java" : "c98091f07a42132519a2ce30b5b7cdc18e51255bad057eb7d6736285996e5f71",
+    "src/main/java/com/acme/sportplatform/identity/domain/UserNotFoundException.java" : "61ea10c7c953b263c6edb4c15922f299988b29ef599b1f863fd45cbfe09a75f8",
+    "src/main/java/com/acme/sportplatform/identity/domain/UserRoleAssignmentRepository.java" : "f5cf4ae1a82cb282d71ba45445698fa36f09b5594455c25734886a702d9a2c13",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/entity/EventOperatorAssignmentEntity.java" : "702bcdff4c59f63ef2ba5d446daae3ad4a9e901cbeb15d65fe9e672b2221a650",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/entity/ProfileEntity.java" : "c49f9a14702d6741c12f4d4dc352a065ad15b300a857e0e7ab18a733a6fb86c8",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/entity/RoleEntity.java" : "4b3a6e72d363c382c999035576ebaba1f025f9db8cf8a36f2b69019cf61e230a",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/entity/UserEntity.java" : "cc2ea959a38481cf51c83710f82daf71a42fc20a9a3f93453660fcc345b91f41",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/entity/UserRoleAssignmentEntity.java" : "e101a0880fba2a2706822bebcf61dfc8631603f2861ce2192c105ab31e43cce0",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/projection/UserRoleCodeProjection.java" : "94815cc3bf225e3e5f560f15acd1fcfdf10be1fbf53637db83bcc20df6760ec9",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/repository/EventOperatorAssignmentRepository.java" : "65b3859659628ab0384cd4e70b6d7db349fb965b30b8fd738c3506ab087d1a14",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/repository/ProfileRepository.java" : "e8d41a8a7c3d7254ac49aca0ae58eb97c0d66c43a9d05fbf5c0c2e9a073682a5",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/repository/RoleRepository.java" : "89c7b6070404f0a97e9c949d557b4180862d2f775db7fba86879732fb2d1070b",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/repository/UserRepository.java" : "e39453a5f9cd480d29eb4004f7f5e1c224b2bf10c7ba2d46a098adc92804e6dc",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/persistence/repository/UserRoleAssignmentRepository.java" : "82463980a2ac19336b1439bda0195ae8140babebd82b027bd12dc5bb1fcae64a",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/security/JwtAuthenticationFilter.java" : "4d844f0a06ab4dd86689848cbf4ed680e0ce0d5d3e87dea5d21286975de39fbe",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/security/JwtConfig.java" : "44c49f4a465451119fbefb539d752557ecc84fd1362600405c73d338e6c30d4e",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/security/JwtProperties.java" : "ee212a18cb27a744d5a346c8777905483745576196b5d48349c176ed93fb1c53",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/security/JwtService.java" : "fba234bd0f563f78972b6cd7543094022351651a498710eb8f14f04b49577fcb",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/security/PlatformUserDetailsService.java" : "b9b7996caf22bbcec84cf48aab0153685babd164277b01b5587c88da030141e9",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/security/PlatformUserPrincipal.java" : "189f49a2a1a4c6351286c52d745afb7d18ee0a2046b942097cfe6c0d616105ef",
+    "src/main/java/com/acme/sportplatform/identity/infrastructure/security/SecurityConfig.java" : "b6dbc42200fe938a28323182b77aa066acefd68d4c5cb85f3b4486ab486160ca",
+    "src/main/java/com/acme/sportplatform/identity/package-info.java" : "db897ccc9b90092cff65ba55a98412c66bdfa5a61139cc9ee289469e2bb5b706",
+    "src/main/java/com/acme/sportplatform/identity/web/AuthController.java" : "fe42d85601ada53f79be8c0496f6e3192122b712ea0206efb0b7485eced03e63",
+    "src/main/java/com/acme/sportplatform/identity/web/UserController.java" : "fa0fa42f55bfdd9586c487577b9a2f59ebcdc439782ef059831c60a9d4d48977",
+    "src/main/java/com/acme/sportplatform/organizations/OrganizationLookup.java" : "571f96bfbf461f916850080a6406ea286db87c6d485483319a4b6672e38c15d1",
+    "src/main/java/com/acme/sportplatform/organizations/OrganizationManagementAccess.java" : "7469f0a4acc81a1b6e491862db0691c87f38bb1dd4ec8e839ea611457b32caf4",
+    "src/main/java/com/acme/sportplatform/organizations/VenueLookup.java" : "ccddd4fabfb4a789b83952255ad72bb144e90c168e3699ce1af78ca88245e7a7",
+    "src/main/java/com/acme/sportplatform/organizations/api/AddOrganizationMemberRequest.java" : "5883b99100b15e260f561e81e1061e9796fa708aa5898298252f0162e2b5bde4",
+    "src/main/java/com/acme/sportplatform/organizations/api/CreateOrganizationRegistrationRequest.java" : "4ead076d84c4bb76029f7f593f7038d2c7980808cfb76ca4db162a33f29ef05d",
+    "src/main/java/com/acme/sportplatform/organizations/api/CreateOrganizationRequest.java" : "9688970b8bae5fccb1da730a608461a02f2cbd0dddeee9a3e867b73b92e727e4",
+    "src/main/java/com/acme/sportplatform/organizations/api/CreateVenueRequest.java" : "158a22c1e43c29b2ad70abfb255c366b369570542372d9aeadc8439bfc3ceec9",
+    "src/main/java/com/acme/sportplatform/organizations/api/OrganizationRegistrationResponse.java" : "67647249ce60c638f1310ec58144906bad76beeccb00589ef0c82b016e4ae92e",
+    "src/main/java/com/acme/sportplatform/organizations/api/OrganizationResponse.java" : "1977b07663bf0f87cce1bb14894344d97b96e3138b147a5b4537209c3dbcc13e",
+    "src/main/java/com/acme/sportplatform/organizations/api/VenueResponse.java" : "89ad813578afedef2596a9c04dc125325c83919d9b6abf7f4df4c2527780db59",
+    "src/main/java/com/acme/sportplatform/organizations/application/CreateVenueUseCase.java" : "982dd3233237f722c5efc7a24303602a3e98a57bbd3f69982224792f2df36a48",
+    "src/main/java/com/acme/sportplatform/organizations/application/GetVenueByIdUseCase.java" : "62abbf714bb7251429cef16249c28f01bcd3277b8db42f5b7e0676805443f751",
+    "src/main/java/com/acme/sportplatform/organizations/application/GetVenuesUseCase.java" : "87ade6529af1a9c214e6cf647d24478f1a6bd53c5b0d508f665680231c23f47b",
+    "src/main/java/com/acme/sportplatform/organizations/application/OrganizationRegistrationService.java" : "fbf57199b4a68d3e606cd11367af474a307e35be39043fbe81ffdd8687061711",
+    "src/main/java/com/acme/sportplatform/organizations/application/OrganizationService.java" : "dc00c73fd99b4ab544df17b6c88057582fe19099de7f5a26db313afd8e438e91",
+    "src/main/java/com/acme/sportplatform/organizations/application/VenueLookupService.java" : "3bbeb40e8fa635538ae32c32187e6c6f0c78da6c0607804f0c5cc01607f9688f",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/OrganizationEntity.java" : "4043aae6f069c5894cc6bb26dbcd7ff3747ae2db99c342a2ff093dfe0702bdbd",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/OrganizationMemberEntity.java" : "a45793ffef702451ecea883f48e814c902f9c21640fc27cba9eaa1e2f11d347b",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/OrganizationMemberRepository.java" : "bce5b53e0c545b921c2b2a468b76fc02b3262ef9b09b6f95c84869e268c40455",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/OrganizationRegistrationEntity.java" : "0bdcb53fa14b1962ac2cbcf54cb3bc175c27789589b5a1eb6e14c1f0520e2d99",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/OrganizationRegistrationRepository.java" : "8c5fb603acacca9991edd40a83db41e72d7f796778cbcb815eeaa8421792a836",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/OrganizationRepository.java" : "66b5118f289dec20da6c3a7c1cd60383be8f5a3f8d93a3134e2cb87012172362",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/VenueEntity.java" : "0de1d32d41ce01ed2bffbb6894a00882c24dce13b85d413a8d4cd9f9f3e04c12",
+    "src/main/java/com/acme/sportplatform/organizations/infrastructure/jpa/VenueRepository.java" : "e1d2ef3b28a4af4a3249648321be5a0f53f625065ca251f73da2c963b22bcfb4",
+    "src/main/java/com/acme/sportplatform/organizations/web/OrganizationController.java" : "cf134fe4aeaa492f20daeb746eba32471d0d0855f96364c34eaa96ddfa938336",
+    "src/main/java/com/acme/sportplatform/organizations/web/OrganizationRegistrationController.java" : "4ff64f27e5923a89ad5410d28567e6a84ec80b9e556c73d399d156e4d72da318",
+    "src/main/java/com/acme/sportplatform/organizations/web/VenueController.java" : "151e5a8032bd6c0ee59cbc2b2c104aca61fd09a9c5aab2bc20ba5e82afb66dfe",
+    "src/main/java/com/acme/sportplatform/payments/api/PaymentResponse.java" : "652b3397be46249cda26cf1de8a100a8249e133331722ddbe1e54f29b8800e9f",
+    "src/main/java/com/acme/sportplatform/payments/application/ApplyProviderPaymentResultUseCase.java" : "a13a2497ef7306941b1962326589d164344672f6cfab21ae3fae2c44703a1ee8",
+    "src/main/java/com/acme/sportplatform/payments/application/ConfirmPaymentUseCase.java" : "20eefe9b2433fee6dadfa7fde7cdde1a5005100c4604df46b33fff06c8337cd7",
+    "src/main/java/com/acme/sportplatform/payments/application/CreateLocalPaymentForRegistrationUseCase.java" : "b485ae7653458e0e3df2e27cad434c0bdf77cb375a0156c915b324dc2bcf8a70",
+    "src/main/java/com/acme/sportplatform/payments/application/CreatePaymentForRegistrationUseCase.java" : "dd72fc47f40729429eed585e162eb7ecf4bddbdaa620c0b8781125dbb887f098",
+    "src/main/java/com/acme/sportplatform/payments/application/CreatedLocalPayment.java" : "549d865e65291b7d71d26a8d0f400d325bae9f121b27f71cb0bbac2e868716ba",
+    "src/main/java/com/acme/sportplatform/payments/application/GetPaymentForRegistrationUseCase.java" : "832158d3c43d7e196e454cf446e8615933f537e0697fc99f8677211aa830cd89",
+    "src/main/java/com/acme/sportplatform/payments/application/GetPaymentForReviewUseCase.java" : "6e542694409692864d77ac8f230d5c16a424bdb2ca374a577ba5c6277d2ef50c",
+    "src/main/java/com/acme/sportplatform/payments/application/PaymentMapper.java" : "e13155216d1190d543e930f7cf2dafe1ae84ccd73c5497a3949f71c6103c996b",
+    "src/main/java/com/acme/sportplatform/payments/application/ProcessYooKassaWebhookUseCase.java" : "77ad2e7736c2d45adbcc5966c8047af3e634363a2232fbb6f432ebf5e216810d",
+    "src/main/java/com/acme/sportplatform/payments/application/ReceiveYooKassaWebhookUseCase.java" : "9ee173105285af7f0f7c9c535dcf11366abc06d274cde01b6d2108fc585d59d9",
+    "src/main/java/com/acme/sportplatform/payments/domain/PaymentProvider.java" : "119b5a236863f4424b89f8fb226e7373af78dcd8e4f56cd6a96b0be1f9de7e50",
+    "src/main/java/com/acme/sportplatform/payments/domain/PaymentStatus.java" : "7de27432e9c796179c385651989f0d75c64b4bcf742306b2f4bce09c41309f00",
+    "src/main/java/com/acme/sportplatform/payments/domain/PaymentWebhookProcessingStatus.java" : "ffe99bb88aa1d6a88472af7ebcdfa946e9519ef7536bc0dd53ef7817db5fdf1e",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/config/PaymentsConfiguration.java" : "b955d7f33b38249b102b0344623dd4786ba16bec0c70604d4fff88c0af218a5f",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/jpa/PaymentEntity.java" : "d566038fb92bff5aa520cf637e1ac89e5493289a2e9083a0ac97fe0978f979f3",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/jpa/PaymentRepository.java" : "c50d5d2bc6be409bbf08d69ff6807dfd8d489bb71c022cf98cb09f274d14af8b",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/jpa/PaymentWebhookEventEntity.java" : "432f877a6730e15abf81ecf1216a3dc1d79fed2c2b19214d1559b0b358bdefdd",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/jpa/PaymentWebhookEventRepository.java" : "510f07edad937139fe51921ec526097c1e8184fd3edb6d9a98ad137c2e9eeedc",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/manual/ManualPaymentProviderClient.java" : "c4594b87b0635f08581bb82dbf9bfaa1886a82aeed3def7b01f6d82084f1549f",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/YooKassaPaymentProviderClient.java" : "80ac9f6a66a5484268da84f265497e8cad48f00ebed669101528776a69f28c0f",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/YooKassaProperties.java" : "75885672738af83ae399d187562da104ce25ee2843138b9e53f48794bf19b207",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/api/YooKassaAmount.java" : "79c1f1347268d139b86889cc456c0257e21671425737cd99f49cecad856106b5",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/api/YooKassaConfirmation.java" : "a7e08f3efb817fdca884d43b1d7e471064133ee81f1d7aaa6b00696ee759da43",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/api/YooKassaConfirmationResponse.java" : "6fbf3f9dea6eef295c604decfb51c9a6e353639667e9a8f4d6aa97549571f7b8",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/api/YooKassaCreatePaymentRequest.java" : "8cc947e11a786fe84ab0cc86fb4c33324da38632877ba6452ec7cc0452fe2df3",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/api/YooKassaMetadata.java" : "da14226feb873f9b0cca07ca59591a094ca17449e12679db1ae210185df2a545",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/api/YooKassaPaymentResponse.java" : "e684c4e8508a145d07bb73f2e2031312ded8e1913d29e9c9a68721469eeffb3d",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/webhook/YooKassaWebhookPayload.java" : "060241c5498476615a86cdc13991593c2b8735c8069638ae9649f9c84230240e",
+    "src/main/java/com/acme/sportplatform/payments/infrastructure/yookassa/webhook/YooKassaWebhookPaymentObject.java" : "124c84f05fe4fcfa9f58c7526ab84a2f1969beb8fb20fc545bcfbddbe7bd75dc",
+    "src/main/java/com/acme/sportplatform/payments/provider/PaymentProviderClient.java" : "5e1703b19fef9c984467d32b74e93794c387f3d5c2b2f544948f3eceb33881a5",
+    "src/main/java/com/acme/sportplatform/payments/provider/PaymentProviderClientResolver.java" : "89b5d729f5a2a39734b6f005205b90ffb383e64fee4fdf75468b81341da504c9",
+    "src/main/java/com/acme/sportplatform/payments/provider/PaymentProviderProperties.java" : "cbf6e869bedabd954f386a5f09e2f74a24b14f3092e065f54a7bfd8f39c4680a",
+    "src/main/java/com/acme/sportplatform/payments/provider/ProviderPaymentCommand.java" : "61ca53962758b90a6553052dc4f644aaf78df4343ac6b0bf1ee3405112e26e22",
+    "src/main/java/com/acme/sportplatform/payments/provider/ProviderPaymentResult.java" : "f16ee10fdc5acd352bf231327e5c449553e805a5686cb1c349e68576af39132d",
+    "src/main/java/com/acme/sportplatform/payments/web/PaymentReviewController.java" : "79165e188cd0d23837fc50331e6be644e06b0e28be859d57018403955785e23c",
+    "src/main/java/com/acme/sportplatform/payments/web/PaymentReviewQueryController.java" : "18aae154e00c642a0fc8b91c6c5eb3f7ab0c0b3442e78bad3dd90ac3577ead59",
+    "src/main/java/com/acme/sportplatform/payments/web/PaymentsController.java" : "6ac92300786ff348cee12c1b633119354219da6f670b7b3453993a0c718722f5",
+    "src/main/java/com/acme/sportplatform/payments/web/YooKassaWebhookController.java" : "98a9e4a9644fcc07e8e79390d22375e77a778107541db370acc061093d2806e8",
+    "src/main/java/com/acme/sportplatform/protocol/CompetitionUnitProtocolAccess.java" : "0f90d38809dd7ce6162a7f5cb51e43d7a4879b1d5f98e8b016adbc9d1b69dae6",
+    "src/main/java/com/acme/sportplatform/protocol/EventProtocolAccess.java" : "dc68c9057724bc0ad40196eb4cf3ef465825b53d2fb60cac36737a2b81e3a3a8",
+    "src/main/java/com/acme/sportplatform/protocol/RegistrationProtocolAccess.java" : "7f571521fb6cea2123bb09a81d26409b6dc1cc5450cbb2df912be664c9cb260d",
+    "src/main/java/com/acme/sportplatform/protocol/SessionProtocolSnapshotAccess.java" : "48b67a850658bc62b8355eddbafd0d02a9a8985f39782b998ee72fdf2e04eee1",
+    "src/main/java/com/acme/sportplatform/protocol/api/CreateProtocolRuleSetRequest.java" : "145edeb52c2d988be1e20a6b508a16697a23b6a93725331d7b2e30a204e2834e",
+    "src/main/java/com/acme/sportplatform/protocol/api/GenerateStartProtocolRequest.java" : "33e4801a5171dba4c2f8569932d2b59215e7d2b1d758101ffef427445244b2ba",
+    "src/main/java/com/acme/sportplatform/protocol/api/GeneratedAssignmentResponse.java" : "0ee884b7959066d64b382a7d711c6a4f6c4f6dbd054a700da8a93a55021b67e7",
+    "src/main/java/com/acme/sportplatform/protocol/api/GeneratedCompetitionUnitResponse.java" : "cc54fa0d6063e5cb57ba1d8a921928635a52d71686b7c76eaa290f0dea862d15",
+    "src/main/java/com/acme/sportplatform/protocol/api/ProtocolRuleSetResponse.java" : "cd426e9dd5b52bc854fac5872d9c0b1711783688edcc22cf5a7900fecb9e4bcb",
+    "src/main/java/com/acme/sportplatform/protocol/api/RuleBlockRequest.java" : "80e944d16237f2716737201fe4d0b2e4fa86eabd9c95b8597178c95290ae5267",
+    "src/main/java/com/acme/sportplatform/protocol/api/RuleBlockResponse.java" : "e25dd06f09234e1b9e19b325dbc51d5f2ccb47f8582e56fa403f10fc9f6b6bbd",
+    "src/main/java/com/acme/sportplatform/protocol/api/StartProtocolResponse.java" : "d655934383b75dfb268a0d663600ba2a8faefed7868623e76f9b4169149c2e72",
+    "src/main/java/com/acme/sportplatform/protocol/application/CompetitionUnitProtocolAccessService.java" : "82ccafd7eea8e66ddcf27a8125bf4d09c24945e1df6a17ab554f15a229c43686",
+    "src/main/java/com/acme/sportplatform/protocol/application/CreateProtocolRuleSetUseCase.java" : "934fb2199b724a1ef6196a4c9316bc732e4eb80a270b258ec0c6a1993ea1a8b6",
+    "src/main/java/com/acme/sportplatform/protocol/application/EventProtocolAccessService.java" : "1feef2feacb8020f6c981e8a4dc3f0136aa6fea7d8f66192a86a70fa10f75474",
+    "src/main/java/com/acme/sportplatform/protocol/application/GenerateSessionProtocolUseCase.java" : "57d6fc0cf022c8f09d999791d53ffbceadaa8823f8f3ab4377b035cfd67e9012",
+    "src/main/java/com/acme/sportplatform/protocol/application/GenerateStartProtocolUseCase.java" : "403120a64a880a90a57aa35f369ad50321090bfb8e22808c575ba81df72787d9",
+    "src/main/java/com/acme/sportplatform/protocol/application/GeneratedAssignment.java" : "e9f916f96a3d06ee3446c0bfba421f3e3638fd9e987372cb4c37adb9b97a5638",
+    "src/main/java/com/acme/sportplatform/protocol/application/GeneratedCompetitionUnit.java" : "4d4075aad67b1e3a9043f1d5b6e6a0793c8b17fbd7c9d4aa2e9f115bb4e0f138",
+    "src/main/java/com/acme/sportplatform/protocol/application/GetProtocolRuleSetByIdUseCase.java" : "f6326d423d43b109ea3b427a05c016f1cbba098c8fb4b0372ab082a06048f73f",
+    "src/main/java/com/acme/sportplatform/protocol/application/GetStartProtocolUseCase.java" : "66f221bc3c1be4160985ff53d6a0b8a7d32ea794c50fdc5cbb0a60b618623245",
+    "src/main/java/com/acme/sportplatform/protocol/application/PrepareStartProtocol.java" : "bb2a3e977716dabafa32a3ee0271747f7a4e2cf5fffc204a52c254b8b2975e94",
+    "src/main/java/com/acme/sportplatform/protocol/application/PreparedStartProtocol.java" : "99d31310cae23b9f76ae10f14dd7b34a2ef9b3b55910b46b70a11d3ca9f63cb6",
+    "src/main/java/com/acme/sportplatform/protocol/application/ProtocolGenerationContext.java" : "3bd4e06425ab7d649ef3fdbe7ffd393b611d827e2beeb60fd2e75f7467c1c051",
+    "src/main/java/com/acme/sportplatform/protocol/application/ProtocolGenerationResult.java" : "fd639fcc645a30b67573095ec340391e423088397624de7bd8b3516f0f15bb50",
+    "src/main/java/com/acme/sportplatform/protocol/application/ProtocolRuleSetMapper.java" : "f05473df315d004639847b79b60b6a78262c0ee6d25c9c7ed4b21fc99475fabc",
+    "src/main/java/com/acme/sportplatform/protocol/application/ProtocolRuleSetValidator.java" : "a965bf66d565eedb187a007c329bf4055b31080184ae70045c4ef868525c2f89",
+    "src/main/java/com/acme/sportplatform/protocol/application/PublishProtocolRuleSetVersionUseCase.java" : "d6433fe49f2f3989c0de1fb3db3d38b3af4654be3c49882bef02c677881ae956",
+    "src/main/java/com/acme/sportplatform/protocol/application/PublishedProtocolRulesResolver.java" : "978f0a8bf892313cc7f5762d022957131123f2462c1542d2c04aae356ca4cccd",
+    "src/main/java/com/acme/sportplatform/protocol/application/RegistrationProtocolAccessService.java" : "c7b5a7863fe0a4902aaa2337c64463702f396daf93be5c2c8cdd19b38b513e94",
+    "src/main/java/com/acme/sportplatform/protocol/application/ResolvedProtocolRules.java" : "469f27d415219eb2481b123e6f0a46e2ac7cbcdbaec8d15ad4a0ad4300cb1336",
+    "src/main/java/com/acme/sportplatform/protocol/application/RuleBlockExecutor.java" : "3367eb228ba10a0f986ed0d6ad143046bdb7e3f7a979d007aa63a7f0bdaf06d8",
+    "src/main/java/com/acme/sportplatform/protocol/application/RuleExecutorRegistry.java" : "3ffa3dbab71e15ef6e5ea217c231d9d50e87600720dde534fb66bc6f6c666ed0",
+    "src/main/java/com/acme/sportplatform/protocol/application/SeedParticipant.java" : "49f10bf9e9a65655487b02984d05cb6e639ee7729596e1bc524d832460a66cd7",
+    "src/main/java/com/acme/sportplatform/protocol/application/schedule/GenerateSessionProtocolCommand.java" : "23a5f3e65359d3c7aaae1f6e23871d134f86be655baff50721e27ca24dc971b6",
+    "src/main/java/com/acme/sportplatform/protocol/application/schedule/ScheduledProtocolBinding.java" : "676df615b6a38cd2a749fd0b8158b0d1600763a0cc7bf1ee7aa9a7acd2797b96",
+    "src/main/java/com/acme/sportplatform/protocol/application/schedule/SessionProtocolGenerationResult.java" : "14aa5d0d310cef7968d1a69b62a0b11fd34068d71fac03c954970bbb9fe2e04c",
+    "src/main/java/com/acme/sportplatform/protocol/application/strategy/AssignCenterOutExecutor.java" : "cf4cea893d932d24b5b063c537ff7e85e7390d94994f43dbc32c8ad90e590fb6",
+    "src/main/java/com/acme/sportplatform/protocol/application/strategy/EligibilityConfirmedOnlyExecutor.java" : "e83cc31ebb6b2ddcf7df92e526127b9d966bf46dc2d50e71a6f6c8bf5eed422c",
+    "src/main/java/com/acme/sportplatform/protocol/application/strategy/GroupByCapacityExecutor.java" : "1c45c34586a2541fdc34e9893df772d16f075c03341bd4469d61b1e2d6f7cf33",
+    "src/main/java/com/acme/sportplatform/protocol/application/strategy/PrepareProtocolSchedule.java" : "d8eca041e714743808ad000b0fc28c25cfa8585612c6bc000e308a7840955183",
+    "src/main/java/com/acme/sportplatform/protocol/application/strategy/ProtocolScheduleInputAdapter.java" : "3a86ece8612823f816a9918a7937625c54c51b752c4d7acf846b70d76cc43da5",
+    "src/main/java/com/acme/sportplatform/protocol/application/strategy/SeedByMetricAscNullsLastExecutor.java" : "3608f1dda2f359c031a4d1cd8281916deaca793d011c31de1a646ecd19b2e3ee",
+    "src/main/java/com/acme/sportplatform/protocol/domain/CompetitionFormat.java" : "14f5118ae54b4efa8366e4946d324fd08e5bd72f1638b12b2c7f4fb1ed88f437",
+    "src/main/java/com/acme/sportplatform/protocol/domain/ProtocolGenerationStatus.java" : "f6ad2232d9c9a9ce7846b53840237ebb14589f21feb265c38fea219d3fb345b6",
+    "src/main/java/com/acme/sportplatform/protocol/domain/ProtocolRuleSetStatus.java" : "2a65042af459d62368a658e30153204fbeecac55d2275c1a4566745ff06341a9",
+    "src/main/java/com/acme/sportplatform/protocol/domain/ProtocolUnitType.java" : "5681a07c97eb7f3e132819b6bd7f9307f96e987ea8acea2cde3c19c823e3fea5",
+    "src/main/java/com/acme/sportplatform/protocol/domain/RuleBlockType.java" : "5f3280784a768a418b119974321014efcaf730b4b6d7855cb5c75716092ec3d6",
+    "src/main/java/com/acme/sportplatform/protocol/domain/schedule/FixedOrderProtocolScheduler.java" : "2bbad6dc9f1a3e36fa1f153f3cb10182aafb07b44e3c692936ec947d3af92a48",
+    "src/main/java/com/acme/sportplatform/protocol/domain/schedule/ProtocolScheduleModel.java" : "b4e8342e7b6d859cf813e655db4aea1b2cdb824934de051961f51a7b9228d00b",
+    "src/main/java/com/acme/sportplatform/protocol/domain/schedule/ProtocolScheduleValidator.java" : "cd864f3e11042cd369c44bb319bb40292cff5752b4e4d0065f2a1b78c3872e9a",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/ProtocolRuleBlockEntity.java" : "cd68b314e453c2360f6e1fd75fdcdae93597db388995d80b18c24de69f8e29ea",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/ProtocolRuleBlockRepository.java" : "20c30d6117904e8c18110f7dfb15c01dba0032946adb1585903e83fc9f58edea",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/ProtocolRuleSetEntity.java" : "e7e8be1cff2c290e1edc13113dadba4ccb5095881544d266ef4a3cc99e7c9c99",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/ProtocolRuleSetRepository.java" : "4c2e67f47362565e48245e7f6409fe33c4b8aee75d9dfd85ba90195e7f4d5a34",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/ProtocolRuleSetVersionEntity.java" : "65483996963fd5a7a6fa07e26eb32a87f8e996c154670f25121b9292366616c8",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/ProtocolRuleSetVersionRepository.java" : "85be409f1c1e3ae08f68cfef3d26a9e044b0acd77ff92f96777b1ee53464615b",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/SessionProtocolSnapshotStore.java" : "87c592b1745846f1e6f9996a6012f193df27a88acdb2bdb76c0a04edbb368b13",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/StartProtocolSnapshotEntity.java" : "f8ff546d24632a98502c036d286e31b6135de34dcc9adda466cadafb39714376",
+    "src/main/java/com/acme/sportplatform/protocol/infrastructure/jpa/StartProtocolSnapshotRepository.java" : "23407e7d37e6b08382fbfc955c96b3da6fe65657b35d378238a69d9e6e38101c",
+    "src/main/java/com/acme/sportplatform/protocol/web/ProtocolRuleSetController.java" : "fbb6248acae654ee01272f33d5029e035381bd8c6926aff1d14643ec270a59bf",
+    "src/main/java/com/acme/sportplatform/protocol/web/StartProtocolController.java" : "1c00876b25a93bed89c02a5fe4a64ccaa9310dc80b71fdd0f44725b7e1ab25cb",
+    "src/main/java/com/acme/sportplatform/registrations/RegistrationLookup.java" : "2dfca4183f772505ec412e1529661884696702569fc18bb43aafaf7f14688805",
+    "src/main/java/com/acme/sportplatform/registrations/RegistrationLookupResult.java" : "c3ffc64cfe88be1f4eadb6fc90281270fd9871f522047c9f61d1f11f579d5a21",
+    "src/main/java/com/acme/sportplatform/registrations/api/CreateRegistrationRequest.java" : "82bab872757b4d7a9ce25198d8b538a564aa48a0934d753b102c222f9fd8d8fc",
+    "src/main/java/com/acme/sportplatform/registrations/api/RegistrationResponse.java" : "386c870dc15f6628f1f1ea2ab02adc9254257fe0ce89d9a92180a3954028dac7",
+    "src/main/java/com/acme/sportplatform/registrations/api/ReviewRegistrationRequest.java" : "b06333b3e828b484def1e5905975f76d36bbcd9cbf6db1a8559374d38e3bd27a",
+    "src/main/java/com/acme/sportplatform/registrations/application/CreateRegistrationUseCase.java" : "9d92992a2fc842629cf48f4f4aafd724fe9c753a16d6fa3eb52ca38d2c13f0af",
+    "src/main/java/com/acme/sportplatform/registrations/application/GetRegistrationByIdUseCase.java" : "6571877be0d88b2665263e905b1a257ff2aec73678e16433f7ac065f27424f93",
+    "src/main/java/com/acme/sportplatform/registrations/application/ListMyRegistrationsUseCase.java" : "594e79e1ac7361766b26a5420b172f8ada0d915e9cb259a02aece4ccecc9bda0",
+    "src/main/java/com/acme/sportplatform/registrations/application/ListRegistrationsForReviewUseCase.java" : "49eb362c7332d4af19a7a47b1971d1a6ba1f402cc9170fa545da9408ee2eea10",
+    "src/main/java/com/acme/sportplatform/registrations/application/RegistrationLookupService.java" : "b4ffe5f6f5736f50cf2a64901f80c900630b4ad8821c7f587fc1ef4ef4946f05",
+    "src/main/java/com/acme/sportplatform/registrations/application/RegistrationMapper.java" : "1f824a1e77c6e0059e103cd9f4d4764647deb64ec2a7a5fd23de7a64d4823376",
+    "src/main/java/com/acme/sportplatform/registrations/application/ReviewRegistrationUseCase.java" : "3c9c7bf9b0b6a94cc9c75b8bb76ab83a53d52ca579f1c0d4dbb123b92037e9e9",
+    "src/main/java/com/acme/sportplatform/registrations/domain/RegistrationReviewDecision.java" : "363814f2eed68bf26f04dda2d11e93d674f552543fa2653a9eaf1ea3419fdffa",
+    "src/main/java/com/acme/sportplatform/registrations/domain/RegistrationStatus.java" : "2f3aedd0df5c96947967f604df7e69e06add73630e5f42854a4b47ee60400648",
+    "src/main/java/com/acme/sportplatform/registrations/infrastructure/jpa/RegistrationEntity.java" : "c0262abf623707d23843379d25839b4728d7e4901c89e0dd2a394cb5ea02923b",
+    "src/main/java/com/acme/sportplatform/registrations/infrastructure/jpa/RegistrationRepository.java" : "42b6841e40639ca02e10fa63a89c9e601cdcc656ed97e201b66cdea63f5a3cf7",
+    "src/main/java/com/acme/sportplatform/registrations/web/RegistrationController.java" : "be425192ced9bcee896c6deabe6c89bacf0c574e7b7213af1888c0267f073550",
+    "src/main/java/com/acme/sportplatform/regulations/RegulationVersionLookup.java" : "a34ee69a33946a00869990d6a0947bb92bb9f0cfebdfefef1715f802fe1d0729",
+    "src/main/java/com/acme/sportplatform/regulations/RegulationVersionLookupResult.java" : "35e3af3d3f5ac593c195c3d2b42009f4d7377174c232409cf08b91b2407e1a14",
+    "src/main/java/com/acme/sportplatform/regulations/api/CreateRegulationTemplateRequest.java" : "9ac53d47f34086569aa0d9682365f90832e0595b68534ce1ffebe5865f4ced04",
+    "src/main/java/com/acme/sportplatform/regulations/api/CreateRegulationVersionRequest.java" : "dec680e914a27b9d0a14bfca102d05de0dc150a1c6533ab9ac5a9e59a1cfea51",
+    "src/main/java/com/acme/sportplatform/regulations/api/RegulationRules.java" : "36670498a68d2c783099d9cb8606cfe6b91cdfaadc7237588b169a9d0e03ef7d",
+    "src/main/java/com/acme/sportplatform/regulations/api/RegulationSection.java" : "9270f8ac23370b58678c956b953e1834282c574b5d0e8ae3a2d6749e4d07f91b",
+    "src/main/java/com/acme/sportplatform/regulations/api/RegulationTemplateResponse.java" : "d957d08f818ec12f6e42b50b8bf2f3c4fb896d312304a65a4ce17d44494fa470",
+    "src/main/java/com/acme/sportplatform/regulations/api/RegulationVersionResponse.java" : "e936b429c9a463c039a6ee65d14ec4e3014ed2a0a92ec575a2440ed74410112e",
+    "src/main/java/com/acme/sportplatform/regulations/application/RegulationService.java" : "d599536851241a0f87276bf6b6f1ccd38807d3fa7acc06b2c09e53ec4ee64888",
+    "src/main/java/com/acme/sportplatform/regulations/application/RegulationVersionLookupService.java" : "a021ca767ad1e6df007c3f38674e518ac76fba87a914ffc9f17f95ed8e13f33b",
+    "src/main/java/com/acme/sportplatform/regulations/infrastructure/jpa/RegulationTemplateEntity.java" : "d640a82e28c40b8b03f17bde336afc91c436c2b95737cfb0be147f46fc37632d",
+    "src/main/java/com/acme/sportplatform/regulations/infrastructure/jpa/RegulationTemplateRepository.java" : "e7e7a666238cf329fa85a7c1ee51eb51b53eb35e8eb409208952b5de574ba9b7",
+    "src/main/java/com/acme/sportplatform/regulations/infrastructure/jpa/RegulationVersionRepository.java" : "063f751b399f6db2f18fd1a21fc0252feea7ecde63486df7915d129aebe7be91",
+    "src/main/java/com/acme/sportplatform/regulations/web/RegulationController.java" : "1de2048ee1250b036426667a1c8a49ebf4ac4ca6d7b2c00cea148deb9d0e1e9c",
+    "src/main/java/com/acme/sportplatform/results/ResultsCompetitionUnitDraft.java" : "47c85269bb8b5a13bc7fad9a453dbfddab35b0efc98d16965cd2e30a49226afb",
+    "src/main/java/com/acme/sportplatform/results/ResultsCompetitionUnitEntryDraft.java" : "7a6a6518a9daa9fa4a2620d7189230d1aa526db0b5def39900a6c504c0f95208",
+    "src/main/java/com/acme/sportplatform/results/ResultsCompetitionUnitEntryView.java" : "b30fe3aeeaa8f7ce2421bf4798cb65656b94741a2596079bd29d6edf8afecc2f",
+    "src/main/java/com/acme/sportplatform/results/ResultsCompetitionUnitView.java" : "475717ce98683be4a85e524dd923198ca4638157d17d35175f33574be92cd1a4",
+    "src/main/java/com/acme/sportplatform/results/ResultsProtocolGateway.java" : "1ec545c59b07fa2a3a37191425e749a018bec59f508363dc24a41e4dd8c0ebcf",
+    "src/main/java/com/acme/sportplatform/results/api/AssignRegistrationRequest.java" : "7b38dbcb3389de29eb9956ce11397727101c59b473bbb8a2ff2da8777d377c37",
+    "src/main/java/com/acme/sportplatform/results/api/CompetitionUnitDetailsResponse.java" : "de627efae042efb6fdfc48e0b0482c545f754b3af6d1590717222c5d882bf400",
+    "src/main/java/com/acme/sportplatform/results/api/CompetitionUnitResponse.java" : "d2fa694f040cbc8977da900177ee96f40eab45dcdb0f931d650d1071b2ffd48a",
+    "src/main/java/com/acme/sportplatform/results/api/CreateCompetitionUnitRequest.java" : "fc300981f13de874fa4d6aeb4a1cf634ce454bd62fe9110e93c275dda731bb60",
+    "src/main/java/com/acme/sportplatform/results/api/PublicCompetitionUnitResultsResponse.java" : "2191b60de364531cd69b714f1861aa6927828c6ae0653c249d5c24278aee48f6",
+    "src/main/java/com/acme/sportplatform/results/api/PublicDisciplineResultsResponse.java" : "9ba2f007f5c75a43202434cb15c7db0523c6817a42eae4eb11db64d30d633a82",
+    "src/main/java/com/acme/sportplatform/results/api/PublicDisciplineStandingsResponse.java" : "edb793baf479453efd45bdead4611819ac6f73c414a23609a38ee9ff3d217980",
+    "src/main/java/com/acme/sportplatform/results/api/PublishCompetitionUnitRequest.java" : "b131907c4d7190e52b3a0504e7469a49658748b7d296d02a00e31e60b0ae3269",
+    "src/main/java/com/acme/sportplatform/results/api/RecordResultRequest.java" : "f83f1ea5781d7cbf210a3f37f3d9ab63c039ef31b8aa8ed7308be81db0c0f1ff",
+    "src/main/java/com/acme/sportplatform/results/api/ResultResponse.java" : "0e41c00375d065ec54f1b21f4118957d7ca449283b2f58a0ce5e949999c2f7b9",
+    "src/main/java/com/acme/sportplatform/results/application/AssignRegistrationToUnitUseCase.java" : "855f5638350c751a341ffe6aa6fa58564953150827f56a0b72bd31509b6f6146",
+    "src/main/java/com/acme/sportplatform/results/application/CompetitionUnitWriteLock.java" : "cddc47839acfe76af0d1c7e373f539ffe5200bc27e23ae345afc1db76b0f1b80",
+    "src/main/java/com/acme/sportplatform/results/application/CreateCompetitionUnitUseCase.java" : "a561b272f23b7daa9ba61f5d1ed85932fa18c6f6f433697291323c33503ba4bb",
+    "src/main/java/com/acme/sportplatform/results/application/DisciplineResultPolicy.java" : "1a461dec63e519d4003e99ce4b9591285a4c45476e6217d5a9a62a3522fb041c",
+    "src/main/java/com/acme/sportplatform/results/application/GetCompetitionUnitDetailsUseCase.java" : "694be5eb86a5aacd7ca935df4e54a6b6b2156d740a3b33a0ab4705fbff632f6a",
+    "src/main/java/com/acme/sportplatform/results/application/GetPublicCompetitionUnitResultsUseCase.java" : "a54f9ed63682120ac995bb928f29e9f035672a1ebc37730a28421cfa94489620",
+    "src/main/java/com/acme/sportplatform/results/application/GetPublicDisciplineResultsUseCase.java" : "89bbe45b2b1619ed8238e0dcf2be6540c0d43b3111ddbf56950b732d806f9eb8",
+    "src/main/java/com/acme/sportplatform/results/application/GetPublicDisciplineStandingsUseCase.java" : "4c321911d76ff2b50ebdafc28e02fb28aedcfffab139dff533c47aadb144f1ae",
+    "src/main/java/com/acme/sportplatform/results/application/PublishCompetitionUnitUseCase.java" : "941c7614fdbade9a69869bd7b0ad548417764bd0ef9636676dbc65e1958d7419",
+    "src/main/java/com/acme/sportplatform/results/application/RecalculatePlacesUseCase.java" : "27261e33f7d9c08e4adbae374b5503ab26474e355798c439e9a32abd640d7937",
+    "src/main/java/com/acme/sportplatform/results/application/RecordResultAndRecalculateUseCase.java" : "baa9a022717e5c5042d296afc252df3bda9d15fd32643411263816d482f17461",
+    "src/main/java/com/acme/sportplatform/results/application/RecordResultUseCase.java" : "6af12c6766e6bc6cc4a00e80b70cf6a35f80c9b90ade42cb3d830c1059a8b53d",
+    "src/main/java/com/acme/sportplatform/results/application/ResultsAccess.java" : "6f091ecc5ec14cf6274ee5cea2ed67bdc597d37ca0b2eea20343411839e4a1f6",
+    "src/main/java/com/acme/sportplatform/results/application/ResultsProtocolGatewayService.java" : "0198be87f16dd5a5d2e069e365fec841cdc1a633d9d1768484787a0577e09550",
+    "src/main/java/com/acme/sportplatform/results/domain/CompetitionUnitStatus.java" : "cb7fd0390ce4c57e941170c9dc5a32c801197ec46269de4086ca0a4d072ff72c",
+    "src/main/java/com/acme/sportplatform/results/domain/ResultStatus.java" : "f7981fe2696299d6e6b8c4aed77c8a63a2de72f0d24fe843fd150905df420b7e",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitEntity.java" : "3ba20ce98ca85dd1b64577a6ee8a0a22e537e12d2c1d481275e606bdabf50239",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitEntryEntity.java" : "f4c105279012864d9b4832513f63468c9b3ad93e705b22a8998f86e949dc3795",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitEntryRepository.java" : "0abdbc0d00966a6a967e431a8623cd56be9b5f24fccd934a816e9bfa61a3fc71",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/CompetitionUnitRepository.java" : "e3bf8e75d20fa5593a0e2f579dbcc2eacd798b2890253ffad728382834fdb0c2",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/ResultEntity.java" : "4a634f133fad238b0cfa155fd0b3480e752be5e357137d90aa8dd9145e01f323",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/ResultRepository.java" : "9d6cb58921a6fb7cf828d181c6cfb1b108cf7131397fae511ea4ee55db23f72c",
+    "src/main/java/com/acme/sportplatform/results/infrastructure/jpa/SqlPlacesRecalculator.java" : "482092a5e9cc730162efd8e3566053ea24fc135624983c0a1fd58fa4e10f93e9",
+    "src/main/java/com/acme/sportplatform/results/web/PublicResultsController.java" : "f153118cbd69fe3ffda474affd36bb37bc111f67b96d1979013ce902f2f3768e",
+    "src/main/java/com/acme/sportplatform/results/web/PublicStandingsController.java" : "5066a52153cd3b6c6712af7f216f43871abdc134bbec30b5302fe6fcbdd6f809",
+    "src/main/java/com/acme/sportplatform/results/web/ResultsController.java" : "f7abcf17ec5a5dd7c8d4c55ae281026995a7f232c8341a77e158e085c44bd9f0",
+    "src/main/java/com/acme/sportplatform/sports/DisciplineTemplateLookup.java" : "274210bc82840e4603e70c017094047f60d78e25ca779789048bc040af472771",
+    "src/main/java/com/acme/sportplatform/sports/DisciplineTemplateLookupResult.java" : "86622894726b40b67bcb8c79733448d016a3d995ecff22d439c003adcfe31d8c",
+    "src/main/java/com/acme/sportplatform/sports/SportLookup.java" : "bbe927c392bef11f3120e41793966f7347ccd26f8cdd5622bc1b979317578d51",
+    "src/main/java/com/acme/sportplatform/sports/api/CreateDisciplineTemplateRequest.java" : "a61687ff9c3779e40af29c4da689036b8e1e4c8b48ed56bdb2616043fe9de9b7",
+    "src/main/java/com/acme/sportplatform/sports/api/CreateSportRequest.java" : "c365190171f0857d5ee276f7bc57c2768b1013b339e304826510281d82ac18c7",
+    "src/main/java/com/acme/sportplatform/sports/api/DisciplineTemplateResponse.java" : "deb829a335df1c26c4f181a3bcbf6769f738e9bd0404beb1bf710056332d77f5",
+    "src/main/java/com/acme/sportplatform/sports/api/SportResponse.java" : "8c4b3c7a4700c41a4fa57d765f693504f57299af3314dbe0dea9aae70566ac54",
+    "src/main/java/com/acme/sportplatform/sports/application/DisciplineTemplateLookupService.java" : "8dffe1eb4e827ab0823a8c55d75c3754d4d5091f8dfd1de04afc995324aacf78",
+    "src/main/java/com/acme/sportplatform/sports/application/SportService.java" : "671e3bf1f29dd6331ffbbe566442c597fa1d113fb5191532b8103e653e1734c5",
+    "src/main/java/com/acme/sportplatform/sports/infrastructure/jpa/DisciplineTemplateEntity.java" : "76381dfd8c1bb4beea3cbc13474b13e43956d96775b4994049a82a0be7a660ec",
+    "src/main/java/com/acme/sportplatform/sports/infrastructure/jpa/DisciplineTemplateRepository.java" : "51fd3a3d0b2372157a0fed92efc5eb16faa450128aca778a3c66afdea48fb212",
+    "src/main/java/com/acme/sportplatform/sports/infrastructure/jpa/RegulationVersionEntity.java" : "e2af3d274ae255157860e8eddf22ed4339c858cd0f0e0e2fea15b76c7f8b1e6e",
+    "src/main/java/com/acme/sportplatform/sports/infrastructure/jpa/SportEntity.java" : "9efd83f091df5ba5d49a503a8618912019afbbb0ccdfc4d4624b21d7e8b32299",
+    "src/main/java/com/acme/sportplatform/sports/infrastructure/jpa/SportRepository.java" : "1c68927bcf1e530a2d9219e31b27dc890f78746967403ad81f57ba8b8d82553e",
+    "src/main/java/com/acme/sportplatform/sports/web/SportsController.java" : "5bde4dcecfcba3d8c76f6585d01a9f934b27a996d7fe5667a8ee46dcec7ea1b7",
+    "src/test/java/com/acme/sportplatform/integration/protocol/SessionProtocolExperimentReport.java" : "ae2b95f0a3a424f86ca2c7697b914a6f182446e5a9300339bb868715ef27b85a",
+    "src/test/java/com/acme/sportplatform/integration/protocol/SessionProtocolExperimentReportTest.java" : "c4f1439521d30c2caed5eb6500749f5dce0eebec8b25c654778a5b177d4a609d",
+    "src/test/java/com/acme/sportplatform/integration/protocol/SessionProtocolExperimentTest.java" : "09fb6787fde6d005b1d4156f00af3751e037794558c83730ff94bc2c11756845"
+  },
+  "fixture" : {
+    "eventId" : "e85cf7ce-d928-49b9-b744-df6986dd90a5",
+    "sessionId" : "bf4dde96-f98d-4adf-afd9-aae452ec458b",
+    "ruleSetVersionId" : "454db5b5-85ad-4dbf-9aac-ea8436efe6f2",
+    "disciplineIds" : [ "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5", "bb588b89-1726-4a16-b175-4f49576424ac" ],
+    "entries" : [ {
+      "id" : "0c624b17-2e24-4250-8699-ffdf853901f9",
+      "profile" : "416bd3d2-6074-4fbd-a611-b096b06a5574",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 0,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "0991803c-fb57-4530-b259-c59b9fdf4320",
+      "profile" : "416bd3d2-6074-4fbd-a611-b096b06a5574",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 0,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "ebb4f638-fa2c-4242-837a-c3fd9f4a59d9",
+      "profile" : "86a8b2a4-5287-407f-9da0-ad82314e15f8",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 1,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":25.25}"
+    }, {
+      "id" : "3650dc15-7755-4f43-81fb-1882d5d020f1",
+      "profile" : "86a8b2a4-5287-407f-9da0-ad82314e15f8",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 1,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.25}"
+    }, {
+      "id" : "92ef9ccf-a75f-4a4a-a7d6-ea7bba781e26",
+      "profile" : "0b5fdd3d-d1c6-4c6e-ad50-b153331a6846",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 2,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":25.5}"
+    }, {
+      "id" : "a7e16bfa-b949-4f34-b78c-df851c955353",
+      "profile" : "0b5fdd3d-d1c6-4c6e-ad50-b153331a6846",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 2,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.5}"
+    }, {
+      "id" : "1e518fae-d963-443b-a55a-6a9a1c11c3fc",
+      "profile" : "29d58225-585d-48fb-bda0-0af2d1f0d48e",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 3,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":25.75}"
+    }, {
+      "id" : "280650d9-2094-424c-9ed5-ad9a15d9d76f",
+      "profile" : "29d58225-585d-48fb-bda0-0af2d1f0d48e",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 3,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.75}"
+    }, {
+      "id" : "96e5c916-7c09-4083-a68e-3cd93b7bcd67",
+      "profile" : "14d791db-47fc-44a1-bfa0-ccb7d90b849b",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 4,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.0}"
+    }, {
+      "id" : "062044b6-edd7-408b-bf9d-2052a376e26f",
+      "profile" : "14d791db-47fc-44a1-bfa0-ccb7d90b849b",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 4,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.0}"
+    }, {
+      "id" : "109516d2-8d15-4795-8436-5cb0cb957779",
+      "profile" : "1405d8f7-3fba-4059-93ef-946659c53141",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 5,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.25}"
+    }, {
+      "id" : "f3d0b321-7741-4d8f-8f53-b800868304b1",
+      "profile" : "1405d8f7-3fba-4059-93ef-946659c53141",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 5,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.25}"
+    }, {
+      "id" : "45f8a0c9-7d8d-4b37-b6d7-19ee71e68742",
+      "profile" : "e73f2652-4d4d-4144-8abc-f79170bbfe38",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 6,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.5}"
+    }, {
+      "id" : "aa3c76d9-4fc0-4a8c-9659-5e6b9a0c3091",
+      "profile" : "e73f2652-4d4d-4144-8abc-f79170bbfe38",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 6,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.5}"
+    }, {
+      "id" : "02441fd5-9dab-4db7-a070-0e452660cab9",
+      "profile" : "272b8d2c-2aae-40a2-bed6-9bfe1314f57d",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 7,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.75}"
+    }, {
+      "id" : "1a2d26a9-05aa-4734-ab5d-6680043ba407",
+      "profile" : "272b8d2c-2aae-40a2-bed6-9bfe1314f57d",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 7,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.75}"
+    }, {
+      "id" : "eea83c9d-5ecd-4647-983f-4a80b9b0a265",
+      "profile" : "cdc04abe-4a8b-44d4-a621-759c91876335",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 8,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.0}"
+    }, {
+      "id" : "6f096392-050c-4bde-bdc9-e8cf2c614432",
+      "profile" : "cdc04abe-4a8b-44d4-a621-759c91876335",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 8,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.0}"
+    }, {
+      "id" : "438028d9-0cdc-48a0-83e4-8ecb3b9d5fc7",
+      "profile" : "4451a462-418d-4d9a-a509-a602f7b00a72",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 9,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.25}"
+    }, {
+      "id" : "6e069d0b-dfc4-4ec0-ab1a-8e064f10aa3d",
+      "profile" : "4451a462-418d-4d9a-a509-a602f7b00a72",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 9,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.25}"
+    }, {
+      "id" : "69606c35-487f-4d2d-b120-f254735cb669",
+      "profile" : "ab6ea9e8-4a4c-4888-82e9-35534ef0f53d",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 10,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "201007cb-1677-446d-b7cf-c0a8abcfc322",
+      "profile" : "ab6ea9e8-4a4c-4888-82e9-35534ef0f53d",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 10,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "8ec627c1-67a0-4c53-a919-5f5b7ea1a894",
+      "profile" : "e411c484-3970-4387-bb90-6f8c70dc7c36",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 11,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.75}"
+    }, {
+      "id" : "6ef0a620-9c33-4b9a-971e-8d0c2229f0b6",
+      "profile" : "e411c484-3970-4387-bb90-6f8c70dc7c36",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 11,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.75}"
+    }, {
+      "id" : "85419695-884f-40cd-a758-c8692769c6e3",
+      "profile" : "3de42d64-652f-47ec-8807-5d8d72dc8307",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 12,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.0}"
+    }, {
+      "id" : "31a8e855-907c-488f-8e44-bf3b51218825",
+      "profile" : "3de42d64-652f-47ec-8807-5d8d72dc8307",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 12,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.0}"
+    }, {
+      "id" : "12b37f21-17a7-462d-8ea4-a262f724b325",
+      "profile" : "12dbae56-6d1b-4113-b581-9092ef4230fc",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 13,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.25}"
+    }, {
+      "id" : "a0cdef53-85fc-4dbe-beb3-5b4cb2a592ad",
+      "profile" : "12dbae56-6d1b-4113-b581-9092ef4230fc",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 13,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.25}"
+    }, {
+      "id" : "98c71dca-1437-4072-9d5e-8e7dbf98b6c6",
+      "profile" : "78dd34f0-8e1c-46de-890e-2e5f05366021",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 14,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.5}"
+    }, {
+      "id" : "2387f976-94f9-476b-b755-c17d13c5e10f",
+      "profile" : "78dd34f0-8e1c-46de-890e-2e5f05366021",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 14,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.5}"
+    }, {
+      "id" : "e80fb58f-c203-4641-ae64-51ce03919630",
+      "profile" : "fa67ff65-2586-4f25-af16-34dfd9719bf2",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 15,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.75}"
+    }, {
+      "id" : "5cd78a20-a5d9-4341-ad77-b0520b80cd34",
+      "profile" : "fa67ff65-2586-4f25-af16-34dfd9719bf2",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 15,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.75}"
+    }, {
+      "id" : "1faf6654-75ae-4ca8-9bd6-5b53abdad48e",
+      "profile" : "3990986a-d024-487a-8631-ec8bed73a510",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 16,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.0}"
+    }, {
+      "id" : "63cba563-d1d8-4669-9e09-fe5827f4624f",
+      "profile" : "3990986a-d024-487a-8631-ec8bed73a510",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 16,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.0}"
+    }, {
+      "id" : "48439bea-16a1-4c4f-911e-fab3f9cdeecb",
+      "profile" : "e10e265f-1076-4a62-8256-04df59842304",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 17,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.25}"
+    }, {
+      "id" : "f8074bd7-35ba-460b-8a1b-f75ad7ef2336",
+      "profile" : "e10e265f-1076-4a62-8256-04df59842304",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 17,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.25}"
+    }, {
+      "id" : "439c3777-b470-413f-bcfd-b58a32510148",
+      "profile" : "d922c008-dac3-4bb1-98e9-5eda808fb576",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 18,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.5}"
+    }, {
+      "id" : "c7840902-e818-4f93-8d68-050cafeb9424",
+      "profile" : "d922c008-dac3-4bb1-98e9-5eda808fb576",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 18,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.5}"
+    }, {
+      "id" : "23d8ebf9-9ea1-4bc3-a607-d60cdba5de32",
+      "profile" : "94e4ee8f-d1e3-4ca1-b472-de06326365f7",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 19,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.75}"
+    }, {
+      "id" : "9243b1a8-5a36-45dd-b7f6-edacbc96324b",
+      "profile" : "94e4ee8f-d1e3-4ca1-b472-de06326365f7",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 19,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.75}"
+    }, {
+      "id" : "0bbbd1b9-eabd-4ac7-a7dd-89b4c01f9248",
+      "profile" : "bef1d97c-cc45-48e4-94f3-758579143f34",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 20,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "4e9f0ebe-f0a8-4114-8333-961361919c05",
+      "profile" : "bef1d97c-cc45-48e4-94f3-758579143f34",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 20,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "87326693-3581-42b4-8fd7-c5a76336296d",
+      "profile" : "23f7b7b8-5cfa-4144-83ab-eb475ce0d8a3",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 21,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.25}"
+    }, {
+      "id" : "262733a2-1c4e-415a-8e0a-51e4b6e27d96",
+      "profile" : "23f7b7b8-5cfa-4144-83ab-eb475ce0d8a3",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 21,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.25}"
+    }, {
+      "id" : "2e2e89a6-2d84-44fc-998a-a4b7c2586cc6",
+      "profile" : "56a936e2-0363-4d06-8176-f1057c155e53",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 22,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.5}"
+    }, {
+      "id" : "39740992-d7a9-49c2-885c-285f9dbf5360",
+      "profile" : "56a936e2-0363-4d06-8176-f1057c155e53",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 22,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.5}"
+    }, {
+      "id" : "ae0e389c-e7e0-4436-b148-b7c1ed6832cb",
+      "profile" : "1a7b76c6-b325-4ad9-84a6-120144f4be48",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 23,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.75}"
+    }, {
+      "id" : "2f294872-25e5-45f5-b4da-ed57790ee541",
+      "profile" : "1a7b76c6-b325-4ad9-84a6-120144f4be48",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 23,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.75}"
+    }, {
+      "id" : "96daaa41-3501-416d-bd2f-d0cba460b69c",
+      "profile" : "9d896ef7-62cf-44d1-9348-b62b30cfc6e0",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 24,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.0}"
+    }, {
+      "id" : "a044e7dc-1174-458b-ae80-4bae9652f69e",
+      "profile" : "9d896ef7-62cf-44d1-9348-b62b30cfc6e0",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 24,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.0}"
+    }, {
+      "id" : "30998459-fdc4-41e1-a673-1c7114dec958",
+      "profile" : "3447cb04-69e5-4d20-a7f7-f3b303bb3421",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 25,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.25}"
+    }, {
+      "id" : "04215615-91c3-4990-8561-adaa14de5764",
+      "profile" : "3447cb04-69e5-4d20-a7f7-f3b303bb3421",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 25,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.25}"
+    }, {
+      "id" : "f71abffb-9c33-496f-b878-13fdf051821b",
+      "profile" : "c7fc2e33-1d56-41ad-b0ef-133613279ee2",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 26,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.5}"
+    }, {
+      "id" : "34158da3-ad5e-42d5-aaa9-717219568681",
+      "profile" : "c7fc2e33-1d56-41ad-b0ef-133613279ee2",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 26,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.5}"
+    }, {
+      "id" : "06dcea4d-cd1a-4a89-9125-4721ce961868",
+      "profile" : "0ff03d47-8ea0-4a74-9843-7c578cda1eb8",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 27,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.75}"
+    }, {
+      "id" : "a55844c0-ec87-4d95-b3fb-e5517d6f55f2",
+      "profile" : "0ff03d47-8ea0-4a74-9843-7c578cda1eb8",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 27,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.75}"
+    }, {
+      "id" : "f02a9f71-d175-4363-a83b-a0e30c76a3f9",
+      "profile" : "9b1e8f90-e252-4d3a-9a86-abe6440866a4",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 28,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.0}"
+    }, {
+      "id" : "92a8d996-3cfc-426b-a671-d1a9e1694967",
+      "profile" : "9b1e8f90-e252-4d3a-9a86-abe6440866a4",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 28,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.0}"
+    }, {
+      "id" : "96e00efa-933c-4880-9ed0-b7f43aaa4580",
+      "profile" : "83078f97-2ebb-49bc-8a36-ffd23a77b41f",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 29,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.25}"
+    }, {
+      "id" : "7c35d9a3-46b4-4699-9acf-f16543885e7d",
+      "profile" : "83078f97-2ebb-49bc-8a36-ffd23a77b41f",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 29,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.25}"
+    }, {
+      "id" : "840c99fa-1588-4282-932c-3d359224f61f",
+      "profile" : "2f4106c5-ce70-47a8-895c-91de922a73b1",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 30,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "4ae9d86f-2a98-4496-8fce-757e414ece7f",
+      "profile" : "2f4106c5-ce70-47a8-895c-91de922a73b1",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 30,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "2c655f8f-46fb-4d7e-939a-3844d4025808",
+      "profile" : "38c92cc2-da8b-4865-baef-61b7530d795c",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 31,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.75}"
+    }, {
+      "id" : "4179569e-bac1-4d96-b26d-ed0b6f421f1a",
+      "profile" : "38c92cc2-da8b-4865-baef-61b7530d795c",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 31,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.75}"
+    }, {
+      "id" : "f298443d-88d1-43bd-bd9c-c09cf3ce17ad",
+      "profile" : "0a673ce0-e4a7-495b-955d-847e41b4eed4",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 32,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.0}"
+    }, {
+      "id" : "f3f39a90-dd45-4a89-95c3-5f1c2fc96724",
+      "profile" : "0a673ce0-e4a7-495b-955d-847e41b4eed4",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 32,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":35.0}"
+    }, {
+      "id" : "17846404-58e6-4f08-ac6a-7603c5ea6397",
+      "profile" : "68c44921-d012-4b0b-a848-cd64174f9dab",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 33,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.25}"
+    }, {
+      "id" : "1b337bd3-5a98-461b-8f5b-77d51baa48a0",
+      "profile" : "68c44921-d012-4b0b-a848-cd64174f9dab",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 33,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":35.25}"
+    }, {
+      "id" : "795f7de8-a963-43c6-8a10-1a2c271a5182",
+      "profile" : "bafbd4ca-4d12-4142-86cb-f999b972ee57",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 34,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.5}"
+    }, {
+      "id" : "5524607b-3552-46fb-9a60-db9a9d581eb0",
+      "profile" : "bafbd4ca-4d12-4142-86cb-f999b972ee57",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 34,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":35.5}"
+    }, {
+      "id" : "5c6e7973-1031-4567-ba53-0be8fc2baf61",
+      "profile" : "f12b02c3-6e93-4257-b2e9-381a99002b7d",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 35,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.75}"
+    }, {
+      "id" : "138a635c-a9b4-41fa-8aa3-b9f63e528efc",
+      "profile" : "f12b02c3-6e93-4257-b2e9-381a99002b7d",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 35,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":35.75}"
+    }, {
+      "id" : "1838b765-1bc5-40eb-8544-b643f83a74af",
+      "profile" : "cebe2940-8141-4736-bc46-58eff4ef4e40",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 36,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.0}"
+    }, {
+      "id" : "294eb7ab-d731-4537-8422-7afd26129b0c",
+      "profile" : "cebe2940-8141-4736-bc46-58eff4ef4e40",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 36,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.0}"
+    }, {
+      "id" : "27f35587-da7b-4956-8d14-0012c3c9411b",
+      "profile" : "39f35c5c-46ff-4bb6-824b-c255fb23ecf5",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 37,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.25}"
+    }, {
+      "id" : "1b6e4d31-7100-4757-8060-e44af1ef934e",
+      "profile" : "39f35c5c-46ff-4bb6-824b-c255fb23ecf5",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 37,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.25}"
+    }, {
+      "id" : "d8b7a98f-dc33-476a-8221-c60a2f2a9ec6",
+      "profile" : "0a3da2e8-f405-4f62-a4c7-ed04a3d10b12",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 38,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.5}"
+    }, {
+      "id" : "283eefc3-9c2c-4e28-a306-3177e22b3674",
+      "profile" : "0a3da2e8-f405-4f62-a4c7-ed04a3d10b12",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 38,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.5}"
+    }, {
+      "id" : "35235d65-e4c2-462c-9703-6447d6315289",
+      "profile" : "b63bae95-c85f-4343-8ac8-81eec7d11c9c",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 39,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.75}"
+    }, {
+      "id" : "073250c9-4e13-430a-8250-9350e2e775a9",
+      "profile" : "b63bae95-c85f-4343-8ac8-81eec7d11c9c",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 39,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.75}"
+    }, {
+      "id" : "aeaf6c74-78c9-4e5d-b519-b3aa203fed92",
+      "profile" : "426c42f7-2113-4226-a452-b3d29369f6a1",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 40,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "bbb46f55-59a2-4e78-bf64-e16fc84ec75e",
+      "profile" : "426c42f7-2113-4226-a452-b3d29369f6a1",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 40,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "e5f9c0d8-0b09-4820-bdfc-1706a022d11a",
+      "profile" : "7b5c3b22-6693-42e0-918b-7cec3252a085",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 41,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":35.25}"
+    }, {
+      "id" : "7dcce272-bded-4fd4-abe2-00125ba9c0ab",
+      "profile" : "7b5c3b22-6693-42e0-918b-7cec3252a085",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 41,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":37.25}"
+    }, {
+      "id" : "cdce9953-9ca0-4402-b91d-336b97aa74b3",
+      "profile" : "ed041b5b-c9f3-40b7-92a6-4ec9650dd2f1",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 42,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":35.5}"
+    }, {
+      "id" : "6143c2f4-5fb1-44ad-bcd9-ff5ae73c7ed8",
+      "profile" : "ed041b5b-c9f3-40b7-92a6-4ec9650dd2f1",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 42,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":37.5}"
+    }, {
+      "id" : "6f3a3f56-9a34-43d2-ba93-6186adea7985",
+      "profile" : "551fcc5a-81d5-4afd-82a8-5ba9c8a02e79",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 43,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":35.75}"
+    }, {
+      "id" : "bed56079-30f8-4885-b52f-91824aa7111d",
+      "profile" : "551fcc5a-81d5-4afd-82a8-5ba9c8a02e79",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 43,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":37.75}"
+    }, {
+      "id" : "2e6c8fa4-a6e1-418c-b4c5-235152ec1536",
+      "profile" : "7aeeb1f1-1af0-4d87-b0b3-a8758cde0108",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 44,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.0}"
+    }, {
+      "id" : "140b28f4-2541-439b-9bdd-80ae40683bab",
+      "profile" : "7aeeb1f1-1af0-4d87-b0b3-a8758cde0108",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 44,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.0}"
+    }, {
+      "id" : "a1e5b500-3f4c-4006-a7e6-8d7b55b44576",
+      "profile" : "8ee7338d-d6a2-4fc5-a0e4-804597dc3f7e",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 45,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.25}"
+    }, {
+      "id" : "66d8e468-6644-47fe-ae4c-41dc09a4cf42",
+      "profile" : "8ee7338d-d6a2-4fc5-a0e4-804597dc3f7e",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 45,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.25}"
+    }, {
+      "id" : "455e5765-bd65-4128-a9c9-856cb835f57e",
+      "profile" : "f210b294-4a26-4e86-b207-28d54dbcfa49",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 46,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.5}"
+    }, {
+      "id" : "1d293c46-e0a8-4d40-b50e-dc179c2c2223",
+      "profile" : "f210b294-4a26-4e86-b207-28d54dbcfa49",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 46,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.5}"
+    }, {
+      "id" : "5a35ca8b-20d5-4478-9971-12be44eb2296",
+      "profile" : "3e53c189-67e0-4a49-8f9e-f71d1c47364b",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 47,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":36.75}"
+    }, {
+      "id" : "301e480a-d5af-454a-b715-4303ae21960c",
+      "profile" : "3e53c189-67e0-4a49-8f9e-f71d1c47364b",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 47,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.75}"
+    }, {
+      "id" : "a0fff241-ff93-4a24-a299-8d7446d78025",
+      "profile" : "f4536ad9-c029-4ff8-ba2e-761b919f7af1",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 48,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":37.0}"
+    }, {
+      "id" : "0aede9fa-7d26-42af-93b0-49c3872f9ab8",
+      "profile" : "f4536ad9-c029-4ff8-ba2e-761b919f7af1",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 48,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":39.0}"
+    }, {
+      "id" : "ea192c28-3b96-444a-95e2-9c1bd261db4c",
+      "profile" : "3a442c1c-3bfa-4077-878e-53fce3c5ff0e",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 49,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":37.25}"
+    }, {
+      "id" : "3d4d017a-8b20-4c8e-a2d8-d7b77040d9d1",
+      "profile" : "3a442c1c-3bfa-4077-878e-53fce3c5ff0e",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 49,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":39.25}"
+    }, {
+      "id" : "4c538046-63bf-4fc7-830b-c06582e64039",
+      "profile" : "3641bdb5-02d9-4ccc-b8d6-b6f9dacf1e19",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 50,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "3375fceb-a3a5-43cd-8fd9-55ab4e8f8f89",
+      "profile" : "3641bdb5-02d9-4ccc-b8d6-b6f9dacf1e19",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 50,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "65d075dc-3875-4595-8f75-f720840d3152",
+      "profile" : "0c4e7c13-70bd-4e85-9510-4c727ab1816d",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 51,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":37.75}"
+    }, {
+      "id" : "c5b869ba-569d-4dac-920f-787c0a568512",
+      "profile" : "0c4e7c13-70bd-4e85-9510-4c727ab1816d",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 51,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":39.75}"
+    }, {
+      "id" : "8b965b24-8c8a-4a21-8351-09c260d0a32b",
+      "profile" : "24eeeb9e-2cc1-4e4c-b753-bebe6db87128",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 52,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.0}"
+    }, {
+      "id" : "4d343261-637c-456e-a2b1-a2d0272f3382",
+      "profile" : "24eeeb9e-2cc1-4e4c-b753-bebe6db87128",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 52,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":40.0}"
+    }, {
+      "id" : "2ba97941-2e97-4c13-8fac-c23cef570ad7",
+      "profile" : "5a37bdf7-93ac-44f2-b019-9e442308d931",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 53,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.25}"
+    }, {
+      "id" : "f9d2dc4b-6698-4efa-bb50-0db9fb899646",
+      "profile" : "5a37bdf7-93ac-44f2-b019-9e442308d931",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 53,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":40.25}"
+    }, {
+      "id" : "b17844e4-004c-49b8-9ea0-96f7cca3f7d7",
+      "profile" : "74f5d5d0-101d-4dca-a2e5-66a9c74c3c92",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 54,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.5}"
+    }, {
+      "id" : "590a14dc-84e1-4bcc-887d-be744b13bf8c",
+      "profile" : "74f5d5d0-101d-4dca-a2e5-66a9c74c3c92",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 54,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":40.5}"
+    }, {
+      "id" : "118da5a5-9418-4a57-97fc-68779b3581f2",
+      "profile" : "b7444ee4-41a8-45da-a44f-c12b148d7f01",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 55,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":38.75}"
+    }, {
+      "id" : "37fafdeb-b051-4237-a167-f678f7a8e5c5",
+      "profile" : "b7444ee4-41a8-45da-a44f-c12b148d7f01",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 55,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":40.75}"
+    }, {
+      "id" : "ff6fd406-2c39-41ed-af33-f6bd9700b9ac",
+      "profile" : "aae32af8-a3e2-4ee1-869d-2a0376bc2c18",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 56,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":39.0}"
+    }, {
+      "id" : "542db2b6-2ec5-43d5-998e-e69a7c87ebb8",
+      "profile" : "aae32af8-a3e2-4ee1-869d-2a0376bc2c18",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 56,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.0}"
+    }, {
+      "id" : "644ec9b5-3d10-4270-a32d-f8cc68bb443b",
+      "profile" : "cdfa953d-8d40-4c50-af32-d005f1c1d15a",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 57,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":39.25}"
+    }, {
+      "id" : "9c45dbfd-921a-44af-a1cf-5d3566a9196f",
+      "profile" : "cdfa953d-8d40-4c50-af32-d005f1c1d15a",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 57,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.25}"
+    }, {
+      "id" : "a153893e-22c9-42e6-8996-9bd738aebe99",
+      "profile" : "4f6a0602-a331-4737-98a9-692c5a16d3e0",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 58,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":39.5}"
+    }, {
+      "id" : "6e8a3775-d73a-4807-9abb-74590343b116",
+      "profile" : "4f6a0602-a331-4737-98a9-692c5a16d3e0",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 58,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.5}"
+    }, {
+      "id" : "023b734e-9626-48d2-91bd-75d2fc181c31",
+      "profile" : "ae663bfa-8ef8-4eac-99b7-42b1ca1d9fed",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 59,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":39.75}"
+    }, {
+      "id" : "3edffdf9-29b9-4d7d-aa97-24d89ec3280d",
+      "profile" : "ae663bfa-8ef8-4eac-99b7-42b1ca1d9fed",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 59,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.75}"
+    }, {
+      "id" : "b0c44028-f7e5-4a4e-9b9d-0c2daf0ec5ce",
+      "profile" : "579bde59-ca9e-45b4-9e07-0881a31f8a31",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 60,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "ef73bf0c-c8e3-49d8-a473-a17125c4829e",
+      "profile" : "579bde59-ca9e-45b4-9e07-0881a31f8a31",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 60,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "27a9462b-43b5-46b8-8476-5c4f13d4a8e5",
+      "profile" : "0d8ddaef-e635-495f-a5d4-27fbc43e14ee",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 61,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":40.25}"
+    }, {
+      "id" : "8ddbe379-6509-466e-a7c2-d666dae7ab1a",
+      "profile" : "0d8ddaef-e635-495f-a5d4-27fbc43e14ee",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 61,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":42.25}"
+    }, {
+      "id" : "4c4997da-16d1-4b73-8e5d-56e00cce0168",
+      "profile" : "6813d789-a022-4aeb-9e95-c99ead17227f",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 62,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":40.5}"
+    }, {
+      "id" : "806867b0-2797-4538-bd3d-f9f6cd0d9732",
+      "profile" : "6813d789-a022-4aeb-9e95-c99ead17227f",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 62,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":42.5}"
+    }, {
+      "id" : "254e243f-90e7-4fad-8ef9-4e8bd9c14199",
+      "profile" : "109c8dec-fc10-4373-9c72-3b2838a7ed03",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 63,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":40.75}"
+    }, {
+      "id" : "f83f829c-6b08-4fef-b3e8-35bc399a9a8b",
+      "profile" : "109c8dec-fc10-4373-9c72-3b2838a7ed03",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 63,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":42.75}"
+    }, {
+      "id" : "26092ed6-5d71-4307-aa18-2a33afc86f99",
+      "profile" : "f2da8bf9-b007-42a6-8bb0-831e847ec88c",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 64,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.0}"
+    }, {
+      "id" : "90063cc5-836b-4c97-8d02-9dc6cf69ac5e",
+      "profile" : "f2da8bf9-b007-42a6-8bb0-831e847ec88c",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 64,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":43.0}"
+    }, {
+      "id" : "f9c2353b-1fff-4269-94bc-4610e2bdb1b2",
+      "profile" : "55be0931-966e-4d45-beff-e2f9bc0c060b",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 65,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.25}"
+    }, {
+      "id" : "667e7aca-7fb4-4dc3-b81e-0a0c10ba426f",
+      "profile" : "55be0931-966e-4d45-beff-e2f9bc0c060b",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 65,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":43.25}"
+    }, {
+      "id" : "59a5e2c2-ea21-4583-99d1-2f0859900fc3",
+      "profile" : "7bdf13b7-1082-499b-913f-81c346922963",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 66,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.5}"
+    }, {
+      "id" : "20e289c2-d9a3-4f8a-8fbb-d0e38ff587af",
+      "profile" : "7bdf13b7-1082-499b-913f-81c346922963",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 66,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":43.5}"
+    }, {
+      "id" : "c5759c3c-3feb-42af-8ac1-3bebfa70b4ac",
+      "profile" : "cd6ea7d9-d2f2-4c8d-b1f7-f1144e109a74",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 67,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":41.75}"
+    }, {
+      "id" : "818f8992-4570-4696-82ec-f21a6b9bc3b8",
+      "profile" : "cd6ea7d9-d2f2-4c8d-b1f7-f1144e109a74",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 67,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":43.75}"
+    }, {
+      "id" : "ba879491-f525-4125-847d-67033aab216d",
+      "profile" : "eba368e1-d3e9-4ece-9480-df22c3c42d96",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 68,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":42.0}"
+    }, {
+      "id" : "546dbecb-4419-4377-867d-48600a58b1db",
+      "profile" : "eba368e1-d3e9-4ece-9480-df22c3c42d96",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 68,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":44.0}"
+    }, {
+      "id" : "c2fb5b33-18c9-47da-88b0-81914f893c21",
+      "profile" : "5ec75529-32c1-4612-bbaa-cfa9cf14f95b",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 69,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":42.25}"
+    }, {
+      "id" : "30b5b79c-1a4c-4b08-9ae5-74e32e82f2b0",
+      "profile" : "5ec75529-32c1-4612-bbaa-cfa9cf14f95b",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 69,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":44.25}"
+    }, {
+      "id" : "b57be4f8-4c00-44ac-8e42-742403949c0e",
+      "profile" : "57b9fa3e-4e8f-4d6b-93b2-40eb323fcb2b",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 70,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "81d591f7-1111-496b-9a3e-fa9b6715a500",
+      "profile" : "57b9fa3e-4e8f-4d6b-93b2-40eb323fcb2b",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 70,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "1ef47593-d976-4602-9a28-eebc3e8ba486",
+      "profile" : "569ff358-bed8-4815-812e-14bf99d5c612",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 71,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":25.25}"
+    }, {
+      "id" : "ebb73188-d4d5-4c43-a0e0-5fae8abc66c1",
+      "profile" : "569ff358-bed8-4815-812e-14bf99d5c612",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 71,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.25}"
+    }, {
+      "id" : "d79ec90e-4fff-4ef4-9c24-37f86f2b7ddd",
+      "profile" : "a8427705-f57d-4eb2-91a2-50b62d49d704",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 72,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":25.5}"
+    }, {
+      "id" : "ed1e2fd8-f892-4034-a906-ef2b7dbdfcdf",
+      "profile" : "a8427705-f57d-4eb2-91a2-50b62d49d704",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 72,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.5}"
+    }, {
+      "id" : "0277f278-2c00-4caf-aa76-a9d5472311d4",
+      "profile" : "2ed98f07-8cfa-4cbd-9423-804a1d3a7b7f",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 73,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":25.75}"
+    }, {
+      "id" : "0f66310c-8f58-4d3d-b79c-8c26155660a5",
+      "profile" : "2ed98f07-8cfa-4cbd-9423-804a1d3a7b7f",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 73,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.75}"
+    }, {
+      "id" : "b056e355-6923-454c-87f8-5f4f2c6d745c",
+      "profile" : "eb2ae63b-6ce8-4965-a335-f99b19718172",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 74,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.0}"
+    }, {
+      "id" : "cfa7e1b4-13ab-4d97-9fa0-83c0cf8c485a",
+      "profile" : "eb2ae63b-6ce8-4965-a335-f99b19718172",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 74,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.0}"
+    }, {
+      "id" : "758f1736-b8c3-4be6-8a53-bdcf713a8c12",
+      "profile" : "01ba111e-c79c-465e-b741-c8199f550ee0",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 75,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.25}"
+    }, {
+      "id" : "fd12a38f-932f-4121-813b-37e9f917898e",
+      "profile" : "01ba111e-c79c-465e-b741-c8199f550ee0",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 75,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.25}"
+    }, {
+      "id" : "e7d3792f-d964-4d80-bcf5-71d26358714b",
+      "profile" : "8768bd26-8e84-4540-bdaf-6b454e0810a8",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 76,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.5}"
+    }, {
+      "id" : "bb7dbd94-923d-46f6-8faa-25c66912ca64",
+      "profile" : "8768bd26-8e84-4540-bdaf-6b454e0810a8",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 76,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.5}"
+    }, {
+      "id" : "179897de-507a-4d0f-af45-88a321626c45",
+      "profile" : "ddaceca0-e03c-4706-8e94-295189a3d136",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 77,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":26.75}"
+    }, {
+      "id" : "0eef9e44-77fe-430d-b419-e0445c0c9a9e",
+      "profile" : "ddaceca0-e03c-4706-8e94-295189a3d136",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 77,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.75}"
+    }, {
+      "id" : "cca9bab6-20aa-4bc0-a882-2049878a8a13",
+      "profile" : "a356e588-4890-4526-b1b8-c38591a426f6",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 78,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.0}"
+    }, {
+      "id" : "0251e42d-e3c7-4c22-9fe6-c6f12eef50c7",
+      "profile" : "a356e588-4890-4526-b1b8-c38591a426f6",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 78,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.0}"
+    }, {
+      "id" : "e2c3eb17-f07c-45ce-bfc2-5e625f1d216d",
+      "profile" : "84d60d84-4fc4-4d1d-94a8-ecdf80a9458c",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 79,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.25}"
+    }, {
+      "id" : "7ca01989-df8c-4316-8fb3-79548632f077",
+      "profile" : "84d60d84-4fc4-4d1d-94a8-ecdf80a9458c",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 79,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.25}"
+    }, {
+      "id" : "0cdb9e61-e24e-4dfa-912c-e113a586caac",
+      "profile" : "4756ac42-ddec-4634-9c0c-d35edc6400da",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 80,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "9c54f971-ec20-4420-8715-0f62aba18c33",
+      "profile" : "4756ac42-ddec-4634-9c0c-d35edc6400da",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 80,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "c2722311-130d-4090-be50-1bf24fc06fed",
+      "profile" : "0e8cc207-77ac-4040-9ea5-896031b8a5d3",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 81,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":27.75}"
+    }, {
+      "id" : "9a7e9eda-6b9b-4637-9137-b211608bf579",
+      "profile" : "0e8cc207-77ac-4040-9ea5-896031b8a5d3",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 81,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.75}"
+    }, {
+      "id" : "5674ed55-8b0c-40ea-91ab-9314e9fbc6bb",
+      "profile" : "66d756c4-45fc-44ba-aa94-f6c13d1340c5",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 82,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.0}"
+    }, {
+      "id" : "e4cd92f7-e784-476d-acc3-4a716585d042",
+      "profile" : "66d756c4-45fc-44ba-aa94-f6c13d1340c5",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 82,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.0}"
+    }, {
+      "id" : "4869abd2-547f-4f32-994c-8fb605c4be3c",
+      "profile" : "0b21724c-afe0-41f1-b186-e31e4a26a9ed",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 83,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.25}"
+    }, {
+      "id" : "9feea530-bf74-4690-89f8-e0bcdd425d83",
+      "profile" : "0b21724c-afe0-41f1-b186-e31e4a26a9ed",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 83,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.25}"
+    }, {
+      "id" : "889c9318-5466-4957-bd49-e1efafdc837f",
+      "profile" : "bd4398c3-abac-4062-9d4c-9d0d839c9c5c",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 84,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.5}"
+    }, {
+      "id" : "b3301709-dbd5-4f09-a8cb-ae9acf2c5207",
+      "profile" : "bd4398c3-abac-4062-9d4c-9d0d839c9c5c",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 84,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.5}"
+    }, {
+      "id" : "798f0158-1a65-4f8b-b6f8-db702a6512ac",
+      "profile" : "de2cc75a-4fab-4b3d-8e78-c4d0051b4d4a",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 85,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":28.75}"
+    }, {
+      "id" : "0a283f78-8053-4e88-b009-895d8558753e",
+      "profile" : "de2cc75a-4fab-4b3d-8e78-c4d0051b4d4a",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 85,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.75}"
+    }, {
+      "id" : "93d8a2a9-1843-4709-a1c3-b79b9839dbdb",
+      "profile" : "ab5506e5-d252-42fb-b18d-853a3e280ed4",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 86,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.0}"
+    }, {
+      "id" : "d7c08367-1d96-4c90-b49e-2b48e334de9c",
+      "profile" : "ab5506e5-d252-42fb-b18d-853a3e280ed4",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 86,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.0}"
+    }, {
+      "id" : "74544f0c-4468-42d2-9c4b-52719586cb9d",
+      "profile" : "b507e7e1-1d70-4bb4-9fe2-5579b30d6121",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 87,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.25}"
+    }, {
+      "id" : "65e4dd82-f608-432e-a54b-feaa0164d501",
+      "profile" : "b507e7e1-1d70-4bb4-9fe2-5579b30d6121",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 87,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.25}"
+    }, {
+      "id" : "463fe1d9-97df-4eca-bf4d-1a322e50ad1f",
+      "profile" : "e608813b-e5d5-4d53-828d-7d5e59d8da7f",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 88,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.5}"
+    }, {
+      "id" : "abbb3282-d92f-492a-900c-f775d93df38b",
+      "profile" : "e608813b-e5d5-4d53-828d-7d5e59d8da7f",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 88,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.5}"
+    }, {
+      "id" : "81824d98-42b2-4de0-9cb9-e21360e489c2",
+      "profile" : "4b6b57cb-fdac-4bd5-a62c-7ffeb87f7148",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 89,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":29.75}"
+    }, {
+      "id" : "e9313442-b414-48e9-a510-8738a8b0b58a",
+      "profile" : "4b6b57cb-fdac-4bd5-a62c-7ffeb87f7148",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 89,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.75}"
+    }, {
+      "id" : "19ced657-7325-4c31-9e77-f7d116f51b00",
+      "profile" : "ee827a4b-d155-4567-9d59-a9f60b9ced4a",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 90,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "8c2a1408-8599-4cff-818b-ee9174aaccab",
+      "profile" : "ee827a4b-d155-4567-9d59-a9f60b9ced4a",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 90,
+      "reserve" : false,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "99229166-873b-4438-a7ea-9cb28e16830f",
+      "profile" : "d92eba25-ff24-4bc2-ab07-b8a3261749b2",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 91,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.25}"
+    }, {
+      "id" : "c9a33b0f-3fec-4566-b518-c79517871774",
+      "profile" : "d92eba25-ff24-4bc2-ab07-b8a3261749b2",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 91,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.25}"
+    }, {
+      "id" : "54ad8e7c-f61b-48f8-8bb7-f9b668bb5bb9",
+      "profile" : "021d9d7f-6731-44f4-8b8d-b066ecbaf060",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 92,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.5}"
+    }, {
+      "id" : "da873890-9e3f-4a88-b665-17c019bb9568",
+      "profile" : "021d9d7f-6731-44f4-8b8d-b066ecbaf060",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 92,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.5}"
+    }, {
+      "id" : "a8e84448-31f5-4433-8219-0a619a484371",
+      "profile" : "7df557ec-5093-4454-8c83-666a85de2979",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 93,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":30.75}"
+    }, {
+      "id" : "f9c56a36-1e81-4e06-9dc7-47e635a1d967",
+      "profile" : "7df557ec-5093-4454-8c83-666a85de2979",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 93,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.75}"
+    }, {
+      "id" : "d9283afc-b77c-4927-bee6-0a0b26b83c7b",
+      "profile" : "2d729308-1f18-4f3a-a104-a2c09eb27f42",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 94,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.0}"
+    }, {
+      "id" : "0aea703b-d1fd-47be-bd73-9e27f96adaa0",
+      "profile" : "2d729308-1f18-4f3a-a104-a2c09eb27f42",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 94,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.0}"
+    }, {
+      "id" : "34742a4b-9063-4745-bb46-14f47cc40684",
+      "profile" : "e9319a84-9190-485d-955d-75f7a4cd7de4",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 95,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.25}"
+    }, {
+      "id" : "fb346bbb-6345-4c4b-9278-7e819d8c1a2c",
+      "profile" : "e9319a84-9190-485d-955d-75f7a4cd7de4",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 95,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.25}"
+    }, {
+      "id" : "b06477eb-b097-4f47-acc3-e25e6293f34b",
+      "profile" : "7ae82728-2664-4d6a-99b3-7244767b3382",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 96,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.5}"
+    }, {
+      "id" : "ebde1b77-3fab-4034-a4e7-232d2b77bccc",
+      "profile" : "7ae82728-2664-4d6a-99b3-7244767b3382",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 96,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.5}"
+    }, {
+      "id" : "af3f224e-81ae-46c2-b20a-98121b24e591",
+      "profile" : "397dd099-31b1-4a56-a334-d89f205e3531",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 97,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":31.75}"
+    }, {
+      "id" : "5e3ae511-3bb0-4348-b9cf-8c5b7d382cfa",
+      "profile" : "397dd099-31b1-4a56-a334-d89f205e3531",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 97,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":33.75}"
+    }, {
+      "id" : "6c5ccf77-df15-45c9-8e70-bf17da676480",
+      "profile" : "8510be8c-4021-43bc-9dfd-a09befa46577",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 98,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.0}"
+    }, {
+      "id" : "01bc76e9-3bce-452c-923c-0f2aac70e512",
+      "profile" : "8510be8c-4021-43bc-9dfd-a09befa46577",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 98,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.0}"
+    }, {
+      "id" : "0c5d30d0-49a8-4c65-9fc7-3cb6a1af3132",
+      "profile" : "c9c6f2ed-74d6-4b1f-810d-c102f8d9e3f7",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 99,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":32.25}"
+    }, {
+      "id" : "cabc662d-8dca-4fb0-937a-c36c51524a8d",
+      "profile" : "c9c6f2ed-74d6-4b1f-810d-c102f8d9e3f7",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 99,
+      "reserve" : false,
+      "originalMeta" : "{\"seedTimeSeconds\":34.25}"
+    }, {
+      "id" : "dcc0fcd4-7cd8-4740-bf2c-19708bb3f62d",
+      "profile" : "67e7c41e-91b7-445b-a57e-690724600129",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 100,
+      "reserve" : true,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "71bbc52a-21e9-4d6a-8874-ab03eb24e61e",
+      "profile" : "67e7c41e-91b7-445b-a57e-690724600129",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 100,
+      "reserve" : true,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "a5ea2898-8a52-475b-b1a6-0d1e989aa07e",
+      "profile" : "8d739802-9737-43fb-a84f-36fab8a1b773",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 101,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":32.75}"
+    }, {
+      "id" : "85da51a8-d7e1-4060-bc44-2803ba116bda",
+      "profile" : "8d739802-9737-43fb-a84f-36fab8a1b773",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 101,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":34.75}"
+    }, {
+      "id" : "df5350e3-13ba-4317-98b3-fce01de9cefb",
+      "profile" : "bf25296b-d813-4601-ae1d-308f8a1a1508",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 102,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":33.0}"
+    }, {
+      "id" : "6930569a-339f-44ed-8ec4-5e0200aa2a84",
+      "profile" : "bf25296b-d813-4601-ae1d-308f8a1a1508",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 102,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":35.0}"
+    }, {
+      "id" : "90ab97a4-d58a-44a4-988d-a7b360c9a97e",
+      "profile" : "798e8829-6b66-4156-bc7e-77c96cb85f27",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 103,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":33.25}"
+    }, {
+      "id" : "c1ff6aa3-d255-4544-8be0-0217ec8ebdbe",
+      "profile" : "798e8829-6b66-4156-bc7e-77c96cb85f27",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 103,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":35.25}"
+    }, {
+      "id" : "6df469b1-0deb-4e15-8a9c-859b7029a48c",
+      "profile" : "1aba9ab3-1e88-4dd1-bedf-3fb7c6f71c9a",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 104,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":33.5}"
+    }, {
+      "id" : "aea8ec84-ba47-416d-823e-6ad952e9a638",
+      "profile" : "1aba9ab3-1e88-4dd1-bedf-3fb7c6f71c9a",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 104,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":35.5}"
+    }, {
+      "id" : "ffe1f0c6-c158-4970-9ffa-a3546d3b65f9",
+      "profile" : "2ae3ede6-0025-4d12-b377-768442e48a7a",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 105,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":33.75}"
+    }, {
+      "id" : "663073b5-5ce2-4f5a-b65d-437bae879afd",
+      "profile" : "2ae3ede6-0025-4d12-b377-768442e48a7a",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 105,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":35.75}"
+    }, {
+      "id" : "dc971c8f-2eec-4448-b083-7209bbd159c0",
+      "profile" : "9c131f9f-9adb-4978-9329-d740428b9823",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 106,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":34.0}"
+    }, {
+      "id" : "f598e790-8f85-46d7-94fe-08d254c79f02",
+      "profile" : "9c131f9f-9adb-4978-9329-d740428b9823",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 106,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.0}"
+    }, {
+      "id" : "10fda7ac-196f-44a2-a3fa-0e3e6723b8fc",
+      "profile" : "c5be0c20-7e78-4539-affb-792c42bde356",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 107,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":34.25}"
+    }, {
+      "id" : "0f951f00-dcb2-419c-a08c-741f1535e417",
+      "profile" : "c5be0c20-7e78-4539-affb-792c42bde356",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 107,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.25}"
+    }, {
+      "id" : "b2bd9f1b-60e6-4a9b-a843-eff40fce4d8b",
+      "profile" : "2594948f-aae9-483e-80cd-eb828eb472fe",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 108,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":34.5}"
+    }, {
+      "id" : "11af2b6f-2c66-4fc7-aa76-dfb9bd9d7e4a",
+      "profile" : "2594948f-aae9-483e-80cd-eb828eb472fe",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 108,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.5}"
+    }, {
+      "id" : "a29bcb02-ea20-492e-9810-c2e2773a6133",
+      "profile" : "ed8f22e3-5d56-4ccf-bb24-e3b542635a35",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 109,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":34.75}"
+    }, {
+      "id" : "30d1b5b7-6bfa-4e25-a248-e86d3b941bcc",
+      "profile" : "ed8f22e3-5d56-4ccf-bb24-e3b542635a35",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 109,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.75}"
+    }, {
+      "id" : "f9ce90c5-be97-4361-92ab-2b314b2c5246",
+      "profile" : "69f78221-1e53-4708-a5b5-38b8252428f2",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 110,
+      "reserve" : true,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "8c485a27-45c8-48e6-9926-a1bbe377e84c",
+      "profile" : "69f78221-1e53-4708-a5b5-38b8252428f2",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 110,
+      "reserve" : true,
+      "originalMeta" : "{}"
+    }, {
+      "id" : "58cd5a16-4a66-4b9b-9ac4-fa43c383e2ec",
+      "profile" : "378c94a0-5a3b-4c72-aecd-439511eeb04d",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 111,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":35.25}"
+    }, {
+      "id" : "0dfea8a9-df00-4681-b0fd-e496c5ff5d64",
+      "profile" : "378c94a0-5a3b-4c72-aecd-439511eeb04d",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 111,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":37.25}"
+    }, {
+      "id" : "dcab3a2c-c732-4f90-8aca-4cd93aa4cb7d",
+      "profile" : "a8d50007-01e2-4060-8c17-e47b74025fc3",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 112,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":35.5}"
+    }, {
+      "id" : "1834c290-85c1-4bc4-b2bd-a579958fc576",
+      "profile" : "a8d50007-01e2-4060-8c17-e47b74025fc3",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 112,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":37.5}"
+    }, {
+      "id" : "cf063a33-5a04-4230-bbf7-6454e849e8e6",
+      "profile" : "ebe1abc2-7d74-4920-9762-e4fe1bac41a7",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 113,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":35.75}"
+    }, {
+      "id" : "9392f39c-14a1-4209-999d-57376a00b969",
+      "profile" : "ebe1abc2-7d74-4920-9762-e4fe1bac41a7",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 113,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":37.75}"
+    }, {
+      "id" : "d0e271a1-30bc-4729-8bcd-67feb670c26a",
+      "profile" : "28303fcd-eeb7-4a38-944c-7f1b2c30a894",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 114,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.0}"
+    }, {
+      "id" : "c9047cfc-28ec-4b4a-a28a-716af7fc6411",
+      "profile" : "28303fcd-eeb7-4a38-944c-7f1b2c30a894",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 114,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":38.0}"
+    }, {
+      "id" : "d25ec8d9-4f9c-4dea-9fb8-00b251acd155",
+      "profile" : "0fcc7023-7a8a-4ab8-923a-53157b67379d",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 115,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.25}"
+    }, {
+      "id" : "ade9f779-3c1c-48bd-8573-7484189ecd76",
+      "profile" : "0fcc7023-7a8a-4ab8-923a-53157b67379d",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 115,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":38.25}"
+    }, {
+      "id" : "8a801472-955c-4d09-90cc-d61a4c1517d6",
+      "profile" : "1bec59d6-37a6-4015-800e-6696b68e485f",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 116,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.5}"
+    }, {
+      "id" : "085960f3-5cc6-4e85-a955-2b418fcee15e",
+      "profile" : "1bec59d6-37a6-4015-800e-6696b68e485f",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 116,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":38.5}"
+    }, {
+      "id" : "f6e51f8b-7e3d-488d-b928-5dbd5fc4f5f2",
+      "profile" : "0fbf4c3d-6da7-4567-bbcb-6461e18045f6",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 117,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":36.75}"
+    }, {
+      "id" : "0c6dc183-65c4-419d-afa7-d1663199e9bd",
+      "profile" : "0fbf4c3d-6da7-4567-bbcb-6461e18045f6",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 117,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":38.75}"
+    }, {
+      "id" : "142b6cb4-43bf-4729-90d3-2c952baf794d",
+      "profile" : "adcfda57-6beb-4c72-8aee-2b00b6d03446",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 118,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":37.0}"
+    }, {
+      "id" : "2477dcc2-d3e2-433c-80ee-ed1dbc0d1edb",
+      "profile" : "adcfda57-6beb-4c72-8aee-2b00b6d03446",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 118,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":39.0}"
+    }, {
+      "id" : "6ad80d4a-223c-47a7-b8ac-8b6e6cca1f62",
+      "profile" : "51e3d729-3710-4541-ae0a-bc50f19afdf2",
+      "discipline" : "c64bcec8-f5f7-4b08-971e-1389ac4ef5d5",
+      "athleteIndex" : 119,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":37.25}"
+    }, {
+      "id" : "42086809-44fa-47e2-81ee-f1eba867bdd2",
+      "profile" : "51e3d729-3710-4541-ae0a-bc50f19afdf2",
+      "discipline" : "bb588b89-1726-4a16-b175-4f49576424ac",
+      "athleteIndex" : 119,
+      "reserve" : true,
+      "originalMeta" : "{\"seedTimeSeconds\":39.25}"
+    } ]
+  }
+}

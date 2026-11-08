@@ -1,0 +1,5 @@
+﻿scenario,eligible_participants,automatic_statistic,automatic_seconds,manual_first_seconds_exact,manual_first_passed,same_timing_boundary,evidence_scope
+baseline,200,single_initial_generation,0.3430414,502.5468661,True,False,one operator after S-60 training; prepared inputs; not an end-to-end comparison
+addition,210,median_of_10_regenerations,0.23743795,218.1375128,False,False,one operator after S-60 training; prepared inputs; not an end-to-end comparison
+withdrawal,208,median_of_10_regenerations,0.20729585,377.6069937,False,False,one operator after S-60 training; prepared inputs; not an end-to-end comparison
+seed_change,208,median_of_10_regenerations,0.205555,181.2620785,True,False,one operator after S-60 training; prepared inputs; not an end-to-end comparison

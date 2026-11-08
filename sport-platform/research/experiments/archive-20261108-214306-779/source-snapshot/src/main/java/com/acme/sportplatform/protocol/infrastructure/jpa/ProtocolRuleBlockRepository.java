@@ -1,0 +1,8 @@
+package com.acme.sportplatform.protocol.infrastructure.jpa;
+import java.util.UUID;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+public interface ProtocolRuleBlockRepository extends JpaRepository<ProtocolRuleBlockEntity, UUID> {
+    List<ProtocolRuleBlockEntity> findByRuleSetVersionIdOrderByOrderIndexAsc(UUID ruleSetVersionId);
+}

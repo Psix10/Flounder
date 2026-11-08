@@ -1,0 +1,7 @@
+﻿dataset,scenario,attempt,role,elapsed_seconds_exact,passed,violation_messages,diagnostic,method,relative_evidence_directory,elapsed_seconds
+M-200,baseline,1,first_submission,502.5468661,True,0,,Excel-sort-copy,manual-baseline/M-200-run-01/attempts/attempt-001,502.5468661
+M-200,addition,1,first_submission,218.1375128,False,1,Unknown participant: [empty]; conversion stopped before assignment validation,Excel-update-sort-copy,manual-updates/M-200/addition/attempts/attempt-001,218.1375128
+M-200,addition,2,correction_after_feedback,13.0018751,True,0,,Excel-correction-after-feedback,manual-updates/M-200/addition/attempts/attempt-002,13.0018751
+M-200,withdrawal,1,first_submission,377.6069937,False,1,Heat sequence must be unique and contiguous from 1; submitted heat numbers 2..27,Excel-update-sort-copy,manual-updates/M-200/withdrawal/attempts/attempt-001,377.6069937
+M-200,withdrawal,2,correction_after_feedback,105.2675604,True,0,,Excel-correction-after-feedback,manual-updates/M-200/withdrawal/attempts/attempt-002,105.2675604
+M-200,seed_change,1,first_submission,181.2620785,True,0,,Excel-update-sort-copy,manual-updates/M-200/seed-change/attempts/attempt-001,181.2620785

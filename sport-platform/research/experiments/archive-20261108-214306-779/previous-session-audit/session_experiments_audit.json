@@ -1,0 +1,54 @@
+{
+  "scope": "Audit of supplied manifest files and timing rows pasted into the conversation; not a replay or full snapshot correctness audit",
+  "rows_checked": 300,
+  "groups_checked": 10,
+  "all_groups_have_30_iterations": true,
+  "all_p50_p95_max_match_previous_summaries": true,
+  "all_reported_correct": true,
+  "all_recalculated_durations_within_5000ms": true,
+  "min_ms": 56.7391,
+  "max_ms": 347.4507,
+  "source_revision": "332054e5a27a41a9df625a03abf9d66b12271a8b",
+  "both_working_trees_reported_dirty": true,
+  "recorded_hashes_equal": true,
+  "hash_count_each_manifest": 329,
+  "production_java_hashes": 325,
+  "recorded_test_hashes": [
+    "src/test/java/com/acme/sportplatform/integration/protocol/SessionProtocolExperimentReport.java",
+    "src/test/java/com/acme/sportplatform/integration/protocol/SessionProtocolExperimentReportTest.java",
+    "src/test/java/com/acme/sportplatform/integration/protocol/SessionProtocolExperimentTest.java"
+  ],
+  "unhashed_test_helpers": [
+    "SessionProtocolSnapshotJsonAssertions.java",
+    "SessionProtocolSnapshotJsonAssertionsTest.java"
+  ],
+  "environment_fields_equal": {
+    "javaVersion": true,
+    "os": true,
+    "arch": true,
+    "availableProcessors": true,
+    "maxHeapBytes": true,
+    "postgresVersion": true,
+    "runsPerScenario": true,
+    "warmupsPerScenario": true,
+    "measurementBoundary": true
+  },
+  "recorded_environment": {
+    "javaVersion": "21.0.12.1",
+    "os": "Windows 11",
+    "arch": "amd64",
+    "availableProcessors": 24,
+    "maxHeapBytes": 8535408640,
+    "postgresVersion": "16.14 (Debian 16.14-1.pgdg13+1)",
+    "runsPerScenario": 30,
+    "warmupsPerScenario": 3,
+    "measurementBoundary": "Spring useCase.execute including transaction commit; excludes fixture setup, external validation and file IO; no HTTP"
+  },
+  "limitations": [
+    "Dirty working trees: HEAD alone does not identify the full executed source state.",
+    "Only recorded files are covered by hash comparison; numeric comparison helper and its tests were not in sourceSha256.",
+    "No independent revalidation of per-run assignment/schedule snapshots was performed in this audit.",
+    "Source hashes and environment metadata are supplied measurements, not independently collected from the workstation.",
+    "No extrapolation to HTTP, concurrent load, all event sizes or unimplemented eligibility/category rules."
+  ]
+}

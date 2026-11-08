@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.acme.sportplatform.registrations.api.CreateRegistrationRequest;
 import com.acme.sportplatform.registrations.api.RegistrationResponse;
+import com.acme.sportplatform.registrations.api.ResubmitRegistrationRequest;
 import com.acme.sportplatform.registrations.api.ReviewRegistrationRequest;
 import com.acme.sportplatform.registrations.application.CreateRegistrationUseCase;
 import com.acme.sportplatform.registrations.application.GetRegistrationByIdUseCase;
 import com.acme.sportplatform.registrations.application.ListMyRegistrationsUseCase;
 import com.acme.sportplatform.registrations.application.ListRegistrationsForReviewUseCase;
+import com.acme.sportplatform.registrations.application.ResubmitRegistrationUseCase;
 import com.acme.sportplatform.registrations.application.ReviewRegistrationUseCase;
 import com.acme.sportplatform.registrations.domain.RegistrationStatus;
 
@@ -35,19 +37,22 @@ public class RegistrationController {
         private final ListMyRegistrationsUseCase listMyRegistrationsUseCase;
         private final ListRegistrationsForReviewUseCase listRegistrationsForReviewUseCase;
         private final GetRegistrationByIdUseCase getRegistrationByIdUseCase;
+        private final ResubmitRegistrationUseCase resubmitRegistrationUseCase;
 
         public RegistrationController(
                 CreateRegistrationUseCase createRegistrationUseCase,
                 ReviewRegistrationUseCase reviewRegistrationUseCase,
                 ListMyRegistrationsUseCase listMyRegistrationsUseCase,
                 ListRegistrationsForReviewUseCase listRegistrationsForReviewUseCase,
-                GetRegistrationByIdUseCase getRegistrationByIdUseCase
+                GetRegistrationByIdUseCase getRegistrationByIdUseCase,
+                ResubmitRegistrationUseCase resubmitRegistrationUseCase
         ) {
                 this.createRegistrationUseCase = createRegistrationUseCase;
                 this.reviewRegistrationUseCase = reviewRegistrationUseCase;
                 this.listMyRegistrationsUseCase = listMyRegistrationsUseCase;
                 this.listRegistrationsForReviewUseCase = listRegistrationsForReviewUseCase;
                 this.getRegistrationByIdUseCase = getRegistrationByIdUseCase;
+                this.resubmitRegistrationUseCase = resubmitRegistrationUseCase;
         }
 
         @PostMapping
@@ -109,4 +114,22 @@ public class RegistrationController {
                 getRegistrationByIdUseCase.execute(registrationId)
         );
         }
+
+        @PostMapping("/{registrationId}/resubmit")
+        @PreAuthorize("hasRole('PARTICIPANT')")
+        public ResponseEntity<RegistrationResponse> resubmit(
+                @PathVariable UUID registrationId,
+                @AuthenticationPrincipal(expression = "userId")
+                UUID participantUserId,
+                @RequestBody @Valid ResubmitRegistrationRequest request
+        ) {
+        return ResponseEntity.ok(
+                resubmitRegistrationUseCase.execute(
+                        registrationId,
+                        participantUserId,
+                        request
+                )
+        );
         }
+
+}

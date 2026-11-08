@@ -1,0 +1,243 @@
+"""Independent exported-protocol validator; Python standard library only."""
+import argparse
+import csv
+import json
+import math
+import statistics
+import sys
+from collections import Counter, defaultdict
+from decimal import Decimal
+from pathlib import Path
+from uuid import UUID
+
+
+def load(path):
+    return json.loads(Path(path).read_text(encoding='utf-8'), parse_float=Decimal)
+
+
+def metric(value):
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        raise ValueError('Boolean is not a seed metric')
+    result = Decimal(str(value))
+    if not result.is_finite():
+        raise ValueError('Seed must be finite')
+    return result
+
+
+def rank(value):
+    return (value is None, Decimal(0) if value is None else value)
+
+
+def validate_protocol(source, protocol):
+    errors = []
+    if source.get('schemaVersion') != 1:
+        return ['Unsupported input schemaVersion']
+    if (source.get('heatOrder'), source.get('partialHeat'), source.get('ntPlacement')) != (
+            'SLOWEST_FIRST', 'FIRST', 'WEAKEST'):
+        return ['Validator supports only SLOWEST_FIRST / FIRST / WEAKEST']
+    capacity = source['capacity']
+    order = source['positionOrder']
+    allowed = source['allowedPositions']
+    if (type(capacity) is not int or capacity < 1 or len(order) != capacity
+            or any(type(x) is not int or x < 0 for x in order + allowed)
+            or len(set(order)) != capacity or set(order) != set(allowed) or len(allowed) != capacity):
+        return ['Invalid capacity/position configuration']
+    rows = source['registrations']
+    all_ids = [str(UUID(r['registrationId'])) for r in rows]
+    if len(set(all_ids)) != len(all_ids):
+        return ['Duplicate input registration IDs']
+    eligible = {str(UUID(r['registrationId'])): metric(r.get('seedMetric'))
+                for r in rows if r['status'] == 'CONFIRMED'}
+    values = sorted(eligible.values(), key=rank)
+    # Oracle works on metric multisets, not production executor code or a saved expected protocol.
+    expected_heats = [values[i:i + capacity] for i in range(0, len(values), capacity)][::-1]
+    units = protocol.get('units')
+    if not isinstance(units, list):
+        return ['units is not an array']
+    if any(type(u.get('sequenceNumber')) is not int for u in units):
+        return ['Invalid heat sequenceNumber']
+    units = sorted(units, key=lambda u: u['sequenceNumber'])
+    if [u['sequenceNumber'] for u in units] != list(range(1, len(units) + 1)):
+        errors.append('Heat sequence must be unique and contiguous from 1')
+    if len(units) != len(expected_heats):
+        errors.append(f'Heat count: expected {len(expected_heats)}, got {len(units)}')
+    if type(protocol.get('unitCount')) is not int or protocol['unitCount'] != len(units):
+        errors.append('unitCount disagrees with units')
+    seen = []
+    for index, unit in enumerate(units):
+        assigned = unit.get('assignments')
+        if not isinstance(assigned, list):
+            errors.append(f'Heat {index + 1}: assignments is not an array')
+            continue
+        if not 1 <= len(assigned) <= capacity:
+            errors.append(f'Heat {index + 1}: invalid occupancy {len(assigned)}')
+        positions = [a.get('laneOrPosition') for a in assigned]
+        valid_positions = all(type(p) is int and p in allowed for p in positions)
+        if not valid_positions or len(set(str(p) for p in positions)) != len(positions):
+            errors.append(f'Heat {index + 1}: invalid/duplicate lanes')
+        if valid_positions and set(positions) != set(order[:len(assigned)]):
+            errors.append(f'Heat {index + 1}: occupied lanes violate positionOrder prefix')
+        local = []
+        for a in assigned:
+            rid = str(UUID(a['registrationId']))
+            seen.append(rid)
+            if rid not in eligible:
+                errors.append(f'Heat {index + 1}: unexpected or ineligible registration {rid}')
+            else:
+                local.append((a.get('laneOrPosition'), eligible[rid]))
+        if valid_positions and len(local) == len(assigned) and index < len(expected_heats):
+            actual_values = [v for _, v in sorted(local, key=lambda pair: order.index(pair[0]))]
+            if actual_values != expected_heats[index]:
+                errors.append(f'Heat {index + 1}: seed grouping/order mismatch')
+    duplicates = [rid for rid, count in Counter(seen).items() if count > 1]
+    if duplicates:
+        errors.append(f'Duplicate assignments: {duplicates}')
+    missing = set(eligible) - set(seen)
+    if missing:
+        errors.append(f'Missing eligible registrations: {sorted(missing)}')
+    if type(protocol.get('assignmentCount')) is not int or protocol['assignmentCount'] != len(seen):
+        errors.append('assignmentCount disagrees with assignments')
+    if len(seen) != len(eligible):
+        errors.append(f'Assignment count: expected {len(eligible)}, got {len(seen)}')
+    return errors
+
+
+def signature(protocol):
+    return sorted((a['registrationId'], u['sequenceNumber'], a['laneOrPosition'])
+                  for u in protocol['units'] for a in u['assignments'])
+
+
+def row_map(source):
+    return {r['registrationId']: (r['status'], metric(r.get('seedMetric'))) for r in source['registrations']}
+
+
+def percentile(values, q):
+    data = sorted(values)
+    point = (len(data) - 1) * q
+    lower = int(point)
+    upper = min(lower + 1, len(data) - 1)
+    return data[lower] + (data[upper] - data[lower]) * (point - lower)
+
+
+def validate_run(folder):
+    folder = Path(folder)
+    manifest = load(folder / 'manifest.json')
+    errors, inputs, protocols, audits = [], {}, {}, {}
+    required = ['baseline', 'no_change', 'addition', 'withdrawal', 'seed_change']
+    scenarios = manifest['scenarios']
+    if [s['name'] for s in scenarios] != required:
+        errors.append('Scenario sequence differs from required five-stage experiment')
+    repetitions = manifest['repetitions']
+    for scenario in scenarios:
+        name = scenario['name']
+        source = load(folder / scenario['input'])
+        inputs[name] = source
+        responses = [load(folder / path) for path in scenario['protocols']]
+        protocols[name] = responses
+        audits[name] = [load(folder / path) for path in scenario['snapshots']]
+        if len(audits[name]) != len(responses):
+            errors.append(f'{name}: wrong snapshot count')
+        if len(responses) != repetitions:
+            errors.append(f'{name}: wrong repetition count')
+        for index, response in enumerate(responses, 1):
+            errors.extend(f'{name}/{index}: {e}' for e in validate_protocol(source, response))
+            if index <= len(audits[name]):
+                audit = audits[name][index - 1]
+                if signature(audit['protocol']) != signature(response):
+                    errors.append(f'{name}/{index}: saved snapshot assignments differ from response')
+                actual_participants = {r['registrationId']: metric(r.get('seedMetric'))
+                                       for r in audit['input']['participants']}
+                expected_participants = {rid: value for rid, (status, value) in row_map(source).items()
+                                         if status == 'CONFIRMED'}
+                if actual_participants != expected_participants:
+                    errors.append(f'{name}/{index}: snapshot participants differ from fixture input')
+                if (audit['input']['ruleSetVersionId'] != manifest['ruleSetVersionId']
+                        or audit['ruleSetVersionId'] != manifest['ruleSetVersionId']):
+                    errors.append(f'{name}/{index}: snapshot uses unexpected rule version')
+        if responses and any(signature(r) != signature(responses[0]) for r in responses[1:]):
+            errors.append(f'{name}: assignments changed between identical-input repetitions')
+    if all(name in inputs and protocols[name] for name in required):
+        baseline, same, addition, withdrawal, changed = [row_map(inputs[n]) for n in required]
+        if len(baseline) != manifest['baseSize'] or any(s != 'CONFIRMED' for s, _ in baseline.values()):
+            errors.append('Baseline does not match declared size/eligibility')
+        if same != baseline or signature(protocols['baseline'][0]) != signature(protocols['no_change'][0]):
+            errors.append('No-change scenario changed input or assignments')
+        expected_additions = max(3, manifest['baseSize'] // 20)
+        if (not baseline.keys() <= addition.keys() or len(addition) - len(baseline) != expected_additions
+                or any(addition[k] != value for k, value in baseline.items())
+                or any(addition[k][0] != 'CONFIRMED' for k in addition.keys() - baseline.keys())):
+            errors.append('Addition input is not the expected append-only change')
+        removed = [k for k in addition if k in withdrawal and addition[k] != withdrawal[k]]
+        if (addition.keys() != withdrawal.keys() or len(removed) != 2
+                or any(addition[k][0] != 'CONFIRMED' or withdrawal[k][0] != 'REJECTED'
+                       or addition[k][1] != withdrawal[k][1] for k in removed)):
+            errors.append('Withdrawal input must change exactly two statuses and no metrics')
+        modified = [k for k in withdrawal if k in changed and withdrawal[k] != changed[k]]
+        if (withdrawal.keys() != changed.keys() or len(modified) != 1
+                or any(withdrawal[k][0] != 'CONFIRMED' or changed[k][0] != 'CONFIRMED'
+                       or changed[k][1] != Decimal('99.99') for k in modified)):
+            errors.append('Seed-change input must alter one confirmed seed to 99.99')
+    with (folder / 'measurements.csv').open(encoding='utf-8', newline='') as stream:
+        measurements = list(csv.DictReader(stream))
+    expected_keys = [(s['name'], rep) for s in scenarios for rep in range(1, repetitions + 1)]
+    actual_keys = [(r['scenario'], int(r['repetition'])) for r in measurements]
+    if expected_keys != actual_keys:
+        errors.append('Measurements do not match ordered exported protocols')
+    groups = defaultdict(list)
+    for index, row in enumerate(measurements, 1):
+        duration = float(row['duration_ms'])
+        if not math.isfinite(duration) or duration < 0:
+            errors.append(f'Measurement {index}: invalid duration')
+            continue
+        if int(row['revision']) != index or row['operation'] != ('GENERATE' if index == 1 else 'REGENERATE'):
+            errors.append(f'Measurement {index}: revision/operation mismatch')
+        candidates = protocols.get(row['scenario'], [])
+        rep = int(row['repetition'])
+        if 1 <= rep <= len(candidates):
+            p = candidates[rep - 1]
+            audit = audits[row['scenario']][rep - 1]
+            if audit['revision'] != int(row['revision']) or audit['operation'] != row['operation']:
+                errors.append(f'Measurement {index}: saved snapshot revision/operation mismatch')
+            if int(row['unit_count']) != p['unitCount'] or int(row['assignment_count']) != p['assignmentCount']:
+                errors.append(f'Measurement {index}: count mismatch')
+        groups[(row['scenario'], row['operation'])].append(duration)
+    summary = []
+    for (scenario, operation), values in groups.items():
+        summary.append(dict(scenario=scenario, operation=operation, samples=len(values),
+                            min_ms=min(values), median_ms=statistics.median(values),
+                            p95_ms=percentile(values, .95), max_ms=max(values)))
+    report = dict(schemaVersion=1, label=manifest['label'], passed=not errors,
+                  checkedProtocols=sum(len(v) for v in protocols.values()), violationCount=len(errors),
+                  violations=errors, timingScope=manifest['timingScope'], summary=summary,
+                  limitations=['No manual baseline; no speedup claim.',
+                               'MockMvc timing excludes real network and fixture setup.',
+                               'Small samples and warm-up effects are not controlled.',
+                               'Equal-metric ties may swap identities across fresh runs; within-run stability is checked.',
+                               'Single-threaded, single-discipline synthetic scenario.'])
+    (folder / 'validation-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    with (folder / 'summary.csv').open('w', encoding='utf-8', newline='') as stream:
+        columns = ['scenario', 'operation', 'samples', 'min_ms', 'median_ms', 'p95_ms', 'max_ms']
+        writer = csv.DictWriter(stream, fieldnames=columns)
+        writer.writeheader()
+        writer.writerows(summary)
+    return report
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--run', required=True, type=Path)
+    args = parser.parse_args()
+    try:
+        report = validate_run(args.run)
+    except (OSError, ValueError, KeyError, TypeError, IndexError) as ex:
+        print(f'INVALID EXPERIMENT ARTIFACTS: {ex}', file=sys.stderr)
+        return 2
+    print(json.dumps({'passed': report['passed'], 'checkedProtocols': report['checkedProtocols'],
+                      'violationCount': report['violationCount']}, ensure_ascii=False))
+    return 0 if report['passed'] else 1
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

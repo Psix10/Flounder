@@ -89,6 +89,14 @@ public class GlobalExceptionHandler {
                 case "registrations.discipline_limit_reached" ->
                         HttpStatus.CONFLICT;
 
+                case "organizations.member_organization_not_found", "organizations.member_user_not_found" -> HttpStatus.NOT_FOUND;
+                case "organizations.member_role_conflict", "organizations.member_user_inactive",
+                     "organizations.member_concurrent_update" -> HttpStatus.CONFLICT;
+
+                case "results.final_not_found" -> HttpStatus.NOT_FOUND;
+                case "results.final_not_ready", "results.final_already_confirmed",
+                     "results.final_request_conflict" -> HttpStatus.CONFLICT;
+
                 case "results.concurrent_update" ->
                         HttpStatus.CONFLICT;
 
@@ -242,6 +250,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorResponse> handleUnexpected(
             Exception ex
     ) {
+        for (Throwable cause = ex; cause != null; cause = cause.getCause()) {
+            if (cause instanceof java.sql.SQLException sql) {
+                String code = switch (sql.getSQLState() == null ? "" : sql.getSQLState()) {
+                    case "PZ001" -> "results.discipline_finalized";
+                    case "PZ002" -> "results.final_history_immutable";
+                    case "PZ003" -> "results.final_isolation_not_supported";
+                    default -> null;
+                };
+                if (code != null) return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        new ApiErrorResponse(code, "Final standings protection rejected this operation", OffsetDateTime.now(), List.of()));
+            }
+        }
         log.error("Unexpected internal server error", ex);
 
         return ResponseEntity.status(

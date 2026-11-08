@@ -181,6 +181,11 @@ export function PublicDisciplineResultsPage() {
         ← К событию
       </Link>
 
+      {publicSlug && disciplineId ? <Link className={styles.backLink}
+        to={`/events/${encodeURIComponent(publicSlug)}/disciplines/${encodeURIComponent(disciplineId)}/standings`}>
+        Общий и категорийный зачёт · подтверждённый итог
+      </Link> : null}
+
       <p className={styles.eyebrow}>Опубликованные результаты</p>
 
       <h1 className={styles.title}>

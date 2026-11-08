@@ -170,7 +170,7 @@
         </dependency>
     </dependencies>
 
-    <build>
+        <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -182,6 +182,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.4</version>
                 <configuration>
+                    <forkedProcessExitTimeoutInSeconds>
+                        60
+                    </forkedProcessExitTimeoutInSeconds>
                     <excludes>
                         <exclude>**/*IT.java</exclude>
                         <exclude>**/*ITCase.java</exclude>
@@ -201,19 +204,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
-                <configuration>
-                    <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
-                    <excludes>
-                        <exclude>**/*IT.java</exclude>
-                        <exclude>**/*ITCase.java</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>

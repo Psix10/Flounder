@@ -1,0 +1,6 @@
+scenario,runs,correct_runs,correct_within_5s,qualified_share,p50_ms,p95_ms,max_ms,assessment
+baseline,3,3,3,1.0,306.9834,369.119,369.119,EXPLORATORY
+nochange,3,3,3,1.0,296.9365,318.3297,318.3297,EXPLORATORY
+seedchange,3,3,3,1.0,269.4341,290.1007,290.1007,EXPLORATORY
+withdrawal,3,3,3,1.0,251.9994,252.2714,252.2714,EXPLORATORY
+addition,3,3,3,1.0,288.0845,314.4719,314.4719,EXPLORATORY

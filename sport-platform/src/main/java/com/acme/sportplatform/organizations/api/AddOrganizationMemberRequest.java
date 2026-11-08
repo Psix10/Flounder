@@ -4,9 +4,10 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 public record AddOrganizationMemberRequest(
         @NotNull UUID userId,
-        @NotBlank String memberRole
+        @NotBlank @Pattern(regexp = "OWNER|ADMIN") String memberRole
 ) {
 }

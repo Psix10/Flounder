@@ -1,0 +1,3499 @@
+===== FILE: frontend\package.json =====
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "test:protocol": "node --test tests/protocol-model.test.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router": "^8.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "oxlint": "^1.79.0",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.2"
+  }
+}
+
+
+===== FILE: frontend\tsconfig.app.json =====
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
+
+
+===== FILE: frontend\src\app\App.tsx =====
+import { Navigate, Route, Routes } from 'react-router'
+
+import { AppLayout } from '../components/AppLayout'
+import { RequireRole } from '../components/RequireRole'
+
+import { LoginPage } from '../features/auth/LoginPage'
+import { RegisterPage } from '../features/auth/RegisterPage'
+
+import { EventDetailsPage } from '../features/events/EventDetailsPage'
+import { EventsPage } from '../features/events/EventsPage'
+
+import { CreateEventPage } from '../features/organizer/CreateEventPage'
+import { OrganizerDashboardPage } from '../features/organizer/OrganizerDashboardPage'
+import { OrganizerEventManagePage } from '../features/organizer/OrganizerEventManagePage'
+import { OrganizerEventsPage } from '../features/organizer/OrganizerEventsPage'
+import { OrganizerLayout } from '../features/organizer/OrganizerLayout'
+import { OrganizerRegistrationsPage } from '../features/organizer/OrganizerRegistrationsPage'
+
+import { OperatorPaymentsPage } from '../features/payments/OperatorPaymentsPage'
+import { OperatorRegistrationPage } from '../features/payments/OperatorRegistrationPage'
+import { PaymentPage } from '../features/payments/PaymentPage'
+
+import { MyRegistrationsPage } from '../features/registrations/MyRegistrationsPage'
+import { RegistrationPage } from '../features/registrations/RegistrationPage'
+
+import { CreateRegulationPage } from '../features/regulations/CreateRegulationPage'
+
+import { PublicStandingsPage, OrganizerStandingsPage } from '../features/results/StandingsPage'
+import { CompetitionUnitsPage } from '../features/results/CompetitionUnitsPage'
+
+import { JudgePanelPage } from '../features/results/JudgePanelPage'
+import { PublicDisciplineResultsPage } from '../features/results/PublicDisciplineResultsPage'
+
+export default function App() {
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<EventsPage />} />
+
+        <Route
+          path="events/:eventCode"
+          element={<EventDetailsPage />}
+        />
+
+        <Route
+          path="events/:publicSlug/disciplines/:disciplineId/results"
+          element={<PublicDisciplineResultsPage />}
+        />
+
+        <Route path="events/:publicSlug/disciplines/:disciplineId/standings" element={<PublicStandingsPage />} />
+
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+
+        <Route element={<RequireRole roles={['participant']} />}>
+          <Route
+            path="events/:eventCode/disciplines/:disciplineId/register"
+            element={<RegistrationPage />}
+          />
+
+          <Route
+            path="my/registrations"
+            element={<MyRegistrationsPage />}
+          />
+
+          <Route
+            path="my/registrations/:registrationId/payment"
+            element={<PaymentPage />}
+          />
+
+          <Route
+            path="payment-return"
+            element={<PaymentPage />}
+          />
+        </Route>
+
+        <Route
+          element={
+            <RequireRole
+              roles={['platform_admin', 'organizer']}
+            />
+          }
+        >
+          <Route path="organizer" element={<OrganizerLayout />}>
+            <Route index element={<OrganizerDashboardPage />} />
+
+            <Route
+              path="events"
+              element={<OrganizerEventsPage />}
+            />
+
+            <Route
+              path="events/new"
+              element={<CreateEventPage />}
+            />
+
+            <Route
+              path="events/:eventId"
+              element={<OrganizerEventManagePage />}
+            />
+
+            <Route
+              path="events/:eventId/registrations"
+              element={<OrganizerRegistrationsPage />}
+            />
+
+            <Route path="events/:eventId/disciplines/:disciplineId/standings" element={<OrganizerStandingsPage />} />
+
+            <Route
+              path="regulations/create"
+              element={<CreateRegulationPage />}
+            />
+          </Route>
+        </Route>
+
+        <Route
+          element={
+            <RequireRole
+              roles={[
+                'platform_admin',
+                'organizer',
+                'operator',
+              ]}
+            />
+          }
+        >
+          <Route
+            path="operator/registrations/:registrationId"
+            element={<OperatorRegistrationPage />}
+          />
+        </Route>
+
+        <Route
+          element={
+            <RequireRole
+              roles={['platform_admin', 'operator']}
+            />
+          }
+        >
+          <Route
+            path="operator/payments"
+            element={<OperatorPaymentsPage />}
+          />
+
+          <Route path="operator/results" element={<CompetitionUnitsPage />} />
+
+          <Route
+            path="operator/competition-units/:unitId"
+            element={<JudgePanelPage />}
+          />
+        </Route>
+
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
+      </Route>
+    </Routes>
+  )
+}
+
+
+===== FILE: frontend\src\api\http.ts =====
+import { readApiFailure } from '../lib/standings-ui.mjs'
+import type { FieldViolation } from '../lib/standings-ui.mjs'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+
+export class ApiError extends Error {
+  public readonly status: number
+  public readonly code?: string
+  public readonly violations: FieldViolation[]
+
+  constructor(
+    status: number,
+    message: string,
+    code?: string,
+    violations: FieldViolation[] = [],
+  ) {
+    super(message)
+
+    this.name = 'ApiError'
+    this.status = status
+    this.code = code
+    this.violations = violations
+  }
+}
+
+type ApiFetchOptions = RequestInit & {
+  accessToken?: string | null
+}
+
+export async function apiFetch<T>(
+  path: string,
+  options: ApiFetchOptions = {},
+): Promise<T> {
+  if (!API_BASE_URL) {
+    throw new Error(
+      'VITE_API_BASE_URL is not configured. Create frontend/.env.local and restart Vite.',
+    )
+  }
+
+  const { accessToken, ...requestOptions } = options
+  const headers = new Headers(requestOptions.headers)
+
+  headers.set('Accept', 'application/json')
+
+  if (accessToken) {
+    headers.set('Authorization', `Bearer ${accessToken}`)
+  }
+
+  if (
+    typeof requestOptions.body === 'string' &&
+    !headers.has('Content-Type')
+  ) {
+    headers.set('Content-Type', 'application/json')
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...requestOptions,
+    headers,
+  })
+
+  if (!response.ok) {
+    let payload: unknown
+
+    try {
+      payload = await response.json()
+    } catch {
+      payload = undefined
+    }
+
+    const failure = readApiFailure(payload, response.status)
+    throw new ApiError(response.status, failure.message, failure.code, failure.violations)
+  }
+
+  if (response.status === 204) {
+    return undefined as T
+  }
+
+  const contentType = response.headers.get('content-type')
+
+  if (!contentType?.includes('application/json')) {
+    return undefined as T
+  }
+
+  return (await response.json()) as T
+}
+
+
+===== FILE: frontend\src\api\standings.api.ts =====
+import { apiFetch } from './http'
+export type StandingsEntry = {
+  overallPlace?: number | null
+  competitionUnitId: string
+  competitionUnitLabel: string
+  unitPlace?: number | null
+  participantName: string
+  clubName?: string | null
+  rawValue?: string | null
+  resultType?: string | null
+  status: string
+  categoryCode?: string | null
+  seedingGroupCode?: string | null
+  categoryPlace?: number | null
+}
+export type Standings = {
+  eventId: string
+  eventDisciplineId: string
+  resultType: string
+  rankingStrategy: string
+  tiePolicy: string
+  entries: StandingsEntry[]
+}
+export type FinalStandings = {
+  id: string
+  eventId: string
+  eventDisciplineId: string
+  revision: number
+  status: 'CONFIRMED' | 'REVOKED'
+  confirmedAt: string
+  confirmedBy: string
+  confirmationNote?: string | null
+  standings: Standings
+  revokedAt?: string | null
+  revokedBy?: string | null
+  revocationReason?: string | null
+}
+export type ConfirmFinalRequest = { requestId: string; programmeComplete: true; note: string }
+function scope(eventId: string, disciplineId: string) {
+  return `events/${encodeURIComponent(eventId)}/disciplines/${encodeURIComponent(disciplineId)}`
+}
+function checkedStandings(data: Standings): Standings {
+  if (!data || !Array.isArray(data.entries) || typeof data.eventId !== 'string' || typeof data.eventDisciplineId !== 'string')
+    throw new Error('Сервер вернул неожиданный формат зачёта.')
+  return data
+}
+function checkedFinal(data: FinalStandings): FinalStandings {
+  if (!data || typeof data.id !== 'string' || !Number.isInteger(data.revision) || !['CONFIRMED','REVOKED'].includes(data.status))
+    throw new Error('Сервер вернул неожиданный формат итогового снимка.')
+  checkedStandings(data.standings)
+  return data
+}
+export async function getStandings(eventId:string,disciplineId:string):Promise<Standings> {
+  return checkedStandings(await apiFetch<Standings>(`/api/v1/public/${scope(eventId,disciplineId)}/standings`))
+}
+export async function getFinalStandings(eventId:string,disciplineId:string):Promise<FinalStandings> {
+  const data=checkedFinal(await apiFetch<FinalStandings>(`/api/v1/public/${scope(eventId,disciplineId)}/final-standings`))
+  if(data.status!=='CONFIRMED') throw new Error('Публичный endpoint вернул неактивную ревизию. Обновите данные.')
+  return data
+}
+export async function getFinalHistory(eventId:string,disciplineId:string,accessToken:string):Promise<FinalStandings[]> {
+  const data=await apiFetch<FinalStandings[]>(`/api/v1/${scope(eventId,disciplineId)}/finalizations`,{accessToken})
+  if(!Array.isArray(data)) throw new Error('Неожиданный формат истории итогов.')
+  return data.map(checkedFinal)
+}
+export async function confirmFinal(eventId:string,disciplineId:string,request:ConfirmFinalRequest,accessToken:string):Promise<FinalStandings> {
+  return checkedFinal(await apiFetch<FinalStandings>(`/api/v1/${scope(eventId,disciplineId)}/finalizations`,{
+    method:'POST',accessToken,body:JSON.stringify(request),
+  }))
+}
+export async function revokeFinal(eventId:string,disciplineId:string,id:string,reason:string,accessToken:string):Promise<FinalStandings> {
+  return checkedFinal(await apiFetch<FinalStandings>(`/api/v1/${scope(eventId,disciplineId)}/finalizations/${encodeURIComponent(id)}/revoke`,{
+    method:'POST',accessToken,body:JSON.stringify({reason}),
+  }))
+}
+
+
+===== FILE: frontend\src\features\organizer\OrganizerEventManagePage.tsx =====
+import { useEffect, useState } from 'react'
+import { NavLink, useParams } from 'react-router'
+
+import {
+  closeEventRegistration,
+  completeEvent,
+  getEventById,
+  getEventDisciplines,
+  openEventRegistration,
+  publishEvent,
+  publishEventDiscipline,
+  type Event,
+  type EventDiscipline,
+} from '../../api/events.api'
+import { ApiError } from '../../api/http'
+import { useAuth } from '../../app/providers/AuthProvider'
+import {
+  getDisciplineStatusLabel,
+  getDisciplineStatusTone,
+} from './discipline-status'
+import {
+  getEventStatusLabel,
+  getEventStatusTone,
+  normalizeEventStatus,
+} from './event-status'
+import styles from './OrganizerEventManagePage.module.css'
+
+type EventAction =
+  | 'publish'
+  | 'open-registration'
+  | 'close-registration'
+  | 'complete'
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof ApiError) {
+    if (error.status === 403) {
+      return 'Нет доступа к управлению мероприятием.'
+    }
+
+    return error.message || fallback
+  }
+
+  return fallback
+}
+
+function statusClassName(status: string): string {
+  switch (getEventStatusTone(status)) {
+    case 'draft':
+      return `${styles.statusBadge} ${styles.statusDraft}`
+    case 'published':
+      return `${styles.statusBadge} ${styles.statusPublished}`
+    case 'open':
+      return `${styles.statusBadge} ${styles.statusOpen}`
+    case 'closed':
+      return `${styles.statusBadge} ${styles.statusClosed}`
+    case 'live':
+      return `${styles.statusBadge} ${styles.statusLive}`
+    case 'completed':
+      return `${styles.statusBadge} ${styles.statusCompleted}`
+    case 'archived':
+      return `${styles.statusBadge} ${styles.statusArchived}`
+    default:
+      return `${styles.statusBadge} ${styles.statusNeutral}`
+  }
+}
+
+function disciplineStatusClassName(status?: string | null): string {
+  switch (getDisciplineStatusTone(status)) {
+    case 'draft':
+      return `${styles.statusBadge} ${styles.statusDraft}`
+    case 'published':
+      return `${styles.statusBadge} ${styles.statusPublished}`
+    case 'archived':
+      return `${styles.statusBadge} ${styles.statusArchived}`
+    default:
+      return `${styles.statusBadge} ${styles.statusNeutral}`
+  }
+}
+
+function formatDate(value?: string | null): string {
+  if (!value) {
+    return '—'
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return '—'
+  }
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date)
+}
+
+export function OrganizerEventManagePage() {
+  const { eventId } = useParams()
+  const { session } = useAuth()
+  const accessToken = session?.accessToken
+
+  const [event, setEvent] = useState<Event | null>(null)
+  const [disciplines, setDisciplines] = useState<EventDiscipline[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [actionMessage, setActionMessage] = useState<string | null>(null)
+  const [publishingId, setPublishingId] = useState<string | null>(null)
+  const [eventAction, setEventAction] = useState<EventAction | null>(null)
+
+  useEffect(() => {
+    if (!eventId || !accessToken) {
+      setIsLoading(false)
+      return
+    }
+
+    let isMounted = true
+
+    async function loadData() {
+      setIsLoading(true)
+      setErrorMessage(null)
+
+      try {
+        const [eventData, disciplinesData] = await Promise.all([
+          getEventById(eventId, accessToken),
+          getEventDisciplines(eventId, accessToken),
+        ])
+
+        if (!isMounted) {
+          return
+        }
+
+        setEvent(eventData)
+        setDisciplines(disciplinesData)
+      } catch (error) {
+        if (isMounted) {
+          setErrorMessage(
+            getErrorMessage(error, 'Не удалось загрузить мероприятие.'),
+          )
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadData()
+
+    return () => {
+      isMounted = false
+    }
+  }, [eventId, accessToken])
+
+  async function handlePublishDiscipline(disciplineId: string) {
+    if (!eventId || !accessToken) {
+      return
+    }
+
+    setPublishingId(disciplineId)
+    setErrorMessage(null)
+    setActionMessage(null)
+
+    try {
+      const updatedDiscipline = await publishEventDiscipline(
+        eventId,
+        disciplineId,
+        accessToken,
+      )
+
+      setDisciplines((current) =>
+        current.map((discipline) =>
+          discipline.id === disciplineId ? updatedDiscipline : discipline,
+        ),
+      )
+
+      setActionMessage('Дисциплина опубликована.')
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось опубликовать дисциплину.'),
+      )
+    } finally {
+      setPublishingId(null)
+    }
+  }
+
+  async function handleEventAction(action: EventAction) {
+    if (!eventId || !accessToken || !event) {
+      return
+    }
+
+    setEventAction(action)
+    setErrorMessage(null)
+    setActionMessage(null)
+
+    try {
+      let updatedEvent: Event
+      let successMessage: string
+
+      switch (action) {
+        case 'publish':
+          updatedEvent = await publishEvent(eventId, accessToken)
+          successMessage = 'Мероприятие опубликовано.'
+          break
+
+        case 'open-registration':
+          updatedEvent = await openEventRegistration(eventId, accessToken)
+          successMessage = 'Регистрация открыта.'
+          break
+
+        case 'close-registration':
+          updatedEvent = await closeEventRegistration(eventId, accessToken)
+          successMessage = 'Регистрация закрыта.'
+          break
+
+        case 'complete':
+          updatedEvent = await completeEvent(eventId, accessToken)
+          successMessage = 'Мероприятие завершено.'
+          break
+      }
+
+      setEvent(updatedEvent)
+      setActionMessage(successMessage)
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось изменить статус мероприятия.'),
+      )
+    } finally {
+      setEventAction(null)
+    }
+  }
+
+  const eventStatus = normalizeEventStatus(event?.status)
+
+  return (
+    <section className={styles.page}>
+      <NavLink className={styles.backLink} to="/organizer/events">
+        ← К мероприятиям
+      </NavLink>
+
+      {isLoading ? (
+        <div className={styles.stateCard}>Загружаем мероприятие…</div>
+      ) : null}
+
+      {errorMessage ? (
+        <p className={styles.errorMessage} role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      {actionMessage ? (
+        <p className={styles.successMessage} role="status">
+          {actionMessage}
+        </p>
+      ) : null}
+
+      {!isLoading && event ? (
+        <>
+          <header className={styles.hero}>
+            <div>
+              <p className={styles.eyebrow}>Управление мероприятием</p>
+              <h1 className={styles.title}>{event.title}</h1>
+
+              <div className={styles.meta}>
+                <span className={statusClassName(event.status)}>
+                  {getEventStatusLabel(event.status)}
+                </span>
+                <span>Начало: {formatDate(event.eventStartAt)}</span>
+                <span>Окончание: {formatDate(event.eventEndAt)}</span>
+              </div>
+
+              {event.description ? (
+                <p className={styles.description}>{event.description}</p>
+              ) : null}
+            </div>
+
+            <div className={styles.heroActions}>
+              <NavLink
+                className={styles.secondaryLink}
+                to={`/organizer/events/${encodeURIComponent(
+                  event.id,
+                )}/registrations`}
+              >
+                Заявки
+              </NavLink>
+
+              {event.publicSlug ? (
+                <NavLink
+                  className={styles.secondaryLink}
+                  to={`/events/${encodeURIComponent(event.publicSlug)}`}
+                >
+                  Открыть страницу
+                </NavLink>
+              ) : null}
+            </div>
+          </header>
+
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>Статус мероприятия</h2>
+
+            <div className={styles.actionRow}>
+              {eventStatus === 'DRAFT' ? (
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  disabled={eventAction === 'publish'}
+                  onClick={() => void handleEventAction('publish')}
+                >
+                  {eventAction === 'publish'
+                    ? 'Публикуем…'
+                    : 'Опубликовать мероприятие'}
+                </button>
+              ) : null}
+
+              {eventStatus === 'PUBLISHED' ? (
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  disabled={eventAction === 'open-registration'}
+                  onClick={() =>
+                    void handleEventAction('open-registration')
+                  }
+                >
+                  {eventAction === 'open-registration'
+                    ? 'Открываем…'
+                    : 'Открыть регистрацию'}
+                </button>
+              ) : null}
+
+              {eventStatus === 'REGISTRATION_OPEN' ? (
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  disabled={eventAction === 'close-registration'}
+                  onClick={() =>
+                    void handleEventAction('close-registration')
+                  }
+                >
+                  {eventAction === 'close-registration'
+                    ? 'Закрываем…'
+                    : 'Закрыть регистрацию'}
+                </button>
+              ) : null}
+
+              {eventStatus === 'REGISTRATION_CLOSED' ||
+              eventStatus === 'LIVE' ? (
+                <button
+                  type="button"
+                  className={styles.primaryButton}
+                  disabled={eventAction === 'complete'}
+                  onClick={() => void handleEventAction('complete')}
+                >
+                  {eventAction === 'complete'
+                    ? 'Завершаем…'
+                    : 'Завершить мероприятие'}
+                </button>
+              ) : null}
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <h2 className={styles.cardTitle}>Дисциплины</h2>
+
+            {disciplines.length === 0 ? (
+              <div className={styles.stateCard}>
+                Для этого мероприятия пока нет дисциплин.
+              </div>
+            ) : (
+              <div className={styles.disciplineList}>
+                {disciplines.map((discipline) => {
+                  const disciplineStatus = discipline.status || 'UNKNOWN'
+
+                  return (
+                    <article
+                      key={discipline.id}
+                      className={styles.disciplineCard}
+                    >
+                      <div className={styles.disciplineHeader}>
+                        <div>
+                          <h3 className={styles.disciplineTitle}>
+                            {discipline.name}
+                          </h3>
+                          <p className={styles.disciplineMeta}>
+                            Код: {discipline.code || '—'} · Формат:{' '}
+                            {discipline.competitionFormat}
+                          </p>
+                        </div>
+
+                        <span
+                          className={disciplineStatusClassName(
+                            disciplineStatus,
+                          )}
+                        >
+                          {getDisciplineStatusLabel(disciplineStatus)}
+                        </span>
+                      </div>
+
+                      <div className={styles.disciplineFooter}>
+                        <span>
+                          Лимит участников:{' '}
+                          {discipline.participantLimit ?? '—'}
+                        </span>
+
+                        <NavLink className={styles.secondaryLink}
+                          to={`/organizer/events/${encodeURIComponent(event.id)}/disciplines/${encodeURIComponent(discipline.id)}/standings`}>
+                          Зачёт и подтверждение итогов
+                        </NavLink>
+
+                        {disciplineStatus === 'DRAFT' ? (
+                          <button
+                            type="button"
+                            className={styles.primaryButton}
+                            disabled={publishingId === discipline.id}
+                            onClick={() =>
+                              void handlePublishDiscipline(discipline.id)
+                            }
+                          >
+                            {publishingId === discipline.id
+                              ? 'Публикуем…'
+                              : 'Опубликовать'}
+                          </button>
+                        ) : null}
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            )}
+          </section>
+        </>
+      ) : null}
+    </section>
+  )
+}
+
+
+===== FILE: frontend\src\features\results\CompetitionUnitsPage.tsx =====
+import { useState } from 'react'
+import type { FormEvent } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { ApiError } from '../../api/http'
+import { useAuth } from '../../app/providers/AuthProvider'
+import {
+  getCompetitionUnitsByDiscipline,
+  type CompetitionUnitResponse,
+} from '../../api/results.api'
+import styles from './CompetitionUnitsPage.module.css'
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof ApiError) {
+    if (error.status === 403) {
+      return 'У вашей учётной записи нет прав на просмотр результатов.'
+    }
+
+    if (error.status === 404) {
+      return 'Дисциплина не найдена.'
+    }
+
+    return error.message
+  }
+
+  return 'Не удалось загрузить соревновательные единицы.'
+}
+
+function unitStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    DRAFT: 'Черновик',
+    PUBLISHED: 'Опубликовано',
+  }
+
+  return labels[status] ?? status
+}
+
+function unitStatusClassName(status: string) {
+  const classes: Record<string, string> = {
+    DRAFT: styles.statusDraft,
+    PUBLISHED: styles.statusPublished,
+  }
+
+  return `${styles.statusBadge} ${classes[status] ?? styles.statusNeutral}`
+}
+
+function formatDate(value: string | null) {
+  if (!value) {
+    return 'Не назначено'
+  }
+
+  return new Intl.DateTimeFormat('ru-RU', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'Europe/Moscow',
+  }).format(new Date(value))
+}
+
+export function CompetitionUnitsPage() {
+  const { session } = useAuth()
+  const navigate = useNavigate()
+  const accessToken = session?.accessToken
+
+  const [eventDisciplineId, setEventDisciplineId] = useState('')
+  const [units, setUnits] = useState<CompetitionUnitResponse[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [hasLoaded, setHasLoaded] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const normalizedDisciplineId = eventDisciplineId.trim()
+
+    if (!accessToken) {
+      navigate('/login', { replace: true })
+      return
+    }
+
+    if (!normalizedDisciplineId) {
+      setErrorMessage('Введите ID дисциплины.')
+      return
+    }
+
+    setIsLoading(true)
+    setHasLoaded(false)
+    setErrorMessage(null)
+
+    try {
+      const data = await getCompetitionUnitsByDiscipline(
+        normalizedDisciplineId,
+        accessToken,
+      )
+
+      setUnits(data)
+      setHasLoaded(true)
+    } catch (error) {
+      setUnits([])
+      setErrorMessage(getErrorMessage(error))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <section className={styles.page}>
+      <Link className={styles.backLink} to="/operator/payments">
+        ← К панели оператора
+      </Link>
+
+      <p className={styles.eyebrow}>Оператор</p>
+
+      <h1 className={styles.title}>Результаты</h1>
+
+      <p className={styles.description}>
+        Введите идентификатор дисциплины, чтобы открыть список заплывов,
+        матчей, групп или финалов.
+      </p>
+
+      <form className={styles.searchForm} onSubmit={handleSubmit}>
+        <label className={styles.field}>
+          <span>ID дисциплины</span>
+
+          <input
+            autoComplete="off"
+            disabled={isLoading}
+            onChange={(event) => setEventDisciplineId(event.target.value)}
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            spellCheck={false}
+            type="text"
+            value={eventDisciplineId}
+          />
+        </label>
+
+        <button
+          className={styles.submitButton}
+          disabled={isLoading}
+          type="submit"
+        >
+          {isLoading ? 'Загружаем…' : 'Открыть'}
+        </button>
+      </form>
+
+      {errorMessage ? (
+        <p className={styles.errorMessage} role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      {hasLoaded && units.length === 0 ? (
+        <div className={styles.stateCard}>
+          <h2>Соревновательных единиц пока нет</h2>
+          <p>
+            Организатор должен создать заплыв, матч, группу или финал для этой
+            дисциплины.
+          </p>
+        </div>
+      ) : null}
+
+      {units.length > 0 ? (
+        <div className={styles.unitsList}>
+          {units.map((unit) => (
+            <article className={styles.unitCard} key={unit.id}>
+              <div>
+                <p className={styles.unitLabel}>
+                  Единица #{unit.sequenceNumber ?? '—'}
+                </p>
+
+                <h2 className={styles.unitTitle}>{unit.label}</h2>
+
+                <p className={styles.unitMeta}>
+                  Проведение: {formatDate(unit.scheduledAt)}
+                </p>
+              </div>
+
+              <div className={styles.unitActions}>
+                <span className={unitStatusClassName(unit.status)}>
+                  {unitStatusLabel(unit.status)}
+                </span>
+
+                <Link
+                  className={styles.openLink}
+                  to={`/operator/competition-units/${unit.id}`}
+                >
+                  Открыть результаты
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+    </section>
+  )
+}
+
+===== FILE: frontend\src\features\results\DisciplineProtocolBoard.tsx =====
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { ApiError } from '../../api/http'
+import {
+  confirmFinalStandings, revokeFinalStandings,
+  type ConfirmationBody, type FinalSnapshot,
+} from '../../api/standings.api'
+import {
+  canConfirm, createConfirmationAttempt, createRevocationAttempt,
+  isUncertainFailure, protocolErrorMessage, unitsReady, type RevocationAttempt,
+} from './protocol-model.mjs'
+import { useProtocolData } from './useProtocolData'
+import { StandingsTable } from './StandingsTable'
+import styles from './ProtocolBoard.module.css'
+
+function formatDate(value?: string | null) {
+  const date = value ? new Date(value) : null
+  return date && !Number.isNaN(date.getTime()) ? new Intl.DateTimeFormat('ru-RU', { dateStyle: 'medium', timeStyle: 'short' }).format(date) : '—'
+}
+function ErrorDetails({ error }: { error: unknown }) {
+  const violations = error instanceof ApiError ? error.violations : []
+  return <div className={styles.error} role="alert">
+    <p>{protocolErrorMessage(error)}</p>
+    {error instanceof ApiError && error.code ? <p>Код: {error.code}</p> : null}
+    {violations.length > 0 ? <ul>{violations.filter(item => typeof item?.field === 'string' && typeof item?.message === 'string').map((item, index) =>
+      <li key={index}>{item.field}: {item.message}</li>)}</ul> : null}
+  </div>
+}
+function SnapshotInfo({ snapshot }: { snapshot: FinalSnapshot }) {
+  return <div className={styles.meta}>
+    <span>Ревизия № {snapshot.revision}. {snapshot.status === 'CONFIRMED' ? 'Подтверждена' : 'Финализация снята'}.</span>
+    <span>Подтверждение: {formatDate(snapshot.confirmedAt)}. Автор (ID): {snapshot.confirmedBy}.</span>
+    {snapshot.confirmationNote ? <span>Примечание: {snapshot.confirmationNote}</span> : null}
+    {snapshot.status === 'REVOKED' ? <>
+      <span>Снятие: {formatDate(snapshot.revokedAt)}. Автор (ID): {snapshot.revokedBy ?? '—'}.</span>
+      <span>Причина: {snapshot.revocationReason ?? '—'}</span>
+    </> : null}
+  </div>
+}
+
+export function DisciplineProtocolBoard({ eventId, disciplineId, accessToken }: { eventId: string; disciplineId: string; accessToken?: string }) {
+  const { data, refresh } = useProtocolData(eventId, disciplineId, accessToken)
+  const [view, setView] = useState<'current' | 'final' | 'history'>('current')
+  const [historyId, setHistoryId] = useState<string | null>(null)
+  const [complete, setComplete] = useState(false)
+  const [note, setNote] = useState('')
+  const [reason, setReason] = useState('')
+  const [pendingConfirm, setPendingConfirm] = useState<Readonly<ConfirmationBody> | null>(null)
+  const [pendingRevoke, setPendingRevoke] = useState<RevocationAttempt | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [actionError, setActionError] = useState<unknown>(null)
+  const [message, setMessage] = useState('')
+  const operationLock = useRef(false)
+  const alive = useRef(true)
+  useEffect(() => { alive.current = true; return () => { alive.current = false } }, [])
+  const permission = Boolean(accessToken && data.history !== null && !data.errors.history)
+  const finalKnown = !data.loading && !data.errors.active
+  const ready = unitsReady(data.units)
+  const confirmAllowed = canConfirm({ permission, loading: data.loading, busy, finalKnown,
+    otherPending: pendingRevoke !== null, pending: pendingConfirm !== null, active: data.active !== null, unitsReady: ready && data.current !== null && !data.errors.current, complete })
+  const revokeAllowed = permission && !data.loading && !busy && finalKnown && !pendingConfirm && Boolean(data.active || pendingRevoke)
+
+  async function handleConfirm(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!accessToken || !confirmAllowed || operationLock.current) return
+    let attempt = pendingConfirm
+    try {
+      if (!attempt) {
+        attempt = createConfirmationAttempt(note, complete)
+        if (!window.confirm('Подтвердить итог всей дисциплины? Результаты и назначения будут защищены от изменения до явного снятия финализации.')) return
+      }
+    } catch (error) { setActionError(error); return }
+    if (!attempt) return
+    operationLock.current = true; setBusy(true); setMessage(''); setActionError(null); setPendingConfirm(attempt)
+    try {
+      const result = await confirmFinalStandings(eventId, disciplineId, accessToken, attempt)
+      if (!alive.current) return
+      setPendingConfirm(null); setComplete(false); setNote('')
+      setMessage(result.status === 'CONFIRMED' ? `Сервер подтвердил итог: ревизия № ${result.revision}.` :
+        `Этот запрос относится к ревизии № ${result.revision}, финализация которой уже снята. Новый итог не создан.`)
+      setView(result.status === 'CONFIRMED' ? 'final' : 'current'); refresh()
+    } catch (error) {
+      if (!alive.current) return
+      setActionError(error)
+      if (!isUncertainFailure(error)) setPendingConfirm(null)
+      refresh()
+    } finally { operationLock.current = false; if (alive.current) setBusy(false) }
+  }
+  async function handleRevoke(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!accessToken || !revokeAllowed || operationLock.current) return
+    let attempt = pendingRevoke
+    try {
+      if (!attempt) {
+        if (!data.active) return
+        attempt = createRevocationAttempt(data.active, reason)
+        if (!window.confirm(`Снять финализацию ревизии № ${attempt.revision}? Причина: ${attempt.reason}`)) return
+      }
+    } catch (error) { setActionError(error); return }
+    if (!attempt) return
+    operationLock.current = true; setBusy(true); setMessage(''); setActionError(null); setPendingRevoke(attempt)
+    try {
+      const result = await revokeFinalStandings(eventId, disciplineId, accessToken, attempt.id, attempt.reason)
+      if (!alive.current) return
+      setPendingRevoke(null); setReason(''); setComplete(false)
+      setMessage(`Сервер подтвердил снятие ревизии № ${result.revision}. Её снимок сохранён в истории.`)
+      setView('current'); refresh()
+    } catch (error) {
+      if (!alive.current) return
+      setActionError(error)
+      if (!isUncertainFailure(error)) setPendingRevoke(null)
+      refresh()
+    } finally { operationLock.current = false; if (alive.current) setBusy(false) }
+  }
+  const historical = data.history?.find(item => item.id === historyId) ?? null
+  const snapshot = view === 'history' ? historical : data.active
+  return <div>
+    <section className={styles.card} aria-busy={data.loading || busy}>
+      <h2>Состояние итогового протокола</h2>
+      {data.loading ? <p role="status">Обновляем состояние с сервера…</p> : data.errors.active ?
+        <><p>Статус финализации неизвестен. Ошибка загрузки не означает отсутствие итога.</p><ErrorDetails error={data.errors.active} /></> :
+        data.active ? <SnapshotInfo snapshot={data.active} /> :
+          <p>{data.history?.some(item => item.status === 'REVOKED') ? 'Активного итога нет. Предыдущая финализация снята; история сохранена.' : 'Активный подтверждённый итог отсутствует.'}</p>}
+      <div className={styles.toolbar}>
+        <button type="button" className={styles.button} disabled={busy || data.loading} onClick={refresh}>Обновить данные</button>
+        <button type="button" className={styles.button} aria-pressed={view === 'current'} onClick={() => setView('current')}>Текущий зачёт</button>
+        <button type="button" className={styles.button} aria-pressed={view === 'final'} onClick={() => setView('final')}>Подтверждённый снимок</button>
+      </div>
+      <p className={styles.hint}>Текущий зачёт строится только по опубликованным заплывам и сам по себе не подтверждает завершение всей программы.</p>
+    </section>
+    {message ? <p role="status" className={styles.success}>{message}</p> : null}
+    {actionError ? <ErrorDetails error={actionError} /> : null}
+    {pendingConfirm || pendingRevoke ? <p className={styles.notice} role="status">
+      Исход действия ещё не подтверждён. Данные исходного запроса сохранены в этой открытой странице.
+      Повторите тот же запрос соответствующей кнопкой; не создавайте новое действие с другими данными.
+    </p> : null}
+    {accessToken ? <section className={styles.card}>
+      <h2>Управление финализацией</h2>
+      {data.errors.history ? <ErrorDetails error={data.errors.history} /> : null}
+      {data.errors.units ? <ErrorDetails error={data.errors.units} /> : null}
+      {!permission ? <p className={styles.hint}>Действия доступны только после успешной проверки приватного доступа сервером.</p> : null}
+      {data.units ? <p>Заплывов: {data.units.length}. Опубликовано: {data.units.filter(unit => unit.status === 'PUBLISHED').length}.</p> : null}
+      {!data.active || pendingConfirm ? <form onSubmit={event => void handleConfirm(event)}>
+        <fieldset disabled={busy || pendingConfirm !== null || data.loading || !permission || !finalKnown}>
+          <legend>Подтвердить итог дисциплины</legend>
+          <label className={styles.field}><span>Примечание (до 500 символов)</span>
+            <textarea maxLength={500} value={note} onChange={event => setNote(event.target.value)} rows={3} /></label>
+          <label className={styles.checkbox}><input type="checkbox" checked={complete} onChange={event => setComplete(event.target.checked)} />
+            <span>Подтверждаю: вся программа дисциплины заведена и завершена, все заплывы опубликованы, подтверждённые заявки распределены.</span></label>
+        </fieldset>
+        {!ready && !pendingConfirm ? <p className={styles.hint}>Для подтверждения нужен хотя бы один заплыв, и все заплывы должны быть опубликованы. Дополнительные проверки выполнит сервер.</p> : null}
+        <button type="submit" className={`${styles.button} ${styles.primary}`} disabled={!confirmAllowed}>
+          {busy ? 'Выполняем запрос…' : pendingConfirm ? 'Повторить исходный запрос подтверждения' : 'Подтвердить итог дисциплины'}
+        </button>
+      </form> : null}
+      {data.active || pendingRevoke ? <form onSubmit={event => void handleRevoke(event)}>
+        <fieldset disabled={busy || pendingRevoke !== null || data.loading || !permission || !finalKnown}>
+          <legend>Снять финализацию ревизии № {pendingRevoke?.revision ?? data.active?.revision}</legend>
+          <label className={styles.field}><span>Обязательная причина (до 1000 символов)</span>
+            <textarea value={reason} maxLength={1000} rows={3} onChange={event => setReason(event.target.value)} /></label>
+        </fieldset>
+        <button type="submit" className={`${styles.button} ${styles.danger}`} disabled={!revokeAllowed || (!pendingRevoke && !reason.trim())}>
+          {busy ? 'Выполняем запрос…' : pendingRevoke ? 'Повторить снятие той же ревизии с той же причиной' : 'Снять финализацию с причиной'}
+        </button>
+      </form> : null}
+    </section> : null}
+    {!data.loading ? <section className={styles.card}>
+      <h2>{view === 'current' ? 'Текущий зачёт опубликованной части дисциплины' : view === 'history' ? 'Исторический снимок — не текущий итог' : 'Подтверждённый итоговый снимок'}</h2>
+      {view === 'current' ? data.errors.current ? <ErrorDetails error={data.errors.current} /> : data.current ?
+        <StandingsTable key="current" standings={data.current} /> : <p>Зачёт недоступен.</p> :
+        snapshot ? <><SnapshotInfo snapshot={snapshot} /><StandingsTable key={snapshot.id} standings={snapshot.standings} /></> :
+          <p>Сохранённый снимок недоступен. Текущие результаты не подставляются вместо подтверждённого итога.</p>}
+    </section> : null}
+    {accessToken && data.history ? <section className={styles.card}>
+      <h2>История ревизий</h2>
+      {data.history.length === 0 ? <p>Подтверждений ещё не было.</p> : <ul className={styles.history}>
+        {[...data.history].reverse().map(item => <li key={item.id}><SnapshotInfo snapshot={item} />
+          <div className={styles.toolbar}><button type="button" className={styles.button} onClick={() => { setHistoryId(item.id); setView('history') }}>Показать снимок ревизии № {item.revision}</button></div>
+        </li>)}
+      </ul>}
+    </section> : null}
+  </div>
+}
+
+
+===== FILE: frontend\src\features\results\JudgePanelPage.tsx =====
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router'
+import { ApiError } from '../../api/http'
+import {
+  changeCompetitionUnitPublication,
+  getCompetitionUnitDetails,
+  recalculatePlaces,
+  recordResult,
+  type CompetitionUnitDetailsResponse,
+  type RankingStrategy,
+  type ResultType,
+} from '../../api/results.api'
+import { useAuth } from '../../app/providers/AuthProvider'
+import styles from './JudgePanelPage.module.css'
+
+type EditableResultStatus =
+  | 'PENDING'
+  | 'DID_NOT_START'
+  | 'DID_NOT_FINISH'
+  | 'DISQUALIFIED'
+
+const RESULT_STATUS_OPTIONS: Array<{
+  value: EditableResultStatus
+  label: string
+}> = [
+  {
+    value: 'PENDING',
+    label: 'Обычный результат',
+  },
+  {
+    value: 'DID_NOT_START',
+    label: 'DNS — не стартовал',
+  },
+  {
+    value: 'DID_NOT_FINISH',
+    label: 'DNF — не финишировал',
+  },
+  {
+    value: 'DISQUALIFIED',
+    label: 'DSQ — дисквалифицирован',
+  },
+]
+
+function getErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof ApiError) {
+    if (error.code === 'results.discipline_finalized') {
+      return 'Итог дисциплины подтверждён. Организатор должен снять финализацию перед изменением или снятием заплыва с публикации.'
+    }
+
+    if (error.status === 401) {
+      return 'Сессия истекла. Войдите в систему снова.'
+    }
+
+    if (error.status === 403) {
+      return 'У вашей учётной записи нет прав для работы с результатами.'
+    }
+
+    if (error.status === 404) {
+      return 'Заплыв, матч или соревновательная единица не найдены.'
+    }
+
+    return error.message
+  }
+
+  return fallback
+}
+
+function resultStatusLabel(status: string | null) {
+  const labels: Record<string, string> = {
+    PENDING: 'Ожидает пересчёта',
+    VALID: 'Учтён',
+    DID_NOT_START: 'Не стартовал',
+    DID_NOT_FINISH: 'Не финишировал',
+    DISQUALIFIED: 'Дисквалифицирован',
+    CORRECTED: 'Исправлен',
+    EXHIBITION: 'Вне зачёта',
+  }
+
+  return status ? labels[status] ?? status : 'Нет результата'
+}
+
+function resultStatusClassName(status: string | null) {
+  if (status === 'VALID') {
+    return `${styles.resultStatus} ${styles.resultStatusValid}`
+  }
+
+  if (
+    status === 'DID_NOT_START' ||
+    status === 'DID_NOT_FINISH'
+  ) {
+    return `${styles.resultStatus} ${styles.resultStatusWarning}`
+  }
+
+  if (status === 'DISQUALIFIED') {
+    return `${styles.resultStatus} ${styles.resultStatusDanger}`
+  }
+
+  if (status === 'CORRECTED') {
+    return `${styles.resultStatus} ${styles.resultStatusCorrected}`
+  }
+
+  if (status === 'EXHIBITION') {
+    return `${styles.resultStatus} ${styles.resultStatusNeutral}`
+  }
+
+  return `${styles.resultStatus} ${styles.resultStatusPending}`
+}
+
+function unitStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    DRAFT: 'Черновик',
+    PUBLISHED: 'Опубликовано',
+  }
+
+  return labels[status] ?? status
+}
+
+function unitStatusClassName(status: string) {
+  if (status === 'PUBLISHED') {
+    return `${styles.unitStatus} ${styles.unitStatusPublished}`
+  }
+
+  if (status === 'DRAFT') {
+    return `${styles.unitStatus} ${styles.unitStatusDraft}`
+  }
+
+  return `${styles.unitStatus} ${styles.unitStatusNeutral}`
+}
+
+function sortEntries(
+  entries: CompetitionUnitDetailsResponse['entries'],
+) {
+  return [...entries].sort((left, right) => {
+    const leftLane = left.laneOrPosition ?? Number.MAX_SAFE_INTEGER
+    const rightLane = right.laneOrPosition ?? Number.MAX_SAFE_INTEGER
+
+    return leftLane - rightLane
+  })
+}
+
+export function JudgePanelPage() {
+  const { session } = useAuth()
+  const navigate = useNavigate()
+  const { unitId } = useParams<{ unitId: string }>()
+  const accessToken = session?.accessToken
+
+  const [unit, setUnit] =
+    useState<CompetitionUnitDetailsResponse | null>(null)
+
+  const [draftValues, setDraftValues] =
+    useState<Record<string, string>>({})
+
+  const [draftStatuses, setDraftStatuses] =
+    useState<Record<string, EditableResultStatus>>({})
+
+  const [resultType, setResultType] =
+    useState<ResultType>('TIME')
+
+  const [rankingStrategy, setRankingStrategy] =
+    useState<RankingStrategy>('ASC')
+
+  const [isLoading, setIsLoading] = useState(true)
+
+  const [savingEntryId, setSavingEntryId] =
+    useState<string | null>(null)
+
+  const [isRecalculating, setIsRecalculating] = useState(false)
+
+  const [isChangingPublication, setIsChangingPublication] =
+    useState(false)
+
+  const [errorMessage, setErrorMessage] =
+    useState<string | null>(null)
+
+  const [successMessage, setSuccessMessage] =
+    useState<string | null>(null)
+
+  const entries = useMemo(
+    () => (unit ? sortEntries(unit.entries) : []),
+    [unit],
+  )
+
+  const isPublished = unit?.status === 'PUBLISHED'
+
+  const isBusy =
+    savingEntryId !== null ||
+    isRecalculating ||
+    isChangingPublication
+
+  const completedResultsCount = useMemo(
+    () =>
+      entries.filter(
+        (entry) =>
+          Boolean(entry.rawValue?.trim()) ||
+          entry.resultStatus === 'DID_NOT_START' ||
+          entry.resultStatus === 'DID_NOT_FINISH' ||
+          entry.resultStatus === 'DISQUALIFIED',
+      ).length,
+    [entries],
+  )
+
+  const hasPendingResults = entries.some(
+    (entry) =>
+      Boolean(entry.rawValue?.trim()) &&
+      entry.resultStatus === 'PENDING',
+  )
+
+  function updateDraftValues(
+    nextUnit: CompetitionUnitDetailsResponse,
+  ) {
+    setDraftValues(
+      Object.fromEntries(
+        nextUnit.entries.map((entry) => [
+          entry.entryId,
+          entry.rawValue ?? '',
+        ]),
+      ),
+    )
+
+    setDraftStatuses(
+      Object.fromEntries(
+        nextUnit.entries.map((entry) => [
+          entry.entryId,
+          entry.resultStatus === 'DID_NOT_START' ||
+          entry.resultStatus === 'DID_NOT_FINISH' ||
+          entry.resultStatus === 'DISQUALIFIED'
+            ? entry.resultStatus
+            : 'PENDING',
+        ]),
+      ),
+    )
+  }
+
+  async function loadUnit() {
+    if (!unitId || !accessToken) {
+      return
+    }
+
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      const loadedUnit = await getCompetitionUnitDetails(
+        unitId,
+        accessToken,
+      )
+
+      setUnit(loadedUnit)
+      updateDraftValues(loadedUnit)
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(
+          error,
+          'Не удалось загрузить стартовый лист и результаты.',
+        ),
+      )
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!accessToken) {
+      navigate('/login', { replace: true })
+      return
+    }
+
+    if (!unitId) {
+      setErrorMessage('Идентификатор заплыва или матча не указан.')
+      setIsLoading(false)
+      return
+    }
+
+    void loadUnit()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accessToken, unitId, navigate])
+
+  async function handleSaveResult(entryId: string) {
+    if (!accessToken || isPublished) {
+      return
+    }
+
+    const status = draftStatuses[entryId] ?? 'PENDING'
+    const rawValue = draftValues[entryId]?.trim()
+
+    if (status === 'PENDING' && !rawValue) {
+      setErrorMessage('Введите результат перед сохранением.')
+      return
+    }
+
+    setSavingEntryId(entryId)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      await recordResult(
+        status === 'PENDING'
+          ? {
+              competitionUnitEntryId: entryId,
+              rawValue,
+            }
+          : {
+              competitionUnitEntryId: entryId,
+              rawValue: '',
+              status,
+            },
+        {
+          resultType,
+          accessToken,
+        },
+      )
+
+      setSuccessMessage(
+        status === 'PENDING'
+          ? 'Результат сохранён. Пересчитайте места, чтобы обновить таблицу.'
+          : `Статус «${resultStatusLabel(status)}» сохранён.`,
+      )
+
+      await loadUnit()
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось сохранить результат.'),
+      )
+    } finally {
+      setSavingEntryId(null)
+    }
+  }
+
+  async function handleRecalculate() {
+    if (!unit || !accessToken || isPublished) {
+      return
+    }
+
+    setIsRecalculating(true)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      const updatedUnit = await recalculatePlaces(unit.id, {
+        rankingStrategy,
+        accessToken,
+      })
+
+      setUnit(updatedUnit)
+      updateDraftValues(updatedUnit)
+      setSuccessMessage('Места успешно пересчитаны.')
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось пересчитать места.'),
+      )
+    } finally {
+      setIsRecalculating(false)
+    }
+  }
+
+  async function handleChangePublication() {
+    if (!unit || !accessToken) {
+      return
+    }
+
+    const willPublish = unit.status !== 'PUBLISHED'
+
+    setIsChangingPublication(true)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      await changeCompetitionUnitPublication(
+        unit.id,
+        willPublish,
+        accessToken,
+      )
+
+      await loadUnit()
+
+      setSuccessMessage(
+        willPublish
+          ? 'Результаты опубликованы и доступны на публичной странице.'
+          : 'Публикация результатов снята.',
+      )
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(
+          error,
+          'Не удалось изменить статус публикации результатов.',
+        ),
+      )
+    } finally {
+      setIsChangingPublication(false)
+    }
+  }
+
+  return (
+    <section className={styles.page}>
+      <Link className={styles.backLink} to="/operator/results">
+        ← К списку соревновательных единиц
+      </Link>
+
+      <div className={styles.titleRow}>
+        <div>
+          <p className={styles.eyebrow}>Судейская панель</p>
+
+          <h1 className={styles.title}>
+            {unit?.label ?? 'Результаты'}
+          </h1>
+        </div>
+
+        {unit ? (
+          <span className={unitStatusClassName(unit.status)}>
+            {unitStatusLabel(unit.status)}
+          </span>
+        ) : null}
+      </div>
+
+      <p className={styles.description}>
+        Вносите результаты участников, затем пересчитывайте итоговые места.
+        Для времени используйте формат <code>00:58.42</code>.
+      </p>
+
+      {isLoading ? (
+        <div className={styles.stateCard}>
+          <h2>Загрузка</h2>
+          <p>Получаем стартовый лист и результаты.</p>
+        </div>
+      ) : null}
+
+      {errorMessage ? (
+        <p className={styles.errorMessage} role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      {successMessage ? (
+        <p className={styles.successMessage} role="status">
+          {successMessage}
+        </p>
+      ) : null}
+
+      {!isLoading && !errorMessage && unit ? (
+        <>
+          <div className={styles.summaryCard}>
+            <div>
+              <span className={styles.summaryLabel}>Статус</span>
+
+              <strong>{unitStatusLabel(unit.status)}</strong>
+            </div>
+
+            <div>
+              <span className={styles.summaryLabel}>Участников</span>
+
+              <strong>{unit.entries.length}</strong>
+            </div>
+
+            <div>
+              <span className={styles.summaryLabel}>Введено результатов</span>
+
+              <strong>
+                {completedResultsCount} / {unit.entries.length}
+              </strong>
+            </div>
+
+            <div className={styles.disciplineSummary}>
+              <span className={styles.summaryLabel}>ID дисциплины</span>
+
+              <code>{unit.eventDisciplineId}</code>
+            </div>
+          </div>
+
+          {isPublished ? (
+            <div className={styles.publishedNotice} role="status">
+              <div>
+                <strong>Результаты опубликованы</strong>
+
+                <p>
+                  Ввод результатов и пересчёт мест заблокированы, чтобы
+                  опубликованный протокол не изменился случайно.
+                </p>
+              </div>
+
+              <button
+                className={styles.unpublishButton}
+                disabled={isBusy}
+                onClick={handleChangePublication}
+                type="button"
+              >
+                {isChangingPublication
+                  ? 'Снимаем…'
+                  : 'Снять с публикации'}
+              </button>
+            </div>
+          ) : null}
+
+          <section className={styles.toolbarCard}>
+            <div>
+              <h2>Настройки результата</h2>
+
+              <p>
+                Выберите формат результата. Для времени лучшим считается
+                меньшее значение, для очков — большее.
+              </p>
+            </div>
+
+            <div className={styles.toolbarControls}>
+              <label className={styles.field}>
+                <span>Тип результата</span>
+
+                <select
+                  disabled={isPublished || isBusy}
+                  onChange={(event) => {
+                    const nextType = event.target.value as ResultType
+
+                    setResultType(nextType)
+                    setRankingStrategy(
+                      nextType === 'TIME' ? 'ASC' : 'DESC',
+                    )
+                  }}
+                  value={resultType}
+                >
+                  <option value="TIME">
+                    Время — меньше лучше
+                  </option>
+
+                  <option value="POINTS">
+                    Очки — больше лучше
+                  </option>
+                </select>
+              </label>
+
+              <button
+                className={styles.recalculateButton}
+                disabled={
+                  isPublished ||
+                  isBusy ||
+                  entries.length === 0
+                }
+                onClick={handleRecalculate}
+                type="button"
+              >
+                {isRecalculating
+                  ? 'Пересчитываем…'
+                  : 'Пересчитать места'}
+              </button>
+
+              {!isPublished ? (
+                <button
+                  className={styles.publishButton}
+                  disabled={
+                    isBusy ||
+                    entries.length === 0 ||
+                    hasPendingResults
+                  }
+                  onClick={handleChangePublication}
+                  type="button"
+                >
+                  {isChangingPublication
+                    ? 'Публикуем…'
+                    : 'Опубликовать результаты'}
+                </button>
+              ) : null}
+            </div>
+
+            {!isPublished && hasPendingResults ? (
+              <p className={styles.recalculateHint}>
+                Перед публикацией пересчитайте места после внесения
+                результатов.
+              </p>
+            ) : null}
+          </section>
+
+          <section className={styles.entriesSection}>
+            <div className={styles.sectionHeader}>
+              <div>
+                <h2>Стартовый протокол</h2>
+
+                <p>
+                  Сохраняйте результат каждого участника отдельно. После
+                  изменений пересчитайте места.
+                </p>
+              </div>
+
+              <span className={styles.entriesCount}>
+                {entries.length}{' '}
+                {entries.length === 1 ? 'участник' : 'участников'}
+              </span>
+            </div>
+
+            {entries.length === 0 ? (
+              <div className={styles.stateCard}>
+                <h2>Участники не назначены</h2>
+
+                <p>
+                  Организатор должен добавить подтверждённые заявки в этот
+                  заплыв или матч.
+                </p>
+              </div>
+            ) : (
+              <div className={styles.tableWrap}>
+                <table className={styles.resultsTable}>
+                  <thead>
+                    <tr>
+                      <th scope="col">Место</th>
+                      <th scope="col">Дорожка</th>
+                      <th scope="col">Участник</th>
+                      <th scope="col">Результат</th>
+                      <th scope="col">Статус ввода</th>
+                      <th scope="col">Статус</th>
+                      <th scope="col">
+                        <span className={styles.visuallyHidden}>
+                          Действия
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {entries.map((entry) => {
+                      const isSaving =
+                        savingEntryId === entry.entryId
+
+                      const draftStatus =
+                        draftStatuses[entry.entryId] ?? 'PENDING'
+
+                      const hasSpecialStatus =
+                        draftStatus !== 'PENDING'
+
+                      const isEntryDisabled =
+                        isPublished ||
+                        isSaving ||
+                        isBusy
+
+                      return (
+                        <tr key={entry.entryId}>
+                          <td className={styles.placeCell}>
+                            {entry.finalPlace ?? '—'}
+                          </td>
+
+                          <td className={styles.laneCell}>
+                            {entry.laneOrPosition ?? '—'}
+                          </td>
+
+                          <td>
+                            <strong className={styles.participantName}>
+                              {entry.participantName}
+                            </strong>
+
+                            <span className={styles.registrationId}>
+                              Заявка {entry.registrationId.slice(0, 8)}
+                            </span>
+                          </td>
+
+                          <td>
+                            <input
+                              className={styles.resultInput}
+                              disabled={
+                                isEntryDisabled || hasSpecialStatus
+                              }
+                              onChange={(event) => {
+                                setDraftValues((current) => ({
+                                  ...current,
+                                  [entry.entryId]: event.target.value,
+                                }))
+                              }}
+                              placeholder={
+                                hasSpecialStatus
+                                  ? 'Не требуется'
+                                  : resultType === 'TIME'
+                                    ? '00:58.42'
+                                    : '0'
+                              }
+                              spellCheck={false}
+                              type="text"
+                              value={draftValues[entry.entryId] ?? ''}
+                            />
+                          </td>
+
+                          <td>
+                            <select
+                              className={styles.statusSelect}
+                              disabled={isEntryDisabled}
+                              onChange={(event) => {
+                                const nextStatus =
+                                  event.target
+                                    .value as EditableResultStatus
+
+                                setDraftStatuses((current) => ({
+                                  ...current,
+                                  [entry.entryId]: nextStatus,
+                                }))
+
+                                if (nextStatus !== 'PENDING') {
+                                  setDraftValues((current) => ({
+                                    ...current,
+                                    [entry.entryId]: '',
+                                  }))
+                                }
+                              }}
+                              value={draftStatus}
+                            >
+                              {RESULT_STATUS_OPTIONS.map((option) => (
+                                <option
+                                  key={option.value}
+                                  value={option.value}
+                                >
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </td>
+
+                          <td>
+                            <span
+                              className={resultStatusClassName(
+                                entry.resultStatus,
+                              )}
+                            >
+                              {resultStatusLabel(entry.resultStatus)}
+                            </span>
+                          </td>
+
+                          <td>
+                            <button
+                              className={styles.saveButton}
+                              disabled={
+                                isEntryDisabled ||
+                                (!hasSpecialStatus &&
+                                  !draftValues[
+                                    entry.entryId
+                                  ]?.trim())
+                              }
+                              onClick={() =>
+                                handleSaveResult(entry.entryId)
+                              }
+                              type="button"
+                            >
+                              {isSaving
+                                ? 'Сохраняем…'
+                                : 'Сохранить'}
+                            </button>
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </>
+      ) : null}
+    </section>
+  )
+}
+
+
+===== FILE: frontend\src\features\results\OperatorResultsPage.tsx =====
+import { useEffect, useMemo, useState } from 'react'
+import type { FormEvent } from 'react'
+import { Link, useParams } from 'react-router'
+import { ApiError } from '../../api/http'
+import { useAuth } from '../../app/providers/AuthProvider'
+import {
+  changeCompetitionUnitPublication,
+  getCompetitionUnitDetails,
+  recalculatePlaces,
+  recordResult,
+  type CompetitionUnitDetailsResponse,
+  type CompetitionUnitEntryView,
+  type RankingStrategy,
+  type ResultType,
+} from '../../api/results.api'
+import styles from './OperatorResultsPage.module.css'
+
+type EntryDraft = {
+  rawValue: string
+  status: EntryResultStatus
+}
+
+type EntryResultStatus =
+  | 'PENDING'
+  | 'DID_NOT_START'
+  | 'DID_NOT_FINISH'
+  | 'DISQUALIFIED'
+
+const RESULT_TYPES: Array<{
+  value: ResultType
+  label: string
+}> = [
+  {
+    value: 'TIME',
+    label: 'Время',
+  },
+  {
+    value: 'POINTS',
+    label: 'Очки',
+  },
+]
+
+const RESULT_STATUSES: Array<{
+  value: EntryResultStatus
+  label: string
+}> = [
+  {
+    value: 'PENDING',
+    label: 'Обычный результат',
+  },
+  {
+    value: 'DID_NOT_START',
+    label: 'Не стартовал',
+  },
+  {
+    value: 'DID_NOT_FINISH',
+    label: 'Не финишировал',
+  },
+  {
+    value: 'DISQUALIFIED',
+    label: 'Дисквалифицирован',
+  },
+]
+
+function getErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof ApiError) {
+    if (error.status === 403) {
+      return 'У вашей учётной записи нет прав для выполнения этого действия.'
+    }
+
+    if (error.status === 404) {
+      return 'Соревновательная единица не найдена.'
+    }
+
+    return error.message
+  }
+
+  return fallback
+}
+
+function unitStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    DRAFT: 'Черновик',
+    PUBLISHED: 'Опубликовано',
+  }
+
+  return labels[status] ?? status
+}
+
+function unitStatusClassName(status: string) {
+  if (status === 'PUBLISHED') {
+    return `${styles.statusBadge} ${styles.statusPublished}`
+  }
+
+  if (status === 'DRAFT') {
+    return `${styles.statusBadge} ${styles.statusDraft}`
+  }
+
+  return `${styles.statusBadge} ${styles.statusNeutral}`
+}
+
+function resultStatusLabel(status: string | null) {
+  const labels: Record<string, string> = {
+    PENDING: 'Ожидает результата',
+    DID_NOT_START: 'Не стартовал',
+    DID_NOT_FINISH: 'Не финишировал',
+    DISQUALIFIED: 'Дисквалифицирован',
+  }
+
+  if (!status) {
+    return 'Не введён'
+  }
+
+  return labels[status] ?? status
+}
+
+function resultStatusClassName(status: string | null) {
+  if (!status || status === 'PENDING') {
+    return `${styles.resultStatus} ${styles.resultStatusPending}`
+  }
+
+  if (status === 'DISQUALIFIED') {
+    return `${styles.resultStatus} ${styles.resultStatusDanger}`
+  }
+
+  return `${styles.resultStatus} ${styles.resultStatusNeutral}`
+}
+
+function createEntryDrafts(
+  entries: CompetitionUnitEntryView[],
+): Record<string, EntryDraft> {
+  return Object.fromEntries(
+    entries.map((entry) => [
+      entry.entryId,
+      {
+        rawValue: entry.rawValue ?? '',
+        status: isEntryResultStatus(entry.resultStatus)
+          ? entry.resultStatus
+          : 'PENDING',
+      },
+    ]),
+  )
+}
+
+function isEntryResultStatus(value: string | null): value is EntryResultStatus {
+  return (
+    value === 'PENDING' ||
+    value === 'DID_NOT_START' ||
+    value === 'DID_NOT_FINISH' ||
+    value === 'DISQUALIFIED'
+  )
+}
+
+export function OperatorResultsPage() {
+  const { unitId } = useParams<{ unitId: string }>()
+  const { session } = useAuth()
+  const accessToken = session?.accessToken
+
+  const [unit, setUnit] = useState<CompetitionUnitDetailsResponse | null>(null)
+  const [drafts, setDrafts] = useState<Record<string, EntryDraft>>({})
+  const [resultType, setResultType] = useState<ResultType>('TIME')
+  const [rankingStrategy, setRankingStrategy] =
+    useState<RankingStrategy>('ASC')
+
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSavingEntryId, setIsSavingEntryId] = useState<string | null>(null)
+  const [isRecalculating, setIsRecalculating] = useState(false)
+  const [isPublishing, setIsPublishing] = useState(false)
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  const isPublished = unit?.status === 'PUBLISHED'
+  const canPublish = unit?.status === 'DRAFT'
+  const canUnpublish = unit?.status === 'PUBLISHED'
+
+  const isBusy =
+    isSavingEntryId !== null || isRecalculating || isPublishing
+
+  const filledResultsCount = useMemo(() => {
+    if (!unit) {
+      return 0
+    }
+
+    return unit.entries.filter(
+      (entry) =>
+        Boolean(entry.rawValue) ||
+        entry.resultStatus === 'DID_NOT_START' ||
+        entry.resultStatus === 'DID_NOT_FINISH' ||
+        entry.resultStatus === 'DISQUALIFIED',
+    ).length
+  }, [unit])
+
+  useEffect(() => {
+    if (!unitId || !accessToken) {
+      setIsLoading(false)
+      return
+    }
+    const resolvedUnitId = unitId
+    const resolvedAccessToken = accessToken
+
+    let isMounted = true
+
+    async function loadUnit() {
+      setIsLoading(true)
+      setErrorMessage(null)
+
+      try {
+        const loadedUnit = await getCompetitionUnitDetails(
+          resolvedUnitId,
+          resolvedAccessToken,
+        )
+        if (!isMounted) {
+          return
+        }
+
+        setUnit(loadedUnit)
+        setDrafts(createEntryDrafts(loadedUnit.entries))
+      } catch (error) {
+        if (isMounted) {
+          setErrorMessage(
+            getErrorMessage(
+              error,
+              'Не удалось загрузить соревновательную единицу.',
+            ),
+          )
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void loadUnit()
+
+    return () => {
+      isMounted = false
+    }
+  }, [accessToken, unitId])
+
+  function updateDraft(
+    entryId: string,
+    field: keyof EntryDraft,
+    value: string,
+  ) {
+    setDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [entryId]: {
+        rawValue: currentDrafts[entryId]?.rawValue ?? '',
+        status: currentDrafts[entryId]?.status ?? 'PENDING',
+        [field]: value,
+      } as EntryDraft,
+    }))
+  }
+
+  async function handleSaveResult(
+    event: FormEvent<HTMLFormElement>,
+    entry: CompetitionUnitEntryView,
+  ) {
+    event.preventDefault()
+
+    if (!accessToken || isPublished) {
+      return
+    }
+
+    const draft = drafts[entry.entryId] ?? {
+      rawValue: '',
+      status: 'PENDING' as const,
+    }
+
+    if (draft.status === 'PENDING' && !draft.rawValue.trim()) {
+      setErrorMessage('Введите результат или укажите специальный статус.')
+      return
+    }
+
+    setIsSavingEntryId(entry.entryId)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      const savedResult = await recordResult(
+        {
+          competitionUnitEntryId: entry.entryId,
+          rawValue: draft.status === 'PENDING' ? draft.rawValue.trim() : '',
+          status: draft.status,
+        },
+        {
+          accessToken,
+          resultType,
+        },
+      )
+
+      setUnit((currentUnit) => {
+        if (!currentUnit) {
+          return currentUnit
+        }
+
+        return {
+          ...currentUnit,
+          entries: currentUnit.entries.map((currentEntry) =>
+            currentEntry.entryId === entry.entryId
+              ? {
+                  ...currentEntry,
+                  rawValue: savedResult.rawValue,
+                  resultType: savedResult.resultType,
+                  resultStatus: savedResult.status,
+                  finalPlace: savedResult.finalPlace,
+                }
+              : currentEntry,
+          ),
+        }
+      })
+
+      setSuccessMessage(
+        `Результат участника «${entry.participantName}» сохранён.`,
+      )
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось сохранить результат.'),
+      )
+    } finally {
+      setIsSavingEntryId(null)
+    }
+  }
+
+  async function handleRecalculate() {
+    if (!unit || !accessToken || isPublished) {
+      return
+    }
+
+    setIsRecalculating(true)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      const updatedUnit = await recalculatePlaces(unit.id, {
+        accessToken,
+        rankingStrategy,
+      })
+
+      setUnit(updatedUnit)
+      setDrafts(createEntryDrafts(updatedUnit.entries))
+      setSuccessMessage('Итоговые места пересчитаны.')
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(error, 'Не удалось пересчитать итоговые места.'),
+      )
+    } finally {
+      setIsRecalculating(false)
+    }
+  }
+
+  async function handlePublicationChange(published: boolean) {
+    if (!unit || !accessToken) {
+      return
+    }
+
+    setIsPublishing(true)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      const updatedUnit = await changeCompetitionUnitPublication(
+        unit.id,
+        published,
+        accessToken,
+      )
+
+      setUnit(updatedUnit)
+      setDrafts(createEntryDrafts(updatedUnit.entries))
+      setSuccessMessage(
+        published
+          ? 'Результаты опубликованы.'
+          : 'Результаты сняты с публикации.',
+      )
+    } catch (error) {
+      setErrorMessage(
+        getErrorMessage(
+          error,
+          published
+            ? 'Не удалось опубликовать результаты.'
+            : 'Не удалось снять результаты с публикации.',
+        ),
+      )
+    } finally {
+      setIsPublishing(false)
+    }
+  }
+
+  if (!unitId || !accessToken) {
+    return null
+  }
+
+  if (isLoading) {
+    return (
+      <section className={styles.page}>
+        <div className={styles.stateCard}>Загрузка судейской панели…</div>
+      </section>
+    )
+  }
+
+  if (errorMessage && !unit) {
+    return (
+      <section className={styles.page}>
+        <p className={styles.errorMessage} role="alert">
+          {errorMessage}
+        </p>
+
+        <Link className={styles.backLink} to="/operator/results">
+          ← К поиску соревнований
+        </Link>
+      </section>
+    )
+  }
+
+  if (!unit) {
+    return null
+  }
+
+  return (
+    <section className={styles.page}>
+      <Link className={styles.backLink} to="/operator/results">
+        ← К списку соревновательных единиц
+      </Link>
+
+      <div className={styles.titleRow}>
+        <div>
+          <p className={styles.eyebrow}>Судейская панель</p>
+          <h1 className={styles.title}>{unit.label}</h1>
+        </div>
+
+        <span className={unitStatusClassName(unit.status)}>
+          {unitStatusLabel(unit.status)}
+        </span>
+      </div>
+
+      <div className={styles.summaryCard}>
+        <div>
+          <span className={styles.summaryLabel}>Участников</span>
+          <strong>{unit.entries.length}</strong>
+        </div>
+
+        <div>
+          <span className={styles.summaryLabel}>Введено результатов</span>
+          <strong>{filledResultsCount}</strong>
+        </div>
+
+        <div>
+          <span className={styles.summaryLabel}>ID дисциплины</span>
+          <code>{unit.eventDisciplineId}</code>
+        </div>
+      </div>
+
+      {isPublished ? (
+        <div className={styles.publishedNotice} role="status">
+          <div>
+            <strong>Результаты опубликованы</strong>
+
+            <p>
+              Ввод результатов и пересчёт мест заблокированы, чтобы
+              опубликованный протокол не изменился случайно.
+            </p>
+          </div>
+
+          {canUnpublish ? (
+            <button
+              className={styles.noticeAction}
+              disabled={isBusy}
+              onClick={() => handlePublicationChange(false)}
+              type="button"
+            >
+              {isPublishing ? 'Снимаем…' : 'Снять с публикации'}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      <section className={styles.controlsCard}>
+        <div className={styles.controlsHeader}>
+          <div>
+            <h2>Настройки результата</h2>
+
+            <p>
+              Выберите тип результата и правило, по которому будут рассчитаны
+              итоговые места.
+            </p>
+          </div>
+        </div>
+
+        <div className={styles.controlsGrid}>
+          <label className={styles.field}>
+            <span>Тип результата</span>
+
+            <select
+              disabled={isPublished || isBusy}
+              onChange={(event) =>
+                setResultType(event.target.value as ResultType)
+              }
+              value={resultType}
+            >
+              {RESULT_TYPES.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className={styles.field}>
+            <span>Ранжирование</span>
+
+            <select
+              disabled={isPublished || isBusy}
+              onChange={(event) =>
+                setRankingStrategy(event.target.value as RankingStrategy)
+              }
+              value={rankingStrategy}
+            >
+              <option value="ASC">
+                По возрастанию — меньшее значение лучше
+              </option>
+
+              <option value="DESC">
+                По убыванию — большее значение лучше
+              </option>
+            </select>
+          </label>
+
+          <button
+            className={styles.recalculateButton}
+            disabled={isPublished || isBusy}
+            onClick={handleRecalculate}
+            type="button"
+          >
+            {isRecalculating ? 'Пересчитываем…' : 'Пересчитать места'}
+          </button>
+        </div>
+      </section>
+
+      <section className={styles.entriesSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <h2>Стартовый протокол</h2>
+
+            <p>Введите результат каждого участника и сохраните изменения.</p>
+          </div>
+
+          <span className={styles.entriesCount}>
+            {unit.entries.length}{' '}
+            {unit.entries.length === 1 ? 'участник' : 'участников'}
+          </span>
+        </div>
+
+        {unit.entries.length === 0 ? (
+          <div className={styles.stateCard}>
+            В этой соревновательной единице пока нет участников.
+          </div>
+        ) : (
+          <div className={styles.entriesList}>
+            {unit.entries.map((entry) => {
+              const draft = drafts[entry.entryId] ?? {
+                rawValue: '',
+                status: 'PENDING' as const,
+              }
+
+              const isSaving = isSavingEntryId === entry.entryId
+              const isSpecialStatus = draft.status !== 'PENDING'
+              const isEntryDisabled = isPublished || isSaving || isBusy
+
+              return (
+                <article className={styles.entryCard} key={entry.entryId}>
+                  <div className={styles.entryHeader}>
+                    <div className={styles.participantBlock}>
+                      <span className={styles.positionNumber}>
+                        {entry.laneOrPosition ?? '—'}
+                      </span>
+
+                      <div>
+                        <h3>{entry.participantName}</h3>
+
+                        <p>
+                          {entry.laneOrPosition !== null
+                            ? `Дорожка / позиция ${entry.laneOrPosition}`
+                            : 'Дорожка / позиция не назначена'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className={styles.entryResult}>
+                      {entry.finalPlace ? (
+                        <span className={styles.placeBadge}>
+                          Место {entry.finalPlace}
+                        </span>
+                      ) : null}
+
+                      <span
+                        className={resultStatusClassName(entry.resultStatus)}
+                      >
+                        {resultStatusLabel(entry.resultStatus)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <form
+                    className={styles.entryForm}
+                    onSubmit={(event) => handleSaveResult(event, entry)}
+                  >
+                    <label className={styles.field}>
+                      <span>Результат</span>
+
+                      <input
+                        disabled={isEntryDisabled}
+                        onChange={(event) =>
+                          updateDraft(
+                            entry.entryId,
+                            'rawValue',
+                            event.target.value,
+                          )
+                        }
+                        placeholder={
+                          resultType === 'TIME'
+                            ? 'Например: 1:05.32'
+                            : 'Например: 125'
+                        }
+                        required={!isSpecialStatus}
+                        spellCheck={false}
+                        type="text"
+                        value={draft.rawValue}
+                      />
+                    </label>
+
+                    <label className={styles.field}>
+                      <span>Статус</span>
+
+                      <select
+                        disabled={isEntryDisabled}
+                        onChange={(event) =>
+                          updateDraft(
+                            entry.entryId,
+                            'status',
+                            event.target.value,
+                          )
+                        }
+                        value={draft.status}
+                      >
+                        {RESULT_STATUSES.map((status) => (
+                          <option key={status.value} value={status.value}>
+                            {status.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+
+                    <button
+                      className={styles.saveButton}
+                      disabled={isEntryDisabled}
+                      type="submit"
+                    >
+                      {isSaving ? 'Сохраняем…' : 'Сохранить'}
+                    </button>
+                  </form>
+
+                  <p className={styles.entryTechnicalId}>
+                    ID записи протокола: <code>{entry.entryId}</code>
+                  </p>
+                </article>
+              )
+            })}
+          </div>
+        )}
+      </section>
+
+      {canPublish ? (
+        <section className={styles.publicationCard}>
+          <div>
+            <h2>Публикация</h2>
+
+            <p>
+              Перед публикацией убедитесь, что результаты всех участников
+              сохранены, а итоговые места пересчитаны.
+            </p>
+          </div>
+
+          <button
+            className={styles.publishButton}
+            disabled={isBusy}
+            onClick={() => handlePublicationChange(true)}
+            type="button"
+          >
+            {isPublishing ? 'Публикуем…' : 'Опубликовать результаты'}
+          </button>
+        </section>
+      ) : null}
+
+      {errorMessage ? (
+        <p className={styles.errorMessage} role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      {successMessage ? (
+        <p className={styles.successMessage} role="status">
+          {successMessage}
+        </p>
+      ) : null}
+    </section>
+  )
+}
+
+===== FILE: frontend\src\features\results\OrganizerDisciplineProtocolPage.tsx =====
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router'
+import { getEventById, getEventDisciplines, type Event, type EventDiscipline } from '../../api/events.api'
+import { useAuth } from '../../app/providers/AuthProvider'
+import { DisciplineProtocolBoard } from './DisciplineProtocolBoard'
+import { protocolErrorMessage } from './protocol-model.mjs'
+import styles from './ProtocolBoard.module.css'
+
+function ProtocolPageContent({ eventId, disciplineId, accessToken }: { eventId: string; disciplineId: string; accessToken: string }) {
+  const [data, setData] = useState<{ event: Event; discipline: EventDiscipline } | null>(null)
+  const [error, setError] = useState<unknown>(null)
+  const [loading, setLoading] = useState(true)
+  const [epoch, setEpoch] = useState(0)
+  useEffect(() => {
+    let valid = true
+    setLoading(true); setData(null); setError(null)
+    void Promise.all([getEventById(eventId, accessToken), getEventDisciplines(eventId, accessToken)])
+      .then(([event, disciplines]) => {
+        if (!valid) return
+        const discipline = disciplines.find(item => item.id === disciplineId)
+        if (!discipline) throw new Error('Дисциплина не найдена в этом мероприятии.')
+        setData({ event, discipline })
+      })
+      .catch(failure => { if (valid) setError(failure) })
+      .finally(() => { if (valid) setLoading(false) })
+    return () => { valid = false }
+  }, [eventId, disciplineId, accessToken, epoch])
+  return <section className={styles.page}>
+    <Link className={styles.link} to={`/organizer/events/${encodeURIComponent(eventId)}`}>← К мероприятию</Link>
+    <h1>Зачёт и итоговый протокол</h1>
+    {loading ? <p role="status">Загружаем дисциплину…</p> : null}
+    {error ? <div className={styles.error} role="alert"><p>{protocolErrorMessage(error)}</p>
+      <button type="button" className={styles.button} onClick={() => setEpoch(value => value + 1)}>Повторить загрузку</button></div> : null}
+    {!loading && !error && data ? <>
+      <p>{data.event.title} — {data.discipline.name}</p>
+      <div className={styles.toolbar}>
+        {data.event.publicSlug ? <Link className={styles.link} to={`/events/${encodeURIComponent(data.event.publicSlug)}/disciplines/${encodeURIComponent(disciplineId)}/standings`}>Публичный зачёт</Link> : null}
+      </div>
+      <DisciplineProtocolBoard eventId={eventId} disciplineId={disciplineId} accessToken={accessToken} />
+    </> : null}
+  </section>
+}
+export function OrganizerDisciplineProtocolPage() {
+  const { eventId, disciplineId } = useParams<{ eventId: string; disciplineId: string }>()
+  const { session } = useAuth()
+  if (!eventId || !disciplineId || !session?.accessToken) return <p role="alert">Не указана дисциплина или отсутствует авторизованная сессия.</p>
+  return <ProtocolPageContent key={`${eventId}:${disciplineId}:${session.expiresAt}`} eventId={eventId} disciplineId={disciplineId} accessToken={session.accessToken} />
+}
+
+
+===== FILE: frontend\src\features\results\protocol-model.d.mts =====
+import type { StandingEntry, ConfirmationBody, FinalSnapshot } from '../../api/standings.api'
+export const ALL_CATEGORIES: ':all:'
+export const LEGACY_CATEGORY: ':legacy:'
+export function isMissingFinal(error: unknown): boolean
+export function isUncertainFailure(error: unknown): boolean
+export function protocolErrorMessage(error: unknown): string
+export function createConfirmationAttempt(note: string, programmeComplete: boolean, createId?: () => string): Readonly<ConfirmationBody>
+export type RevocationAttempt = Readonly<{ id: string; revision: number; reason: string }>
+export function createRevocationAttempt(snapshot: Pick<FinalSnapshot, 'id' | 'revision'>, reason: string): RevocationAttempt
+export function unitsReady(units: Array<{ status: string }> | null): boolean
+export function canConfirm(flags: { permission: boolean; loading: boolean; busy: boolean; finalKnown: boolean; otherPending: boolean; pending: boolean; active: boolean; unitsReady: boolean; complete: boolean }): boolean
+export function categoryOptions(entries: StandingEntry[]): string[]
+export function filterCategory(entries: StandingEntry[], category: string): StandingEntry[]
+export function statusLabel(status: string): string
+
+
+===== FILE: frontend\src\features\results\protocol-model.mjs =====
+export const ALL_CATEGORIES = ':all:'
+export const LEGACY_CATEGORY = ':legacy:'
+
+export function isMissingFinal(error) {
+  return error?.status === 404 && error?.code === 'results.final_not_found'
+}
+export function isUncertainFailure(error) {
+  const status = error?.status
+  return !(typeof status === 'number' && status >= 400 && status < 500 && status !== 408 && status !== 429)
+}
+export function protocolErrorMessage(error) {
+  if (error?.status === 401) return 'Сессия истекла или не подтверждена. Войдите заново и обновите страницу.'
+  if (error?.status === 403) return 'Сервер не разрешил управление этой дисциплиной. Роль организатора сама по себе не даёт доступ к чужому событию.'
+  const messages = {
+    'results.final_not_ready': 'Итог пока нельзя подтвердить: проверьте публикацию всех заплывов, результаты и назначение всех подтверждённых заявок.',
+    'results.final_already_confirmed': 'Итог уже подтверждён. Обновите данные; для исправления сначала явно снимите финализацию.',
+    'results.final_request_conflict': 'Сервер отклонил повторный ключ с другими данными. Обновите состояние перед новым действием.',
+    'results.mixed_category_assignments': 'В опубликованных результатах смешаны назначения с категориями и без них. Исправьте протокол на сервере.',
+    'results.invalid_category_assignment': 'Обнаружена некорректная пара категории и группы посева.',
+    'results.discipline_finalized': 'Дисциплина финализирована: изменение заблокировано до явного снятия финализации.',
+    'results.final_isolation_not_supported': 'Сервер отклонил уровень изоляции транзакции. Требуется проверка конфигурации backend.',
+  }
+  return messages[error?.code] || (typeof error?.message === 'string' ? error.message : 'Не удалось выполнить запрос. Проверьте соединение и обновите данные.')
+}
+export function createConfirmationAttempt(note, programmeComplete, createId = () => globalThis.crypto.randomUUID()) {
+  if (programmeComplete !== true) throw new Error('Явно подтвердите завершённость всей программы дисциплины.')
+  const normalized = note.trim()
+  if (normalized.length > 500) throw new Error('Примечание не должно превышать 500 символов.')
+  let requestId
+  try { requestId = createId() } catch { throw new Error('Не удалось создать безопасный requestId. Откройте интерфейс через HTTPS или localhost.') }
+  if (typeof requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestId)) {
+    throw new Error('Не удалось создать корректный requestId.')
+  }
+  return Object.freeze({ requestId, programmeComplete: true, note: normalized })
+}
+export function createRevocationAttempt(snapshot, reason) {
+  const normalized = reason.trim()
+  if (!normalized || normalized.length > 1000) throw new Error('Укажите причину снятия: от 1 до 1000 символов.')
+  return Object.freeze({ id: snapshot.id, revision: snapshot.revision, reason: normalized })
+}
+export function unitsReady(units) {
+  return Array.isArray(units) && units.length > 0 && units.every(unit => unit.status === 'PUBLISHED')
+}
+export function canConfirm(flags) {
+  return flags.permission && !flags.loading && !flags.busy && flags.finalKnown && !flags.otherPending &&
+    (flags.pending || (!flags.active && flags.unitsReady && flags.complete))
+}
+export function categoryOptions(entries) {
+  return [...new Set(entries.map(entry => entry.categoryCode ?? LEGACY_CATEGORY))].sort()
+}
+export function filterCategory(entries, category) {
+  if (category === ALL_CATEGORIES) return entries
+  return entries.filter(entry => (entry.categoryCode ?? LEGACY_CATEGORY) === category)
+}
+export function statusLabel(status) {
+  return ({ VALID: 'Учтён', DID_NOT_START: 'Не стартовал', DID_NOT_FINISH: 'Не финишировал', DISQUALIFIED: 'Дисквалифицирован', PENDING: 'Ожидает проверки' })[status] || status
+}
+
+
+===== FILE: frontend\src\features\results\PublicDisciplineResultsPage.tsx =====
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useParams } from 'react-router'
+import { getPublicEventDetails } from '../../api/events.api'
+import { ApiError } from '../../api/http'
+import {
+  getPublicDisciplineResults,
+  type PublicDisciplineResultEntry,
+  type PublicDisciplineResultsResponse,
+} from '../../api/results.api'
+import styles from './PublicDisciplineResultsPage.module.css'
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof ApiError && error.status === 404) {
+    return 'Событие, дисциплина или опубликованные результаты не найдены.'
+  }
+
+  if (error instanceof ApiError) {
+    return error.message
+  }
+
+  return 'Не удалось загрузить результаты.'
+}
+
+function resultStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    PENDING: 'Ожидает пересчёта',
+    VALID: 'Учтён',
+    DID_NOT_START: 'Не стартовал',
+    DID_NOT_FINISH: 'Не финишировал',
+    DISQUALIFIED: 'Дисквалифицирован',
+    CORRECTED: 'Исправлен',
+    EXHIBITION: 'Вне зачёта',
+  }
+
+  return labels[status] ?? status
+}
+
+function resultStatusClassName(status: string) {
+  if (status === 'VALID') {
+    return `${styles.statusBadge} ${styles.statusValid}`
+  }
+
+  if (
+    status === 'DID_NOT_START' ||
+    status === 'DID_NOT_FINISH'
+  ) {
+    return `${styles.statusBadge} ${styles.statusWarning}`
+  }
+
+  if (status === 'DISQUALIFIED') {
+    return `${styles.statusBadge} ${styles.statusDanger}`
+  }
+
+  if (status === 'CORRECTED') {
+    return `${styles.statusBadge} ${styles.statusCorrected}`
+  }
+
+  if (status === 'EXHIBITION') {
+    return `${styles.statusBadge} ${styles.statusNeutral}`
+  }
+
+  return `${styles.statusBadge} ${styles.statusPending}`
+}
+
+function placeClassName(place: number | null) {
+  if (place === 1) {
+    return `${styles.place} ${styles.placeGold}`
+  }
+
+  if (place === 2) {
+    return `${styles.place} ${styles.placeSilver}`
+  }
+
+  if (place === 3) {
+    return `${styles.place} ${styles.placeBronze}`
+  }
+
+  return styles.place
+}
+
+function displayResult(rawValue: string | null, status: string) {
+  if (
+    status === 'DID_NOT_START' ||
+    status === 'DID_NOT_FINISH' ||
+    status === 'DISQUALIFIED'
+  ) {
+    return '—'
+  }
+
+  return rawValue?.trim() || '—'
+}
+
+function sortEntries(entries: PublicDisciplineResultEntry[]) {
+  return [...entries].sort((left, right) => {
+    const leftPlace = left.place ?? Number.MAX_SAFE_INTEGER
+    const rightPlace = right.place ?? Number.MAX_SAFE_INTEGER
+
+    return leftPlace - rightPlace
+  })
+}
+
+export function PublicDisciplineResultsPage() {
+  const { publicSlug, disciplineId } = useParams<{
+    publicSlug: string
+    disciplineId: string
+  }>()
+
+  const [results, setResults] =
+    useState<PublicDisciplineResultsResponse | null>(null)
+
+  const [eventTitle, setEventTitle] = useState<string | null>(null)
+
+  const [disciplineName, setDisciplineName] =
+    useState<string | null>(null)
+
+  const [isLoading, setIsLoading] = useState(true)
+
+  const [errorMessage, setErrorMessage] =
+    useState<string | null>(null)
+
+  const publishedEntriesCount = useMemo(
+    () =>
+      results?.units.reduce(
+        (total, unit) => total + unit.entries.length,
+        0,
+      ) ?? 0,
+    [results],
+  )
+
+  async function loadResults() {
+    if (!publicSlug || !disciplineId) {
+      setErrorMessage(
+        'Не указана ссылка на событие или идентификатор дисциплины.',
+      )
+      setIsLoading(false)
+      return
+    }
+
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      const event = await getPublicEventDetails(publicSlug)
+
+      const discipline = (event.disciplines ?? []).find(
+        (item) => item.id === disciplineId,
+      )
+
+      if (!discipline) {
+        setErrorMessage(
+          'Дисциплина не найдена или больше не опубликована.',
+        )
+        return
+      }
+
+      const data = await getPublicDisciplineResults(
+        event.id,
+        disciplineId,
+      )
+
+      setEventTitle(event.title)
+      setDisciplineName(discipline.name)
+      setResults(data)
+    } catch (error) {
+      setErrorMessage(getErrorMessage(error))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    void loadResults()
+  }, [publicSlug, disciplineId])
+
+  return (
+    <section className={styles.page}>
+      <Link
+        className={styles.backLink}
+        to={publicSlug ? `/events/${publicSlug}` : '/'}
+      >
+        ← К событию
+      </Link>
+
+      {publicSlug && disciplineId ? <Link className={styles.backLink}
+        to={`/events/${encodeURIComponent(publicSlug)}/disciplines/${encodeURIComponent(disciplineId)}/standings`}>
+        Общий и категорийный зачёт · подтверждённый итог
+      </Link> : null}
+
+      <p className={styles.eyebrow}>Опубликованные результаты</p>
+
+      <h1 className={styles.title}>
+        {disciplineName
+          ? `Результаты: ${disciplineName}`
+          : 'Таблица результатов'}
+      </h1>
+
+      {eventTitle ? (
+        <p className={styles.eventTitle}>{eventTitle}</p>
+      ) : null}
+
+      <p className={styles.description}>
+        Здесь показаны только опубликованные результаты дисциплины.
+      </p>
+
+      {!isLoading && !errorMessage && results ? (
+        <div className={styles.summaryRow}>
+          <span>
+            Соревновательных единиц: <strong>{results.units.length}</strong>
+          </span>
+
+          <span>
+            Участников в протоколах:{' '}
+            <strong>{publishedEntriesCount}</strong>
+          </span>
+        </div>
+      ) : null}
+
+      {isLoading ? (
+        <div className={styles.stateCard}>
+          <h2>Загрузка</h2>
+          <p>Получаем опубликованные результаты дисциплины.</p>
+        </div>
+      ) : null}
+
+      {errorMessage ? (
+        <p className={styles.errorMessage} role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+
+      {!isLoading && !errorMessage && results ? (
+        results.units.length === 0 ? (
+          <div className={styles.stateCard}>
+            <h2>Результаты ещё не опубликованы</h2>
+
+            <p>
+              Организатор опубликует итоговую таблицу после завершения
+              соревнования.
+            </p>
+          </div>
+        ) : (
+          <div className={styles.unitsList}>
+            {results.units.map((unit) => {
+              const entries = sortEntries(unit.entries)
+
+              return (
+                <article className={styles.unitCard} key={unit.id}>
+                  <div className={styles.unitHeader}>
+                    <div>
+                      <p className={styles.unitLabel}>
+                        Соревновательная единица
+                      </p>
+
+                      <h2 className={styles.unitTitle}>{unit.label}</h2>
+                    </div>
+
+                    <div className={styles.unitMeta}>
+                      {unit.sequenceNumber !== null ? (
+                        <span className={styles.sequenceBadge}>
+                          № {unit.sequenceNumber}
+                        </span>
+                      ) : null}
+
+                      <span className={styles.entriesBadge}>
+                        {entries.length}{' '}
+                        {entries.length === 1
+                          ? 'участник'
+                          : 'участников'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {entries.length === 0 ? (
+                    <p className={styles.hint}>
+                      В этой соревновательной единице нет опубликованных
+                      результатов.
+                    </p>
+                  ) : (
+                    <div className={styles.tableWrap}>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th scope="col">Место</th>
+                            <th scope="col">Участник</th>
+                            <th scope="col">Клуб</th>
+                            <th scope="col">Результат</th>
+                            <th scope="col">Статус</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {entries.map((entry, index) => (
+                            <tr
+                              key={`${unit.id}-${entry.participantName}-${index}`}
+                            >
+                              <td>
+                                <span className={placeClassName(entry.place)}>
+                                  {entry.place ?? '—'}
+                                </span>
+                              </td>
+
+                              <td>
+                                <strong className={styles.participantName}>
+                                  {entry.participantName}
+                                </strong>
+
+                                {entry.laneOrPosition !== null ? (
+                                  <span className={styles.positionLabel}>
+                                    Дорожка / позиция{' '}
+                                    {entry.laneOrPosition}
+                                  </span>
+                                ) : null}
+                              </td>
+
+                              <td className={styles.clubCell}>
+                                {entry.clubName ?? '—'}
+                              </td>
+
+                              <td className={styles.resultValue}>
+                                {displayResult(
+                                  entry.rawValue,
+                                  entry.status,
+                                )}
+                              </td>
+
+                              <td>
+                                <span
+                                  className={resultStatusClassName(
+                                    entry.status,
+                                  )}
+                                >
+                                  {resultStatusLabel(entry.status)}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </article>
+              )
+            })}
+          </div>
+        )
+      ) : null}
+    </section>
+  )
+}
+
+
+===== FILE: frontend\src\features\results\PublicDisciplineStandingsPage.tsx =====
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router'
+import { getPublicEventDetails, type PublicEventDetails } from '../../api/events.api'
+import { DisciplineProtocolBoard } from './DisciplineProtocolBoard'
+import { protocolErrorMessage } from './protocol-model.mjs'
+import styles from './ProtocolBoard.module.css'
+
+function PublicPageContent({ publicSlug, disciplineId }: { publicSlug: string; disciplineId: string }) {
+  const [event, setEvent] = useState<PublicEventDetails | null>(null)
+  const [error, setError] = useState<unknown>(null)
+  const [loading, setLoading] = useState(true)
+  const [epoch, setEpoch] = useState(0)
+  useEffect(() => {
+    let valid = true
+    setLoading(true); setEvent(null); setError(null)
+    void getPublicEventDetails(publicSlug).then(value => {
+      if (!valid) return
+      if (!value.disciplines?.some(item => item.id === disciplineId)) throw new Error('Дисциплина не найдена на публичной странице события.')
+      setEvent(value)
+    }).catch(failure => { if (valid) setError(failure) }).finally(() => { if (valid) setLoading(false) })
+    return () => { valid = false }
+  }, [publicSlug, disciplineId, epoch])
+  return <section className={styles.page}>
+    <div className={styles.toolbar}>
+      <Link className={styles.link} to={`/events/${encodeURIComponent(publicSlug)}`}>← К событию</Link>
+      <Link className={styles.link} to={`/events/${encodeURIComponent(publicSlug)}/disciplines/${encodeURIComponent(disciplineId)}/results`}>Результаты по заплывам</Link>
+    </div>
+    <h1>Общий и категорийный зачёт</h1>
+    {loading ? <p role="status">Загружаем событие…</p> : null}
+    {error ? <div className={styles.error} role="alert"><p>{protocolErrorMessage(error)}</p>
+      <button type="button" className={styles.button} onClick={() => setEpoch(value => value + 1)}>Повторить загрузку</button></div> : null}
+    {!loading && !error && event ? <>
+      <p>{event.title} — {event.disciplines.find(item => item.id === disciplineId)?.name}</p>
+      <DisciplineProtocolBoard eventId={event.id} disciplineId={disciplineId} />
+    </> : null}
+  </section>
+}
+export function PublicDisciplineStandingsPage() {
+  const { publicSlug, disciplineId } = useParams<{ publicSlug: string; disciplineId: string }>()
+  if (!publicSlug || !disciplineId) return <p role="alert">Не указаны событие или дисциплина.</p>
+  return <PublicPageContent key={`${publicSlug}:${disciplineId}`} publicSlug={publicSlug} disciplineId={disciplineId} />
+}
+
+
+===== FILE: frontend\src\features\results\StandingsPage.tsx =====
+import { useCallback, useEffect, useRef, useState } from 'react'
+import type { FormEvent } from 'react'
+import { Link, useParams } from 'react-router'
+import { getEventById, getEventDisciplines, getPublicEventDetails } from '../../api/events.api'
+import { ApiError } from '../../api/http'
+import { confirmFinal, getFinalHistory, getFinalStandings, getStandings, revokeFinal } from '../../api/standings.api'
+import type { ConfirmFinalRequest, FinalStandings, Standings } from '../../api/standings.api'
+import { useAuth } from '../../app/providers/AuthProvider'
+import { StandingsTable } from './StandingsTable'
+import { failureMessage, formatTimestamp, isMissingFinal, keepAttemptAfterFailure } from '../../lib/standings-ui.mjs'
+import styles from './Standings.module.css'
+
+type Resource<T> = {kind:'loading'} | {kind:'ready';data:T} | {kind:'error';error:unknown}
+type Metadata = {eventId:string;disciplineId:string;eventTitle:string;disciplineName:string;publicSlug:string;key:string}
+async function capture<T>(work:()=>Promise<T>):Promise<Resource<T>> {
+  try { return {kind:'ready',data:await work()} }
+  catch(error) { return {kind:'error',error} }
+}
+function Failure({error}:{error:unknown}) {
+  return <div className={styles.error} role="alert">
+    <p>{failureMessage(error)}</p>
+    {error instanceof ApiError && error.code?<p>Код: <code>{error.code}</code></p>:null}
+    {error instanceof ApiError && error.violations.length>0?<ul>{error.violations.map((v,i)=><li key={i}><code>{v.field}</code>: {v.message}</li>)}</ul>:null}
+  </div>
+}
+function Snapshot({data}:{data:FinalStandings}) {
+  return <section className={styles.card}>
+    <h2>Сохранённая ревизия № {data.revision} · {data.status==='CONFIRMED'?'Подтверждена':'Снята'}</h2>
+    <p>Подтверждение: {formatTimestamp(data.confirmedAt)}. Автор: <code>{data.confirmedBy}</code></p>
+    {data.confirmationNote?<p>Примечание: {data.confirmationNote}</p>:null}
+    {data.revokedAt?<p>Снятие: {formatTimestamp(data.revokedAt)}. Причина: {data.revocationReason??'—'}</p>:null}
+    <p className={styles.hint}>Время показано в часовом поясе браузера. Это сохранённые данные, а не новый расчёт.</p>
+    <StandingsTable data={data.standings}/>
+  </section>
+}
+function StandingsWorkspace({eventId,disciplineId,accessToken}:{eventId:string;disciplineId:string;accessToken?:string}) {
+  const [live,setLive]=useState<Resource<Standings>>({kind:'loading'})
+  const [final,setFinal]=useState<Resource<FinalStandings|null>>({kind:'loading'})
+  const [history,setHistory]=useState<Resource<FinalStandings[]>>({kind:'loading'})
+  const [tab,setTab]=useState<'current'|'final'>('current')
+  const [busy,setBusy]=useState(false)
+  const busyRef=useRef(false)
+  const mounted=useRef(true)
+  const generation=useRef(0)
+  const [message,setMessage]=useState<string|null>(null)
+  const [actionError,setActionError]=useState<unknown>(null)
+  const [complete,setComplete]=useState(false)
+  const [note,setNote]=useState('')
+  const [reason,setReason]=useState('')
+  const [confirmAttempt,setConfirmAttempt]=useState<ConfirmFinalRequest|null>(null)
+  const [revokeAttempt,setRevokeAttempt]=useState<{id:string;reason:string}|null>(null)
+  const reload=useCallback(async()=>{
+    const ticket=++generation.current
+    if(mounted.current) {
+      setLive({kind:'loading'});setFinal({kind:'loading'})
+      if(accessToken) setHistory({kind:'loading'})
+    }
+    const [nextLive,nextFinal,nextHistory]=await Promise.all([
+      capture(()=>getStandings(eventId,disciplineId)),
+      capture(async()=>{
+        try {return await getFinalStandings(eventId,disciplineId)}
+        catch(error) {if(isMissingFinal(error)) return null;throw error}
+      }),
+      accessToken?capture(()=>getFinalHistory(eventId,disciplineId,accessToken)):Promise.resolve<Resource<FinalStandings[]>>({kind:'ready',data:[]}),
+    ])
+    if(!mounted.current||ticket!==generation.current) return
+    setLive(nextLive);setFinal(nextFinal);setHistory(nextHistory)
+    if(nextFinal.kind==='ready'&&nextFinal.data) setConfirmAttempt(null)
+  },[eventId,disciplineId,accessToken])
+  useEffect(()=>{
+    mounted.current=true
+    void reload()
+    return ()=>{mounted.current=false;generation.current++}
+  },[reload])
+  const current=final.kind==='ready'?final.data:null
+  // A successful PRIVATE history request establishes access, not the role label alone.
+  const canManage=Boolean(accessToken)&&history.kind==='ready'
+  const loading=live.kind==='loading'||final.kind==='loading'||Boolean(accessToken&&history.kind==='loading')
+  const canConfirm=canManage&&!loading&&!busy&&final.kind==='ready'&&!current&&live.kind==='ready'&&live.data.entries.length>0&&(complete||Boolean(confirmAttempt))
+  async function handleConfirm(event:FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if(!accessToken||!canConfirm||busyRef.current) return
+    let attempt=confirmAttempt
+    if(!attempt) {
+      if(typeof globalThis.crypto?.randomUUID!=='function') {setActionError(new Error('Для создания requestId нужен защищённый контекст браузера (HTTPS или localhost).'));return}
+      attempt={requestId:globalThis.crypto.randomUUID(),programmeComplete:true,note:note.trim()}
+      setConfirmAttempt(attempt)
+    }
+    busyRef.current=true;setBusy(true);setMessage(null);setActionError(null)
+    try {
+      const saved=await confirmFinal(eventId,disciplineId,attempt,accessToken)
+      if(!mounted.current) return
+      setConfirmAttempt(null);setComplete(false);setNote('')
+      setMessage(saved.status==='CONFIRMED'?`Подтверждена ревизия № ${saved.revision}.`:'Эта попытка относится к уже снятой ревизии. Нового подтверждения не создано.')
+      if(saved.status==='CONFIRMED') {setFinal({kind:'ready',data:saved});setTab('final')}
+      await reload()
+    } catch(error) {
+      if(!mounted.current) return
+      setActionError(error)
+      if(!keepAttemptAfterFailure(error)) setConfirmAttempt(null)
+      await reload()
+    } finally {
+      busyRef.current=false;if(mounted.current) setBusy(false)
+    }
+  }
+  async function handleRevoke(event:FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if(!accessToken||!canManage||busyRef.current||loading||(!current&&!revokeAttempt)) return
+    const attempt=revokeAttempt??{id:current!.id,reason:reason.trim()}
+    if(!attempt.reason||attempt.reason.length>1000) return
+    setRevokeAttempt(attempt);busyRef.current=true;setBusy(true);setMessage(null);setActionError(null)
+    try {
+      const saved=await revokeFinal(eventId,disciplineId,attempt.id,attempt.reason,accessToken)
+      if(!mounted.current) return
+      setRevokeAttempt(null);setReason('')
+      setMessage(saved.status==='REVOKED'?`Финализация ревизии № ${saved.revision} снята. Снимок остался в истории.`:'Сервер не подтвердил снятие. Проверьте актуальный статус.')
+      await reload()
+    } catch(error) {
+      if(!mounted.current) return
+      setActionError(error)
+      if(!keepAttemptAfterFailure(error)) setRevokeAttempt(null)
+      await reload()
+    } finally {busyRef.current=false;if(mounted.current) setBusy(false)}
+  }
+  return <div className={styles.page}>
+    <div className={styles.actions}>
+      <button className={styles.button} type="button" aria-pressed={tab==='current'} onClick={()=>setTab('current')}>Текущий зачёт</button>
+      <button className={styles.button} type="button" aria-pressed={tab==='final'} onClick={()=>setTab('final')}>Подтверждённый итог</button>
+      <button className={styles.button} type="button" disabled={busy||loading} onClick={()=>void reload()}>Обновить</button>
+    </div>
+    {final.kind==='loading'?<p role="status">Проверяем состояние итогов…</p>:final.kind==='error'?<><p>Статус финализации неизвестен. Действия заблокированы до успешной проверки.</p><Failure error={final.error}/></>:
+      <p className={styles.notice}>{current?`Итог подтверждён: ревизия № ${current.revision}. Изменения защищены сервером.`:'Активного подтверждённого итога нет. Наличие старых снятых ревизий проверяется в истории.'}</p>}
+    {tab==='current'?<>
+      <p className={styles.hint}>Зачёт только по опубликованным заплывам. Пока опубликована не вся программа, это не окончательные итоги.</p>
+      {live.kind==='loading'?<p role="status">Загружаем текущий зачёт…</p>:live.kind==='error'?<Failure error={live.error}/>:<StandingsTable data={live.data}/>}
+    </>:final.kind==='ready'&&current?<Snapshot data={current}/>:final.kind==='ready'?<section className={styles.card}>Сохранённого активного итога пока нет. Текущая таблица не подставляется вместо него.</section>:null}
+    {message?<p className={styles.notice} role="status">{message}</p>:null}
+    {actionError?<Failure error={actionError}/>:null}
+    {accessToken?<>
+      <section className={styles.card}>
+        <h2>Управление итогами дисциплины</h2>
+        <p className={styles.hint}>Сервер проверит все заплывы и назначения. Подтверждение итогов дисциплины не меняет статус всего мероприятия.</p>
+        {history.kind==='loading'?<p role="status">Проверяем доступ и историю…</p>:history.kind==='error'?<Failure error={history.error}/>:null}
+        {canManage&&final.kind==='ready'&&!current?<form onSubmit={handleConfirm}>
+          <label className={styles.checkbox}><input type="checkbox" checked={complete} onChange={e=>setComplete(e.target.checked)} disabled={busy||Boolean(confirmAttempt)} required={!confirmAttempt}/>
+            <span>Подтверждаю, что вся программа этой дисциплины заведена и завершена, все заплывы и результаты проверены.</span></label>
+          <label className={styles.field}>Примечание (необязательно)<textarea maxLength={500} rows={3} value={note} onChange={e=>setNote(e.target.value)} disabled={busy||Boolean(confirmAttempt)}/></label>
+          {confirmAttempt?<p className={styles.notice}>Есть попытка с неопределённым исходом. При повторе сохраняются прежние requestId и примечание. Неизвестный исход не считается успехом.</p>:null}
+          <button className={styles.button} type="submit" disabled={!canConfirm}>{busy?'Выполняем…':confirmAttempt?'Повторить ту же попытку':'Подтвердить итог дисциплины'}</button>
+        </form>:null}
+        {canManage&&(current||revokeAttempt)?<form onSubmit={handleRevoke}>
+          <p>Снятие относится только к снимку <code>{revokeAttempt?.id??current?.id}</code>. История сохраняется.</p>
+          <label className={styles.field}>Обязательная причина<textarea required maxLength={1000} rows={3} value={revokeAttempt?.reason??reason} onChange={e=>setReason(e.target.value)} disabled={busy||Boolean(revokeAttempt)}/></label>
+          {revokeAttempt?<p className={styles.hint}>Повтор адресуется прежнему снимку, даже если другой пользователь уже создал новую ревизию.</p>:null}
+          <button className={`${styles.button} ${styles.danger}`} type="submit" disabled={busy||loading||!(revokeAttempt?.reason??reason).trim()}>{busy?'Выполняем…':revokeAttempt?'Повторить снятие того же снимка':'Снять финализацию для исправлений'}</button>
+        </form>:null}
+      </section>
+      <section className={styles.card}><h2>История ревизий</h2>
+        {history.kind==='ready'?history.data.length===0?<p>Ревизий пока нет.</p>:<div className={styles.history}>
+          {[...history.data].sort((a,b)=>b.revision-a.revision).map(item=><details key={item.id}>
+            <summary>Ревизия № {item.revision} · {item.status==='CONFIRMED'?'Подтверждена':'Снята'} · {formatTimestamp(item.confirmedAt)}</summary>
+            <Snapshot data={item}/>
+          </details>)}
+        </div>:null}
+      </section>
+    </>:null}
+  </div>
+}
+function StandingsPage({manage=false}:{manage?:boolean}) {
+  const {eventId,publicSlug,disciplineId}=useParams<{eventId:string;publicSlug:string;disciplineId:string}>()
+  const {session}=useAuth()
+  const token=manage?session?.accessToken:undefined
+  const key=`${manage?'manage':'public'}:${eventId??publicSlug??''}:${disciplineId??''}:${manage?session?.expiresAt??'none':''}`
+  const [metadata,setMetadata]=useState<Resource<Metadata>>({kind:'loading'})
+  const [retry,setRetry]=useState(0)
+  useEffect(()=>{
+    let active=true
+    setMetadata({kind:'loading'})
+    async function load() {
+      if(!disciplineId||manage&&(!eventId||!token)||!manage&&!publicSlug) throw new Error('Недостаточно данных для открытия дисциплины.')
+      if(manage) {
+        const [event,disciplines]=await Promise.all([getEventById(eventId!,token),getEventDisciplines(eventId!,token!)])
+        const discipline=disciplines.find(d=>d.id===disciplineId)
+        if(!discipline) throw new Error('Дисциплина не принадлежит выбранному мероприятию или недоступна.')
+        return {eventId:event.id,disciplineId,eventTitle:event.title,disciplineName:discipline.name,publicSlug:event.publicSlug,key}
+      }
+      const event=await getPublicEventDetails(publicSlug!)
+      const discipline=event.disciplines.find(d=>d.id===disciplineId)
+      if(!discipline) throw new Error('Опубликованная дисциплина не найдена.')
+      return {eventId:event.id,disciplineId,eventTitle:event.title,disciplineName:discipline.name,publicSlug:event.publicSlug,key}
+    }
+    void capture(load).then(result=>{if(active) setMetadata(result)})
+    return ()=>{active=false}
+  },[eventId,publicSlug,disciplineId,manage,token,key,retry])
+  const context=metadata.kind==='ready'&&metadata.data.key===key?metadata.data:null
+  return <section className={styles.page}>
+    <Link to={manage?`/organizer/events/${encodeURIComponent(eventId??'')}`:`/events/${encodeURIComponent(publicSlug??'')}`}>← К мероприятию</Link>
+    <h1>{context?`Зачёт: ${context.disciplineName}`:'Зачёт дисциплины'}</h1>
+    {context?<>
+      <p>{context.eventTitle}</p>
+      {context.publicSlug?<Link to={`/events/${encodeURIComponent(context.publicSlug)}/disciplines/${encodeURIComponent(context.disciplineId)}/results`}>Опубликованные результаты по заплывам</Link>:null}
+      <StandingsWorkspace key={key} eventId={context.eventId} disciplineId={context.disciplineId} accessToken={token}/>
+    </>:metadata.kind==='error'?<><Failure error={metadata.error}/><button className={styles.button} type="button" onClick={()=>setRetry(v=>v+1)}>Повторить загрузку</button></>:<p role="status">Загружаем дисциплину…</p>}
+  </section>
+}
+export function PublicStandingsPage() {return <StandingsPage/>}
+export function OrganizerStandingsPage() {return <StandingsPage manage/>}
+
+
+===== FILE: frontend\src\features\results\StandingsTable.tsx =====
+import { useState } from 'react'
+import type { Standings } from '../../api/standings.api'
+import { categoryOptions, filterStandings } from '../../lib/standings-ui.mjs'
+import styles from './Standings.module.css'
+const statuses:Record<string,string>={VALID:'Учтён',DID_NOT_START:'DNS — не стартовал',DID_NOT_FINISH:'DNF — не финишировал',DISQUALIFIED:'DSQ — дисквалифицирован'}
+export function StandingsTable({data}:{data:Standings}) {
+  const [selected,setSelected]=useState('')
+  const options=categoryOptions(data.entries)
+  const category=selected==='__legacy__'||options.includes(selected)?selected:''
+  const entries=filterStandings(data.entries,category)
+  return <section className={styles.card}>
+    <p>Тип: {data.resultType} · Порядок: {data.rankingStrategy} · Равенства: {data.tiePolicy}</p>
+    <p className={styles.hint}>Место в заплыве, общем зачёте и категории — разные значения. Фильтр не пересчитывает места.</p>
+    <label className={styles.field}>Категория
+      <select value={category} onChange={e=>setSelected(e.target.value)}>
+        <option value="">Все категории</option>
+        {options.map(code=><option key={code} value={code}>{code}</option>)}
+        {data.entries.some(e=>e.categoryCode==null)?<option value="__legacy__">Без категории</option>:null}
+      </select>
+    </label>
+    {entries.length===0?<p>Опубликованных строк для выбранного просмотра нет.</p>:<div className={styles.tableWrap}>
+      <table className={styles.table}><caption>Показано {entries.length} из {data.entries.length} строк</caption>
+        <thead><tr><th>Общее место</th><th>Место в категории</th><th>Категория</th><th>Участник</th><th>Клуб</th><th>Заплыв</th><th>Место в заплыве</th><th>Группа посева</th><th>Результат</th><th>Статус</th></tr></thead>
+        <tbody>{entries.map((e,index)=><tr key={`${e.competitionUnitId}:${index}`}>
+          <td>{e.overallPlace??'—'}</td><td>{e.categoryPlace??'—'}</td><td>{e.categoryCode??'—'}</td>
+          <td>{e.participantName}</td><td>{e.clubName??'—'}</td><td>{e.competitionUnitLabel}</td>
+          <td>{e.unitPlace??'—'}</td><td>{e.seedingGroupCode??'—'}</td>
+          <td>{e.status==='VALID'?(e.rawValue??'—'):'—'}</td><td>{statuses[e.status]??e.status}</td>
+        </tr>)}</tbody>
+      </table>
+    </div>}
+  </section>
+}
+
+
+===== FILE: frontend\src\features\results\useProtocolData.ts =====
+import { useEffect, useState } from 'react'
+import {
+  getDisciplineStandings, getFinalStandings, getFinalizationHistory,
+  type DisciplineStandings, type FinalSnapshot,
+} from '../../api/standings.api'
+import { getCompetitionUnitsByDiscipline, type CompetitionUnitResponse } from '../../api/results.api'
+
+type Resource = 'current' | 'active' | 'history' | 'units'
+type ProtocolData = {
+  loading: boolean
+  current: DisciplineStandings | null
+  active: FinalSnapshot | null
+  history: FinalSnapshot[] | null
+  units: CompetitionUnitResponse[] | null
+  errors: Partial<Record<Resource, unknown>>
+}
+const emptyData = (): ProtocolData => ({ loading: true, current: null, active: null, history: null, units: null, errors: {} })
+
+export function useProtocolData(eventId: string, disciplineId: string, accessToken?: string) {
+  const [data, setData] = useState<ProtocolData>(emptyData)
+  const [epoch, setEpoch] = useState(0)
+  useEffect(() => {
+    let valid = true
+    const controller = new AbortController()
+    setData(emptyData())
+    async function load() {
+      const [current, active, history, units] = await Promise.allSettled([
+        getDisciplineStandings(eventId, disciplineId, controller.signal),
+        getFinalStandings(eventId, disciplineId, controller.signal),
+        accessToken ? getFinalizationHistory(eventId, disciplineId, accessToken, controller.signal) : Promise.resolve(null),
+        accessToken ? getCompetitionUnitsByDiscipline(disciplineId, accessToken) : Promise.resolve(null),
+      ])
+      if (!valid) return
+      const errors: ProtocolData['errors'] = {}
+      if (current.status === 'rejected') errors.current = current.reason
+      if (active.status === 'rejected') errors.active = active.reason
+      if (history.status === 'rejected') errors.history = history.reason
+      if (units.status === 'rejected') errors.units = units.reason
+      setData({
+        loading: false, errors,
+        current: current.status === 'fulfilled' ? current.value : null,
+        active: active.status === 'fulfilled' ? active.value : null,
+        history: history.status === 'fulfilled' ? history.value : null,
+        units: units.status === 'fulfilled' ? units.value : null,
+      })
+    }
+    void load()
+    return () => { valid = false; controller.abort() }
+  }, [eventId, disciplineId, accessToken, epoch])
+  function refresh() {
+    setData(current => ({ ...current, loading: true }))
+    setEpoch(current => current + 1)
+  }
+  return { data, refresh }
+}
+
+

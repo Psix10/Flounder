@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "taskLabel": "M-200",
+  "scenario": "baseline",
+  "attempt": 1,
+  "operator": "operator01",
+  "method": "Excel-sort-copy",
+  "startedAt": "2026-10-31T14:02:57.201834+00:00",
+  "finishedAt": "2026-10-31T14:11:19.754127+00:00",
+  "elapsedNanoseconds": 502546866100,
+  "elapsedSeconds": 502.5468661,
+  "measured": true
+}

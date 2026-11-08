@@ -68,7 +68,10 @@ public class CreateEventUseCase {
         }
 
         try {
-            regulationVersionLookup.getPublishedById(request.regulationVersionId());
+            var regulation = regulationVersionLookup.getPublishedById(request.regulationVersionId());
+            if (!request.sportId().equals(regulation.sportId())) {
+                throw new BusinessException("events.regulation_sport_mismatch", "Event and regulation must belong to the same sport");
+            }
         } catch (IllegalArgumentException exception) {
             throw new BusinessException(
                     "events.regulation_version_not_found",

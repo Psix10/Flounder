@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "MANUAL_UPDATE",
+  "scenario": "addition",
+  "label": "M-200",
+  "participantCount": 210,
+  "sourceRun": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\experiment-results\\M-200-2026-10-31T13-03-56.856566300Z-34621cb0",
+  "previousAttempt": "C:\\Users\\Psixowan\\Desktop\\Flounder\\sport-platform\\manual-baseline\\M-200-run-01\\attempts\\attempt-001",
+  "changeCount": 10
+}

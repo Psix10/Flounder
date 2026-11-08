@@ -22,7 +22,13 @@ public record PublicDisciplineResultsResponse(
             String clubName,
             String rawValue,
             String resultType,
-            String status
+            String status,
+            String categoryCode,
+            String seedingGroupCode
     ) {
+        public EntryView(Integer place, String participantName, String clubName,
+                String rawValue, String resultType, String status) {
+            this(place, participantName, clubName, rawValue, resultType, status, null, null);
+        }
     }
 }
