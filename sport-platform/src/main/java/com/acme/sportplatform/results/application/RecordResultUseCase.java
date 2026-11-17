@@ -104,6 +104,16 @@ public class RecordResultUseCase {
             );
         }
 
+        if (requestedStatus == ResultStatus.PENDING
+                && com.acme.sportplatform.common.numeric.NumericResultValue.parse(
+                        request.rawValue().trim(), configuredResultType) == null) {
+            throw new BusinessException(
+                    "results.invalid_raw_value",
+                    "Укажите корректный результат: время должно быть больше нуля; "
+                            + "для очков требуется числовое значение."
+            );
+        }
+
         ResultEntity result = resultRepository
                 .findByCompetitionUnitEntryId(entry.getId())
                 .orElseGet(ResultEntity::new);

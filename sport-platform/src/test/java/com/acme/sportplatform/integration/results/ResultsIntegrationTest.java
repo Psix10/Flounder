@@ -932,7 +932,10 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         Fixture fixture = createFixture();
         Fixture invalid = additionalEntry(fixture, 2);
         recordOnly(fixture, "28.11", "PENDING").andExpect(status().isOk());
-        recordOnly(invalid, "01:60", "PENDING").andExpect(status().isOk());
+        recordOnly(invalid, "29.00", "PENDING").andExpect(status().isOk());
+        // Simulate pre-fix stored data. New API writes must reject this value.
+        rankingJdbc.update("UPDATE results SET raw_value='01:60' WHERE competition_unit_entry_id=?",
+                invalid.entryId());
         List<Map<String, Object>> before = unitResultRows(fixture.unitId());
 
         mockMvc.perform(post("/api/v1/competition-units/{unitId}/recalculate", fixture.unitId())
@@ -1811,5 +1814,69 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
                 ));
         return registrationOrganizerForEvent(discipline.getEventId());
     }
+
+
+@Test void rejectsNonPositiveAndMalformedTimesBeforeCreatingResult() throws Exception {
+    Fixture fixture = createFixture();
+    for (String raw : List.of("0", "-0.00", "-12.5", "00:00.00", "01:60", "NaN", "Infinity")) {
+        recordOnly(fixture, raw, "PENDING").andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("results.invalid_raw_value"));
+        org.junit.jupiter.api.Assertions.assertTrue(
+                resultRepository.findByCompetitionUnitEntryId(fixture.entryId()).isEmpty());
+    }
+}
+
+@Test void invalidTimeCannotOverwriteAnExistingResult() throws Exception {
+    Fixture fixture = createFixture();
+    recordAndRecalculate(fixture, "28.11", "PENDING", "ASC").andExpect(status().isOk());
+    List<Map<String, Object>> before = unitResultRows(fixture.unitId());
+    recordOnly(fixture, "-1", "PENDING").andExpect(status().isBadRequest());
+    org.junit.jupiter.api.Assertions.assertEquals(before, unitResultRows(fixture.unitId()));
+}
+
+@Test void zeroAndNegativePointsRemainValidAndAreRanked() throws Exception {
+    Fixture first = createFixture();
+    Fixture second = additionalEntry(first, 2);
+    rankingJdbc.update("UPDATE event_disciplines SET result_type='POINTS' WHERE id=?", first.disciplineId());
+    mockMvc.perform(post("/api/v1/results").with(user(operatorFor(first)))
+            .param("resultType", "POINTS").contentType(MediaType.APPLICATION_JSON)
+            .content(resultJson(first.entryId(), "-2.50", "PENDING"))).andExpect(status().isOk());
+    mockMvc.perform(post("/api/v1/results").with(user(operatorFor(first)))
+            .param("resultType", "POINTS").contentType(MediaType.APPLICATION_JSON)
+            .content(resultJson(second.entryId(), "0", "PENDING"))).andExpect(status().isOk());
+    sqlRecalculate.execute(first.unitId(), "ASC");
+    org.junit.jupiter.api.Assertions.assertEquals(Integer.valueOf(1), findResult(first).getFinalPlace());
+    org.junit.jupiter.api.Assertions.assertEquals(Integer.valueOf(2), findResult(second).getFinalPlace());
+}
+
+@Test void typedExactParserAgreesWithJavaOnRepresentativeInputs() {
+    var inputs = java.util.Arrays.asList(null, "", "0", "-0.00", "-12.5", "68.54", "01:08.54",
+            "1:60", "1:-2", "1:+2", "1:2:3", "1e3", ".5", "1.", "NaN", "Infinity", " 12 ");
+    for (String type : List.of("TIME", "POINTS")) {
+        for (String raw : inputs) {
+            java.math.BigDecimal expected = com.acme.sportplatform.common.numeric.NumericResultValue.parse(raw, type);
+            java.math.BigDecimal actual = rankingJdbc.queryForObject(
+                    "SELECT results_validated_numeric_value(?, ?)", java.math.BigDecimal.class, raw, type);
+            if (expected == null) org.junit.jupiter.api.Assertions.assertNull(actual, type + ":" + raw);
+            else {
+                org.junit.jupiter.api.Assertions.assertNotNull(actual, type + ":" + raw);
+                org.junit.jupiter.api.Assertions.assertEquals(0, expected.compareTo(actual), type + ":" + raw);
+            }
+        }
+    }
+}
+
+@Test void exactParserMatchesClockAndDecimalAcrossBoundaryGrid() {
+    Long mismatches = rankingJdbc.queryForObject("""
+            SELECT count(*) FROM generate_series(0,30) m
+            CROSS JOIN generate_series(0,59) s
+            CROSS JOIN generate_series(0,99) h
+            WHERE results_validated_numeric_value(
+                m::text || ':' || lpad(s::text,2,'0') || '.' || lpad(h::text,2,'0'), 'TIME')
+                IS DISTINCT FROM results_validated_numeric_value(
+                (m*60+s)::text || '.' || lpad(h::text,2,'0'), 'TIME')
+            """, Long.class);
+    org.junit.jupiter.api.Assertions.assertEquals(Long.valueOf(0), mismatches);
+}
 
 }

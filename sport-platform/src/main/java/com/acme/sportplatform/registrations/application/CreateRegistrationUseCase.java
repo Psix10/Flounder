@@ -62,6 +62,14 @@ public class CreateRegistrationUseCase {
             UUID participantUserId,
             CreateRegistrationRequest request
     ) {
+        if (request == null || !request.isRegistrationMetaValid()) {
+            throw new BusinessException(
+                    "registrations.invalid_seed_time",
+                    "Заявочное время должно быть положительным числом секунд "
+                            + "с точностью до сотых либо отсутствовать (NT)."
+            );
+        }
+
         ProfileLookupResult profile;
 
         try {
@@ -144,7 +152,7 @@ public class CreateRegistrationUseCase {
         entity.setStatus(RegistrationStatus.SUBMITTED.name());
         entity.setParticipantSnapshot(createParticipantSnapshot(profile));
         entity.setRegistrationMeta(
-                request.registrationMeta() == null
+                request.registrationMeta() == null || request.registrationMeta().isNull()
                         ? "{}"
                         : request.registrationMeta().toString()
         );

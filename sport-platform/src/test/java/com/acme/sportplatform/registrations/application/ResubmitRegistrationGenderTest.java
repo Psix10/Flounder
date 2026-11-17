@@ -462,4 +462,16 @@ class ResubmitRegistrationGenderTest {
         verify(registrations, never())
                 .saveAndFlush(any(RegistrationEntity.class));
     }
+
+@Test void rejectsStoredNonPositiveSeedBeforeSavingCorrection() throws Exception {
+    ObjectNode meta = (ObjectNode) json.readTree(registration.getRegistrationMeta());
+    meta.put("seedTimeSeconds", -1);
+    registration.setRegistrationMeta(meta.toString());
+    var request = new ResubmitRegistrationRequest("Checked", "Contact", "79990000000", true, true, true);
+    assertThrows(com.acme.sportplatform.common.exception.BusinessException.class,
+            () -> useCase.execute(registrationId, participantId, request));
+    assertEquals("NEEDS_CORRECTION", registration.getStatus());
+    verify(registrations, never()).saveAndFlush(any());
+}
+
 }

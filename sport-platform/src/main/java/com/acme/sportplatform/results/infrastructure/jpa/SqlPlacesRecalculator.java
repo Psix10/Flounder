@@ -34,7 +34,7 @@ public class SqlPlacesRecalculator {
                 WITH parsed AS MATERIALIZED (
                     SELECT
                         r.id,
-                        results_numeric_value(r.raw_value) AS value
+                        results_validated_numeric_value(r.raw_value, r.result_type) AS value
                     FROM results r
                     JOIN competition_unit_entries e
                         ON e.id = r.competition_unit_entry_id

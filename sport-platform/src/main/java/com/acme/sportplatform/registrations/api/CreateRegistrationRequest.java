@@ -1,6 +1,5 @@
 package com.acme.sportplatform.registrations.api;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,27 +23,6 @@ public record CreateRegistrationRequest(
                     + "with at most two decimal places, or absent/null"
     )
     public boolean isRegistrationMetaValid() {
-        if (registrationMeta == null || registrationMeta.isNull()) {
-            return true;
-        }
-
-        if (!registrationMeta.isObject()) {
-            return false;
-        }
-
-        JsonNode seedTime = registrationMeta.get("seedTimeSeconds");
-
-        if (seedTime == null || seedTime.isNull()) {
-            return true;
-        }
-
-        if (!seedTime.isNumber()) {
-            return false;
-        }
-
-        BigDecimal seconds = seedTime.decimalValue();
-
-        return seconds.signum() > 0
-                && seconds.stripTrailingZeros().scale() <= 2;
+        return com.acme.sportplatform.common.numeric.SeedTimeValue.metadataIsValid(registrationMeta);
     }
 }

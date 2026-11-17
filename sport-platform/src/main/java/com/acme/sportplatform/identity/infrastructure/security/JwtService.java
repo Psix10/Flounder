@@ -17,16 +17,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
 
     private final JwtProperties jwtProperties;
+    private final SecretKey validatedSigningKey;
 
     public JwtService(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
+        this.validatedSigningKey = JwtSigningKeyConfiguration.decode(jwtProperties.secret());
     }
 
     public String generateAccessToken(PlatformUserPrincipal principal, List<String> roles) {
@@ -88,14 +88,6 @@ public class JwtService {
     }
 
     private SecretKey signingKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.secret());
-
-        if (keyBytes.length < 32) {
-            throw new IllegalStateException(
-                    "JWT secret must decode to at least 32 bytes for HS256."
-            );
-        }
-
-        return Keys.hmacShaKeyFor(keyBytes);
+        return validatedSigningKey;
     }
 }

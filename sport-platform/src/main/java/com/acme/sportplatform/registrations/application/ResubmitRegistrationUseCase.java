@@ -139,6 +139,14 @@ public class ResubmitRegistrationUseCase {
                 "registration metadata"
         );
 
+        if (!com.acme.sportplatform.common.numeric.SeedTimeValue.metadataIsValid(meta)) {
+            throw new com.acme.sportplatform.common.exception.BusinessException(
+                    "registrations.invalid_seed_time",
+                    "В сохранённой заявке некорректное заявочное время. "
+                            + "Нельзя повторно подать её без исправления данных."
+            );
+        }
+
         ArrayNode history = correctionHistory(meta);
 
         boolean returnedFromConfirmed = meta

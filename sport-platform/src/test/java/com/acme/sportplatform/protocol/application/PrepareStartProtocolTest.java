@@ -159,4 +159,23 @@ class PrepareStartProtocolTest {
         assertEquals(id(1),first.units().get(0).assignments().get(0).registrationId());
         assertEquals(id(2),second.units().get(0).assignments().get(0).registrationId());
     }
+
+@Test void rejectsNonPositiveCanonicalSeedBeforeExecutingRules() {
+    for (String value : List.of("0", "-1", "-0.00", "28.111")) {
+        var preparation = new PrepareStartProtocol(registry, json);
+        assertThrows(BusinessException.class, () -> preparation.prepare(id(200), rules(),
+                List.of(registration(1, "{\"seedTimeSeconds\":" + value + "}"))));
+    }
+    verifyNoInteractions(registry);
+}
+
+@Test void customPointsMetricIsNotTreatedAsSwimmingTime() {
+    var base = rules();
+    var custom = new ResolvedProtocolRules(base.versionId(), base.capacity(), base.prefix(), "seedPoints",
+            base.order(), base.allowed(), base.heatOrder(), base.partialHeat(), base.blocks());
+    var result = preparer(this::buildGroups).prepare(id(200), custom,
+            List.of(registration(1, "{\"seedPoints\":-2.5}")));
+    assertEquals(0, new BigDecimal("-2.5").compareTo(result.participants().get(0).seedMetric()));
+}
+
 }

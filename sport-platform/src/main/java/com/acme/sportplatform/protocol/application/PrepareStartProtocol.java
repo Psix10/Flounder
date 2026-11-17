@@ -75,7 +75,16 @@ public final class PrepareStartProtocol {
         JsonNode value = object(raw, "protocol.invalid_seed_metric").path(key);
         if (value.isMissingNode() || value.isNull()) return null;
         if (!value.isNumber()) throw error("protocol.invalid_seed_metric", "Seed metric must be numeric");
-        return value.decimalValue();
+        if ("seedTimeSeconds".equals(key)
+                && !com.acme.sportplatform.common.numeric.SeedTimeValue.isValid(value)) {
+            throw error("protocol.invalid_seed_metric",
+                    "Заявочное время должно быть больше нуля и задано с точностью до сотых; "
+                            + "для NT значение должно отсутствовать или быть null.");
+        }
+        try { return value.decimalValue(); }
+        catch (IllegalArgumentException | ArithmeticException invalid) {
+            throw error("protocol.invalid_seed_metric", "Некорректное числовое значение для посева.");
+        }
     }
     private void validateOutput(ProtocolGenerationContext context, Set<UUID> expected) {
         Set<UUID> actual = new HashSet<>(); Set<Integer> allowed = new HashSet<>(context.getAllowedPositions());
