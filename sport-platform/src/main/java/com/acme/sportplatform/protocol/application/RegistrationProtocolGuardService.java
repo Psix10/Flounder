@@ -48,7 +48,7 @@ public class RegistrationProtocolGuardService
     ) {
         if (sessionReader.findLatestProtocol(eventId).isPresent()) {
             throw conflict(
-                    "Event already has a saved session protocol"
+                    "Для мероприятия уже сформирована программа сессии. Подтверждение новых заявок и изменение состава запрещены."
             );
         }
 
@@ -58,13 +58,13 @@ public class RegistrationProtocolGuardService
                 )
                 .isPresent()) {
             throw conflict(
-                    "Discipline already has a saved start protocol"
+                    "Для дисциплины уже сохранён стартовый протокол. Подтверждение новых заявок и изменение состава запрещены."
             );
         }
 
         if (units.hasCompetitionUnits(disciplineId)) {
             throw conflict(
-                    "Discipline already has competition units"
+                    "В дисциплине уже есть заплывы. Подтверждение новых заявок и изменение состава запрещены."
             );
         }
     }

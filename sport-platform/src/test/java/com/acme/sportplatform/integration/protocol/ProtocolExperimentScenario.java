@@ -73,7 +73,7 @@ class ProtocolExperimentScenario extends AbstractPostgresIntegrationTest {
         scenario(output, scenarios, measurements, "no_change", rows, discipline, version, admin, repetitions, true);
         int additions = Math.max(3, size / 20);
         for (int i = 0; i < additions; i++) rows.add(registration(discipline, admin,
-                BigDecimal.valueOf(2400 + random.nextInt(4001), 2)));
+                BigDecimal.valueOf(2400 + random.nextInt(4001), 2), true));
         scenario(output, scenarios, measurements, "addition", rows, discipline, version, admin, repetitions, true);
         for (int i = 0; i < 2; i++) {
             Row r = rows.get(i);
@@ -92,6 +92,7 @@ class ProtocolExperimentScenario extends AbstractPostgresIntegrationTest {
         manifest.put("schemaVersion", 1); manifest.put("label", label); manifest.put("seed", seed);
         manifest.put("baseSize", size); manifest.put("repetitions", repetitions);
         manifest.put("fixtureDurationMs", fixtureMs);
+        manifest.put("additionFixtureMode", "TEST_SQL_HISTORICAL_POOL_NOT_PUBLIC_ADMISSION");
         manifest.put("timingScope", "MockMvc generation request including DB and snapshot; excludes fixture and response parsing");
         manifest.put("ruleSetVersionId", version.toString()); manifest.put("eventDisciplineId", discipline.toString());
         manifest.set("scenarios", scenarios);
@@ -170,6 +171,9 @@ class ProtocolExperimentScenario extends AbstractPostgresIntegrationTest {
         d.setCreatedAt(now); d.setUpdatedAt(now); disciplines.saveAndFlush(d); return d.getId();
     }
     private Row registration(UUID discipline, PlatformUserPrincipal admin, BigDecimal metric) throws Exception {
+        return registration(discipline, admin, metric, false);
+    }
+    private Row registration(UUID discipline, PlatformUserPrincipal admin, BigDecimal metric, boolean historicalPool) throws Exception {
         var participant = actor("PARTICIPANT"); var p = new ProfileEntity(); p.setUserId(participant.getUserId());
         p.setFirstName("Ivan"); p.setLastName("Petrov"); p.setBirthDate(LocalDate.parse("2004-05-10"));
         p.setGender("MALE"); p.setCountryCode("RU"); p.setCity("Moscow"); p.setClubName("Synthetic club");
@@ -180,8 +184,12 @@ class ProtocolExperimentScenario extends AbstractPostgresIntegrationTest {
                         Map.of("seedTimeSeconds", metric == null ? new BigDecimal("30.00") : metric,
                                 "emergencyContactPhone", "+79990000000")))), 200);
         UUID id = UUID.fromString(response.path("id").asText());
+        if (historicalPool) {
+            com.acme.sportplatform.support.ConfirmedRegistrationFixtures.confirmHistoricalInput(jdbc, id, admin.getUserId());
+        } else {
         call(post("/api/v1/registrations/{id}/review", id).with(user(admin))
                 .contentType(MediaType.APPLICATION_JSON).content("{\"decision\":\"CONFIRMED\",\"reviewNote\":\"Experiment\"}"), 200);
+        }
         if (metric == null) jdbc.update("""
                 UPDATE registrations SET registration_meta=jsonb_set(registration_meta,
                     '{seedTimeSeconds}', 'null'::jsonb) WHERE id=?

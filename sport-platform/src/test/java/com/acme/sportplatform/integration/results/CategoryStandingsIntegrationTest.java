@@ -62,6 +62,7 @@ import jakarta.persistence.PersistenceContext;
 
 @AutoConfigureMockMvc
 class CategoryStandingsIntegrationTest extends AbstractPostgresIntegrationTest {
+    @Autowired private org.springframework.jdbc.core.JdbcTemplate fixtureRegistrationJdbc;
 
     @Autowired
     private OrganizationRepository organizationRepository;
@@ -456,20 +457,10 @@ class CategoryStandingsIntegrationTest extends AbstractPostgresIntegrationTest {
 
         String registrationId = JsonPath.read(response, "$.id");
 
-        mockMvc.perform(post(
-                        "/api/v1/registrations/{registrationId}/review",
-                        registrationId
-                )
-                        .with(user(registrationOrganizerForDiscipline(disciplineId)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "decision": "CONFIRMED",
-                                  "reviewNote": "Results integration test"
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("CONFIRMED"));
+        // Historical pool fixture for result algorithms; NF-01 tests exercise real admission.
+        com.acme.sportplatform.support.ConfirmedRegistrationFixtures.confirmHistoricalInput(
+                fixtureRegistrationJdbc, UUID.fromString(registrationId),
+                registrationOrganizerForDiscipline(disciplineId).getUserId());
 
         return UUID.fromString(registrationId);
     }

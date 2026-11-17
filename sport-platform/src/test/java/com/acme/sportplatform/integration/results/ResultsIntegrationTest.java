@@ -1614,20 +1614,10 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
 
         String registrationId = JsonPath.read(response, "$.id");
 
-        mockMvc.perform(post(
-                        "/api/v1/registrations/{registrationId}/review",
-                        registrationId
-                )
-                        .with(user(registrationOrganizerForDiscipline(disciplineId)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                  "decision": "CONFIRMED",
-                                  "reviewNote": "Results integration test"
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("CONFIRMED"));
+        // Historical pool fixture for result algorithms; NF-01 tests exercise real admission.
+        com.acme.sportplatform.support.ConfirmedRegistrationFixtures.confirmHistoricalInput(
+                rankingJdbc, UUID.fromString(registrationId),
+                registrationOrganizerForDiscipline(disciplineId).getUserId());
 
         return UUID.fromString(registrationId);
     }

@@ -77,6 +77,9 @@ class StartProtocolRegenerationIntegrationTest extends AbstractPostgresIntegrati
         return new Fixture(discipline.getId(), first, second, version, admin);
     }
     private UUID registration(UUID discipline, PlatformUserPrincipal admin, double seed) throws Exception {
+        return registration(discipline, admin, seed, false);
+    }
+    private UUID registration(UUID discipline, PlatformUserPrincipal admin, double seed, boolean historicalPool) throws Exception {
         var participant = actor("PARTICIPANT"); var profile = new ProfileEntity(); profile.setUserId(participant.getUserId());
         profile.setFirstName("Ivan"); profile.setLastName("Petrov"); profile.setBirthDate(LocalDate.parse("2004-05-10"));
         profile.setGender("MALE"); profile.setCountryCode("RU"); profile.setCity("Moscow"); profile.setClubName("Test");
@@ -87,11 +90,15 @@ class StartProtocolRegenerationIntegrationTest extends AbstractPostgresIntegrati
                                         "seedTimeSeconds", seed, "emergencyContactPhone", "+79990000000")))))
                 .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         UUID id = UUID.fromString(json.readTree(raw).path("id").asText());
+        if (historicalPool) {
+            com.acme.sportplatform.support.ConfirmedRegistrationFixtures.confirmHistoricalInput(jdbc, id, admin.getUserId());
+        } else {
         mvc.perform(post("/api/v1/registrations/{id}/review", id).with(user(admin))
                         .contentType(MediaType.APPLICATION_JSON).content("""
                                 {"decision":"CONFIRMED","reviewNote":"Regeneration fixture"}
                                 """))
                 .andExpect(status().isOk());
+        }
         return id;
     }
     private UUID rule(PlatformUserPrincipal admin) throws Exception {
@@ -148,13 +155,14 @@ class StartProtocolRegenerationIntegrationTest extends AbstractPostgresIntegrati
         Collections.sort(result); return result;
     }
 
-    @Test void shouldIncludeNewConfirmedRegistrationAndPreservePreviousSnapshot() throws Exception {
+    @Test void shouldRegenerateHistoricalChangedPoolAndPreservePreviousSnapshot() throws Exception {
         Fixture f = fixture(); generate(f, false);
         UUID oldUnitId = jdbc.queryForObject(
                 "SELECT id FROM competition_units WHERE event_discipline_id=?", UUID.class, f.discipline());
         var firstSnapshot = snapshots.findFirstByEventDisciplineIdOrderByRevisionNoDesc(f.discipline()).orElseThrow();
         JsonNode oldProtocol = firstSnapshot.getProtocol().deepCopy();
-        UUID added = registration(f.discipline(), f.admin(), 27.0);
+        // Algorithm compatibility with an explicitly prepared historical changed pool.
+        UUID added = registration(f.discipline(), f.admin(), 27.0, true);
         var after = generate(f, true);
         assertEquals(3, after.path("assignmentCount").asInt()); assertEquals(2, after.path("unitCount").asInt());
         assertTrue(signature(after).stream().anyMatch(s -> s.contains(added.toString())));

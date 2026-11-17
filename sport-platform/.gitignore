@@ -40,3 +40,7 @@ frontend/dist/
 # Local patch tooling and test backups
 /install_time_validation.py
 /test-config-backups/
+
+# Local NF-01 patch tooling and backups
+/install_nf01_confirmation_guard.py
+/nf01-confirmation-backups/

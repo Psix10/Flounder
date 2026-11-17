@@ -34,6 +34,10 @@ class ReviewRegistrationAccessTest {
     private final UUID registrationId = UUID.randomUUID();
     private final UUID eventId = UUID.randomUUID();
     private final UUID actorId = UUID.randomUUID();
+    private final UUID disciplineId = UUID.randomUUID();
+    private com.acme.sportplatform.registrations.RegistrationProtocolGuard protocolGuard;
+    private com.acme.sportplatform.competition.ProtocolDisciplineLookup disciplines;
+    private jakarta.persistence.EntityManager entityManager;
 
     private RegistrationRepository registrations;
     private RegistrationMapper mapper;
@@ -50,16 +54,27 @@ class ReviewRegistrationAccessTest {
         mapper = mock(RegistrationMapper.class);
         eventAccess = mock(EventOperationAccess.class);
         request = mock(ReviewRegistrationRequest.class);
+        protocolGuard = mock(com.acme.sportplatform.registrations.RegistrationProtocolGuard.class);
+        disciplines = mock(com.acme.sportplatform.competition.ProtocolDisciplineLookup.class);
+        entityManager = mock(jakarta.persistence.EntityManager.class);
+        when(disciplines.lock(disciplineId)).thenReturn(
+                new com.acme.sportplatform.competition.ProtocolDisciplineLookup.View(
+                        disciplineId, UUID.randomUUID(), UUID.randomUUID(), "INDIVIDUAL", "HEAT", eventId));
 
         useCase = new ReviewRegistrationUseCase(
                 registrations,
                 mapper,
-                eventAccess
+                eventAccess,
+                protocolGuard,
+                disciplines,
+                entityManager
         );
 
         registration = new RegistrationEntity();
         registration.setId(registrationId);
         registration.setEventId(eventId);
+        registration.setEventDisciplineId(disciplineId);
+        when(registrations.findById(registrationId)).thenReturn(Optional.of(registration));
         registration.setStatus("SUBMITTED");
         registration.setParticipantSnapshot(
                 "{\"gender\":\"FEMALE\",\"city\":\"Moscow\"}"
@@ -110,7 +125,7 @@ class ReviewRegistrationAccessTest {
         );
         assertEquals(meta, registration.getRegistrationMeta());
 
-        verify(eventAccess).canManageEvent(eventId, actorId);
+        verify(eventAccess, org.mockito.Mockito.times(2)).canManageEvent(eventId, actorId);
         verify(registrations).save(registration);
     }
 
@@ -224,6 +239,77 @@ class ReviewRegistrationAccessTest {
         SecurityContextHolder.getContext()
                 .setAuthentication(authentication);
     }
+
+
+@Test void programGuardRejectsBeforeAnyRegistrationMutation() {
+    String snapshot = registration.getParticipantSnapshot();
+    String meta = registration.getRegistrationMeta();
+    org.mockito.Mockito.doThrow(new org.springframework.web.server.ResponseStatusException(
+            org.springframework.http.HttpStatus.CONFLICT, "Programme exists"))
+            .when(protocolGuard).requireNoProtocolsOrUnits(eventId, disciplineId);
+    var error = assertThrows(org.springframework.web.server.ResponseStatusException.class,
+            () -> useCase.execute(registrationId, actorId, request));
+    assertEquals(409, error.getStatusCode().value());
+    assertEquals("SUBMITTED", registration.getStatus());
+    assertEquals(snapshot, registration.getParticipantSnapshot());
+    assertEquals(meta, registration.getRegistrationMeta());
+    assertEquals(null, registration.getReviewedAt());
+    assertEquals(null, registration.getReviewedByUserId());
+    assertNotSaved();
+}
+@Test void platformAdminCannotBypassProgramGuard() {
+    authenticate("ROLE_PLATFORM_ADMIN");
+    org.mockito.Mockito.doThrow(new org.springframework.web.server.ResponseStatusException(
+            org.springframework.http.HttpStatus.CONFLICT, "Programme exists"))
+            .when(protocolGuard).requireNoProtocolsOrUnits(eventId, disciplineId);
+    assertThrows(org.springframework.web.server.ResponseStatusException.class,
+            () -> useCase.execute(registrationId, actorId, request));
+    assertEquals("SUBMITTED", registration.getStatus()); assertNotSaved();
+}
+@Test void locksEventThenDisciplineThenRegistrationAndRefreshesBeforeGuard() {
+    useCase.execute(registrationId, actorId, request);
+    var order = org.mockito.Mockito.inOrder(registrations, protocolGuard, disciplines, entityManager);
+    order.verify(registrations).findById(registrationId);
+    order.verify(protocolGuard).lockEventBatch(eventId);
+    order.verify(disciplines).lock(disciplineId);
+    order.verify(registrations).findForUpdate(registrationId);
+    order.verify(entityManager).refresh(registration);
+    order.verify(protocolGuard).requireNoProtocolsOrUnits(eventId, disciplineId);
+    order.verify(registrations).save(registration);
+}
+@Test void refreshedStatusIsRecheckedAfterLockWait() {
+    org.mockito.Mockito.doAnswer(call -> {
+        registration.setStatus("CONFIRMED"); return null;
+    }).when(entityManager).refresh(registration);
+    assertThrows(BusinessException.class, () -> useCase.execute(registrationId, actorId, request));
+    assertNotSaved();
+    verify(protocolGuard, never()).requireNoProtocolsOrUnits(any(), any());
+}
+@Test void refreshedScopeCannotBeMovedToAnotherEvent() {
+    org.mockito.Mockito.doAnswer(call -> {
+        registration.setEventId(UUID.randomUUID()); return null;
+    }).when(entityManager).refresh(registration);
+    assertThrows(org.springframework.web.server.ResponseStatusException.class,
+            () -> useCase.execute(registrationId, actorId, request));
+    assertNotSaved();
+}
+@Test void foreignOrganizerIsRejectedBeforeTakingProgramLocks() {
+    when(eventAccess.canManageEvent(eventId, actorId)).thenReturn(false);
+    assertThrows(AccessDeniedException.class, () -> useCase.execute(registrationId, actorId, request));
+    verifyNoInteractions(protocolGuard, disciplines, entityManager);
+    assertNotSaved();
+}
+@Test void permissionRevokedWhileWaitingCannotBeUsed() {
+    when(eventAccess.canManageEvent(eventId, actorId)).thenReturn(true, false);
+    assertThrows(AccessDeniedException.class, () -> useCase.execute(registrationId, actorId, request));
+    assertNotSaved();
+}
+@Test void rejectingASubmittedRegistrationDoesNotChangeTheAdmittedPool() {
+    when(request.decision()).thenReturn(RegistrationReviewDecision.REJECTED);
+    useCase.execute(registrationId, actorId, request);
+    assertEquals("REJECTED", registration.getStatus());
+    verify(protocolGuard, never()).requireNoProtocolsOrUnits(any(), any());
+}
 
     private void assertNotSaved() {
         verify(registrations, never())
