@@ -1,3 +1,5 @@
+// SWIM_LABELS_V1
+import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import {
@@ -191,7 +193,7 @@ export function EventDetailsPage() {
                   <div>
                     <p className={styles.disciplineLabel}>Дисциплина</p>
                     <h3 className={styles.disciplineTitle}>
-                      {discipline.name}
+                      {formatHeatLabel(discipline.name)}
                     </h3>
                   </div>
 
@@ -232,14 +234,21 @@ export function EventDetailsPage() {
                   <div className={styles.actions}>
                     <Link
                       className={styles.secondaryButton}
-                      to={`/events/${event.publicSlug}/disciplines/${discipline.id}/results`}
+                      to={`/events/${encodeURIComponent(event.publicSlug)}/disciplines/${encodeURIComponent(discipline.id)}/results`}
                     >
-                      Результаты
+                      Результаты по заплывам
+                    </Link>
+
+                    <Link
+                      className={styles.secondaryButton}
+                      to={`/events/${encodeURIComponent(event.publicSlug)}/disciplines/${encodeURIComponent(discipline.id)}/standings`}
+                    >
+                      Общий и категорийный зачёт
                     </Link>
 
                     <Link
                       className={styles.primaryButton}
-                      to={`/events/${event.publicSlug}/disciplines/${discipline.id}/register`}
+                      to={`/events/${encodeURIComponent(event.publicSlug)}/disciplines/${encodeURIComponent(discipline.id)}/register`}
                     >
                       Зарегистрироваться
                     </Link>

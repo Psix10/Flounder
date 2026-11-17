@@ -1,0 +1,40 @@
+.panel {
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid #e7c7bd;
+  border-radius: var(--radius-md, 12px);
+  background: #fffaf7;
+  color: #33435c;
+}
+.title { margin: 0; font-size: 1.08rem; }
+.hint { line-height: 1.55; margin: 12px 0; }
+.field { display: grid; gap: 8px; font-weight: 650; }
+.field textarea {
+  width: 100%; box-sizing: border-box; min-height: 100px; resize: vertical;
+  border: 1px solid #bfcddd; border-radius: 8px; padding: 12px;
+  background: #fff; color: #172b40; font: inherit;
+}
+.field textarea:focus-visible, .button:focus-visible, .secondary:focus-visible {
+  outline: 3px solid #0b5b7b; outline-offset: 3px;
+}
+.confirm { display: flex; align-items: flex-start; gap: 10px; margin: 16px 0; line-height: 1.5; }
+.confirm input { flex: 0 0 auto; margin-top: 5px; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.button, .secondary {
+  min-height: 42px; padding: 10px 16px; border-radius: 8px;
+  border: 1px solid transparent; font: inherit; font-weight: 700; cursor: pointer;
+}
+.button { background: #a12737; color: white; }
+.button:hover:not(:disabled) { background: #811b2a; }
+.secondary { background: #edf3f7; color: #20485d; border-color: #bfcddd; }
+.button:disabled, .secondary:disabled, .field textarea:disabled { opacity: .65; cursor: not-allowed; }
+.error { color: #962136; white-space: pre-line; line-height: 1.5; }
+.technical { overflow-wrap: anywhere; font-size: .85rem; }
+.history { margin-top: 20px; padding-top: 16px; border-top: 1px solid #dbe4ea; }
+.history ol { padding-left: 22px; }
+.history li { margin-top: 12px; overflow-wrap: anywhere; }
+.history p { margin: 6px 0; white-space: pre-wrap; }
+.controls { margin-top: 16px; }
+@media (max-width: 640px) {
+  .actions { display: grid; grid-template-columns: 1fr; }
+}

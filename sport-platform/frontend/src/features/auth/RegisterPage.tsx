@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
-import { ApiError } from '../../api/http'
+
 import { register } from '../../api/auth.api'
+import { ApiError } from '../../api/http'
 import { useAuth } from '../../app/providers/AuthProvider'
 import styles from './RegisterPage.module.css'
 
@@ -10,20 +10,32 @@ type RegisterLocationState = {
   from?: string
 }
 
-function getRegisterErrorMessage(error: unknown) {
+type ParticipantGender = '' | 'MALE' | 'FEMALE'
+
+function getRegisterErrorMessage(error: unknown): string {
   if (error instanceof ApiError) {
     if (error.status === 409) {
       return 'Пользователь с таким email уже зарегистрирован.'
     }
 
     if (error.status === 400) {
-      return 'Проверьте правильность заполнения полей.'
+      return [
+        error.message || 'Проверьте правильность заполнения полей.',
+        ...error.violations.map(
+          (violation) => `${violation.field}: ${violation.message}`,
+        ),
+      ]
+        .filter(Boolean)
+        .join('\n')
     }
 
-    return error.message
+    return error.message || 'Не удалось создать аккаунт.'
   }
 
-  return 'Не удалось создать аккаунт. Попробуйте ещё раз.'
+  return (
+    'Не удалось получить ответ сервера. ' +
+    'Если аккаунт уже создан, попробуйте войти с указанными данными.'
+  )
 }
 
 export function RegisterPage() {
@@ -35,6 +47,7 @@ export function RegisterPage() {
   const [lastName, setLastName] = useState('')
   const [middleName, setMiddleName] = useState('')
   const [birthDate, setBirthDate] = useState('')
+  const [gender, setGender] = useState<ParticipantGender>('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,6 +57,8 @@ export function RegisterPage() {
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const submitting = useRef(false)
 
   const state = location.state as RegisterLocationState | null
   const returnTo = state?.from ?? '/my/registrations'
@@ -55,11 +70,31 @@ export function RegisterPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (isSubmitting) {
+    if (submitting.current || isSubmitting) {
       return
     }
 
     setErrorMessage(null)
+
+    if (!firstName.trim() || !lastName.trim()) {
+      setErrorMessage('Укажите имя и фамилию.')
+      return
+    }
+
+    if (!birthDate) {
+      setErrorMessage('Укажите дату рождения.')
+      return
+    }
+
+    if (gender !== 'MALE' && gender !== 'FEMALE') {
+      setErrorMessage('Укажите пол участника для категорий соревнований.')
+      return
+    }
+
+    if (!phone.trim() || !email.trim()) {
+      setErrorMessage('Укажите email и телефон.')
+      return
+    }
 
     if (password !== passwordConfirmation) {
       setErrorMessage('Пароль и его подтверждение не совпадают.')
@@ -73,11 +108,12 @@ export function RegisterPage() {
       return
     }
 
+    submitting.current = true
     setIsSubmitting(true)
 
-    try {
-      const normalizedEmail = email.trim().toLowerCase()
+    const normalizedEmail = email.trim().toLowerCase()
 
+    try {
       await register({
         email: normalizedEmail,
         password,
@@ -86,23 +122,38 @@ export function RegisterPage() {
         lastName: lastName.trim(),
         middleName: middleName.trim() || null,
         birthDate,
-        gender: null,
+        gender,
         city: city.trim() || null,
         countryCode: 'RU',
         clubName: clubName.trim() || null,
       })
+    } catch (error) {
+      setErrorMessage(getRegisterErrorMessage(error))
+      submitting.current = false
+      setIsSubmitting(false)
+      return
+    }
 
+    try {
       await login({
         email: normalizedEmail,
         password,
       })
-
-      navigate(returnTo, { replace: true })
-    } catch (error) {
-      setErrorMessage(getRegisterErrorMessage(error))
+    } catch {
+      navigate('/login', {
+        replace: true,
+        state: {
+          from: returnTo,
+          registrationCompleted: true,
+        },
+      })
+      return
     } finally {
+      submitting.current = false
       setIsSubmitting(false)
     }
+
+    navigate(returnTo, { replace: true })
   }
 
   return (
@@ -117,13 +168,22 @@ export function RegisterPage() {
         <h1 className={styles.title}>Создать аккаунт</h1>
 
         <p className={styles.description}>
-          Зарегистрируйтесь как участник, чтобы подавать заявки на дисциплины,
-          оплачивать стартовые взносы и отслеживать статус регистрации.
+          Создайте личный аккаунт, чтобы подавать заявки на участие
+          в событиях. Для организации событий после регистрации
+          подайте отдельную заявку на регистрацию организации.
         </p>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <fieldset className={styles.fieldset} disabled={isSubmitting}>
-            <legend className={styles.legend}>Данные участника</legend>
+        <form
+          className={styles.form}
+          onSubmit={(event) => void handleSubmit(event)}
+        >
+          <fieldset
+            className={styles.fieldset}
+            disabled={isSubmitting}
+          >
+            <legend className={styles.legend}>
+              Данные участника
+            </legend>
 
             <div className={styles.twoColumns}>
               <label className={styles.field}>
@@ -162,6 +222,7 @@ export function RegisterPage() {
             <label className={styles.field}>
               <span>Дата рождения</span>
               <input
+                autoComplete="bday"
                 max={new Date().toISOString().slice(0, 10)}
                 onChange={(event) => setBirthDate(event.target.value)}
                 required
@@ -169,10 +230,45 @@ export function RegisterPage() {
                 value={birthDate}
               />
             </label>
+
+            <label className={styles.field}>
+              <span>Пол участника для категорий соревнований</span>
+              <select
+                name="gender"
+                required
+                value={gender}
+                onChange={(event) => {
+                  const value = event.target.value
+
+                  if (
+                    value === '' ||
+                    value === 'MALE' ||
+                    value === 'FEMALE'
+                  ) {
+                    setGender(value)
+                  }
+                }}
+              >
+                <option value="">Выберите значение</option>
+                <option value="MALE">Мужской</option>
+                <option value="FEMALE">Женский</option>
+              </select>
+            </label>
+
+            <p>
+              Дата рождения и пол используются при проверке возрастных
+              и половых категорий, если они предусмотрены регламентом.
+              Проверьте данные перед созданием аккаунта.
+            </p>
           </fieldset>
 
-          <fieldset className={styles.fieldset} disabled={isSubmitting}>
-            <legend className={styles.legend}>Контакты и вход</legend>
+          <fieldset
+            className={styles.fieldset}
+            disabled={isSubmitting}
+          >
+            <legend className={styles.legend}>
+              Контакты и вход
+            </legend>
 
             <label className={styles.field}>
               <span>Email</span>
@@ -229,8 +325,13 @@ export function RegisterPage() {
             </div>
           </fieldset>
 
-          <fieldset className={styles.fieldset} disabled={isSubmitting}>
-            <legend className={styles.legend}>Дополнительно</legend>
+          <fieldset
+            className={styles.fieldset}
+            disabled={isSubmitting}
+          >
+            <legend className={styles.legend}>
+              Дополнительно
+            </legend>
 
             <div className={styles.twoColumns}>
               <label className={styles.field}>
@@ -264,8 +365,8 @@ export function RegisterPage() {
             />
 
             <span>
-              Я согласен(на) с правилами платформы и обработкой персональных
-              данных.
+              Я согласен(на) с правилами платформы и обработкой
+              персональных данных.
             </span>
           </label>
 
@@ -286,12 +387,7 @@ export function RegisterPage() {
 
         <p className={styles.loginPrompt}>
           Уже есть аккаунт?{' '}
-          <Link
-            to="/login"
-            state={{
-              from: returnTo,
-            }}
-          >
+          <Link to="/login" state={{ from: returnTo }}>
             Войти
           </Link>
         </p>

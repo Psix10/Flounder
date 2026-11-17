@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfileRepository extends JpaRepository<ProfileEntity, UUID> {
     Optional<ProfileEntity> findByUserId(UUID userId);
+
+    java.util.List<ProfileEntity> findByUserIdIn(java.util.Collection<UUID> userIds);
 }

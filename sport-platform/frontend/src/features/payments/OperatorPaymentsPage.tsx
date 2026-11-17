@@ -25,6 +25,7 @@ function registrationStatusLabel(status: Registration['status']) {
     REJECTED: 'Отклонена',
     NEEDS_CORRECTION: 'Требует уточнения',
     CANCELLED: 'Отменена',
+    WITHDRAWN: 'Снята с участия',
   }
 
   return labels[status]
@@ -37,6 +38,7 @@ function registrationStatusClassName(status: Registration['status']) {
     REJECTED: styles.statusRejected,
     NEEDS_CORRECTION: styles.statusCorrection,
     CANCELLED: styles.statusCancelled,
+    WITHDRAWN: styles.statusCancelled,
   }
 
   return `${styles.statusBadge} ${classes[status]}`

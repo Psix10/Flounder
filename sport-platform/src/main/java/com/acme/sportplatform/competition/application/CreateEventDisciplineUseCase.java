@@ -1,3 +1,4 @@
+// DISCIPLINE_METADATA_ADMISSION_V1
 package com.acme.sportplatform.competition.application;
 
 import java.math.BigDecimal;
@@ -118,9 +119,8 @@ public class CreateEventDisciplineUseCase {
         );
         entity.setStatus(EventDisciplineStatus.DRAFT.name());
 
-        String settingsJson = request.settingsJson() == null
-                ? template.defaultMeta()
-                : request.settingsJson().toString();;
+        String settingsJson = com.acme.sportplatform.competition.DisciplineSettingsPolicy
+                .mergeAndValidate(template.defaultMeta(), request.settingsJson()).toString();
 
         entity.setSettingsJson(settingsJson);
         entity.setCreatedAt(now);

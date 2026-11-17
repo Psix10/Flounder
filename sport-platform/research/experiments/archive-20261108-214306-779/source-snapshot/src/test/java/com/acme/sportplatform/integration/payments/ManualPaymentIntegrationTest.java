@@ -34,6 +34,10 @@ import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEnt
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberRepository;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationRepository;
 import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.infrastructure.jpa.PaymentEntity;
@@ -49,9 +53,7 @@ class ManualPaymentIntegrationTest
         extends AbstractPostgresIntegrationTest {
 
     private static final UUID SWIMMING_SPORT_ID =
-            UUID.fromString(
-                    "10000000-0000-0000-0000-000000000001"
-            );
+            UUID.fromString("10000000-0000-0000-0000-000000000001");
 
     @Autowired
     private MockMvc mockMvc;
@@ -74,13 +76,15 @@ class ManualPaymentIntegrationTest
     @Autowired
     private PaymentRepository paymentRepository;
 
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private OrganizationMemberRepository organizationMemberRepository;
+
     @Test
-    void shouldCreateAndConfirmManualPaymentAsOperator()
-            throws Exception {
-
-        RegistrationFixture fixture =
-                createConfirmedPaidRegistration();
-
+    void shouldCreateAndConfirmManualPaymentAsOperator() throws Exception {
+        RegistrationFixture fixture = createConfirmedPaidRegistration();
         UUID paymentId = createManualPayment(fixture);
 
         mockMvc.perform(
@@ -91,26 +95,13 @@ class ManualPaymentIntegrationTest
                                 .with(user(principal("OPERATOR")))
                 )
                 .andExpect(status().isOk())
-                .andExpect(
-                        jsonPath("$.id")
-                                .value(paymentId.toString())
-                )
-                .andExpect(
-                        jsonPath("$.status")
-                                .value("SUCCEEDED")
-                )
-                .andExpect(
-                        jsonPath("$.provider")
-                                .value("MANUAL")
-                )
-                .andExpect(
-                        jsonPath("$.paidAt")
-                                .isNotEmpty()
-                );
+                .andExpect(jsonPath("$.id").value(paymentId.toString()))
+                .andExpect(jsonPath("$.status").value("SUCCEEDED"))
+                .andExpect(jsonPath("$.provider").value("MANUAL"))
+                .andExpect(jsonPath("$.paidAt").isNotEmpty());
 
-        PaymentEntity payment =
-                paymentRepository.findById(paymentId)
-                        .orElseThrow();
+        PaymentEntity payment = paymentRepository.findById(paymentId)
+                .orElseThrow();
 
         assertEquals(
                 PaymentStatus.SUCCEEDED.name(),
@@ -122,10 +113,7 @@ class ManualPaymentIntegrationTest
     @Test
     void shouldForbidOrganizerAndParticipantFromConfirmingPayment()
             throws Exception {
-
-        RegistrationFixture fixture =
-                createConfirmedPaidRegistration();
-
+        RegistrationFixture fixture = createConfirmedPaidRegistration();
         UUID paymentId = createManualPayment(fixture);
 
         mockMvc.perform(
@@ -142,9 +130,7 @@ class ManualPaymentIntegrationTest
                                 "/api/v1/payments/{paymentId}/confirm",
                                 paymentId
                         )
-                                .with(user(
-                                        fixture.participantPrincipal()
-                                ))
+                                .with(user(fixture.participantPrincipal()))
                 )
                 .andExpect(status().isForbidden());
 
@@ -157,16 +143,11 @@ class ManualPaymentIntegrationTest
     }
 
     @Test
-    void shouldRejectRepeatedManualConfirmation()
-            throws Exception {
-
-        RegistrationFixture fixture =
-                createConfirmedPaidRegistration();
-
+    void shouldRejectRepeatedManualConfirmation() throws Exception {
+        RegistrationFixture fixture = createConfirmedPaidRegistration();
         UUID paymentId = createManualPayment(fixture);
 
-        PlatformUserPrincipal operator =
-                principal("OPERATOR");
+        PlatformUserPrincipal operator = principal("OPERATOR");
 
         mockMvc.perform(
                         post(
@@ -194,9 +175,7 @@ class ManualPaymentIntegrationTest
     @Test
     void shouldRejectManualConfirmationForYooKassaPayment()
             throws Exception {
-
-        RegistrationFixture fixture =
-                createConfirmedPaidRegistration();
+        RegistrationFixture fixture = createConfirmedPaidRegistration();
 
         PaymentEntity payment = savePayment(
                 fixture.registrationId(),
@@ -228,11 +207,8 @@ class ManualPaymentIntegrationTest
     }
 
     @Test
-    void shouldRejectDuplicatePaymentCreation()
-            throws Exception {
-
-        RegistrationFixture fixture =
-                createConfirmedPaidRegistration();
+    void shouldRejectDuplicatePaymentCreation() throws Exception {
+        RegistrationFixture fixture = createConfirmedPaidRegistration();
 
         createManualPayment(fixture);
 
@@ -241,9 +217,7 @@ class ManualPaymentIntegrationTest
                                 "/api/v1/registrations/{registrationId}/payments",
                                 fixture.registrationId()
                         )
-                                .with(user(
-                                        fixture.participantPrincipal()
-                                ))
+                                .with(user(fixture.participantPrincipal()))
                 )
                 .andExpect(status().isConflict())
                 .andExpect(
@@ -253,12 +227,8 @@ class ManualPaymentIntegrationTest
     }
 
     @Test
-    void shouldAllowOperatorToReadPaymentForReview()
-            throws Exception {
-
-        RegistrationFixture fixture =
-                createConfirmedPaidRegistration();
-
+    void shouldAllowOperatorToReadPaymentForReview() throws Exception {
+        RegistrationFixture fixture = createConfirmedPaidRegistration();
         UUID paymentId = createManualPayment(fixture);
 
         mockMvc.perform(
@@ -269,85 +239,70 @@ class ManualPaymentIntegrationTest
                                 .with(user(principal("OPERATOR")))
                 )
                 .andExpect(status().isOk())
-                .andExpect(
-                        jsonPath("$.id")
-                                .value(paymentId.toString())
-                )
-                .andExpect(
-                        jsonPath("$.status")
-                                .value("CREATED")
-                )
-                .andExpect(
-                        jsonPath("$.provider")
-                                .value("MANUAL")
-                );
+                .andExpect(jsonPath("$.id").value(paymentId.toString()))
+                .andExpect(jsonPath("$.status").value("CREATED"))
+                .andExpect(jsonPath("$.provider").value("MANUAL"));
     }
 
     private UUID createManualPayment(
             RegistrationFixture fixture
     ) throws Exception {
-
         String response = mockMvc.perform(
                         post(
                                 "/api/v1/registrations/{registrationId}/payments",
                                 fixture.registrationId()
                         )
-                                .with(user(
-                                        fixture.participantPrincipal()
-                                ))
+                                .with(user(fixture.participantPrincipal()))
                 )
                 .andExpect(status().isOk())
                 .andExpect(
                         jsonPath("$.registrationId")
-                                .value(
-                                        fixture.registrationId()
-                                                .toString()
-                                )
+                                .value(fixture.registrationId().toString())
                 )
-                .andExpect(
-                        jsonPath("$.status")
-                                .value("CREATED")
-                )
-                .andExpect(
-                        jsonPath("$.provider")
-                                .value("MANUAL")
-                )
+                .andExpect(jsonPath("$.status").value("CREATED"))
+                .andExpect(jsonPath("$.provider").value("MANUAL"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        String paymentId =
-                JsonPath.read(response, "$.id");
+        String paymentId = JsonPath.read(response, "$.id");
 
         return UUID.fromString(paymentId);
     }
 
     private RegistrationFixture createConfirmedPaidRegistration()
             throws Exception {
-
-        UserEntity participant =
-                createParticipantUser();
-
+        UserEntity participant = createParticipantUser();
         createParticipantProfile(participant.getId());
 
-        /*
-         * Передаём ID реально сохранённого пользователя.
-         * Он станет автором тестового события.
-         */
-        UUID eventId =
-                createEventWithOpenRegistration(
-                        participant.getId()
+        UserEntity organizer = createOrganizerUser();
+
+        UUID organizationId =
+                createOrganizationWithOwner(organizer.getId());
+
+        PlatformUserPrincipal organizerPrincipal =
+                new PlatformUserPrincipal(
+                        organizer.getId(),
+                        organizer.getEmail(),
+                        "",
+                        "active",
+                        List.of(
+                                new SimpleGrantedAuthority("ROLE_ORGANIZER")
+                        )
                 );
 
-        UUID disciplineTemplateId =
-                createDisciplineTemplate();
+        UUID eventId = createEventWithOpenRegistration(
+                organizer.getId(),
+                organizationId
+        );
 
-        UUID eventDisciplineId =
-                createPublishedEventDiscipline(
-                        eventId,
-                        disciplineTemplateId,
-                        new BigDecimal("1500.00")
-                );
+        UUID disciplineTemplateId = createDisciplineTemplate();
+
+        UUID eventDisciplineId = createPublishedEventDiscipline(
+                eventId,
+                disciplineTemplateId,
+                new BigDecimal("1500.00")
+        );
 
         PlatformUserPrincipal participantPrincipal =
                 new PlatformUserPrincipal(
@@ -356,9 +311,7 @@ class ManualPaymentIntegrationTest
                         "",
                         "active",
                         List.of(
-                                new SimpleGrantedAuthority(
-                                        "ROLE_PARTICIPANT"
-                                )
+                                new SimpleGrantedAuthority("ROLE_PARTICIPANT")
                         )
                 );
 
@@ -374,15 +327,9 @@ class ManualPaymentIntegrationTest
 
         String registrationResponse = mockMvc.perform(
                         post("/api/v1/registrations")
-                                .with(user(
-                                        participantPrincipal
-                                ))
-                                .contentType(
-                                        MediaType.APPLICATION_JSON
-                                )
-                                .content(
-                                        registrationRequestJson
-                                )
+                                .with(user(participantPrincipal))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(registrationRequestJson)
                 )
                 .andExpect(status().isOk())
                 .andReturn()
@@ -390,13 +337,9 @@ class ManualPaymentIntegrationTest
                 .getContentAsString();
 
         String registrationIdValue =
-                JsonPath.read(
-                        registrationResponse,
-                        "$.id"
-                );
+                JsonPath.read(registrationResponse, "$.id");
 
-        UUID registrationId =
-                UUID.fromString(registrationIdValue);
+        UUID registrationId = UUID.fromString(registrationIdValue);
 
         String reviewRequestJson = """
                 {
@@ -410,12 +353,8 @@ class ManualPaymentIntegrationTest
                                 "/api/v1/registrations/{registrationId}/review",
                                 registrationId
                         )
-                                .with(user(
-                                        principal("ORGANIZER")
-                                ))
-                                .contentType(
-                                        MediaType.APPLICATION_JSON
-                                )
+                                .with(user(organizerPrincipal))
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(reviewRequestJson)
                 )
                 .andExpect(status().isOk());
@@ -431,11 +370,9 @@ class ManualPaymentIntegrationTest
             PaymentProvider provider,
             PaymentStatus status
     ) {
-        OffsetDateTime now =
-                OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
-        PaymentEntity payment =
-                new PaymentEntity();
+        PaymentEntity payment = new PaymentEntity();
 
         payment.setId(UUID.randomUUID());
         payment.setRegistrationId(registrationId);
@@ -443,13 +380,11 @@ class ManualPaymentIntegrationTest
         payment.setCurrency("RUB");
         payment.setStatus(status.name());
         payment.setProvider(provider.name());
-
         payment.setExternalPaymentId(
                 provider == PaymentProvider.YOOKASSA
                         ? "test-yookassa-" + UUID.randomUUID()
                         : null
         );
-
         payment.setIdempotencyKey(UUID.randomUUID());
         payment.setProviderMetadata("{}");
         payment.setCreatedAt(now);
@@ -458,9 +393,7 @@ class ManualPaymentIntegrationTest
         return paymentRepository.saveAndFlush(payment);
     }
 
-    private PlatformUserPrincipal principal(
-            String role
-    ) {
+    private PlatformUserPrincipal principal(String role) {
         return new PlatformUserPrincipal(
                 UUID.randomUUID(),
                 role.toLowerCase()
@@ -470,111 +403,116 @@ class ManualPaymentIntegrationTest
                 "",
                 "active",
                 List.of(
-                        new SimpleGrantedAuthority(
-                                "ROLE_" + role
-                        )
+                        new SimpleGrantedAuthority("ROLE_" + role)
                 )
         );
     }
 
     private UserEntity createParticipantUser() {
-        UserEntity user = new UserEntity();
+        UserEntity participant = new UserEntity();
 
-        user.setEmail(
+        participant.setEmail(
                 "manual-payment-participant-"
                         + UUID.randomUUID()
                         + "@example.com"
         );
-        user.setPhone("+79990000000");
-        user.setPasswordHash("test-password-hash");
-        user.setStatus("active");
+        participant.setPhone("+79990000000");
+        participant.setPasswordHash("test-password-hash");
+        participant.setStatus("active");
 
-        return userRepository.saveAndFlush(user);
+        return userRepository.saveAndFlush(participant);
     }
 
-    private void createParticipantProfile(
-            UUID userId
-    ) {
-        ProfileEntity profile =
-                new ProfileEntity();
+    private UserEntity createOrganizerUser() {
+        UserEntity organizer = new UserEntity();
+
+        organizer.setEmail(
+                "manual-payment-organizer-"
+                        + UUID.randomUUID()
+                        + "@example.com"
+        );
+        organizer.setPhone("+79990000001");
+        organizer.setPasswordHash("test-password-hash");
+        organizer.setStatus("active");
+
+        return userRepository.saveAndFlush(organizer);
+    }
+
+    private UUID createOrganizationWithOwner(UUID ownerUserId) {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        OrganizationEntity organization = new OrganizationEntity();
+
+        organization.setType("CLUB");
+        organization.setName(
+                "Manual payment test organization " + UUID.randomUUID()
+        );
+        organization.setMeta("{}");
+        organization.setCreatedAt(now);
+        organization.setUpdatedAt(now);
+
+        OrganizationEntity saved =
+                organizationRepository.saveAndFlush(organization);
+
+        OrganizationMemberEntity owner =
+                new OrganizationMemberEntity();
+
+        owner.setOrganizationId(saved.getId());
+        owner.setUserId(ownerUserId);
+        owner.setMemberRole("OWNER");
+        owner.setCreatedAt(now);
+
+        organizationMemberRepository.saveAndFlush(owner);
+
+        return saved.getId();
+    }
+
+    private void createParticipantProfile(UUID userId) {
+        ProfileEntity profile = new ProfileEntity();
 
         profile.setUserId(userId);
         profile.setFirstName("Manual");
         profile.setLastName("Participant");
         profile.setMiddleName("Test");
-        profile.setBirthDate(
-                LocalDate.parse("2000-01-01")
-        );
+        profile.setBirthDate(LocalDate.parse("2000-01-01"));
         profile.setGender("MALE");
         profile.setCountryCode("RU");
         profile.setCity("Санкт-Петербург");
-        profile.setClubName(
-                "Manual payment test club"
-        );
+        profile.setClubName("Manual payment test club");
         profile.setSportMeta(
-                Map.of(
-                        "sportRank",
-                        "FIRST_CATEGORY"
-                )
+                Map.of("sportRank", "FIRST_CATEGORY")
         );
 
         profileRepository.saveAndFlush(profile);
     }
 
     private UUID createEventWithOpenRegistration(
-            UUID createdByUserId
+            UUID createdByUserId,
+            UUID organizationId
     ) {
-        OffsetDateTime now =
-                OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
-        EventEntity event =
-                new EventEntity();
+        EventEntity event = new EventEntity();
 
         event.setId(UUID.randomUUID());
-
-        /*
-         * Исправление ошибки:
-         * events.created_by_user_id не может быть null.
-         */
         event.setCreatedByUserId(createdByUserId);
-
-        event.setOrganizationId(UUID.randomUUID());
+        event.setOrganizationId(organizationId);
         event.setVenueId(UUID.randomUUID());
         event.setSportId(SWIMMING_SPORT_ID);
-        event.setRegulationVersionId(
-                UUID.randomUUID()
-        );
-        event.setTitle(
-                "Manual payment integration event"
-        );
-        event.setDescription(
-                "Manual payment integration fixture"
-        );
-        event.setRegistrationOpenAt(
-                now.minusDays(1)
-        );
-        event.setRegistrationCloseAt(
-                now.plusDays(20)
-        );
-        event.setEventStartAt(
-                now.plusDays(30)
-        );
-        event.setEventEndAt(
-                now.plusDays(31)
-        );
-        event.setStatus(
-                EventStatus.REGISTRATION_OPEN.name()
-        );
-        event.setPublicSlug(
-                "manual-payment-" + UUID.randomUUID()
-        );
+        event.setRegulationVersionId(UUID.randomUUID());
+        event.setTitle("Manual payment integration event");
+        event.setDescription("Manual payment integration fixture");
+        event.setRegistrationOpenAt(now.minusDays(1));
+        event.setRegistrationCloseAt(now.plusDays(20));
+        event.setEventStartAt(now.plusDays(30));
+        event.setEventEndAt(now.plusDays(31));
+        event.setStatus(EventStatus.REGISTRATION_OPEN.name());
+        event.setPublicSlug("manual-payment-" + UUID.randomUUID());
         event.setSettingsJson("{}");
         event.setCreatedAt(now);
         event.setUpdatedAt(now);
 
-        return eventRepository
-                .saveAndFlush(event)
-                .getId();
+        return eventRepository.saveAndFlush(event).getId();
     }
 
     private UUID createDisciplineTemplate() {
@@ -584,15 +522,10 @@ class ManualPaymentIntegrationTest
         template.setId(UUID.randomUUID());
         template.setSportId(SWIMMING_SPORT_ID);
         template.setCode(
-                "manual-payment-discipline-"
-                        + UUID.randomUUID()
+                "manual-payment-discipline-" + UUID.randomUUID()
         );
-        template.setName(
-                "Manual payment test discipline"
-        );
-        template.setCompetitionFormat(
-                "INDIVIDUAL"
-        );
+        template.setName("Manual payment test discipline");
+        template.setCompetitionFormat("INDIVIDUAL");
         template.setUnitType("HEAT");
         template.setResultType("TIME");
         template.setRankingStrategy("ASC");
@@ -614,38 +547,26 @@ class ManualPaymentIntegrationTest
             UUID disciplineTemplateId,
             BigDecimal entryFeeAmount
     ) {
-        OffsetDateTime now =
-                OffsetDateTime.now(ZoneOffset.UTC);
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         EventDisciplineEntity discipline =
                 new EventDisciplineEntity();
 
         discipline.setId(UUID.randomUUID());
         discipline.setEventId(eventId);
-        discipline.setDisciplineTemplateId(
-                disciplineTemplateId
-        );
+        discipline.setDisciplineTemplateId(disciplineTemplateId);
         discipline.setCode(
-                "manual-payment-100m-"
-                        + UUID.randomUUID()
+                "manual-payment-100m-" + UUID.randomUUID()
         );
-        discipline.setName(
-                "Manual payment paid discipline"
-        );
-        discipline.setCompetitionFormat(
-                "INDIVIDUAL"
-        );
+        discipline.setName("Manual payment paid discipline");
+        discipline.setCompetitionFormat("INDIVIDUAL");
         discipline.setUnitType("HEAT");
         discipline.setResultType("TIME");
         discipline.setRankingStrategy("ASC");
         discipline.setParticipantLimit(100);
-        discipline.setEntryFeeAmount(
-                entryFeeAmount
-        );
+        discipline.setEntryFeeAmount(entryFeeAmount);
         discipline.setEntryFeeCurrency("RUB");
-        discipline.setStatus(
-                EventDisciplineStatus.PUBLISHED.name()
-        );
+        discipline.setStatus(EventDisciplineStatus.PUBLISHED.name());
         discipline.setSettingsJson("""
                 {
                   "distanceMeters": 100,

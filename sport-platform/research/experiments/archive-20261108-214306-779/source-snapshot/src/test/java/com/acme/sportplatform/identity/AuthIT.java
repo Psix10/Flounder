@@ -31,7 +31,7 @@ class AuthIntegrationTest extends AbstractPostgresIntegrationTest {
                   "firstName": "Maria",
                   "lastName": "Ivanova",
                   "birthDate": "1997-01-10",
-                  "gender": "female",
+                  "gender": "FEMALE",
                   "city": "Moscow",
                   "countryCode": "RU",
                   "clubName": "Aqua Team"

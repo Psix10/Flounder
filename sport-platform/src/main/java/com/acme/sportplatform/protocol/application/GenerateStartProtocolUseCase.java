@@ -1,3 +1,4 @@
+// DISCIPLINE_METADATA_ADMISSION_V1
 package com.acme.sportplatform.protocol.application;
 
 import java.math.BigDecimal;
@@ -80,6 +81,7 @@ public class GenerateStartProtocolUseCase {
         var confirmed = registrations.findConfirmedByEventDisciplineId(disciplineId);
         if (confirmed.isEmpty()) throw error("protocol.no_confirmed_registrations",
                 "No confirmed registrations found; existing protocol has not been replaced");
+        rules = DisciplineProtocolAdmission.apply(published.settingsJson(), rules, confirmed, json, selectedVersion);
         var prepared = new PrepareStartProtocol(registry, json).prepare(disciplineId, rules, confirmed);
         var participants = prepared.participants();
         Map<UUID, BigDecimal> metrics = new HashMap<>();
@@ -100,7 +102,8 @@ public class GenerateStartProtocolUseCase {
                     .map(s -> s.getRevisionNo() + 1).orElse(1);
             snapshot.setRevisionNo(revision); snapshot.setOperation(existing ? "REGENERATE" : "GENERATE");
             ObjectNode input = json.createObjectNode();
-            input.put("schemaVersion", 1); input.put("ruleSetVersionId", selectedVersion.toString());
+            input.put("schemaVersion", 1);
+            input.set("disciplineSettings", DisciplineProtocolAdmission.snapshotSettings(published.settingsJson())); input.put("ruleSetVersionId", selectedVersion.toString());
             input.set("rules", json.valueToTree(rules));
             input.set("confirmedRegistrations", json.valueToTree(confirmed));
             input.set("participants", json.valueToTree(participants));

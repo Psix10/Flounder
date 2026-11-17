@@ -18,20 +18,24 @@ import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMembe
 import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationRepository;
 
 @Service
-public class OrganizationService implements OrganizationLookup, OrganizationManagementAccess {
+public class OrganizationService
+        implements OrganizationLookup, OrganizationManagementAccess {
 
     private static final String OWNER = "OWNER";
     private static final String ADMIN = "ADMIN";
 
     private final OrganizationRepository organizationRepository;
     private final OrganizationMemberRepository organizationMemberRepository;
+    private final OrganizationInnGuard innGuard;
 
     public OrganizationService(
             OrganizationRepository organizationRepository,
-            OrganizationMemberRepository organizationMemberRepository
+            OrganizationMemberRepository organizationMemberRepository,
+            OrganizationInnGuard innGuard
     ) {
         this.organizationRepository = organizationRepository;
         this.organizationMemberRepository = organizationMemberRepository;
+        this.innGuard = innGuard;
     }
 
     @Override
@@ -41,21 +45,27 @@ public class OrganizationService implements OrganizationLookup, OrganizationMana
     }
 
     @Transactional
-    public OrganizationResponse createOrganization(CreateOrganizationRequest request) {
+    public OrganizationResponse createOrganization(
+            CreateOrganizationRequest request
+    ) {
+        String inn = innGuard.requireAvailable(request.inn());
+
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         OrganizationEntity entity = new OrganizationEntity();
         entity.setType(request.type());
         entity.setName(request.name());
         entity.setLegalName(request.legalName());
-        entity.setInn(request.inn());
+        entity.setInn(inn);
         entity.setContactEmail(request.contactEmail());
         entity.setContactPhone(request.contactPhone());
         entity.setMeta("{}");
         entity.setCreatedAt(now);
         entity.setUpdatedAt(now);
 
-        OrganizationEntity saved = organizationRepository.save(entity);
+        OrganizationEntity saved =
+                organizationRepository.saveAndFlush(entity);
+
         return mapToResponse(saved);
     }
 
@@ -71,7 +81,8 @@ public class OrganizationService implements OrganizationLookup, OrganizationMana
             organization = organizationRepository.findById(organizationId)
                     .orElseThrow(this::organizationNotFound);
         } else {
-            organization = organizationRepository.findByIdAndMemberUserId(
+            organization = organizationRepository
+                    .findByIdAndMemberUserId(
                             organizationId,
                             currentUserId
                     )
@@ -89,9 +100,13 @@ public class OrganizationService implements OrganizationLookup, OrganizationMana
         List<OrganizationEntity> organizations;
 
         if (platformAdmin) {
-            organizations = organizationRepository.findAllByOrderByNameAsc();
+            organizations =
+                    organizationRepository.findAllByOrderByNameAsc();
         } else {
-            organizations = organizationRepository.findAllByMemberUserId(currentUserId);
+            organizations =
+                    organizationRepository.findAllByMemberUserId(
+                            currentUserId
+                    );
         }
 
         return organizations.stream()
@@ -101,9 +116,15 @@ public class OrganizationService implements OrganizationLookup, OrganizationMana
 
     @Override
     @Transactional(readOnly = true)
-    public boolean canManageOrganization(UUID organizationId, UUID userId) {
+    public boolean canManageOrganization(
+            UUID organizationId,
+            UUID userId
+    ) {
         return organizationMemberRepository
-                .findByOrganizationIdAndUserId(organizationId, userId)
+                .findByOrganizationIdAndUserId(
+                        organizationId,
+                        userId
+                )
                 .map(member ->
                         OWNER.equals(member.getMemberRole())
                                 || ADMIN.equals(member.getMemberRole())
@@ -118,7 +139,9 @@ public class OrganizationService implements OrganizationLookup, OrganizationMana
         );
     }
 
-    private OrganizationResponse mapToResponse(OrganizationEntity entity) {
+    private OrganizationResponse mapToResponse(
+            OrganizationEntity entity
+    ) {
         return new OrganizationResponse(
                 entity.getId(),
                 entity.getType(),

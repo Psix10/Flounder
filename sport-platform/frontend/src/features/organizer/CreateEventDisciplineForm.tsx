@@ -1,3 +1,6 @@
+// DISCIPLINE_METADATA_ADMISSION_V1
+import { SwimmingDisciplineFields } from './SwimmingDisciplineFields'
+import { emptySwimmingFields, buildSwimmingSettings } from '../../lib/swimming-discipline-settings.mjs'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 
 import {
@@ -52,6 +55,7 @@ export function CreateEventDisciplineForm({
   const [name, setName] = useState('')
   const [participantLimit, setParticipantLimit] = useState('')
   const [entryFee, setEntryFee] = useState('0')
+  const [swimmingFields, setSwimmingFields] = useState(emptySwimmingFields)
 
   const [saving, setSaving] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -68,18 +72,9 @@ export function CreateEventDisciplineForm({
         const items = await getDisciplineTemplates(accessToken)
 
         if (active) {
-        const matchingTemplates = items.filter(
-            (item) => item.sportId === sportId,
-        )
-
-        console.log('[CreateEventDisciplineForm]', {
-            eventId,
-            eventSportId: sportId,
-            receivedTemplates: items,
-            matchingTemplates,
-        })
-
-        setTemplates(matchingTemplates)
+          setTemplates(
+            items.filter((item) => item.sportId === sportId),
+          )
         }
       } catch (error) {
         if (active) {
@@ -105,6 +100,7 @@ export function CreateEventDisciplineForm({
     const template = templates.find((item) => item.id === id)
 
     setTemplateId(id)
+    setSwimmingFields(emptySwimmingFields())
     setCode(template?.code ?? '')
     setName(template?.name ?? '')
     setSubmitError(null)
@@ -149,6 +145,10 @@ export function CreateEventDisciplineForm({
       return
     }
 
+    let swimmingSettings: Record<string, unknown> | undefined
+    try { swimmingSettings = buildSwimmingSettings(swimmingFields) }
+    catch (error) { setSubmitError(error instanceof Error ? error.message : 'Проверьте параметры плавания.'); return }
+
     submitting.current = true
     setSaving(true)
     onBusyChange(true)
@@ -163,6 +163,7 @@ export function CreateEventDisciplineForm({
           participantLimit: limit,
           entryFeeAmount: fee,
           entryFeeCurrency: 'RUB',
+          ...(swimmingSettings ? { settingsJson: swimmingSettings } : {}),
         },
         accessToken,
       )
@@ -174,6 +175,7 @@ export function CreateEventDisciplineForm({
       setName('')
       setParticipantLimit('')
       setEntryFee('0')
+      setSwimmingFields(emptySwimmingFields())
     } catch (error) {
       setSubmitError(
         errorText(error, 'Не удалось создать дисциплину.'),
@@ -219,7 +221,7 @@ export function CreateEventDisciplineForm({
 
       <p className={styles.hint}>
         Выберите шаблон. Название и код можно изменить для этого мероприятия.
-        Формат и настройки будут унаследованы от шаблона.
+        Формат наследуется от шаблона. Параметры плавания можно уточнить ниже; остальные настройки шаблона сохраняются.
       </p>
 
       <fieldset className={styles.fields} disabled={disabled || saving}>
@@ -286,6 +288,8 @@ export function CreateEventDisciplineForm({
             />
           </label>
         </div>
+
+        <SwimmingDisciplineFields value={swimmingFields} onChange={setSwimmingFields} />
 
         <button
           type="submit"

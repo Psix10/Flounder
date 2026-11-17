@@ -117,10 +117,13 @@ public class CreateRegistrationUseCase {
 
         if (discipline.participantLimit() != null) {
             long occupiedPlaces = registrationRepository
-                    .countByEventDisciplineIdAndStatusIn(
-                            discipline.id(),
-                            LIMIT_OCCUPYING_STATUSES
-                    );
+                .countByEventDisciplineIdAndStatusIn(
+                        discipline.id(),
+                        LIMIT_OCCUPYING_STATUSES
+                )
+                + registrationRepository.countReservedConfirmedCorrections(
+                        discipline.id()
+                );
 
             if (occupiedPlaces >= discipline.participantLimit()) {
                 throw new BusinessException(

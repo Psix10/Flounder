@@ -1,3 +1,5 @@
+// SWIM_LABELS_V1
+import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import { getPublicEventDetails } from '../../api/events.api'
@@ -190,7 +192,7 @@ export function PublicDisciplineResultsPage() {
 
       <h1 className={styles.title}>
         {disciplineName
-          ? `Результаты: ${disciplineName}`
+          ? `Результаты: ${formatHeatLabel(disciplineName)}`
           : 'Таблица результатов'}
       </h1>
 
@@ -205,7 +207,7 @@ export function PublicDisciplineResultsPage() {
       {!isLoading && !errorMessage && results ? (
         <div className={styles.summaryRow}>
           <span>
-            Соревновательных единиц: <strong>{results.units.length}</strong>
+            Заплывов: <strong>{results.units.length}</strong>
           </span>
 
           <span>
@@ -248,10 +250,10 @@ export function PublicDisciplineResultsPage() {
                   <div className={styles.unitHeader}>
                     <div>
                       <p className={styles.unitLabel}>
-                        Соревновательная единица
+                        Заплыв
                       </p>
 
-                      <h2 className={styles.unitTitle}>{unit.label}</h2>
+                      <h2 className={styles.unitTitle}>{formatHeatLabel(unit.label)}</h2>
                     </div>
 
                     <div className={styles.unitMeta}>
@@ -272,7 +274,7 @@ export function PublicDisciplineResultsPage() {
 
                   {entries.length === 0 ? (
                     <p className={styles.hint}>
-                      В этой соревновательной единице нет опубликованных
+                      В этом заплыве нет опубликованных
                       результатов.
                     </p>
                   ) : (

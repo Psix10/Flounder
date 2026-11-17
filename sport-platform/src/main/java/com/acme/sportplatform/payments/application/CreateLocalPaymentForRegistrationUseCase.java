@@ -47,7 +47,7 @@ public class CreateLocalPaymentForRegistrationUseCase {
         RegistrationLookupResult registration;
 
         try {
-            registration = registrationLookup.getById(registrationId);
+            registration = registrationLookup.getByIdForUpdate(registrationId);
         } catch (IllegalArgumentException exception) {
             throw new BusinessException(
                     "payments.registration_not_found",

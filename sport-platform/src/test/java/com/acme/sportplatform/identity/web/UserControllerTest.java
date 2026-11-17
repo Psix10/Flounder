@@ -39,7 +39,7 @@ class UserControllerTest {
                   "firstName": "Ivan",
                   "lastName": "Petrov",
                   "birthDate": "1995-05-12",
-                  "gender": "male",
+                  "gender": "MALE",
                   "city": "Moscow",
                   "countryCode": "RU",
                   "clubName": "Dolphin Club"

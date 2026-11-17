@@ -25,4 +25,6 @@ public interface EventRepository extends JpaRepository<EventEntity, UUID> {
     Optional<EventEntity> findByPublicSlug(String publicSlug);
 
     List<EventEntity> findByCreatedByUserIdOrderByEventStartAtDesc(UUID createdByUserId);
+
+    List<EventEntity> findByIdInOrderByEventStartAtAscIdAsc(Collection<UUID> ids);
 }

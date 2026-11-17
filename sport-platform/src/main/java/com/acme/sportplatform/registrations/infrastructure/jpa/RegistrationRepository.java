@@ -43,4 +43,17 @@ public interface RegistrationRepository
         @Lock(LockModeType.PESSIMISTIC_WRITE)
         @Query("select r from RegistrationEntity r where r.id = :id")
         Optional<RegistrationEntity> findForUpdate(@Param("id") UUID id);
+
+        @Query(value = """
+                select count(*)
+                from registrations r
+                where r.event_discipline_id = :disciplineId
+                and r.status = 'NEEDS_CORRECTION'
+                and r.registration_meta
+                        -> 'confirmedCorrection'
+                        ->> 'reservePlace' = 'true'
+                """, nativeQuery = true)
+        long countReservedConfirmedCorrections(
+                @Param("disciplineId") UUID disciplineId
+        );
 }

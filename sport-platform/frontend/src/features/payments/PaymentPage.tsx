@@ -1,3 +1,4 @@
+import { registrationStatusLabel } from '../registrations/registration-withdrawal.mjs'
 import { useEffect, useState } from 'react'
 import {
   Link,
@@ -10,7 +11,6 @@ import { getMyRegistrations } from '../../api/registrations.api'
 import { useAuth } from '../../app/providers/AuthProvider'
 import type {
   Registration,
-  RegistrationStatus,
 } from '../../features/registrations/registration.types'
 import {
   createPaymentForRegistration,
@@ -53,17 +53,6 @@ function paymentStatusLabel(status: string) {
   return labels[status] ?? status
 }
 
-function registrationStatusLabel(status: RegistrationStatus) {
-  const labels: Record<RegistrationStatus, string> = {
-    SUBMITTED: 'На рассмотрении',
-    CONFIRMED: 'Подтверждена',
-    REJECTED: 'Отклонена',
-    NEEDS_CORRECTION: 'Требует уточнения',
-    CANCELLED: 'Отменена',
-  }
-
-  return labels[status]
-}
 
 function paymentStatusClassName(status: string) {
   const statusClasses: Record<string, string> = {
@@ -102,6 +91,13 @@ function getPaymentUnavailableCopy(registration: Registration) {
     return {
       title: 'Заявка отклонена',
       message: 'Оплата для отклонённой заявки недоступна.',
+    }
+  }
+
+  if (registration.status === 'WITHDRAWN') {
+    return {
+      title: 'Заявка снята с участия',
+      message: 'Создать платёж для снятой заявки нельзя. Причину снятия смотрите в комментарии организатора.',
     }
   }
 

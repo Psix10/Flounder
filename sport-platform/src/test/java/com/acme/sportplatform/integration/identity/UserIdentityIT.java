@@ -329,7 +329,7 @@ class UserIdentityIntegrationTest extends AbstractPostgresIntegrationTest {
                           "firstName": "%s",
                           "lastName": "%s",
                           "birthDate": "1998-03-17",
-                          "gender": "female",
+                          "gender": "FEMALE",
                           "city": "Moscow",
                           "countryCode": "RU",
                           "clubName": "Wave Club"

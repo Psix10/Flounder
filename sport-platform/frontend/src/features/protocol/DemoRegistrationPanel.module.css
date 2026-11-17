@@ -1,0 +1,13 @@
+.panel { border: 2px dashed #b87b20; border-radius: 12px; padding: 20px; margin: 18px 0; background: #fffaf0; color: #25364b; }
+.panel h2 { margin-top: 0; }
+.panel p { line-height: 1.5; }
+.table { overflow-x: auto; }
+.table table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 8px; text-align: left; border-bottom: 1px solid #e0d6bf; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.button { border: 1px solid #0f766e; background: #0f766e; color: #fff; border-radius: 8px; padding: 10px 14px; font: inherit; cursor: pointer; }
+.button:disabled { opacity: .6; cursor: not-allowed; }
+.button:focus-visible { outline: 3px solid #0b5b7b; outline-offset: 3px; }
+.confirm { display: flex; align-items: flex-start; gap: 10px; margin-top: 18px; line-height: 1.5; }
+.confirm input { margin-top: 5px; }
+.error { white-space: pre-line; color: #9b1c32; }

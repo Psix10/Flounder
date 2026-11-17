@@ -1,3 +1,4 @@
+// SWIM_LABELS_V1
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { NavLink, useNavigate, useSearchParams } from 'react-router'
 import { ApiError } from '../../api/http'
@@ -153,14 +154,14 @@ export function CreateRegulationPage() {
         </article>
         <article className={styles.card}>
           <h2 className={styles.cardTitle}>Формирование стартового протокола</h2>
-          <label><input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} /> Настроить индивидуальные заходы (INDIVIDUAL / HEAT)</label>
+          <label><input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} /> Настроить индивидуальные заплывы (INDIVIDUAL / HEAT)</label>
           {enabled ? <>
-            <p>Общие настройки для совместимых дисциплин этого регламента. Категории определяют отдельный зачёт; группы посева определяют, кто может попасть в один заход. Расписание и индивидуальные исключения здесь не настраиваются.</p>
+            <p>Общие настройки для совместимых дисциплин этого регламента. Категории определяют отдельный зачёт; группы посева определяют, кто может попасть в один заплыв. Расписание и индивидуальные исключения здесь не настраиваются.</p>
             <div className={styles.grid}>
-              <label className={styles.field}>Вместимость захода<input className={styles.input} required type="number" min="1" max="1024" value={capacity} onChange={(e) => setCapacity(e.target.value)} /></label>
+              <label className={styles.field}>Вместимость заплыва<input className={styles.input} required type="number" min="1" max="1024" value={capacity} onChange={(e) => setCapacity(e.target.value)} /></label>
               <label className={styles.field}>Порядок дорожек<input className={styles.input} required value={positions} onChange={(e) => setPositions(e.target.value)} /></label>
-              <label className={styles.field}>Порядок заходов<select className={styles.input} value={heatOrder} onChange={(e) => setHeatOrder(e.target.value as ProtocolSettings['heatOrder'])}><option value="SLOWEST_FIRST">От слабых к сильным</option><option value="FASTEST_FIRST">От сильных к слабым</option></select></label>
-              <label className={styles.field}>Неполный заход<select className={styles.input} value={partialHeat} onChange={(e) => setPartialHeat(e.target.value as ProtocolSettings['partialHeat'])}><option value="FIRST">В начале</option><option value="LAST">В конце</option></select></label>
+              <label className={styles.field}>Порядок заплывов<select className={styles.input} value={heatOrder} onChange={(e) => setHeatOrder(e.target.value as ProtocolSettings['heatOrder'])}><option value="SLOWEST_FIRST">От слабых к сильным</option><option value="FASTEST_FIRST">От сильных к слабым</option></select></label>
+              <label className={styles.field}>Неполный заплыв<select className={styles.input} value={partialHeat} onChange={(e) => setPartialHeat(e.target.value as ProtocolSettings['partialHeat'])}><option value="FIRST">В начале</option><option value="LAST">В конце</option></select></label>
               <label className={styles.field}>Поле заявочного результата<input className={styles.input} required maxLength={100} value={metricKey} onChange={(e) => setMetricKey(e.target.value)} /></label>
             </div>
             <section className={styles.card}>
@@ -169,8 +170,8 @@ export function CreateRegulationPage() {
                 <select className={styles.input} value={categoryMode}
                   onChange={(e) => changeCategoryMode(e.target.value as CategoryMode)}>
                   <option value="NONE">Без категорий — прежний режим</option>
-                  <option value="SEX_MIXED">Мужчины / женщины — совместные заходы</option>
-                  <option value="SEX_SEPARATE">Мужчины / женщины — раздельные заходы</option>
+                  <option value="SEX_MIXED">Мужчины / женщины — совместные заплывы</option>
+                  <option value="SEX_SEPARATE">Мужчины / женщины — раздельные заплывы</option>
                   <option value="CUSTOM">Пользовательские или сохранённые категории (JSON)</option>
                 </select>
               </label>
@@ -184,13 +185,13 @@ export function CreateRegulationPage() {
                 </> : <>
                   <p>Категории MEN и WOMEN с отдельным зачётом по сохранённому полу участника в заявке.</p>
                   <p>{categoryMode === 'SEX_MIXED'
-                    ? 'Общая группа посева OPEN: участники разных категорий могут попасть в один заход.'
-                    : 'Разные группы посева MEN и WOMEN: заходы формируются раздельно.'}</p>
+                    ? 'Общая группа посева OPEN: участники разных категорий могут попасть в один заплыв.'
+                    : 'Разные группы посева MEN и WOMEN: заплывы формируются раздельно.'}</p>
                   <p>Заявка без распознаваемого пола не будет молча исключена: сервер отклонит генерацию и вернёт ошибку классификации.</p>
                 </>}
               {categoryMode !== 'NONE' ? <p>Текстовые условия сами по себе не задают категории. Итоговое соответствие участников категориям проверяет сервер при генерации.</p> : null}
             </section>
-            <p>Участники без результата — в слабейшем заходе. Сбор заявочного времени этой формой не добавляется; отсутствующее время не заменяется нулём.</p>
+            <p>Участники без результата — в слабейшем заплыве. Сбор заявочного времени этой формой не добавляется; отсутствующее время не заменяется нулём.</p>
           </> : <p>Регламент будет опубликован без настроек генерации. Чтобы добавить их позже, создайте новую версию.</p>}
         </article>
         <div className={styles.actions}><button className={styles.primaryButton} type="submit" disabled={busy || loading}>{busy ? 'Сохраняем…' : 'Сохранить и опубликовать регламент'}</button></div>

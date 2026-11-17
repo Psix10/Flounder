@@ -97,8 +97,6 @@ export function getRegistration(
   )
 }
 
-
-
 export function resubmitRegistration(
   registrationId: string,
   request: ResubmitRegistrationRequest,
@@ -112,6 +110,38 @@ export function resubmitRegistration(
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify(request),
+    },
+  )
+}
+
+export function returnRegistrationForCorrection(
+  registrationId: string,
+  reviewNote: string,
+  accessToken: string,
+): Promise<Registration> {
+  return apiFetch<Registration>(
+    `/api/v1/registrations/${encodeURIComponent(
+      registrationId,
+    )}/return-for-correction`,
+    {
+      method: 'POST',
+      accessToken,
+      body: JSON.stringify({ reviewNote }),
+    },
+  )
+}
+
+export function withdrawConfirmedRegistration(
+  registrationId: string,
+  request: { reason: string },
+  accessToken: string,
+): Promise<Registration> {
+  return apiFetch<Registration>(
+    `/api/v1/registrations/${encodeURIComponent(registrationId)}/withdraw-confirmed`,
+    {
+      method: 'POST',
+      accessToken,
       body: JSON.stringify(request),
     },
   )

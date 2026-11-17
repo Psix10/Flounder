@@ -1,3 +1,4 @@
+// DISCIPLINE_METADATA_ADMISSION_V1
 package com.acme.sportplatform.protocol.application;
 
 import java.math.BigDecimal;
@@ -217,6 +218,7 @@ public class GenerateSessionProtocolUseCase {
                     registrations.findConfirmedByEventDisciplineId(
                             item.disciplineId()
                     );
+            rules = DisciplineProtocolAdmission.apply(events.getPublishedEventDiscipline(item.disciplineId()).settingsJson(), rules, confirmed, json, effectiveRuleVersionId);
 
             var prepared = preparation.prepare(
                     item.disciplineId(),
@@ -380,6 +382,7 @@ public class GenerateSessionProtocolUseCase {
             var input = json.createObjectNode();
 
             input.put("schemaVersion", 2);
+            input.set("disciplineSettings", DisciplineProtocolAdmission.snapshotSettings(events.getPublishedEventDiscipline(id).settingsJson()));
             input.put(
                     "sessionSnapshotId",
                     snapshotId.toString()

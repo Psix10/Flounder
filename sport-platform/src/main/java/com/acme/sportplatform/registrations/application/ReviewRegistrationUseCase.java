@@ -4,10 +4,14 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.acme.sportplatform.common.exception.BusinessException;
+import com.acme.sportplatform.events.EventOperationAccess;
+import com.acme.sportplatform.identity.AuthenticatedUserPrincipal;
 import com.acme.sportplatform.registrations.api.RegistrationResponse;
 import com.acme.sportplatform.registrations.api.ReviewRegistrationRequest;
 import com.acme.sportplatform.registrations.domain.RegistrationReviewDecision;
@@ -20,13 +24,16 @@ public class ReviewRegistrationUseCase {
 
     private final RegistrationRepository registrationRepository;
     private final RegistrationMapper registrationMapper;
+    private final EventOperationAccess eventAccess;
 
     public ReviewRegistrationUseCase(
             RegistrationRepository registrationRepository,
-            RegistrationMapper registrationMapper
+            RegistrationMapper registrationMapper,
+            EventOperationAccess eventAccess
     ) {
         this.registrationRepository = registrationRepository;
         this.registrationMapper = registrationMapper;
+        this.eventAccess = eventAccess;
     }
 
     @Transactional
@@ -35,12 +42,63 @@ public class ReviewRegistrationUseCase {
             UUID reviewerUserId,
             ReviewRegistrationRequest request
     ) {
+        var authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || !(authentication.getPrincipal()
+                     instanceof AuthenticatedUserPrincipal principal)
+                || principal.getUserId() == null) {
+            throw new AccessDeniedException(
+                    "Authenticated platform principal is required"
+            );
+        }
+
+        UUID actorId = principal.getUserId();
+
+        if (!actorId.equals(reviewerUserId)) {
+            throw new AccessDeniedException(
+                    "Reviewer must match authenticated user"
+            );
+        }
+
+        boolean admin = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        "ROLE_PLATFORM_ADMIN".equals(
+                                authority.getAuthority()
+                        )
+                );
+
+        boolean organizer = authentication.getAuthorities().stream()
+                .anyMatch(authority ->
+                        "ROLE_ORGANIZER".equals(
+                                authority.getAuthority()
+                        )
+                );
+
+        if (!admin && !organizer) {
+            throw new AccessDeniedException(
+                    "Organizer access is required"
+            );
+        }
+
         RegistrationEntity registration = registrationRepository
                 .findForUpdate(registrationId)
                 .orElseThrow(() -> new BusinessException(
                         "registrations.notfound",
                         "Registration not found"
                 ));
+
+        if (!admin && !eventAccess.canManageEvent(
+                registration.getEventId(),
+                actorId
+        )) {
+            throw new AccessDeniedException(
+                    "You cannot review registrations for this event"
+            );
+        }
 
         if (!RegistrationStatus.SUBMITTED.name()
                 .equals(registration.getStatus())) {
@@ -50,11 +108,19 @@ public class ReviewRegistrationUseCase {
             );
         }
 
+        if (request == null || request.decision() == null) {
+            throw new BusinessException(
+                    "registrations.review_decision_required",
+                    "Review decision is required"
+            );
+        }
+
         String reviewNote = request.reviewNote() == null
                 ? ""
                 : request.reviewNote().trim();
 
-        if (requiresReviewNote(request.decision()) && reviewNote.isBlank()) {
+        if (requiresReviewNote(request.decision())
+                && reviewNote.isBlank()) {
             throw new BusinessException(
                     "registrations.review_note_required",
                     "Review note is required"
@@ -64,14 +130,15 @@ public class ReviewRegistrationUseCase {
         RegistrationStatus newStatus = switch (request.decision()) {
             case CONFIRMED -> RegistrationStatus.CONFIRMED;
             case REJECTED -> RegistrationStatus.REJECTED;
-            case NEEDS_CORRECTION -> RegistrationStatus.NEEDS_CORRECTION;
+            case NEEDS_CORRECTION ->
+                    RegistrationStatus.NEEDS_CORRECTION;
         };
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         registration.setStatus(newStatus.name());
         registration.setReviewNote(reviewNote);
-        registration.setReviewedByUserId(reviewerUserId);
+        registration.setReviewedByUserId(actorId);
         registration.setReviewedAt(now);
         registration.setUpdatedAt(now);
 

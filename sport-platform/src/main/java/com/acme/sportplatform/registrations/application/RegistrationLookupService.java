@@ -4,8 +4,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.acme.sportplatform.registrations.RegistrationLookup;
 import com.acme.sportplatform.registrations.RegistrationLookupResult;
 import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationEntity;
@@ -14,35 +17,85 @@ import com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationRepos
 @Service
 @Transactional(readOnly = true)
 public class RegistrationLookupService implements RegistrationLookup {
+
     private final RegistrationRepository registrationRepository;
-    public RegistrationLookupService(RegistrationRepository registrationRepository) {
+
+    public RegistrationLookupService(
+            RegistrationRepository registrationRepository
+    ) {
         this.registrationRepository = registrationRepository;
     }
+
     @Override
     public RegistrationLookupResult getById(UUID registrationId) {
-        return findById(registrationId).orElseThrow(() -> new IllegalArgumentException(
-                "Registration not found: " + registrationId));
+        return findById(registrationId)
+                .orElseThrow(() -> notFound(registrationId));
     }
+
     @Override
-    public Optional<RegistrationLookupResult> findById(UUID registrationId) {
-        return registrationRepository.findById(registrationId).map(this::toResult);
+    @Transactional(
+            propagation = Propagation.MANDATORY,
+            readOnly = false
+    )
+    public RegistrationLookupResult getByIdForUpdate(
+            UUID registrationId
+    ) {
+        return registrationRepository.findForUpdate(registrationId)
+                .map(this::toResult)
+                .orElseThrow(() -> notFound(registrationId));
     }
+
     @Override
-    public List<RegistrationLookupResult> findByIdIn(Collection<UUID> registrationIds) {
-        if (registrationIds == null || registrationIds.isEmpty()) return List.of();
-        return registrationRepository.findByIdIn(List.copyOf(registrationIds)).stream()
-                .map(this::toResult).toList();
+    public Optional<RegistrationLookupResult> findById(
+            UUID registrationId
+    ) {
+        return registrationRepository.findById(registrationId)
+                .map(this::toResult);
     }
+
     @Override
-    public List<RegistrationLookupResult> findByEventDisciplineId(UUID eventDisciplineId) {
-        return registrationRepository.findByEventDisciplineId(eventDisciplineId).stream()
-                .map(this::toResult).toList();
+    public List<RegistrationLookupResult> findByIdIn(
+            Collection<UUID> registrationIds
+    ) {
+        if (registrationIds == null || registrationIds.isEmpty()) {
+            return List.of();
+        }
+
+        return registrationRepository
+                .findByIdIn(List.copyOf(registrationIds))
+                .stream()
+                .map(this::toResult)
+                .toList();
     }
-    private RegistrationLookupResult toResult(RegistrationEntity registration) {
+
+    @Override
+    public List<RegistrationLookupResult> findByEventDisciplineId(
+            UUID eventDisciplineId
+    ) {
+        return registrationRepository
+                .findByEventDisciplineId(eventDisciplineId)
+                .stream()
+                .map(this::toResult)
+                .toList();
+    }
+
+    private IllegalArgumentException notFound(UUID registrationId) {
+        return new IllegalArgumentException(
+                "Registration not found: " + registrationId
+        );
+    }
+
+    private RegistrationLookupResult toResult(
+            RegistrationEntity registration
+    ) {
         return new RegistrationLookupResult(
-                registration.getId(), registration.getParticipantUserId(),
-                registration.getEventDisciplineId(), registration.getStatus(),
-                registration.getParticipantSnapshot(), registration.getRegistrationMeta(),
-                registration.getParticipantProfileId());
+                registration.getId(),
+                registration.getParticipantUserId(),
+                registration.getEventDisciplineId(),
+                registration.getStatus(),
+                registration.getParticipantSnapshot(),
+                registration.getRegistrationMeta(),
+                registration.getParticipantProfileId()
+        );
     }
 }

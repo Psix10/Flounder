@@ -31,6 +31,10 @@ import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEnt
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberRepository;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationRepository;
 import com.acme.sportplatform.sports.infrastructure.jpa.DisciplineTemplateEntity;
 import com.acme.sportplatform.sports.infrastructure.jpa.DisciplineTemplateRepository;
 import com.acme.sportplatform.support.AbstractPostgresIntegrationTest;
@@ -60,6 +64,15 @@ class StartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
     @Autowired
     private EventDisciplineRepository eventDisciplineRepository;
 
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private OrganizationMemberRepository organizationMemberRepository;
+
+    private final Map<UUID, PlatformUserPrincipal> eventOrganizers =
+            new java.util.HashMap<>();
+
     @Test
     void shouldGenerateAndReturnStartProtocol() throws Exception {
         UserEntity maria = createParticipantUser("maria.protocol");
@@ -77,7 +90,7 @@ class StartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
 
         PlatformUserPrincipal mariaPrincipal = participantPrincipal(maria);
         PlatformUserPrincipal annaPrincipal = participantPrincipal(anna);
-        PlatformUserPrincipal organizerPrincipal = organizerPrincipal();
+        PlatformUserPrincipal organizerPrincipal = organizerForEvent(eventId);
 
         String mariaRegistrationId = createRegistration(
                 eventDisciplineId,
@@ -145,7 +158,7 @@ class StartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
                         "/api/v1/event-disciplines/{eventDisciplineId}/start-protocol",
                         eventDisciplineId
                 )
-                        .with(user(organizerPrincipal()))
+                        .with(user(organizerForEvent(eventId)))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code")
@@ -236,12 +249,14 @@ class StartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     private UUID createEventWithOpenRegistration() {
+        ManagedOrganization managed = createManagedOrganization();
+
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         EventEntity event = new EventEntity();
         event.setId(UUID.randomUUID());
-        event.setCreatedByUserId(UUID.randomUUID());
-        event.setOrganizationId(UUID.randomUUID());
+        event.setCreatedByUserId(managed.organizerPrincipal().getUserId());
+        event.setOrganizationId(managed.organizationId());
         event.setVenueId(UUID.randomUUID());
         event.setSportId(SWIMMING_SPORT_ID);
         event.setRegulationVersionId(UUID.randomUUID());
@@ -257,7 +272,9 @@ class StartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
         event.setCreatedAt(now);
         event.setUpdatedAt(now);
 
-        return eventRepository.save(event).getId();
+        UUID eventId = eventRepository.saveAndFlush(event).getId();
+        eventOrganizers.put(eventId, managed.organizerPrincipal());
+        return eventId;
     }
 
     private UUID createDisciplineTemplate() {
@@ -331,15 +348,7 @@ class StartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
         );
     }
 
-    private PlatformUserPrincipal organizerPrincipal() {
-        return new PlatformUserPrincipal(
-                UUID.randomUUID(),
-                "organizer@example.com",
-                "",
-                "active",
-                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
-        );
-    }
+
 
     private String randomDigits(int count) {
         String source = UUID.randomUUID()
@@ -361,5 +370,56 @@ class StartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
         }
 
         return digits.toString();
+    }
+    private ManagedOrganization createManagedOrganization() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        UserEntity organizer = new UserEntity();
+        organizer.setEmail("fixture-organizer-" + UUID.randomUUID() + "@example.com");
+        organizer.setPhone("+79990000001");
+        organizer.setPasswordHash("test-password-hash");
+        organizer.setStatus("active");
+        organizer = userRepository.saveAndFlush(organizer);
+
+        OrganizationEntity organization = new OrganizationEntity();
+        organization.setType("CLUB");
+        organization.setName("Integration test organization " + UUID.randomUUID());
+        organization.setMeta("{}");
+        organization.setCreatedAt(now);
+        organization.setUpdatedAt(now);
+        organization = organizationRepository.saveAndFlush(organization);
+
+        OrganizationMemberEntity owner = new OrganizationMemberEntity();
+        owner.setOrganizationId(organization.getId());
+        owner.setUserId(organizer.getId());
+        owner.setMemberRole("OWNER");
+        owner.setCreatedAt(now);
+        organizationMemberRepository.saveAndFlush(owner);
+
+        PlatformUserPrincipal principal = new PlatformUserPrincipal(
+                organizer.getId(),
+                organizer.getEmail(),
+                "",
+                "active",
+                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+        );
+
+        return new ManagedOrganization(organization.getId(), principal);
+    }
+
+    private PlatformUserPrincipal organizerForEvent(UUID eventId) {
+        PlatformUserPrincipal principal = eventOrganizers.get(eventId);
+        if (principal == null) {
+            throw new IllegalStateException(
+                    "Organizer fixture not found for event " + eventId
+            );
+        }
+        return principal;
+    }
+
+    private record ManagedOrganization(
+            UUID organizationId,
+            PlatformUserPrincipal organizerPrincipal
+    ) {
     }
 }

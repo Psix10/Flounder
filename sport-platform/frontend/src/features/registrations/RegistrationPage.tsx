@@ -1,12 +1,35 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
+
 import { ApiError } from '../../api/http'
 import { createRegistration } from '../../api/registrations.api'
 import { useAuth } from '../../app/providers/AuthProvider'
 import styles from './RegistrationPage.module.css'
 
-function getRegistrationErrorMessage(error: unknown) {
+function parseSeedTimeSeconds(value: string): number | null {
+  const normalized = value.trim().replace(',', '.')
+  const match = /^(\d{1,3}):([0-5]\d)\.(\d{2})$/.exec(normalized)
+
+  if (!match) {
+    return null
+  }
+
+  const minutes = Number(match[1])
+  const seconds = Number(match[2])
+  const hundredths = Number(match[3])
+
+  const totalHundredths =
+    minutes * 6000 + seconds * 100 + hundredths
+
+  if (totalHundredths <= 0) {
+    return null
+  }
+
+  return totalHundredths / 100
+}
+
+function getRegistrationErrorMessage(error: unknown): string {
   if (!(error instanceof ApiError)) {
     return 'Не удалось отправить заявку. Попробуйте ещё раз.'
   }
@@ -30,6 +53,8 @@ export function RegistrationPage() {
   const { disciplineId, eventCode } = useParams()
   const navigate = useNavigate()
 
+  const [seedTime, setSeedTime] = useState('')
+  const [withoutSeedTime, setWithoutSeedTime] = useState(false)
   const [emergencyContactName, setEmergencyContactName] = useState('')
   const [emergencyContactPhone, setEmergencyContactPhone] = useState('')
   const [medicalCertificate, setMedicalCertificate] = useState(false)
@@ -37,6 +62,7 @@ export function RegistrationPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const submitting = useRef(false)
   const accessToken = session?.accessToken
 
   useEffect(() => {
@@ -44,9 +70,10 @@ export function RegistrationPage() {
       navigate('/login', {
         replace: true,
         state: {
-          from: eventCode && disciplineId
-            ? `/events/${eventCode}/disciplines/${disciplineId}/register`
-            : '/',
+          from:
+            eventCode && disciplineId
+              ? `/events/${eventCode}/disciplines/${disciplineId}/register`
+              : '/',
         },
       })
     }
@@ -62,11 +89,23 @@ export function RegistrationPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (isSubmitting) {
+    if (submitting.current || isSubmitting) {
       return
     }
 
     setErrorMessage(null)
+
+    const seedTimeSeconds = withoutSeedTime
+      ? null
+      : parseSeedTimeSeconds(seedTime)
+
+    if (!withoutSeedTime && seedTimeSeconds === null) {
+      setErrorMessage(
+        'Укажите положительное время в формате ММ:СС.сс, ' +
+          'например 01:25.34, или выберите «Без заявочного времени».',
+      )
+      return
+    }
 
     const normalizedContactName = emergencyContactName.trim()
     const normalizedContactPhone = emergencyContactPhone.trim()
@@ -83,6 +122,7 @@ export function RegistrationPage() {
       return
     }
 
+    submitting.current = true
     setIsSubmitting(true)
 
     try {
@@ -94,6 +134,9 @@ export function RegistrationPage() {
             emergencyContactPhone: normalizedContactPhone,
             medicalCertificate,
             agreeToRules,
+            ...(seedTimeSeconds === null
+              ? {}
+              : { seedTimeSeconds }),
           },
         },
         authenticatedAccessToken,
@@ -105,6 +148,7 @@ export function RegistrationPage() {
     } catch (error) {
       setErrorMessage(getRegistrationErrorMessage(error))
     } finally {
+      submitting.current = false
       setIsSubmitting(false)
     }
   }
@@ -124,12 +168,59 @@ export function RegistrationPage() {
         <h1 className={styles.title}>Регистрация на дисциплину</h1>
 
         <p className={styles.description}>
-          Укажите контакт на случай экстренной ситуации и подтвердите условия
-          участия. После отправки вы сможете отслеживать статус заявки в
-          личном кабинете.
+          Укажите заявочное время, контакт на случай экстренной
+          ситуации и подтвердите условия участия. После отправки
+          статус заявки будет доступен в личном кабинете.
         </p>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form
+          className={styles.form}
+          onSubmit={(event) => void handleSubmit(event)}
+        >
+          <fieldset
+            className={styles.fieldset}
+            disabled={isSubmitting}
+          >
+            <legend className={styles.legend}>
+              Заявочное время
+            </legend>
+
+            <label className={styles.field}>
+              <span>Время на выбранную дисциплину</span>
+
+              <input
+                aria-describedby="seed-time-help"
+                autoComplete="off"
+                disabled={withoutSeedTime}
+                maxLength={9}
+                onChange={(event) => setSeedTime(event.target.value)}
+                placeholder="01:25.34"
+                required={!withoutSeedTime}
+                type="text"
+                value={seedTime}
+              />
+            </label>
+
+            <p id="seed-time-help">
+              Формат: минуты:секунды.сотые. Например, 01:25.34 —
+              это 1 минута 25 секунд 34 сотых. Для времени меньше
+              минуты укажите 00:45.12. Вместо точки можно использовать
+              запятую.
+            </p>
+
+            <label className={styles.checkboxField}>
+              <input
+                checked={withoutSeedTime}
+                onChange={(event) =>
+                  setWithoutSeedTime(event.target.checked)
+                }
+                type="checkbox"
+              />
+
+              <span>Без заявочного времени (NT)</span>
+            </label>
+          </fieldset>
+
           <fieldset
             className={styles.fieldset}
             disabled={isSubmitting}
@@ -175,8 +266,8 @@ export function RegistrationPage() {
             <strong>Медицинская справка</strong>
 
             <p>
-              Подтвердите наличие действующей справки, если она требуется
-              правилами выбранной дисциплины.
+              Подтвердите наличие действующей справки, если она
+              требуется правилами выбранной дисциплины.
             </p>
           </div>
 
@@ -191,14 +282,18 @@ export function RegistrationPage() {
                 type="checkbox"
               />
 
-              <span>У меня есть действующая медицинская справка.</span>
+              <span>
+                У меня есть действующая медицинская справка.
+              </span>
             </label>
 
             <label className={styles.checkboxField}>
               <input
                 checked={agreeToRules}
                 disabled={isSubmitting}
-                onChange={(event) => setAgreeToRules(event.target.checked)}
+                onChange={(event) =>
+                  setAgreeToRules(event.target.checked)
+                }
                 required
                 type="checkbox"
               />

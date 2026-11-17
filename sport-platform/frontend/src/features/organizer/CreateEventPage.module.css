@@ -255,3 +255,24 @@
   font-size: 0.875rem;
   line-height: 1.45;
 }
+
+.inlineActionButton {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary, #01696f);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: right;
+  cursor: pointer;
+}
+
+.inlineActionButton:hover {
+  text-decoration: underline;
+}
+
+.inlineActionButton:focus-visible {
+  outline: 2px solid var(--color-primary, #01696f);
+  outline-offset: 4px;
+}

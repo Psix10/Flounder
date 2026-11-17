@@ -216,6 +216,7 @@ export type CreateEventDisciplineRequest = {
   participantLimit?: number | null
   entryFeeAmount: number
   entryFeeCurrency: string
+  settingsJson?: Record<string, unknown> | null
 }
 
 export async function createEventDiscipline(

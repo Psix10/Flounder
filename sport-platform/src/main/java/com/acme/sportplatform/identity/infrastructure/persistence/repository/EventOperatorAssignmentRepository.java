@@ -63,4 +63,6 @@ public interface EventOperatorAssignmentRepository
             @Param("eventId") UUID eventId,
             @Param("operatorUserId") UUID operatorUserId
     );
+
+    List<EventOperatorAssignmentEntity> findByOperatorUserIdOrderByCreatedAtAscIdAsc(UUID operatorUserId);
 }

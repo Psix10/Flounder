@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
+
 import { ApiError } from '../../api/http'
 import { useAuth } from '../../app/providers/AuthProvider'
 import styles from './LoginPage.module.css'
 
 type LoginLocationState = {
   from?: string
+  registrationCompleted?: boolean
 }
 
 export function LoginPage() {
@@ -28,6 +30,11 @@ export function LoginPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (isSubmitting) {
+      return
+    }
+
     setErrorMessage(null)
     setIsSubmitting(true)
 
@@ -64,8 +71,16 @@ export function LoginPage() {
         <h1 className={styles.title}>Войти</h1>
 
         <p className={styles.description}>
-          Войдите, чтобы подать заявку на дисциплину и посмотреть её статус.
+          Войдите, чтобы управлять заявками на участие, подать заявку на
+          регистрацию организации или продолжить работу с событиями.
         </p>
+
+        {state?.registrationCompleted ? (
+          <p className={styles.description} role="status">
+            Аккаунт создан, но автоматический вход не выполнен. Войдите с
+            указанными при регистрации email и паролем.
+          </p>
+        ) : null}
 
         <form className={styles.form} onSubmit={handleSubmit}>
           <label className={styles.field}>
@@ -108,6 +123,7 @@ export function LoginPage() {
             {isSubmitting ? 'Входим…' : 'Войти'}
           </button>
         </form>
+
         <p className={styles.registerPrompt}>
           Ещё нет аккаунта?{' '}
           <Link to="/register" state={{ from: returnTo }}>

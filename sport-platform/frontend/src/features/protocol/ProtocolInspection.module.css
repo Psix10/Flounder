@@ -1,0 +1,15 @@
+.block { margin-top: 18px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+.facts div { padding: 12px; border: 1px solid var(--color-border, #dce3eb); border-radius: 10px; }
+.facts dt { font-size: .85rem; color: var(--color-text-muted, #566579); }
+.facts dd { margin: 7px 0 0; font-weight: 600; }
+.scroll { max-width: 100%; overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; text-align: left; }
+.table th, .table td { vertical-align: top; padding: 12px; border-bottom: 1px solid var(--color-border, #dce3eb); min-width: 110px; }
+.table th { font-size: .85rem; }
+.table small { display: block; margin-top: 6px; color: var(--color-text-muted, #566579); overflow-wrap: anywhere; }
+.note { color: var(--color-text-muted, #566579); font-size: .9rem; line-height: 1.55; }
+.warning { color: #8f3b12; line-height: 1.5; }
+.matched { color: #195638; line-height: 1.5; }
+
+.saved { display: block; margin-top: 6px; color: var(--color-text-muted, #566579); overflow-wrap: anywhere; }

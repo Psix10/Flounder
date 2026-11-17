@@ -1,3 +1,5 @@
+// SWIM_LABELS_V1
+import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useParams } from 'react-router'
@@ -195,7 +197,7 @@ function StandingsPage({manage=false}:{manage?:boolean}) {
   const context=metadata.kind==='ready'&&metadata.data.key===key?metadata.data:null
   return <section className={styles.page}>
     <Link to={manage?`/organizer/events/${encodeURIComponent(eventId??'')}`:`/events/${encodeURIComponent(publicSlug??'')}`}>← К мероприятию</Link>
-    <h1>{context?`Зачёт: ${context.disciplineName}`:'Зачёт дисциплины'}</h1>
+    <h1>{context?`Зачёт: ${formatHeatLabel(context.disciplineName)}`:'Зачёт дисциплины'}</h1>
     {context?<>
       <p>{context.eventTitle}</p>
       {context.publicSlug?<Link to={`/events/${encodeURIComponent(context.publicSlug)}/disciplines/${encodeURIComponent(context.disciplineId)}/results`}>Опубликованные результаты по заплывам</Link>:null}

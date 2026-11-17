@@ -1,3 +1,4 @@
+// SWIM_LABELS_V1
 package com.acme.sportplatform.protocol.application;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class ProtocolConfigurationPublicationService implements ProtocolConfigur
     @Override @Transactional
     public UUID publish(UUID sportId, String name, Settings s, UUID actorId) {
         var group = json.createObjectNode();
-        group.put("capacity", s.capacity()); group.put("unitLabelPrefix", "Заход");
+        group.put("capacity", s.capacity()); group.put("unitLabelPrefix", "Заплыв");
         group.put("heatOrder", s.heatOrder()); group.put("partialHeat", s.partialHeat());
         group.put("ntPlacement", "WEAKEST");
         if (s.categories() != null && !s.categories().isEmpty()) {

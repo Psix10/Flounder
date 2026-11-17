@@ -1,9 +1,34 @@
+export type RegistrationGenderChange = {
+  source: 'PARTICIPANT_PROFILE'
+  sourceProfileId: string
+  confirmedByUserId: string
+  confirmedAt: string
+  oldValue: unknown
+  newValue: string
+}
+
+
+
 export type CorrectionHistoryItem = {
   reviewNote: string | null
   reviewedAt: string | null
   reviewedByUserId: string | null
   reply: string
   repliedAt: string
+  repliedByUserId?: string
+  genderChange?: RegistrationGenderChange
+}
+
+export type RegistrationWithdrawalHistoryItem = {
+  operation: 'WITHDRAW_CONFIRMED_REGISTRATION'
+  actorUserId: string
+  occurredAt: string
+  fromStatus: 'CONFIRMED'
+  toStatus: 'WITHDRAWN'
+  reason: string
+  previousReviewNote?: string | null
+  previousReviewedByUserId?: string | null
+  previousReviewedAt?: string | null
 }
 
 export type RegistrationMeta = {
@@ -11,7 +36,14 @@ export type RegistrationMeta = {
   emergencyContactPhone: string
   medicalCertificate: boolean
   agreeToRules: boolean
+  seedTimeSeconds?: number | null
   correctionHistory?: CorrectionHistoryItem[]
+  withdrawalHistory?: RegistrationWithdrawalHistoryItem[]
+  confirmedCorrection?: {
+    reservePlace: boolean
+    returnedAt: string
+    returnedByUserId: string
+  }
 }
 
 export type ParticipantSnapshot = {
@@ -28,7 +60,13 @@ export type ParticipantSnapshot = {
 
 export type CreateRegistrationRequest = {
   eventDisciplineId: string
-  registrationMeta: RegistrationMeta
+  registrationMeta: {
+    emergencyContactName: string
+    emergencyContactPhone: string
+    medicalCertificate: boolean
+    agreeToRules: boolean
+    seedTimeSeconds?: number
+  }
 }
 
 export type ResubmitRegistrationRequest = {
@@ -37,6 +75,7 @@ export type ResubmitRegistrationRequest = {
   emergencyContactPhone: string
   medicalCertificate: boolean
   agreeToRules: boolean
+  refreshGenderFromProfile: boolean
 }
 
 export type RegistrationStatus =
@@ -45,6 +84,7 @@ export type RegistrationStatus =
   | 'REJECTED'
   | 'NEEDS_CORRECTION'
   | 'CANCELLED'
+  | 'WITHDRAWN'
 
 export type Registration = {
   id: string

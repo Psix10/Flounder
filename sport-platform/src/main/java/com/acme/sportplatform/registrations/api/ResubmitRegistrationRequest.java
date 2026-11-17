@@ -20,6 +20,25 @@ public record ResubmitRegistrationRequest(
         boolean medicalCertificate,
 
         @AssertTrue(message = "Agreement to the rules is required")
-        boolean agreeToRules
+        boolean agreeToRules,
+
+        boolean refreshGenderFromProfile
 ) {
+
+    public ResubmitRegistrationRequest(
+            String reply,
+            String emergencyContactName,
+            String emergencyContactPhone,
+            boolean medicalCertificate,
+            boolean agreeToRules
+    ) {
+        this(
+                reply,
+                emergencyContactName,
+                emergencyContactPhone,
+                medicalCertificate,
+                agreeToRules,
+                false
+        );
+    }
 }

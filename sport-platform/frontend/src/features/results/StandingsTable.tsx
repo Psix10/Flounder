@@ -1,3 +1,5 @@
+// SWIM_LABELS_V1
+import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useState } from 'react'
 import type { Standings } from '../../api/standings.api'
 import { categoryOptions, filterStandings } from '../../lib/standings-ui.mjs'
@@ -23,7 +25,7 @@ export function StandingsTable({data}:{data:Standings}) {
         <thead><tr><th>Общее место</th><th>Место в категории</th><th>Категория</th><th>Участник</th><th>Клуб</th><th>Заплыв</th><th>Место в заплыве</th><th>Группа посева</th><th>Результат</th><th>Статус</th></tr></thead>
         <tbody>{entries.map((e,index)=><tr key={`${e.competitionUnitId}:${index}`}>
           <td>{e.overallPlace??'—'}</td><td>{e.categoryPlace??'—'}</td><td>{e.categoryCode??'—'}</td>
-          <td>{e.participantName}</td><td>{e.clubName??'—'}</td><td>{e.competitionUnitLabel}</td>
+          <td>{e.participantName}</td><td>{e.clubName??'—'}</td><td>{formatHeatLabel(e.competitionUnitLabel)}</td>
           <td>{e.unitPlace??'—'}</td><td>{e.seedingGroupCode??'—'}</td>
           <td>{e.status==='VALID'?(e.rawValue??'—'):'—'}</td><td>{statuses[e.status]??e.status}</td>
         </tr>)}</tbody>

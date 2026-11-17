@@ -1,3 +1,7 @@
+// OPERATOR_WORKSPACE_ROUTES_V1
+import { OperatorEventsPage, OperatorEventPage, OperatorDisciplinePage } from '../features/operator/OperatorWorkspacePages'
+// EVENT_OPERATORS_ROUTE_V1
+import { OrganizerEventOperatorsPage } from '../features/organizer/OrganizerEventOperatorsPage'
 import { Navigate, Route, Routes } from 'react-router'
 
 import { AppLayout } from '../components/AppLayout'
@@ -8,6 +12,9 @@ import { RegisterPage } from '../features/auth/RegisterPage'
 
 import { EventDetailsPage } from '../features/events/EventDetailsPage'
 import { EventsPage } from '../features/events/EventsPage'
+
+import { MyOrganizationRequestsPage } from '../features/organizations/MyOrganizationRequestsPage'
+import { OrganizationRequestsAdminPage } from '../features/organizations/OrganizationRequestsAdminPage'
 
 import { CreateEventPage } from '../features/organizer/CreateEventPage'
 import { OrganizerDashboardPage } from '../features/organizer/OrganizerDashboardPage'
@@ -20,6 +27,9 @@ import { OperatorPaymentsPage } from '../features/payments/OperatorPaymentsPage'
 import { OperatorRegistrationPage } from '../features/payments/OperatorRegistrationPage'
 import { PaymentPage } from '../features/payments/PaymentPage'
 
+import { MyProfilePage } from '../features/profile/MyProfilePage'
+
+import { SessionProtocolPage } from '../features/protocol/SessionProtocolPage'
 import { StartProtocolPage } from '../features/protocol/StartProtocolPage'
 
 import { MyRegistrationsPage } from '../features/registrations/MyRegistrationsPage'
@@ -41,6 +51,13 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<EventsPage />} />
 
+        <Route element={<RequireRole roles={['operator']} />}>
+          <Route path="operator/events" element={<OperatorEventsPage />} />
+          <Route path="operator/events/:eventId" element={<OperatorEventPage />} />
+          <Route path="operator/events/:eventId/disciplines/:disciplineId" element={<OperatorDisciplinePage />} />
+        </Route>
+
+
         <Route
           path="events/:eventCode"
           element={<EventDetailsPage />}
@@ -56,19 +73,29 @@ export default function App() {
           element={<PublicStandingsPage />}
         />
 
+        <Route path="login" element={<LoginPage />} />
+        <Route path="register" element={<RegisterPage />} />
+
         <Route
-          path="login"
-          element={<LoginPage />}
+          path="my/profile"
+          element={<MyProfilePage />}
         />
 
         <Route
-          path="register"
-          element={<RegisterPage />}
+          path="my/organization-requests"
+          element={<MyOrganizationRequestsPage />}
         />
 
         <Route
-          element={<RequireRole roles={['participant']} />}
+          element={<RequireRole roles={['platform_admin']} />}
         >
+          <Route
+            path="admin/organization-requests"
+            element={<OrganizationRequestsAdminPage />}
+          />
+        </Route>
+
+        <Route element={<RequireRole roles={['participant']} />}>
           <Route
             path="events/:eventCode/disciplines/:disciplineId/register"
             element={<RegistrationPage />}
@@ -92,19 +119,11 @@ export default function App() {
 
         <Route
           element={
-            <RequireRole
-              roles={['platform_admin', 'organizer']}
-            />
+            <RequireRole roles={['platform_admin', 'organizer']} />
           }
         >
-          <Route
-            path="organizer"
-            element={<OrganizerLayout />}
-          >
-            <Route
-              index
-              element={<OrganizerDashboardPage />}
-            />
+          <Route path="organizer" element={<OrganizerLayout />}>
+            <Route index element={<OrganizerDashboardPage />} />
 
             <Route
               path="events"
@@ -116,6 +135,7 @@ export default function App() {
               element={<CreateEventPage />}
             />
 
+            <Route path="events/:eventId/operators" element={<OrganizerEventOperatorsPage />} />
             <Route
               path="events/:eventId"
               element={<OrganizerEventManagePage />}
@@ -124,6 +144,11 @@ export default function App() {
             <Route
               path="events/:eventId/registrations"
               element={<OrganizerRegistrationsPage />}
+            />
+
+            <Route
+              path="events/:eventId/session-protocol"
+              element={<SessionProtocolPage />}
             />
 
             <Route
@@ -146,11 +171,7 @@ export default function App() {
         <Route
           element={
             <RequireRole
-              roles={[
-                'platform_admin',
-                'organizer',
-                'operator',
-              ]}
+              roles={['platform_admin', 'organizer', 'operator']}
             />
           }
         >
@@ -172,9 +193,7 @@ export default function App() {
 
         <Route
           element={
-            <RequireRole
-              roles={['platform_admin', 'operator']}
-            />
+            <RequireRole roles={['platform_admin', 'operator']} />
           }
         >
           <Route

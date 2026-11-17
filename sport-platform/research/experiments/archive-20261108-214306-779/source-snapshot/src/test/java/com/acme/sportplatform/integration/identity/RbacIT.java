@@ -41,7 +41,7 @@ class RbacIntegrationTest extends AbstractPostgresIntegrationTest {
                   "firstName": "User",
                   "lastName": "Testov",
                   "birthDate": "1997-01-10",
-                  "gender": "male",
+                  "gender": "MALE",
                   "city": "Moscow",
                   "countryCode": "RU",
                   "clubName": "Aqua Team"

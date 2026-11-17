@@ -19,11 +19,14 @@ public class OrganizationRegistrationService {
     private static final String PENDING_STATUS = "PENDING";
 
     private final OrganizationRegistrationRepository registrationRepository;
+    private final OrganizationInnGuard innGuard;
 
     public OrganizationRegistrationService(
-            OrganizationRegistrationRepository registrationRepository
+            OrganizationRegistrationRepository registrationRepository,
+            OrganizationInnGuard innGuard
     ) {
         this.registrationRepository = registrationRepository;
+        this.innGuard = innGuard;
     }
 
     @Transactional
@@ -44,6 +47,8 @@ public class OrganizationRegistrationService {
             );
         }
 
+        String inn = innGuard.requireAvailable(request.inn());
+
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         OrganizationRegistrationEntity entity =
@@ -53,7 +58,7 @@ public class OrganizationRegistrationService {
         entity.setOrganizationType(request.organizationType());
         entity.setOrganizationName(request.organizationName());
         entity.setLegalName(request.legalName());
-        entity.setInn(request.inn());
+        entity.setInn(inn);
         entity.setContactEmail(request.contactEmail());
         entity.setContactPhone(request.contactPhone());
         entity.setStatus(PENDING_STATUS);

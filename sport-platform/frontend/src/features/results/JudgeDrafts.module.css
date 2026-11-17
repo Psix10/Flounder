@@ -1,0 +1,13 @@
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 16px 0; }
+.button { min-height: 42px; padding: 10px 16px; border: 1px solid #bfcddd; border-radius: 8px; background: #edf3f7; color: #16485e; font: inherit; font-weight: 700; cursor: pointer; }
+.button:disabled { opacity: .6; cursor: not-allowed; }
+.button:focus-visible { outline: 3px solid #0b5b7b; outline-offset: 3px; }
+.primary { background: #0b5b7b; color: white; border-color: #0b5b7b; }
+.dirty { display: block; margin-top: 6px; color: #865c00; font-size: .8rem; font-weight: 700; }
+.rowError { display: block; color: #a12747; margin-top: 8px; white-space: pre-line; font-size: .85rem; line-height: 1.4; }
+.notice { padding: 14px 16px; margin: 16px 0; border: 1px solid #e6cd89; background: #fff9e9; border-radius: 8px; color: #674b19; line-height: 1.5; }
+.notice p { margin: 8px 0; }
+.status { margin: 0; font-size: .92rem; color: #465770; }
+.serverValue { display: block; font-size: .78rem; color: #65748c; margin-top: 5px; }
+.orphans { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .controls { align-items: stretch; flex-direction: column; } }

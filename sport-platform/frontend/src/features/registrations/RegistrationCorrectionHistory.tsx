@@ -15,7 +15,24 @@ function formatDate(value: string): string {
   return new Intl.DateTimeFormat('ru-RU', {
     dateStyle: 'medium',
     timeStyle: 'short',
+    timeZone: 'Europe/Moscow',
   }).format(date)
+}
+
+function genderLabel(value: unknown): string {
+  if (value === 'MALE') {
+    return 'Мужской'
+  }
+
+  if (value === 'FEMALE') {
+    return 'Женский'
+  }
+
+  if (value === null || value === undefined || value === '') {
+    return 'Не указан'
+  }
+
+  return 'Некорректное значение'
 }
 
 export function RegistrationCorrectionHistory({ items }: Props) {
@@ -37,6 +54,30 @@ export function RegistrationCorrectionHistory({ items }: Props) {
 
           <p className={styles.label}>Ответ участника</p>
           <p className={styles.text}>{item.reply}</p>
+
+          {item.genderChange ? (
+            <>
+              <p className={styles.label}>
+                Изменение пола в снимке заявки
+              </p>
+
+              <p className={styles.text}>
+                {genderLabel(item.genderChange.oldValue)}
+                {' → '}
+                {genderLabel(item.genderChange.newValue)}
+              </p>
+
+              <p className={styles.text}>
+                Источник: профиль участника. Перенос выполнен
+                с явным подтверждением участника.
+              </p>
+
+              <p className={styles.date}>
+                Подтверждено:{' '}
+                {formatDate(item.genderChange.confirmedAt)}
+              </p>
+            </>
+          ) : null}
 
           <p className={styles.date}>
             Отправлен: {formatDate(item.repliedAt)}

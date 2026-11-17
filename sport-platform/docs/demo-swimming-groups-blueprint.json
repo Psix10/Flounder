@@ -1,0 +1,224 @@
+{
+  "kind": "DESIGN_BLUEPRINT_NOT_AN_API_REQUEST",
+  "status": "NOT_APPLIED",
+  "target": "Separate new demo event; existing published/finalized event remains unchanged",
+  "referenceDate": "2026-11-16",
+  "categories": [
+    {
+      "code": "M_2014_2016",
+      "seedingGroupCode": "M_2014_2016",
+      "eligibility": {
+        "allowedGenders": [
+          "MALE"
+        ],
+        "ageMethod": "BY_YEAR",
+        "ageReferenceDate": "2026-11-16",
+        "minAge": 10,
+        "maxAge": 12
+      }
+    },
+    {
+      "code": "M_2012_2013",
+      "seedingGroupCode": "M_2012_2013",
+      "eligibility": {
+        "allowedGenders": [
+          "MALE"
+        ],
+        "ageMethod": "BY_YEAR",
+        "ageReferenceDate": "2026-11-16",
+        "minAge": 13,
+        "maxAge": 14
+      }
+    },
+    {
+      "code": "M_2010_2011",
+      "seedingGroupCode": "M_2010_2011",
+      "eligibility": {
+        "allowedGenders": [
+          "MALE"
+        ],
+        "ageMethod": "BY_YEAR",
+        "ageReferenceDate": "2026-11-16",
+        "minAge": 15,
+        "maxAge": 16
+      }
+    },
+    {
+      "code": "F_2014_2016",
+      "seedingGroupCode": "F_2014_2016",
+      "eligibility": {
+        "allowedGenders": [
+          "FEMALE"
+        ],
+        "ageMethod": "BY_YEAR",
+        "ageReferenceDate": "2026-11-16",
+        "minAge": 10,
+        "maxAge": 12
+      }
+    },
+    {
+      "code": "F_2012_2013",
+      "seedingGroupCode": "F_2012_2013",
+      "eligibility": {
+        "allowedGenders": [
+          "FEMALE"
+        ],
+        "ageMethod": "BY_YEAR",
+        "ageReferenceDate": "2026-11-16",
+        "minAge": 13,
+        "maxAge": 14
+      }
+    },
+    {
+      "code": "F_2010_2011",
+      "seedingGroupCode": "F_2010_2011",
+      "eligibility": {
+        "allowedGenders": [
+          "FEMALE"
+        ],
+        "ageMethod": "BY_YEAR",
+        "ageReferenceDate": "2026-11-16",
+        "minAge": 15,
+        "maxAge": 16
+      }
+    }
+  ],
+  "disciplines": [
+    {
+      "code": "M-50-FREE",
+      "distanceMeters": 50,
+      "stroke": "FREESTYLE",
+      "gender": "MALE",
+      "sessionNumber": 1,
+      "orderInSession": 1,
+      "allowedCategoryCodes": [
+        "M_2014_2016",
+        "M_2012_2013",
+        "M_2010_2011"
+      ]
+    },
+    {
+      "code": "F-50-FREE",
+      "distanceMeters": 50,
+      "stroke": "FREESTYLE",
+      "gender": "FEMALE",
+      "sessionNumber": 1,
+      "orderInSession": 2,
+      "allowedCategoryCodes": [
+        "F_2014_2016",
+        "F_2012_2013",
+        "F_2010_2011"
+      ]
+    },
+    {
+      "code": "M-100-FREE",
+      "distanceMeters": 100,
+      "stroke": "FREESTYLE",
+      "gender": "MALE",
+      "sessionNumber": 2,
+      "orderInSession": 1,
+      "allowedCategoryCodes": [
+        "M_2014_2016",
+        "M_2012_2013",
+        "M_2010_2011"
+      ]
+    },
+    {
+      "code": "F-100-FREE",
+      "distanceMeters": 100,
+      "stroke": "FREESTYLE",
+      "gender": "FEMALE",
+      "sessionNumber": 2,
+      "orderInSession": 2,
+      "allowedCategoryCodes": [
+        "F_2014_2016",
+        "F_2012_2013",
+        "F_2010_2011"
+      ]
+    },
+    {
+      "code": "M-50-BREAST",
+      "distanceMeters": 50,
+      "stroke": "BREASTSTROKE",
+      "gender": "MALE",
+      "sessionNumber": 1,
+      "orderInSession": 3,
+      "allowedCategoryCodes": [
+        "M_2014_2016",
+        "M_2012_2013",
+        "M_2010_2011"
+      ]
+    },
+    {
+      "code": "F-50-BREAST",
+      "distanceMeters": 50,
+      "stroke": "BREASTSTROKE",
+      "gender": "FEMALE",
+      "sessionNumber": 1,
+      "orderInSession": 4,
+      "allowedCategoryCodes": [
+        "F_2014_2016",
+        "F_2012_2013",
+        "F_2010_2011"
+      ]
+    },
+    {
+      "code": "M-100-BREAST",
+      "distanceMeters": 100,
+      "stroke": "BREASTSTROKE",
+      "gender": "MALE",
+      "sessionNumber": 2,
+      "orderInSession": 3,
+      "allowedCategoryCodes": [
+        "M_2014_2016",
+        "M_2012_2013",
+        "M_2010_2011"
+      ]
+    },
+    {
+      "code": "F-100-BREAST",
+      "distanceMeters": 100,
+      "stroke": "BREASTSTROKE",
+      "gender": "FEMALE",
+      "sessionNumber": 2,
+      "orderInSession": 4,
+      "allowedCategoryCodes": [
+        "F_2014_2016",
+        "F_2012_2013",
+        "F_2010_2011"
+      ]
+    },
+    {
+      "code": "M-50-FLY",
+      "distanceMeters": 50,
+      "stroke": "BUTTERFLY",
+      "gender": "MALE",
+      "sessionNumber": 1,
+      "orderInSession": 5,
+      "allowedCategoryCodes": [
+        "M_2014_2016",
+        "M_2012_2013",
+        "M_2010_2011"
+      ]
+    },
+    {
+      "code": "F-50-FLY",
+      "distanceMeters": 50,
+      "stroke": "BUTTERFLY",
+      "gender": "FEMALE",
+      "sessionNumber": 1,
+      "orderInSession": 6,
+      "allowedCategoryCodes": [
+        "F_2014_2016",
+        "F_2012_2013",
+        "F_2010_2011"
+      ]
+    }
+  ],
+  "warnings": [
+    "These field names describe a target scenario, not a new supported API contract.",
+    "The existing regulation configuration is event-wide. Discipline-specific sex/category admission must be verified before seeding applications.",
+    "No sessions, disciplines, participants, registrations or protocols have been created by this patch.",
+    "poolLengthMeters, venue, capacity, session windows and demo participant snapshots must be explicitly configured before generation."
+  ]
+}

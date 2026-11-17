@@ -1,3 +1,5 @@
+// SWIM_LABELS_V1
+import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
@@ -24,10 +26,10 @@ function getErrorMessage(error: unknown): string {
       return 'Дисциплина не найдена.'
     }
 
-    return error.message || 'Не удалось загрузить заходы.'
+    return error.message || 'Не удалось загрузить заплывы.'
   }
 
-  return 'Не удалось загрузить заходы.'
+  return 'Не удалось загрузить заплывы.'
 }
 
 function unitStatusLabel(status: string): string {
@@ -165,11 +167,11 @@ function CompetitionUnitsContent({
 
       <p className={styles.eyebrow}>Управление результатами</p>
 
-      <h1 className={styles.title}>Заходы и результаты</h1>
+      <h1 className={styles.title}>Заплывы и результаты</h1>
 
       <p className={styles.description}>
         {initialDisciplineId
-          ? 'Дисциплина уже выбрана. Нажмите «Открыть», затем выберите нужный заход.'
+          ? 'Дисциплина уже выбрана. Нажмите «Открыть», затем выберите нужный заплыв.'
           : 'Введите идентификатор дисциплины, чтобы открыть список заплывов, матчей, групп или финалов.'}
       </p>
 
@@ -210,7 +212,7 @@ function CompetitionUnitsContent({
 
       {isLoading ? (
         <div className={styles.stateCard} role="status">
-          Загружаем заходы…
+          Загружаем заплывы…
         </div>
       ) : null}
 
@@ -230,10 +232,10 @@ function CompetitionUnitsContent({
             <article className={styles.unitCard} key={unit.id}>
               <div>
                 <p className={styles.unitLabel}>
-                  Единица #{unit.sequenceNumber ?? '—'}
+                  Заплыв № {unit.sequenceNumber ?? '—'}
                 </p>
 
-                <h2 className={styles.unitTitle}>{unit.label}</h2>
+                <h2 className={styles.unitTitle}>{formatHeatLabel(unit.label)}</h2>
 
                 <p className={styles.unitMeta}>
                   Проведение: {formatDate(unit.scheduledAt)}

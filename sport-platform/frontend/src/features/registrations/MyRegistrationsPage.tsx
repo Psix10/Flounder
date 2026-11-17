@@ -1,3 +1,4 @@
+import { registrationStatusLabel as getStatusLabel } from './registration-withdrawal.mjs'
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
 
@@ -8,13 +9,14 @@ import { ErrorState } from '../../components/ErrorState'
 import { LoadingState } from '../../components/LoadingState'
 import { RegistrationCorrectionForm } from './RegistrationCorrectionForm'
 import { RegistrationCorrectionHistory } from './RegistrationCorrectionHistory'
+import { RegistrationWithdrawalHistory } from './RegistrationWithdrawalHistory'
 import type {
   Registration,
   RegistrationStatus,
 } from './registration.types'
 import styles from './MyRegistrationsPage.module.css'
 
-function formatDate(value: string) {
+function formatDate(value: string): string {
   const date = new Date(value)
 
   if (Number.isNaN(date.getTime())) {
@@ -28,38 +30,81 @@ function formatDate(value: string) {
   }).format(date)
 }
 
-function getStatusLabel(status: RegistrationStatus) {
-  const labels: Record<RegistrationStatus, string> = {
-    SUBMITTED: 'На рассмотрении',
-    CONFIRMED: 'Подтверждена',
-    REJECTED: 'Отклонена',
-    NEEDS_CORRECTION: 'Требует уточнения',
-    CANCELLED: 'Отменена',
+function formatSeedTime(value: unknown): string {
+  if (value === undefined || value === null) {
+    return 'Без заявочного времени (NT)'
   }
 
-  return labels[status] ?? status
+  if (
+    typeof value !== 'number' ||
+    !Number.isFinite(value) ||
+    value <= 0
+  ) {
+    return 'Некорректное заявочное время'
+  }
+
+  const scaled = value * 100
+  const totalHundredths = Math.round(scaled)
+
+  if (
+    !Number.isSafeInteger(totalHundredths) ||
+    totalHundredths <= 0 ||
+    Math.abs(scaled - totalHundredths) > 0.000001
+  ) {
+    return 'Некорректное заявочное время'
+  }
+
+  const minutes = Math.floor(totalHundredths / 6000)
+  const seconds = Math.floor((totalHundredths % 6000) / 100)
+  const hundredths = totalHundredths % 100
+
+  return (
+    `${String(minutes).padStart(2, '0')}:` +
+    `${String(seconds).padStart(2, '0')}.` +
+    String(hundredths).padStart(2, '0')
+  )
 }
 
-function getStatusClassName(status: RegistrationStatus) {
+function getSeedTimeLabel(registration: Registration): string {
+  const meta: unknown = registration.registrationMeta
+
+  if (meta === undefined || meta === null) {
+    return formatSeedTime(undefined)
+  }
+
+  if (typeof meta !== 'object' || Array.isArray(meta)) {
+    return 'Некорректные данные заявки'
+  }
+
+  if (!('seedTimeSeconds' in meta)) {
+    return formatSeedTime(undefined)
+  }
+
+  return formatSeedTime(meta.seedTimeSeconds)
+}
+
+
+function getStatusClassName(status: RegistrationStatus): string {
   const classes: Record<RegistrationStatus, string> = {
     SUBMITTED: styles.statusSubmitted,
     CONFIRMED: styles.statusConfirmed,
     REJECTED: styles.statusRejected,
     NEEDS_CORRECTION: styles.statusCorrection,
     CANCELLED: styles.statusCancelled,
+    WITHDRAWN: styles.statusCancelled,
   }
 
   return `${styles.statusBadge} ${classes[status] ?? ''}`
 }
 
-function getParticipantName(registration: Registration) {
+function getParticipantName(registration: Registration): string {
   const { firstName, lastName, middleName } =
     registration.participantSnapshot
 
   return [lastName, firstName, middleName].filter(Boolean).join(' ')
 }
 
-function getStatusHint(status: RegistrationStatus) {
+function getStatusHint(status: RegistrationStatus): string | null {
   const hints: Record<RegistrationStatus, string | null> = {
     SUBMITTED:
       'Организатор проверяет заявку. Если вы отправили исправления, дождитесь повторного рассмотрения.',
@@ -71,18 +116,21 @@ function getStatusHint(status: RegistrationStatus) {
       'Заявка отклонена. Оплата для неё недоступна.',
     CANCELLED:
       'Заявка отменена. Оплата для неё недоступна.',
+    WITHDRAWN:
+      'Заявка снята с участия. Создание оплаты и отправка исправлений недоступны. Причина указана в комментарии и истории.',
   }
 
   return hints[status]
 }
 
-function getStatusHintClassName(status: RegistrationStatus) {
+function getStatusHintClassName(status: RegistrationStatus): string {
   const classes: Record<RegistrationStatus, string> = {
     SUBMITTED: styles.hintSubmitted,
     CONFIRMED: styles.hintConfirmed,
     NEEDS_CORRECTION: styles.hintCorrection,
     REJECTED: styles.hintRejected,
     CANCELLED: styles.hintCancelled,
+    WITHDRAWN: styles.hintCancelled,
   }
 
   return `${styles.statusHint} ${classes[status] ?? ''}`
@@ -148,6 +196,7 @@ export function MyRegistrationsPage() {
         registration.id === updated.id ? updated : registration,
       ),
     )
+
     setSuccessMessage(
       'Исправления отправлены. Заявка снова находится на рассмотрении.',
     )
@@ -186,6 +235,7 @@ export function MyRegistrationsPage() {
         <div className={styles.emptyState}>
           <h2>Заявок пока нет</h2>
           <p>Выберите соревнование и подайте первую заявку.</p>
+
           <Link className={styles.primaryButton} to="/">
             Найти соревнование
           </Link>
@@ -202,6 +252,7 @@ export function MyRegistrationsPage() {
                 <div className={styles.cardHeader}>
                   <div>
                     <p className={styles.cardLabel}>Заявка</p>
+
                     <h2 className={styles.participantName}>
                       {getParticipantName(registration)}
                     </h2>
@@ -215,6 +266,11 @@ export function MyRegistrationsPage() {
                 </div>
 
                 <dl className={styles.facts}>
+                  <div>
+                    <dt>Заявочное время</dt>
+                    <dd>{getSeedTimeLabel(registration)}</dd>
+                  </div>
+
                   <div>
                     <dt>Последняя отправка</dt>
                     <dd>{formatDate(registration.submittedAt)}</dd>
@@ -256,6 +312,10 @@ export function MyRegistrationsPage() {
 
                 <RegistrationCorrectionHistory
                   items={registration.registrationMeta?.correctionHistory}
+                />
+
+                <RegistrationWithdrawalHistory
+                  items={registration.registrationMeta?.withdrawalHistory}
                 />
 
                 {registration.status === 'NEEDS_CORRECTION' &&

@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,10 @@ import com.acme.sportplatform.identity.infrastructure.persistence.repository.Pro
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRoleAssignmentRepository;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberRepository;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationRepository;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryEntity;
 import com.acme.sportplatform.results.infrastructure.jpa.CompetitionUnitEntryRepository;
@@ -59,6 +62,17 @@ import jakarta.persistence.PersistenceContext;
 
 @AutoConfigureMockMvc
 class CategoryStandingsIntegrationTest extends AbstractPostgresIntegrationTest {
+
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private OrganizationMemberRepository organizationMemberRepository;
+
+    private final Map<UUID, PlatformUserPrincipal> registrationOrganizersByEvent =
+            new java.util.HashMap<>();
+
+
 
     private static final UUID SWIMMING_SPORT_ID =
             UUID.fromString("10000000-0000-0000-0000-000000000001");
@@ -446,7 +460,7 @@ class CategoryStandingsIntegrationTest extends AbstractPostgresIntegrationTest {
                         "/api/v1/registrations/{registrationId}/review",
                         registrationId
                 )
-                        .with(user(principal("ORGANIZER")))
+                        .with(user(registrationOrganizerForDiscipline(disciplineId)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -461,12 +475,15 @@ class CategoryStandingsIntegrationTest extends AbstractPostgresIntegrationTest {
     }
 
     private UUID createEvent() {
+        ManagedRegistrationOrganization managed =
+                createManagedRegistrationOrganization();
+
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
         EventEntity event = new EventEntity();
         event.setId(UUID.randomUUID());
-        event.setCreatedByUserId(UUID.randomUUID());
-        event.setOrganizationId(UUID.randomUUID());
+        event.setCreatedByUserId(managed.organizerPrincipal().getUserId());
+        event.setOrganizationId(managed.organizationId());
         event.setVenueId(UUID.randomUUID());
         event.setSportId(SWIMMING_SPORT_ID);
         event.setRegulationVersionId(UUID.randomUUID());
@@ -482,7 +499,9 @@ class CategoryStandingsIntegrationTest extends AbstractPostgresIntegrationTest {
         event.setCreatedAt(now);
         event.setUpdatedAt(now);
 
-        return eventRepository.saveAndFlush(event).getId();
+        UUID eventId = eventRepository.saveAndFlush(event).getId();
+        registrationOrganizersByEvent.put(eventId, managed.organizerPrincipal());
+        return eventId;
     }
 
     private UUID createDisciplineTemplate() {
@@ -576,4 +595,66 @@ class CategoryStandingsIntegrationTest extends AbstractPostgresIntegrationTest {
             UUID entryId
     ) {
     }
+    private ManagedRegistrationOrganization createManagedRegistrationOrganization() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        UserEntity organizer = new UserEntity();
+        organizer.setEmail("review-organizer-" + UUID.randomUUID() + "@example.com");
+        organizer.setPhone("+79990000001");
+        organizer.setPasswordHash("test-password-hash");
+        organizer.setStatus("active");
+        organizer = userRepository.saveAndFlush(organizer);
+
+        OrganizationEntity organization = new OrganizationEntity();
+        organization.setType("CLUB");
+        organization.setName("Registration review fixture " + UUID.randomUUID());
+        organization.setMeta("{}");
+        organization.setCreatedAt(now);
+        organization.setUpdatedAt(now);
+        organization = organizationRepository.saveAndFlush(organization);
+
+        OrganizationMemberEntity owner = new OrganizationMemberEntity();
+        owner.setOrganizationId(organization.getId());
+        owner.setUserId(organizer.getId());
+        owner.setMemberRole("OWNER");
+        owner.setCreatedAt(now);
+        organizationMemberRepository.saveAndFlush(owner);
+
+        PlatformUserPrincipal organizerPrincipal = new PlatformUserPrincipal(
+                organizer.getId(),
+                organizer.getEmail(),
+                "",
+                "active",
+                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+        );
+
+        return new ManagedRegistrationOrganization(
+                organization.getId(), organizerPrincipal
+        );
+    }
+
+    private PlatformUserPrincipal registrationOrganizerForEvent(UUID eventId) {
+        PlatformUserPrincipal organizer = registrationOrganizersByEvent.get(eventId);
+        if (organizer == null) {
+            throw new IllegalStateException(
+                    "Registration organizer fixture not found for event " + eventId
+            );
+        }
+        return organizer;
+    }
+
+    private record ManagedRegistrationOrganization(
+            UUID organizationId,
+            PlatformUserPrincipal organizerPrincipal
+    ) {
+    }
+    private PlatformUserPrincipal registrationOrganizerForDiscipline(UUID disciplineId) {
+        EventDisciplineEntity discipline = eventDisciplineRepository
+                .findById(disciplineId)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Discipline fixture not found: " + disciplineId
+                ));
+        return registrationOrganizerForEvent(discipline.getEventId());
+    }
+
 }

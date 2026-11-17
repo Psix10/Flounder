@@ -9,9 +9,19 @@ public interface RegistrationLookup {
 
     RegistrationLookupResult getById(UUID registrationId);
 
+    /**
+     * Locks the registration for an operation that changes related data.
+     * Must be called inside the caller's read-write transaction.
+     */
+    RegistrationLookupResult getByIdForUpdate(UUID registrationId);
+
     Optional<RegistrationLookupResult> findById(UUID registrationId);
 
-    List<RegistrationLookupResult> findByIdIn(Collection<UUID> registrationIds);
+    List<RegistrationLookupResult> findByIdIn(
+            Collection<UUID> registrationIds
+    );
 
-    List<RegistrationLookupResult> findByEventDisciplineId(UUID eventDisciplineId);
+    List<RegistrationLookupResult> findByEventDisciplineId(
+            UUID eventDisciplineId
+    );
 }

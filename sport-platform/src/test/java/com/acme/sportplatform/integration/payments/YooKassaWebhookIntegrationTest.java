@@ -32,6 +32,10 @@ import com.acme.sportplatform.identity.infrastructure.persistence.entity.UserEnt
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.ProfileRepository;
 import com.acme.sportplatform.identity.infrastructure.persistence.repository.UserRepository;
 import com.acme.sportplatform.identity.infrastructure.security.PlatformUserPrincipal;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberEntity;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationMemberRepository;
+import com.acme.sportplatform.organizations.infrastructure.jpa.OrganizationRepository;
 import com.acme.sportplatform.payments.domain.PaymentProvider;
 import com.acme.sportplatform.payments.domain.PaymentStatus;
 import com.acme.sportplatform.payments.domain.PaymentWebhookProcessingStatus;
@@ -48,13 +52,20 @@ import com.jayway.jsonpath.JsonPath;
 class YooKassaWebhookIntegrationTest
         extends AbstractPostgresIntegrationTest {
 
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private OrganizationMemberRepository organizationMemberRepository;
+
+    private final Map<UUID, PlatformUserPrincipal> registrationOrganizersByEvent =
+            new java.util.HashMap<>();
+
+
+
         private static final UUID SWIMMING_SPORT_ID =
                 UUID.fromString("10000000-0000-0000-0000-000000000001");
-        
-        private static final UUID TEST_EVENT_CREATOR_ID =
-                UUID.fromString(
-                        "20000000-0000-0000-0000-000000000001"
-                );
+
 
         private static final String WEBHOOK_URL =
                 "/api/v1/payments/webhooks/yookassa";
@@ -315,17 +326,7 @@ class YooKassaWebhookIntegrationTest
                 );
 
                 PlatformUserPrincipal organizerPrincipal =
-                        new PlatformUserPrincipal(
-                                UUID.randomUUID(),
-                                "organizer-webhook@example.com",
-                                "",
-                                "active",
-                                List.of(
-                                        new SimpleGrantedAuthority(
-                                                "ROLE_ORGANIZER"
-                                        )
-                                )
-                        );
+                        registrationOrganizerForEvent(eventId);
 
                 String reviewRequestJson = """
                         {
@@ -381,14 +382,17 @@ class YooKassaWebhookIntegrationTest
         }
 
         private UUID createEventWithOpenRegistration() {
+        ManagedRegistrationOrganization managed =
+                createManagedRegistrationOrganization();
+
                 OffsetDateTime now =
                         OffsetDateTime.now(ZoneOffset.UTC);
 
                 EventEntity event = new EventEntity();
 
                 event.setId(UUID.randomUUID());
-                event.setCreatedByUserId(TEST_EVENT_CREATOR_ID);
-                event.setOrganizationId(UUID.randomUUID());
+                event.setCreatedByUserId(managed.organizerPrincipal().getUserId());
+                event.setOrganizationId(managed.organizationId());
                 event.setVenueId(UUID.randomUUID());
                 event.setSportId(SWIMMING_SPORT_ID);
                 event.setRegulationVersionId(UUID.randomUUID());
@@ -410,9 +414,9 @@ class YooKassaWebhookIntegrationTest
                 event.setCreatedAt(now);
                 event.setUpdatedAt(now);
 
-                return eventRepository
-                        .saveAndFlush(event)
-                        .getId();
+                UUID eventId = eventRepository.saveAndFlush(event).getId();
+        registrationOrganizersByEvent.put(eventId, managed.organizerPrincipal());
+        return eventId;
                 }
 
         private UUID createDisciplineTemplate() {
@@ -499,4 +503,57 @@ class YooKassaWebhookIntegrationTest
                         }
                         """.formatted(externalPaymentId);
         }
+    private ManagedRegistrationOrganization createManagedRegistrationOrganization() {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        UserEntity organizer = new UserEntity();
+        organizer.setEmail("review-organizer-" + UUID.randomUUID() + "@example.com");
+        organizer.setPhone("+79990000001");
+        organizer.setPasswordHash("test-password-hash");
+        organizer.setStatus("active");
+        organizer = userRepository.saveAndFlush(organizer);
+
+        OrganizationEntity organization = new OrganizationEntity();
+        organization.setType("CLUB");
+        organization.setName("Registration review fixture " + UUID.randomUUID());
+        organization.setMeta("{}");
+        organization.setCreatedAt(now);
+        organization.setUpdatedAt(now);
+        organization = organizationRepository.saveAndFlush(organization);
+
+        OrganizationMemberEntity owner = new OrganizationMemberEntity();
+        owner.setOrganizationId(organization.getId());
+        owner.setUserId(organizer.getId());
+        owner.setMemberRole("OWNER");
+        owner.setCreatedAt(now);
+        organizationMemberRepository.saveAndFlush(owner);
+
+        PlatformUserPrincipal organizerPrincipal = new PlatformUserPrincipal(
+                organizer.getId(),
+                organizer.getEmail(),
+                "",
+                "active",
+                List.of(new SimpleGrantedAuthority("ROLE_ORGANIZER"))
+        );
+
+        return new ManagedRegistrationOrganization(
+                organization.getId(), organizerPrincipal
+        );
+    }
+
+    private PlatformUserPrincipal registrationOrganizerForEvent(UUID eventId) {
+        PlatformUserPrincipal organizer = registrationOrganizersByEvent.get(eventId);
+        if (organizer == null) {
+            throw new IllegalStateException(
+                    "Registration organizer fixture not found for event " + eventId
+            );
+        }
+        return organizer;
+    }
+
+    private record ManagedRegistrationOrganization(
+            UUID organizationId,
+            PlatformUserPrincipal organizerPrincipal
+    ) {
+    }
 }
