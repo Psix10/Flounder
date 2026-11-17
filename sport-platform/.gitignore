@@ -36,3 +36,7 @@ frontend/dist/
 /frontend/node_modules/
 /frontend/dist/
 /standings-layout-backup-*/
+
+# Local patch tooling and test backups
+/install_time_validation.py
+/test-config-backups/
