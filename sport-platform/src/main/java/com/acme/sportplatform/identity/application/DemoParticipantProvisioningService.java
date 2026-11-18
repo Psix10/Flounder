@@ -30,6 +30,13 @@ public class DemoParticipantProvisioningService implements DemoParticipantProvis
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
     public ProfileLookupResult create(UUID eventId, UUID batchId, int ordinal) {
+        return create(eventId, batchId, ordinal, new Fixture(
+                ordinal % 2 == 1 ? "MALE" : "FEMALE", LocalDate.of(2000, 1, 1)));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public ProfileLookupResult create(UUID eventId, UUID batchId, int ordinal, Fixture fixture) {
         mode.requireAllowed(eventId);
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()
@@ -40,6 +47,8 @@ public class DemoParticipantProvisioningService implements DemoParticipantProvis
             throw new AccessDeniedException("Organizer platform principal required");
         }
         if (batchId == null || ordinal < 1 || ordinal > 64) throw new IllegalArgumentException("Invalid demo ordinal");
+        if (fixture == null) throw new IllegalArgumentException("Demo fixture is required");
+        boolean male = "MALE".equals(fixture.gender());
         var user = new UserEntity();
         user.setEmail("demo-fixture-" + batchId + "-" + String.format("%03d", ordinal) + "@example.invalid");
         user.setPasswordHash(passwords.encode(UUID.randomUUID().toString() + UUID.randomUUID()));
@@ -47,10 +56,10 @@ public class DemoParticipantProvisioningService implements DemoParticipantProvis
         user = users.saveAndFlush(user);
         var profile = new ProfileEntity();
         profile.setUserId(user.getId());
-        profile.setFirstName(ordinal % 2 == 1 ? "Демо-участник" : "Демо-участница");
+        profile.setFirstName(male ? "Демо-участник" : "Демо-участница");
         profile.setLastName(String.format("Тестовый-%03d", ordinal));
-        profile.setBirthDate(LocalDate.of(2000, 1, 1));
-        profile.setGender(ordinal % 2 == 1 ? "male" : "female");
+        profile.setBirthDate(fixture.birthDate());
+        profile.setGender(male ? "male" : "female");
         profile.setCity("Москва"); profile.setCountryCode("RU");
         profile.setClubName("Демо-клуб");
         profile.setSportMeta(Map.of("demoFixture", true, "demoBatchId", batchId.toString()));

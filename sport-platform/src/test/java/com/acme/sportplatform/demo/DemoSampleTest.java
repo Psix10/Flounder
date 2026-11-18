@@ -31,10 +31,10 @@ class DemoSampleTest {
         var settings = new Settings(4,List.of(1,2,3,4),"points","FASTEST_FIRST","LAST");
         assertThrows(DemoDataException.class,()->DemoSample.count(settings));
     }
-    @Test void rejectsCustomAgePolicyInsteadOfIgnoringIt() throws Exception {
+    @Test void sizeCalculationLeavesCategoryValidationToThePlanner() throws Exception {
         var items = categories(true);
         ((com.fasterxml.jackson.databind.node.ObjectNode)items.get(0).path("eligibility")).put("minAge",30);
-        assertThrows(DemoDataException.class,()->DemoSample.count(settings(4,items)));
+        assertEquals(8,DemoSample.count(settings(4,items)));
     }
     @Test void exactlyOneMissingMetric() {
         assertEquals(1,IntStream.rangeClosed(1,8).filter(i->DemoSample.metric(i,8)==null).count());

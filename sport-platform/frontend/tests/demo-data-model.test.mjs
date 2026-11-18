@@ -2,11 +2,12 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { buildDemoRequest, isMatchingDemoPlan } from '../src/features/protocol/demo-data-model.mjs'
 const id = '00000000-0000-4000-8000-000000000001'
+const dataset = 'SWIM_ELIGIBLE_V2:' + 'a'.repeat(64)
 const plan = { eventId: 'event', disciplineId: 'discipline', ruleVersionId: id,
-  capacity: 4, count: 8, datasetVersion: 'SWIM_MIXED_V1', state: 'AVAILABLE' }
+  capacity: 4, count: 8, datasetVersion: dataset, state: 'AVAILABLE' }
 test('request is bound to displayed rule, capacity and count', () => {
   assert.deepEqual(buildDemoRequest(plan,id,true), { requestId:id, expectedRuleVersionId:id,
-    expectedCapacity:4, expectedCount:8, datasetVersion:'SWIM_MIXED_V1', confirmed:true })
+    expectedCapacity:4, expectedCount:8, datasetVersion:dataset, confirmed:true })
 })
 test('request is frozen and does not carry arbitrary participants or statuses', () => {
   const request=buildDemoRequest(plan,id,true)
@@ -36,4 +37,14 @@ test('preview must refer to the exact event and discipline', () => {
   assert.equal(isMatchingDemoPlan(plan,'other','discipline'),false)
   assert.equal(isMatchingDemoPlan(plan,'event','other'),false)
   assert.equal(isMatchingDemoPlan(null,'event','discipline'),false)
+})
+
+test('legacy datasets remain non-submittable for fresh creation', () => {
+  assert.throws(() => buildDemoRequest({...plan,datasetVersion:'SWIM_MIXED_V1'},id,true))
+})
+test('dataset fingerprint must be a full lowercase SHA-256', () => {
+  for (const value of [null, undefined, 'SWIM_ELIGIBLE_V2', 'SWIM_ELIGIBLE_V2:' + 'a'.repeat(63),
+    'SWIM_ELIGIBLE_V2:' + 'g'.repeat(64), 'SWIM_ELIGIBLE_V2:' + 'A'.repeat(64)]) {
+    assert.throws(() => buildDemoRequest({...plan,datasetVersion:value},id,true))
+  }
 })

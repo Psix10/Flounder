@@ -13,6 +13,6 @@ public class DemoDisciplineConstraintsService implements DemoDisciplineConstrain
     public View read(UUID id) {
         var d = repository.findById(id).orElseThrow(() -> new DemoDataException(404,
                 "demo.discipline_not_found", "Дисциплина не найдена."));
-        return new View(d.getParticipantLimit(), d.getResultType(), d.getRankingStrategy());
+        return new View(d.getParticipantLimit(), d.getResultType(), d.getRankingStrategy(), d.getSettingsJson());
     }
 }

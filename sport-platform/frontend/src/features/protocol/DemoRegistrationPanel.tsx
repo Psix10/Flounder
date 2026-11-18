@@ -102,9 +102,10 @@ export function DemoRegistrationPanel({
       {plan.receipt ? <p>Создан набор {plan.receipt.requestId}. Повторное наполнение недоступно.</p> : null}
       <p>Количество заплывов зависит от правил и групп посева. Наполнение само не сохраняет протокол.</p>
       <div className={styles.table}><table>
-        <thead><tr><th>Участник</th><th>Пол в снимке</th><th>Заявочное время</th></tr></thead>
+        <thead><tr><th>Участник</th><th>Пол в снимке</th><th>Дата рождения</th><th>Категория</th><th>Группа посева</th><th>Заявочное время</th></tr></thead>
         <tbody>{plan.participants.map((row) => <tr key={row.ordinal}>
-          <td>{row.name}</td><td>{row.gender === 'MALE' ? 'Мужской' : 'Женский'}</td>
+          <td>{row.name}</td><td>{row.gender === 'MALE' ? 'Мужской' : row.gender === 'FEMALE' ? 'Женский' : '—'}</td>
+          <td>{row.birthDate ?? '—'}</td><td>{row.categoryCode ?? 'Без категорий'}</td><td>{row.seedingGroupCode ?? '—'}</td>
           <td>{row.seedTimeSeconds == null ? 'Без времени (NT)' : `${row.seedTimeSeconds.toFixed(2)} с`}</td>
         </tr>)}</tbody>
       </table></div>

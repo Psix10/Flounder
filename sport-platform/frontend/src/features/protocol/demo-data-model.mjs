@@ -8,7 +8,7 @@ export function buildDemoRequest(plan, requestId, confirmed) {
     throw new Error('Некорректный размер демонабора.')
   }
   if (!uuid.test(plan.ruleVersionId) || !uuid.test(requestId)) throw new Error('Не удалось подготовить идентификатор операции.')
-  if (plan.datasetVersion !== 'SWIM_MIXED_V1') throw new Error('Версия демонабора изменилась. Обновите страницу.')
+  if (typeof plan.datasetVersion !== 'string' || !/^SWIM_ELIGIBLE_V2:[0-9a-f]{64}$/.test(plan.datasetVersion)) throw new Error('Версия демонабора изменилась. Обновите страницу.')
   if (confirmed !== true) throw new Error('Подтвердите создание тестовых данных.')
   return Object.freeze({
     requestId, expectedRuleVersionId: plan.ruleVersionId,

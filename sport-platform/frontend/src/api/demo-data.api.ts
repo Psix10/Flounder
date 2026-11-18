@@ -4,6 +4,9 @@ export type DemoRow = {
   ordinal: number
   name: string
   gender: string
+  birthDate?: string | null
+  categoryCode?: string | null
+  seedingGroupCode?: string | null
   seedTimeSeconds: number | null
   registrationId: string | null
 }
