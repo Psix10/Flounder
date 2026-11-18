@@ -5,6 +5,8 @@ import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { ApiError } from '../../api/http'
+import { getEventDisciplines } from '../../api/events.api'
+import { getOperatorDisciplines } from '../../api/operator-workspace.api'
 import {
   changeCompetitionUnitPublication, getCompetitionUnitDetails, recalculatePlaces, recordResult,
   type CompetitionUnitDetailsResponse, type ResultType,
@@ -69,6 +71,47 @@ function JudgePanelContent({ unitId, token }: { unitId: string; token: string })
   const canRecord = hasRole('platform_admin') || hasRole('operator') || hasRole('organizer')
   const canPublish = canRecord
   const [unit, setUnit] = useState<CompetitionUnitDetailsResponse | null>(null)
+  const contextEventId = operatorSearchParams.get('eventId')
+  const actualDisciplineId = unit?.eventDisciplineId
+  const isOperator = hasRole('operator')
+  const [disciplineDetails, setDisciplineDetails] = useState<{
+    eventId: string
+    disciplineId: string
+    name: string | null
+  } | null>(null)
+
+  useEffect(() => {
+    if (!contextEventId || !actualDisciplineId) return
+
+    let active = true
+    const request = isOperator
+      ? getOperatorDisciplines(contextEventId, token)
+      : getEventDisciplines(contextEventId, token)
+
+    void request.then(disciplines => {
+      if (!active) return
+      const name = disciplines.find(item => item.id === actualDisciplineId)?.name?.trim()
+      setDisciplineDetails({
+        eventId: contextEventId,
+        disciplineId: actualDisciplineId,
+        name: name || null,
+      })
+    }).catch(() => {
+      if (active) setDisciplineDetails({
+        eventId: contextEventId,
+        disciplineId: actualDisciplineId,
+        name: null,
+      })
+    })
+
+    return () => { active = false }
+  }, [contextEventId, actualDisciplineId, isOperator, token])
+
+  const disciplineName = disciplineDetails &&
+    disciplineDetails.eventId === contextEventId &&
+    disciplineDetails.disciplineId === actualDisciplineId
+    ? disciplineDetails.name
+    : null
   const [drafts, setDrafts] = useState<Drafts>({})
   const [resultType, setResultType] = useState<ResultType>('TIME')
   const [loading, setLoading] = useState(true)
@@ -306,7 +349,10 @@ function JudgePanelContent({ unitId, token }: { unitId: string; token: string })
         <div><span className={styles.summaryLabel}>Статус</span><strong>{unitLabel(unit.status)}</strong></div>
         <div><span className={styles.summaryLabel}>Участников</span><strong>{entries.length}</strong></div>
         <div><span className={styles.summaryLabel}>Сохранено результатов</span><strong>{completeCount} / {entries.length}</strong></div>
-        <div className={styles.disciplineSummary}><span className={styles.summaryLabel}>ID дисциплины</span><code>{unit.eventDisciplineId}</code></div>
+        <div className={styles.disciplineSummary}>
+          <span className={styles.summaryLabel}>Дисциплина</span>
+          <strong>{disciplineName ? formatHeatLabel(disciplineName) : 'Название дисциплины недоступно'}</strong>
+        </div>
       </div>
       {published ? <div className={styles.publishedNotice} role="status">
         <div><strong>Результаты опубликованы</strong><p>Ввод и пересчёт заблокированы. Для просмотра показаны сохранённые серверные значения.</p></div>

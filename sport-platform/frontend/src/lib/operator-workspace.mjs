@@ -39,7 +39,13 @@ export function operatorJudgePath(eventId, disciplineId, unitId) {
   return `/operator/competition-units/${requireId(unitId)}?${query}`
 }
 export function operatorResultsBackPath(eventId, disciplineId, actualDisciplineId, isOperator = false) {
-  if (!isOperator) return '/operator/results'
+  if (!isOperator) {
+    if (id(eventId) && id(disciplineId) && disciplineId === actualDisciplineId) {
+      const query = new URLSearchParams({ eventId, disciplineId })
+      return `/operator/results?${query}`
+    }
+    return '/operator/results'
+  }
   if (id(eventId) && id(disciplineId) && disciplineId === actualDisciplineId) return operatorDisciplinePath(eventId, disciplineId)
   return '/operator/events'
 }

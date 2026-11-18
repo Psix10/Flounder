@@ -1,3 +1,4 @@
+import { buildSessionDisciplineLabels } from './sessionDisciplineLabels'
 import { useEffect, useState } from 'react'
 import { NavLink, useParams } from 'react-router'
 
@@ -114,9 +115,7 @@ function SessionProtocolContent({
     }
   }, [eventId, accessToken])
 
-  const names = new Map(
-    disciplines.map((discipline) => [discipline.id, discipline.name]),
-  )
+  const names = buildSessionDisciplineLabels(disciplines)
 
   const units = new Map(
     (protocol?.disciplines ?? []).flatMap((discipline) =>

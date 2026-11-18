@@ -249,9 +249,15 @@ function CompetitionUnitsContent({
 
                 <Link
                   className={styles.openLink}
-                  to={`/operator/competition-units/${encodeURIComponent(
-                    unit.id,
-                  )}`}
+                  to={{
+                    pathname: `/operator/competition-units/${encodeURIComponent(unit.id)}`,
+                    search: sourceEventId
+                      ? `?${new URLSearchParams({
+                          eventId: sourceEventId,
+                          disciplineId: unit.eventDisciplineId,
+                        }).toString()}`
+                      : '',
+                  }}
                 >
                   Открыть результаты
                 </Link>

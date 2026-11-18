@@ -1,3 +1,4 @@
+import { buildSessionDisciplineLabels } from './sessionDisciplineLabels'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 
 import type { EventDiscipline } from '../../api/events.api'
@@ -144,9 +145,7 @@ export function SessionProtocolForm({
     }
   }, [])
 
-  const names = new Map(
-    disciplines.map((discipline) => [discipline.id, discipline.name]),
-  )
+  const names = buildSessionDisciplineLabels(disciplines)
 
   function updateRow(id: string, patch: Partial<DisciplineRow>) {
     setRows((current) =>
