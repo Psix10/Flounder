@@ -215,7 +215,7 @@ export function OrganizerEventJourney({
           ) : null}
 
           {snapshot.kind === 'missing' ? (
-            <p>Общий снимок программы ещё не сохранён.</p>
+            <p>Общая программа заплывов ещё не сохранена.</p>
           ) : null}
 
           {snapshot.kind === 'saved' ? (

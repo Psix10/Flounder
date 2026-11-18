@@ -131,7 +131,7 @@ function StandingsWorkspace({eventId,disciplineId,accessToken}:{eventId:string;d
       <button className={styles.button} type="button" disabled={busy||loading} onClick={()=>void reload()}>Обновить</button>
     </div>
     {final.kind==='loading'?<p role="status">Проверяем состояние итогов…</p>:final.kind==='error'?<><p>Статус финализации неизвестен. Действия заблокированы до успешной проверки.</p><Failure error={final.error}/></>:
-      <p className={styles.notice}>{current?`Итог подтверждён: ревизия № ${current.revision}. Изменения защищены сервером.`:'Активного подтверждённого итога нет. Наличие старых снятых ревизий проверяется в истории.'}</p>}
+      <p className={styles.notice}>{current?`Итог подтверждён: ревизия № ${current.revision}. Изменения защищены сервером.`:'Подтверждённого итога сейчас нет. Ранее снятые подтверждения можно посмотреть в истории.'}</p>}
     {tab==='current'?<>
       <p className={styles.hint}>Зачёт только по опубликованным заплывам. Пока опубликована не вся программа, это не окончательные итоги.</p>
       {live.kind==='loading'?<p role="status">Загружаем текущий зачёт…</p>:live.kind==='error'?<Failure error={live.error}/>:<StandingsTable data={live.data}/>}
@@ -157,8 +157,8 @@ function StandingsWorkspace({eventId,disciplineId,accessToken}:{eventId:string;d
           <button className={`${styles.button} ${styles.danger}`} type="submit" disabled={busy||loading||!(revokeAttempt?.reason??reason).trim()}>{busy?'Выполняем…':revokeAttempt?'Повторить снятие того же снимка':'Снять финализацию для исправлений'}</button>
         </form>:null}
       </section>
-      <section className={styles.card}><h2>История ревизий</h2>
-        {history.kind==='ready'?history.data.length===0?<p>Ревизий пока нет.</p>:<div className={styles.history}>
+      <section className={styles.card}><h2>История подтверждений</h2>
+        {history.kind==='ready'?history.data.length===0?<p>История подтверждений пока пуста.</p>:<div className={styles.history}>
           {[...history.data].sort((a,b)=>b.revision-a.revision).map(item=><details key={item.id}>
             <summary>Ревизия № {item.revision} · {item.status==='CONFIRMED'?'Подтверждена':'Снята'} · {formatTimestamp(item.confirmedAt)}</summary>
             <Snapshot data={item}/>

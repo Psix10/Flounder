@@ -327,7 +327,7 @@ function JudgePanelContent({ unitId, token }: { unitId: string; token: string })
         {mixedTypes ? <p className={extra.notice}>В сохранённых строках разные типы результата. Проверьте данные; автоматический выбор порядка мест заблокирован.</p> : null}
       </section>
       <section className={styles.entriesSection}>
-        <div className={styles.sectionHeader}><div><h2>Результаты участников</h2><p>Несохранённых строк: {changedIds.length}. Общая кнопка выполняет отдельные запросы последовательно, не одной транзакцией.</p></div><span className={styles.entriesCount}>Участников: {entries.length}</span></div>
+        <div className={styles.sectionHeader}><div><h2>Результаты участников</h2><p>Несохранённых строк: {changedIds.length}. Строки сохраняются по очереди. При ошибке уже сохранённые строки не изменятся, а следующие не будут отправлены.</p></div><span className={styles.entriesCount}>Участников: {entries.length}</span></div>
         {!published && canRecord ? <div className={extra.controls}>
           <button className={`${extra.button} ${extra.primary}`} type="button" disabled={busy || needsReview || !draftUnit || !changedIds.length} onClick={() => void save()}>Сохранить все изменения ({changedIds.length})</button>
           <button className={extra.button} type="button" disabled={busy || (changedIds.length === 0 && conflictIds.length === 0 && orphans.length === 0)} onClick={() => {

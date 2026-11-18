@@ -172,7 +172,7 @@ export function DisciplineProtocolBoard({ eventId, disciplineId, accessToken }: 
           <p>Сохранённый снимок недоступен. Текущие результаты не подставляются вместо подтверждённого итога.</p>}
     </section> : null}
     {accessToken && data.history ? <section className={styles.card}>
-      <h2>История ревизий</h2>
+      <h2>История подтверждений</h2>
       {data.history.length === 0 ? <p>Подтверждений ещё не было.</p> : <ul className={styles.history}>
         {[...data.history].reverse().map(item => <li key={item.id}><SnapshotInfo snapshot={item} />
           <div className={styles.toolbar}><button type="button" className={styles.button} onClick={() => { setHistoryId(item.id); setView('history') }}>Показать снимок ревизии № {item.revision}</button></div>

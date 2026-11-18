@@ -11,7 +11,13 @@ export function StandingsTable({data}:{data:Standings}) {
   const category=selected==='__legacy__'||options.includes(selected)?selected:''
   const entries=filterStandings(data.entries,category)
   return <section className={styles.card}>
-    <p>Тип: {data.resultType} · Порядок: {data.rankingStrategy} · Равенства: {data.tiePolicy}</p>
+    <p>
+      Результат: {data.resultType === 'TIME' ? 'время' : data.resultType === 'POINTS' ? 'очки' : 'тип не распознан'}
+      {' · Порядок: '}
+      {data.rankingStrategy === 'ASC' ? 'меньшее значение — лучше' : data.rankingStrategy === 'DESC' ? 'большее значение — лучше' : 'порядок не распознан'}
+      {' · Равные результаты: '}
+      {data.tiePolicy === 'COMPETITION' ? 'одинаковое место' : 'правило не распознано'}
+    </p>
     <p className={styles.hint}>Место в заплыве, общем зачёте и категории — разные значения. Фильтр не пересчитывает места.</p>
     <label className={styles.field}>Категория
       <select value={category} onChange={e=>setSelected(e.target.value)}>

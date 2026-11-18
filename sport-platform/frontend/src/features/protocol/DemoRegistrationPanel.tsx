@@ -98,7 +98,7 @@ export function DemoRegistrationPanel({
     {error ? <p role="alert" className={styles.error}>{error}</p> : null}
     {plan ? <>
       <p role="status">{plan.message}</p>
-      <p>Вместимость: {plan.capacity}. Размер набора: {plan.count}. Поле времени: seedTimeSeconds.</p>
+      <p>Участников в заплыве: до {plan.capacity}. Тестовых заявок в наборе: {plan.count}.</p>
       {plan.receipt ? <p>Создан набор {plan.receipt.requestId}. Повторное наполнение недоступно.</p> : null}
       <p>Количество заплывов зависит от правил и групп посева. Наполнение само не сохраняет протокол.</p>
       <div className={styles.table}><table>
