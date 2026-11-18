@@ -21,11 +21,11 @@ export function ProtocolDisciplineFacts({ settings }: { settings: unknown }) {
     <dl className={styles.facts}>
       <div><dt>Дистанция</dt><dd>{facts.distance}</dd></div>
       <div><dt>Стиль</dt><dd>{facts.stroke}</dd></div>
-      <div><dt>Пол в настройках дисциплины</dt><dd>{facts.gender}</dd></div>
+      <div><dt>Пол в настройках дисциплины</dt><dd>{facts.gender === 'Код: OPEN' ? 'без ограничения' : facts.gender}</dd></div>
       <div><dt>Длина бассейна</dt><dd>{facts.pool}</dd></div>
     </dl>
     {facts.error ? <p className={styles.warning}>{facts.error}</p> : null}
-    <p className={styles.note}>Параметры прочитаны из settingsJson дисциплины, не из её названия. Сессию и порядок программы этот блок не проверяет.</p>
+    <p className={styles.note}>Дистанция, стиль, ограничение по полу и длина бассейна берутся из настроек дисциплины. Расписание заплывов здесь не проверяется.</p>
   </div>
 }
 export function ProtocolCategoryRules({ settings }: { settings: unknown }) {
@@ -65,7 +65,7 @@ export function ConfirmedRegistrationAudit({ registrations, settings, discipline
         </tr>
       })}</tbody>
     </table></div>
-    <p className={styles.note}>Заявочное время берётся из registrationMeta.seedTimeSeconds. Это не сохранённая метрика генерации; в регламенте может быть выбран другой ключ метрики.</p>
+    <p className={styles.note}>Здесь показано время, указанное в заявке. Для распределения по заплывам регламент может использовать другой показатель.</p>
   </div>
 }
 export function SavedParticipantFacts({ registration }: { registration?: Registration }) {

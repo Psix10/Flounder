@@ -24,9 +24,15 @@ function errorText(error: unknown): string {
     'protocol.rule_version_not_published': 'Выберите опубликованную версию правил.',
     'protocol.regeneration_requires_snapshot': 'Для старого протокола нет снимка генерации. Автоматическое переформирование недоступно.',
   }
-  const message = error.status === 403 ? 'Нет прав на это действие для выбранного мероприятия.'
-    : messages[error.code ?? ''] ?? error.message
-  return [message, ...error.violations.map((item) => `${item.field}: ${item.message}`)].join('\n')
+  if (error.status === 401) return 'Не удалось подтвердить вход. Войдите в систему заново.'
+  if (error.status === 403) return 'Нет прав на это действие для выбранного мероприятия.'
+
+  const message = messages[error.code ?? '']
+  if (message) return message
+  if (error.violations.length > 0) {
+    return 'Не удалось пройти проверку. Проверьте заявки и настройки дисциплины.'
+  }
+  return 'Не удалось выполнить действие с протоколом. Обновите страницу и повторите попытку.'
 }
 
 function participantName(registration?: Registration): string {
@@ -134,7 +140,7 @@ export function StartProtocolPage() {
     {!loading && event && discipline ? <>
       <header className={styles.card}>
         <h2>{formatHeatLabel(discipline.name)}</h2><p>{event.title}</p>
-        <p>Формат: {discipline.competitionFormat} · Тип: {discipline.unitType ?? '—'} · Результат: {discipline.resultType ?? '—'}</p>
+        <p>Формат: {discipline.competitionFormat === 'INDIVIDUAL' ? 'индивидуальный' : discipline.competitionFormat === 'TEAM' ? 'командный' : discipline.competitionFormat} · Тип старта: {discipline.unitType === 'HEAT' ? 'заплыв' : (discipline.unitType ?? '—')} · Результат: {discipline.resultType === 'TIME' ? 'время' : (discipline.resultType ?? '—')}</p>
         <ProtocolDisciplineFacts settings={discipline.settingsJson} />
         <p>Подтверждено: {confirmed.length} · Остальных заявок: {registrations.length - confirmed.length}</p>
       </header>
@@ -165,10 +171,10 @@ export function StartProtocolPage() {
         {!protocol ? <p>Протокол ещё не сформирован.</p> : <>
           <p>Заплывов: {protocol.unitCount} · Назначений: {protocol.assignmentCount}</p>
           <p className={styles.hint}>Коды категории и группы ниже взяты из сохранённых назначений. Описание категории расшифровано по загруженной конфигурации регламента. Предварительная проверка выше не заменяет сохранённые значения.</p>
-          <p className={styles.hint}>После обновления страницы текущий API возвращает позиции и категории, но не seedMetric. «—» в столбце метрики означает отсутствие значения в ответе, а не нулевой результат или подтверждённое отсутствие заявочного времени.</p>
+          <p className={styles.hint}>Показатель посева отображается сразу после формирования протокола. После обновления страницы в этом столбце будет «—». Заявочное время по-прежнему видно рядом с именем участника. Если время не указано в заявке, там будет отметка «Без заявочного времени (NT)».</p>
           {[...protocol.units].sort((a, b) => (a.sequenceNumber ?? 0) - (b.sequenceNumber ?? 0)).map((unit) => <article className={styles.heat} key={unit.competitionUnitId}>
             <h3>{formatHeatLabel(unit.label)}</h3>
-            <div className={styles.scroll}><table><thead><tr><th>Дорожка</th><th>Участник</th><th>Клуб</th><th>Метрика в ответе</th><th>Категория</th><th>Сохранённая группа распределения</th></tr></thead><tbody>
+            <div className={styles.scroll}><table><thead><tr><th>Дорожка</th><th>Участник</th><th>Клуб</th><th>Показатель посева</th><th>Категория</th><th>Сохранённая группа распределения</th></tr></thead><tbody>
               {[...unit.assignments].sort((a, b) => (a.laneOrPosition ?? Number.MAX_SAFE_INTEGER) - (b.laneOrPosition ?? Number.MAX_SAFE_INTEGER)).map((assignment) => {
                 const person = registrations.find((item) => item.id === assignment.registrationId)
                 return <tr key={assignment.registrationId}><td>{assignment.laneOrPosition ?? '—'}</td><td>{participantName(person)}<small>{assignment.registrationId}</small><SavedParticipantFacts registration={person} /></td><td>{person?.participantSnapshot.clubName || '—'}</td><td>{assignment.seedMetric ?? '—'}</td><td><SavedCategoryDetails code={assignment.categoryCode} settings={configuration?.settings} /></td><td>{assignment.seedingGroupCode ?? '—'}</td></tr>
