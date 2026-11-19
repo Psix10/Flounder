@@ -110,7 +110,7 @@ export function OrganizerDashboardPage() {
         (event) => normalizeEventStatus(event.status) === 'DRAFT',
       ).length,
       registrationOpen: events.filter(
-        (event) => normalizeEventStatus(event.status) === 'REGISTRATIONOPEN',
+        (event) => normalizeEventStatus(event.status) === 'REGISTRATION_OPEN',
       ).length,
       upcoming: events.filter((event) => {
         const startAt = new Date(event.eventStartAt).getTime()
