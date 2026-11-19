@@ -35,6 +35,18 @@ test('judge navigation includes only event and discipline context',()=>{
 test('judge back link returns to the selected discipline',()=>assert.equal(operatorResultsBackPath(eventId,disciplineId,disciplineId,true),operatorDisciplinePath(eventId,disciplineId)))
 test('mismatched judge context falls back to own event list',()=>assert.equal(operatorResultsBackPath(eventId,foreignId,disciplineId,true),'/operator/events'))
 test('missing context for operator falls back to own event list',()=>assert.equal(operatorResultsBackPath(null,null,disciplineId,true),'/operator/events'))
-test('organizer legacy back route is preserved',()=>assert.equal(operatorResultsBackPath(eventId,disciplineId,disciplineId,false),'/operator/results'))
+test('organizer back route preserves matching event and discipline context',()=>{
+  const url=new URL(operatorResultsBackPath(eventId,disciplineId,disciplineId,false),'https://example.invalid')
+  assert.equal(url.pathname,'/operator/results')
+  assert.deepEqual([...url.searchParams.entries()],[['eventId',eventId],['disciplineId',disciplineId]])
+})
+test('organizer missing context preserves legacy back route',()=>assert.equal(
+  operatorResultsBackPath(null,null,disciplineId,false),'/operator/results'))
+test('organizer mismatched discipline falls back to legacy back route',()=>assert.equal(
+  operatorResultsBackPath(eventId,foreignId,disciplineId,false),'/operator/results'))
+test('organizer invalid event context falls back to legacy back route',()=>assert.equal(
+  operatorResultsBackPath('https://evil.example',disciplineId,disciplineId,false),'/operator/results'))
+test('organizer unknown actual discipline falls back to legacy back route',()=>assert.equal(
+  operatorResultsBackPath(eventId,disciplineId,undefined,false),'/operator/results'))
 test('external redirects are not accepted as context',()=>assert.equal(operatorResultsBackPath('https://evil.example',disciplineId,disciplineId,true),'/operator/events'))
 test('invalid ids do not generate navigation links',()=>assert.throws(()=>operatorEventPath('../admin')))

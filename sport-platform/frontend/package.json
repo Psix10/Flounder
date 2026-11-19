@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "test:protocol": "node --test tests/protocol-model.test.mjs",
+    "test:protocol": "node --test tests/standings-repair.test.mjs",
     "preview": "vite preview",
     "test:standings-ui": "node --test tests/standings-repair.test.mjs",
     "test:standings-repair": "node --test tests/standings-repair.test.mjs"
