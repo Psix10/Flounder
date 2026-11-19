@@ -48,6 +48,16 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @AutoConfigureMockMvc
 class ConfiguredStartProtocolIntegrationTest extends AbstractPostgresIntegrationTest {
+    private static final UUID DEMO_EVENT_ID = UUID.randomUUID();
+
+    @org.springframework.test.context.DynamicPropertySource
+    static void demoProperties(
+            org.springframework.test.context.DynamicPropertyRegistry registry
+    ) {
+        registry.add("app.demo-data.enabled", () -> "true");
+        registry.add("app.demo-data.allowed-event-ids", DEMO_EVENT_ID::toString);
+    }
+
     private static final UUID SPORT = UUID.fromString("10000000-0000-0000-0000-000000000001");
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper json;
@@ -70,17 +80,21 @@ class ConfiguredStartProtocolIntegrationTest extends AbstractPostgresIntegration
                 List.of(new SimpleGrantedAuthority("ROLE_" + role)));
     }
     private Fixture fixture() throws Exception {
+        return fixture(false);
+    }
+
+    private Fixture fixture(boolean demo) throws Exception {
         PlatformUserPrincipal admin = actor("PLATFORM_ADMIN");
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         
         EventEntity event = new EventEntity();
-        event.setId(UUID.randomUUID()); event.setCreatedByUserId(admin.getUserId());
+        event.setId(demo ? DEMO_EVENT_ID : UUID.randomUUID()); event.setCreatedByUserId(admin.getUserId());
         event.setOrganizationId(UUID.randomUUID()); event.setVenueId(UUID.randomUUID());
         event.setSportId(SPORT); event.setRegulationVersionId(UUID.randomUUID());
         event.setTitle("Configured protocol test"); event.setDescription("Fixture");
         event.setRegistrationOpenAt(now.minusDays(1)); event.setRegistrationCloseAt(now.plusDays(10));
         event.setEventStartAt(now.plusDays(20)); event.setEventEndAt(now.plusDays(21));
-        event.setStatus("REGISTRATION_OPEN"); event.setPublicSlug("configured-" + UUID.randomUUID());
+        event.setStatus(demo ? "DRAFT" : "REGISTRATION_OPEN"); event.setPublicSlug("configured-" + UUID.randomUUID());
         event.setSettingsJson("{}"); event.setCreatedAt(now); event.setUpdatedAt(now);
         events.saveAndFlush(event);
 
@@ -97,9 +111,12 @@ class ConfiguredStartProtocolIntegrationTest extends AbstractPostgresIntegration
         discipline.setName("50m Freestyle"); discipline.setCompetitionFormat("INDIVIDUAL");
         discipline.setUnitType("HEAT"); discipline.setResultType("TIME"); discipline.setRankingStrategy("ASC");
         discipline.setParticipantLimit(40); discipline.setEntryFeeAmount(BigDecimal.ZERO);
-        discipline.setEntryFeeCurrency("RUB"); discipline.setStatus("PUBLISHED");
-        discipline.setSettingsJson("{}"); discipline.setCreatedAt(now); discipline.setUpdatedAt(now);
+        discipline.setEntryFeeCurrency("RUB"); discipline.setStatus(demo ? "DRAFT" : "PUBLISHED");
+        discipline.setSettingsJson(demo ? "{\"gender\":\"MALE\"}" : "{}"); discipline.setCreatedAt(now); discipline.setUpdatedAt(now);
         disciplines.saveAndFlush(discipline);
+        if (demo) {
+            return new Fixture(discipline.getId(), admin);
+        }
 
         PlatformUserPrincipal participant = actor("PARTICIPANT");
         ProfileEntity profile = new ProfileEntity(); profile.setUserId(participant.getUserId());
@@ -276,5 +293,180 @@ class ConfiguredStartProtocolIntegrationTest extends AbstractPostgresIntegration
             jdbc.execute("DROP FUNCTION IF EXISTS " + function + "()");
         }
     }
+    private JsonNode createMaleDemoBatch(
+            UUID eventId, UUID disciplineId, UUID boundVersion,
+            PlatformUserPrincipal admin
+    ) throws Exception {
+        String path = "/api/v1/events/{eventId}/disciplines/{disciplineId}/demo-registrations";
+
+        JsonNode plan = json.readTree(mvc.perform(
+                        org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                                .get(path, eventId, disciplineId).with(user(admin)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+
+        assertEquals("AVAILABLE", plan.path("state").asText(), plan.toString());
+        assertEquals(boundVersion.toString(), plan.path("ruleVersionId").asText());
+
+        JsonNode planned = plan.path("participants");
+        assertTrue(planned.isArray());
+        assertTrue(planned.size() > 0);
+        assertEquals(plan.path("count").asInt(), planned.size());
+
+        ObjectNode request = json.createObjectNode();
+        request.put("requestId", UUID.randomUUID().toString());
+        request.set("expectedRuleVersionId", plan.path("ruleVersionId"));
+        request.set("expectedCapacity", plan.path("capacity"));
+        request.set("expectedCount", plan.path("count"));
+        request.set("datasetVersion", plan.path("datasetVersion"));
+        request.put("confirmed", true);
+
+        JsonNode receipt = json.readTree(mvc.perform(post(path, eventId, disciplineId)
+                        .with(user(admin))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString());
+
+        for (String field : List.of("ruleVersionId", "capacity", "count", "datasetVersion")) {
+            assertEquals(plan.path(field), receipt.path(field), field);
+        }
+
+        JsonNode created = receipt.path("participants");
+        assertTrue(created.isArray());
+        assertEquals(planned.size(), created.size());
+
+        var ids = new java.util.HashSet<UUID>();
+        int withoutTime = 0;
+        for (int i = 0; i < planned.size(); i++) {
+            JsonNode expected = planned.get(i);
+            JsonNode actual = created.get(i);
+            for (String field : List.of(
+                    "ordinal", "name", "gender", "birthDate", "seedTimeSeconds",
+                    "categoryCode", "seedingGroupCode")) {
+                assertEquals(expected.path(field), actual.path(field), field + ", row " + i);
+            }
+            assertEquals("MALE", actual.path("gender").asText());
+            java.time.LocalDate.parse(actual.path("birthDate").asText());
+
+            JsonNode time = actual.path("seedTimeSeconds");
+            if (time.isNull() || time.isMissingNode()) {
+                withoutTime++;
+            }
+            assertTrue(ids.add(UUID.fromString(actual.path("registrationId").asText())),
+                    "Duplicate registrationId at row " + i);
+        }
+        assertEquals(1, withoutTime);
+        return receipt;
+    }
+
+    @Test
+    void maleDemoBatchSurvivesPersistenceAndProtocolGeneration() throws Exception {
+        Fixture f = fixture(true);
+        UUID boundVersion = bindDemoRegulation(f);
+
+        JsonNode receipt = createMaleDemoBatch(
+                DEMO_EVENT_ID, f.discipline(), boundVersion, f.admin());
+        var expectedIds = new java.util.ArrayList<UUID>();
+
+        for (JsonNode row : receipt.path("participants")) {
+            UUID id = UUID.fromString(row.path("registrationId").asText());
+            expectedIds.add(id);
+
+            var stored = jdbc.queryForMap("""
+                    SELECT status, participant_snapshot::text AS snapshot,
+                           registration_meta::text AS meta
+                    FROM registrations
+                    WHERE id = ? AND event_id = ? AND event_discipline_id = ?
+                    """, id, DEMO_EVENT_ID, f.discipline());
+
+            assertEquals("CONFIRMED", stored.get("status"), id.toString());
+            JsonNode snapshot = json.readTree((String) stored.get("snapshot"));
+            JsonNode meta = json.readTree((String) stored.get("meta"));
+            assertEquals(row.path("gender"), snapshot.path("gender"), id.toString());
+            assertEquals(row.path("birthDate"), snapshot.path("birthDate"), id.toString());
+            assertTrue(meta.path("demoFixture").asBoolean(), id.toString());
+            assertEquals(receipt.path("requestId"), meta.path("demoBatchId"), id.toString());
+
+            JsonNode expectedTime = row.path("seedTimeSeconds");
+            if (expectedTime.isNull() || expectedTime.isMissingNode()) {
+                assertTrue(!meta.has("seedTimeSeconds"), id.toString());
+            } else {
+                JsonNode storedTime = meta.path("seedTimeSeconds");
+                assertTrue(storedTime.isNumber(), id.toString());
+                assertEquals(0, expectedTime.decimalValue()
+                        .compareTo(storedTime.decimalValue()), id.toString());
+            }
+        }
+
+        var persistedIds = jdbc.queryForList("""
+                SELECT id FROM registrations
+                WHERE event_id = ? AND event_discipline_id = ?
+                """, UUID.class, DEMO_EVENT_ID, f.discipline());
+        var sortedExpectedIds = expectedIds.stream().sorted().toList();
+        assertEquals(sortedExpectedIds,
+                persistedIds.stream().sorted().toList(), "Persisted registrations");
+
+        var discipline = disciplines.findById(f.discipline()).orElseThrow();
+        discipline.setStatus("PUBLISHED");
+        disciplines.saveAndFlush(discipline);
+
+        JsonNode protocol = json.readTree(generate(f, boundVersion, f.admin())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.assignmentCount").value(expectedIds.size()))
+                .andReturn().getResponse().getContentAsString());
+
+        var assignedIds = new java.util.ArrayList<UUID>();
+        for (JsonNode unit : protocol.path("units")) {
+            for (JsonNode assignment : unit.path("assignments")) {
+                assignedIds.add(UUID.fromString(assignment.path("registrationId").asText()));
+            }
+        }
+        assertEquals(sortedExpectedIds,
+                assignedIds.stream().sorted().toList(), "Protocol assignments");
+
+        var snapshot = snapshots.findFirstByEventDisciplineIdOrderByRevisionNoDesc(
+                f.discipline()).orElseThrow();
+        assertEquals(boundVersion, snapshot.getRuleSetVersionId());
+    }
+
+    private UUID bindDemoRegulation(Fixture f) throws Exception {
+        ObjectNode request = json.createObjectNode();
+        request.putNull("sourceVersionId");
+        request.put("sportId", SPORT.toString());
+        request.put("code", "NF02-DEMO-" + UUID.randomUUID());
+        request.put("name", "NF-02 demo protocol integration");
+        request.putNull("description");
+        request.put("versionNo", 1);
+        request.putNull("effectiveFrom");
+        request.putNull("notes");
+        request.putArray("conditions").add("NF-02 integration fixture");
+
+        ObjectNode protocol = request.putObject("protocol");
+        protocol.put("capacity", 4);
+        protocol.set("positionOrder", json.valueToTree(List.of(1, 2, 3, 4)));
+        protocol.put("metricKey", "seedTimeSeconds");
+        protocol.put("heatOrder", "SLOWEST_FIRST");
+        protocol.put("partialHeat", "FIRST");
+
+        JsonNode document = json.readTree(mvc.perform(
+                        post("/api/v1/regulation-configurations")
+                                .with(user(f.admin()))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json.writeValueAsBytes(request)))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn().getResponse().getContentAsString()).path("document");
+
+        UUID regulationId = UUID.fromString(document.path("id").asText());
+        UUID ruleVersionId = UUID.fromString(
+                document.path("binding").path("ruleVersionId").asText());
+
+        assertEquals(1, jdbc.update("""
+                UPDATE events SET regulation_version_id = ?
+                WHERE id = ? AND status = 'DRAFT'
+                """, regulationId, DEMO_EVENT_ID));
+        return ruleVersionId;
+    }
+
     private record Fixture(UUID discipline, PlatformUserPrincipal admin) { }
 }
