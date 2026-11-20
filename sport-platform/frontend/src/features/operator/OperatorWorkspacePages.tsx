@@ -124,6 +124,7 @@ function DisciplineContent({ eventId, disciplineId, token }: { eventId: string; 
     {resource.data ? <>
       <p>{resource.data.event.title}</p><p>Заплывов: {resource.data.units.length}</p>
       <p>Открытие судейской панели не отменяет публикацию результатов и защиту подтверждённого итога.</p>
+      <p>Часовой пояс отображения: {Intl.DateTimeFormat().resolvedOptions().timeZone}.</p>
       {!resource.data.units.length ? <div className={styles.card}><h2>Заплывов пока нет</h2><p>Организатор должен сформировать стартовый протокол.</p></div> : null}
       <div className={styles.list}>{resource.data.units.map(unit => <article className={styles.card} key={unit.id}>
         <span className={styles.badge}>{unit.status === 'PUBLISHED' ? 'Опубликовано' : unit.status === 'DRAFT' ? 'Черновик' : unit.status}</span>

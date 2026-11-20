@@ -66,7 +66,6 @@ function formatDate(value: string | null): string {
   return new Intl.DateTimeFormat('ru-RU', {
     dateStyle: 'medium',
     timeStyle: 'short',
-    timeZone: 'Europe/Moscow',
   }).format(date)
 }
 
@@ -173,6 +172,11 @@ function CompetitionUnitsContent({
         {initialDisciplineId
           ? 'Дисциплина уже выбрана. Нажмите «Открыть», затем выберите нужный заплыв.'
           : 'Введите идентификатор дисциплины, чтобы открыть список заплывов, матчей, групп или финалов.'}
+      </p>
+
+      <p>
+        Часовой пояс отображения:{' '}
+        {Intl.DateTimeFormat().resolvedOptions().timeZone}.
       </p>
 
       <form className={styles.searchForm} onSubmit={handleSubmit}>
