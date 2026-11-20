@@ -54,6 +54,7 @@ class ResubmitRegistrationGenderTest {
     private RegistrationProtocolGuard protocolGuard;
     private RegistrationPaymentGuard paymentGuard;
     private EntityManager entityManager;
+    private com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck;
     private ObjectMapper json;
 
     private ResubmitRegistrationUseCase useCase;
@@ -71,6 +72,7 @@ class ResubmitRegistrationGenderTest {
         protocolGuard = mock(RegistrationProtocolGuard.class);
         paymentGuard = mock(RegistrationPaymentGuard.class);
         entityManager = mock(EntityManager.class);
+        admissionCheck = mock(com.acme.sportplatform.registrations.RegistrationAdmissionCheck.class);
         json = new ObjectMapper();
 
         useCase = new ResubmitRegistrationUseCase(
@@ -81,7 +83,8 @@ class ResubmitRegistrationGenderTest {
                 disciplines,
                 protocolGuard,
                 paymentGuard,
-                entityManager
+                entityManager,
+                admissionCheck
         );
 
         registration = new RegistrationEntity();
@@ -390,6 +393,63 @@ class ResubmitRegistrationGenderTest {
         assertConflictWithoutSave(true);
 
         verifyNoInteractions(profiles);
+    }
+
+    @Test
+    void admissionChecksUpdatedGenderBeforeSaving() throws Exception {
+        useCase.execute(registrationId, participantId, request(true));
+
+        var candidate = org.mockito.ArgumentCaptor.forClass(String.class);
+        var order = org.mockito.Mockito.inOrder(admissionCheck, registrations);
+        order.verify(admissionCheck).verify(
+                org.mockito.ArgumentMatchers.eq(disciplineId),
+                org.mockito.ArgumentMatchers.eq(registrationId),
+                candidate.capture());
+        order.verify(registrations).saveAndFlush(registration);
+
+        assertEquals("FEMALE", json.readTree(candidate.getValue()).path("gender").asText());
+        assertEquals(candidate.getValue(), registration.getParticipantSnapshot());
+    }
+
+    @Test
+    void admissionChecksStoredSnapshotWithoutRefreshingProfile() throws Exception {
+        var snapshot = (ObjectNode) json.readTree(registration.getParticipantSnapshot());
+        snapshot.put("gender", "MALE");
+        registration.setParticipantSnapshot(snapshot.toString());
+        String captured = registration.getParticipantSnapshot();
+
+        useCase.execute(registrationId, participantId, request(false));
+
+        verify(admissionCheck).verify(disciplineId, registrationId, captured);
+        verifyNoInteractions(profiles);
+        assertEquals(captured, registration.getParticipantSnapshot());
+    }
+
+    @Test
+    void admissionFailurePreservesSnapshotMetadataAndStatus() {
+        String snapshot = registration.getParticipantSnapshot();
+        String meta = registration.getRegistrationMeta();
+        var submittedAt = registration.getSubmittedAt();
+        var updatedAt = registration.getUpdatedAt();
+
+        var failure = new com.acme.sportplatform.common.exception.BusinessException(
+                "protocol.eligibility_violation", "Synthetic admission failure");
+        doThrow(failure).when(admissionCheck).verify(
+                org.mockito.ArgumentMatchers.eq(disciplineId),
+                org.mockito.ArgumentMatchers.eq(registrationId),
+                org.mockito.ArgumentMatchers.anyString());
+
+        var actual = assertThrows(
+                com.acme.sportplatform.common.exception.BusinessException.class,
+                () -> useCase.execute(registrationId, participantId, request(true)));
+
+        org.junit.jupiter.api.Assertions.assertSame(failure, actual);
+        assertEquals("NEEDS_CORRECTION", registration.getStatus());
+        assertEquals(snapshot, registration.getParticipantSnapshot());
+        assertEquals(meta, registration.getRegistrationMeta());
+        assertEquals(submittedAt, registration.getSubmittedAt());
+        assertEquals(updatedAt, registration.getUpdatedAt());
+        assertNotSaved();
     }
 
     private ResubmitRegistrationRequest request(boolean consent) {

@@ -38,6 +38,7 @@ class ReviewRegistrationAccessTest {
     private com.acme.sportplatform.registrations.RegistrationProtocolGuard protocolGuard;
     private com.acme.sportplatform.competition.ProtocolDisciplineLookup disciplines;
     private jakarta.persistence.EntityManager entityManager;
+    private com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck;
 
     private RegistrationRepository registrations;
     private RegistrationMapper mapper;
@@ -57,6 +58,7 @@ class ReviewRegistrationAccessTest {
         protocolGuard = mock(com.acme.sportplatform.registrations.RegistrationProtocolGuard.class);
         disciplines = mock(com.acme.sportplatform.competition.ProtocolDisciplineLookup.class);
         entityManager = mock(jakarta.persistence.EntityManager.class);
+        admissionCheck = mock(com.acme.sportplatform.registrations.RegistrationAdmissionCheck.class);
         when(disciplines.lock(disciplineId)).thenReturn(
                 new com.acme.sportplatform.competition.ProtocolDisciplineLookup.View(
                         disciplineId, UUID.randomUUID(), UUID.randomUUID(), "INDIVIDUAL", "HEAT", eventId));
@@ -67,7 +69,8 @@ class ReviewRegistrationAccessTest {
                 eventAccess,
                 protocolGuard,
                 disciplines,
-                entityManager
+                entityManager,
+                admissionCheck
         );
 
         registration = new RegistrationEntity();
@@ -310,6 +313,82 @@ class ReviewRegistrationAccessTest {
     assertEquals("REJECTED", registration.getStatus());
     verify(protocolGuard, never()).requireNoProtocolsOrUnits(any(), any());
 }
+
+    @Test
+    void admissionFailureDoesNotMutateRegistration() {
+        String snapshot = registration.getParticipantSnapshot();
+        String meta = registration.getRegistrationMeta();
+        var failure = new BusinessException(
+                "protocol.eligibility_violation", "Synthetic admission failure");
+        org.mockito.Mockito.doThrow(failure).when(admissionCheck)
+                .verify(disciplineId, registrationId, snapshot);
+
+        assertEquals(failure, assertThrows(BusinessException.class, () ->
+                useCase.execute(registrationId, actorId, request)));
+
+        assertEquals("SUBMITTED", registration.getStatus());
+        assertEquals(snapshot, registration.getParticipantSnapshot());
+        assertEquals(meta, registration.getRegistrationMeta());
+        assertEquals(null, registration.getReviewedAt());
+        assertEquals(null, registration.getReviewedByUserId());
+        assertEquals(null, registration.getReviewNote());
+        assertEquals(null, registration.getUpdatedAt());
+        assertNotSaved();
+    }
+
+    @Test
+    void platformAdminCannotBypassAdmission() {
+        authenticate("ROLE_PLATFORM_ADMIN");
+        org.mockito.Mockito.doThrow(new BusinessException(
+                "protocol.eligibility_violation", "Synthetic admission failure"))
+                .when(admissionCheck).verify(
+                        disciplineId, registrationId,
+                        registration.getParticipantSnapshot());
+
+        assertThrows(BusinessException.class, () ->
+                useCase.execute(registrationId, actorId, request));
+
+        assertEquals("SUBMITTED", registration.getStatus());
+        assertNotSaved();
+    }
+
+    @Test
+    void rejectionAndCorrectionDoNotRequireAdmission() {
+        for (var decision : List.of(
+                RegistrationReviewDecision.REJECTED,
+                RegistrationReviewDecision.NEEDS_CORRECTION)) {
+            registration.setStatus("SUBMITTED");
+            when(request.decision()).thenReturn(decision);
+            useCase.execute(registrationId, actorId, request);
+            assertEquals(decision.name(), registration.getStatus());
+        }
+        verifyNoInteractions(admissionCheck);
+    }
+
+    @Test
+    void admissionRunsAfterProtocolGuardAndBeforeSave() {
+        String snapshot = registration.getParticipantSnapshot();
+        useCase.execute(registrationId, actorId, request);
+
+        var order = org.mockito.Mockito.inOrder(
+                protocolGuard, admissionCheck, registrations);
+        order.verify(protocolGuard).requireNoProtocolsOrUnits(eventId, disciplineId);
+        order.verify(admissionCheck).verify(disciplineId, registrationId, snapshot);
+        order.verify(registrations).save(registration);
+    }
+
+    @Test
+    void existingProgrammeStopsBeforeAdmissionCheck() {
+        org.mockito.Mockito.doThrow(new org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.CONFLICT, "Programme exists"))
+                .when(protocolGuard).requireNoProtocolsOrUnits(eventId, disciplineId);
+
+        assertThrows(org.springframework.web.server.ResponseStatusException.class, () ->
+                useCase.execute(registrationId, actorId, request));
+
+        verifyNoInteractions(admissionCheck);
+        assertNotSaved();
+    }
 
     private void assertNotSaved() {
         verify(registrations, never())

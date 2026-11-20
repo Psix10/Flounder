@@ -20,7 +20,7 @@ class RegistrationSeedTimeValidationTest {
     private final EventDisciplineLookup disciplines = mock(EventDisciplineLookup.class);
     private final RegistrationMapper mapper = mock(RegistrationMapper.class);
     private final CreateRegistrationUseCase service = new CreateRegistrationUseCase(
-            registrations, profiles, events, disciplines, mapper, json);
+            registrations, profiles, events, disciplines, mapper, json, mock(com.acme.sportplatform.registrations.RegistrationAdmissionCheck.class));
     @Test void serviceRejectsInvalidSeedWithoutControllerValidation() throws Exception {
         for (String value : new String[]{"0", "-1", "28.111", "true", "\"28.11\""}) {
             var meta = json.readTree("{\"seedTimeSeconds\":" + value + "}");

@@ -100,6 +100,9 @@ class RegistrationConfirmationProtocolIntegrationTest extends AbstractPostgresIn
         return id;
     }
     private UUID rule(PlatformUserPrincipal admin) throws Exception {
+        return rule(admin, json.createObjectNode());
+    }
+    private UUID rule(PlatformUserPrincipal admin, JsonNode eligibility) throws Exception {
         ObjectNode request = (ObjectNode) json.readTree("""
                 {
                   "sportId":"10000000-0000-0000-0000-000000000001",
@@ -113,6 +116,7 @@ class RegistrationConfirmationProtocolIntegrationTest extends AbstractPostgresIn
                   ]
                 }
                 """);
+        ((ObjectNode) request.path("blocks").get(0)).set("config", eligibility);
         request.put("code", "regen-" + UUID.randomUUID());
         var created = json.readTree(mvc.perform(post("/api/v1/protocol-rule-sets").with(user(admin))
                         .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsBytes(request)))
@@ -312,5 +316,140 @@ class RegistrationConfirmationProtocolIntegrationTest extends AbstractPostgresIn
             assertTrue(signature(result).stream().anyMatch(s->s.contains(target.toString())));
         } finally { pool.shutdownNow(); }
     }
+    @Autowired
+    private com.acme.sportplatform.regulations.RegulationBundleAccess admissionRegulations;
+
+    private void admissionSettings(Fixture f, String settings) {
+        var discipline = disciplines.findById(f.discipline()).orElseThrow();
+        discipline.setSettingsJson(settings);
+        disciplines.saveAndFlush(discipline);
+    }
+
+    private void admissionSnapshot(UUID registrationId, String snapshot) {
+        assertEquals(1, jdbc.update(
+                "UPDATE registrations SET participant_snapshot=CAST(? AS jsonb) WHERE id=?",
+                snapshot, registrationId));
+    }
+
+    private void bindAdmissionAgeRules(Fixture f) throws Exception {
+        UUID version = rule(f.admin(), json.readTree("""
+                {
+                  "ageMethod":"ON_DATE",
+                  "ageReferenceDate":"2026-11-22",
+                  "minAge":18,
+                  "maxAge":25,
+                  "allowedGenders":["MALE"]
+                }
+                """));
+
+        var document = admissionRegulations.publish(
+                null,
+                SPORT,
+                "admission-" + UUID.randomUUID(),
+                "Admission integration test",
+                "Synthetic container fixture",
+                1,
+                LocalDate.of(2026, 1, 1),
+                "Test only",
+                List.of("Age and gender are checked from the captured snapshot"),
+                version,
+                f.admin().getUserId(),
+                true
+        );
+
+        var entity = events.findById(event(f)).orElseThrow();
+        entity.setRegulationVersionId(document.id());
+        events.saveAndFlush(entity);
+    }
+
+    private void assertAdmissionEligibilityFailure(
+            UUID target,
+            PlatformUserPrincipal reviewer,
+            String reason
+    ) throws Exception {
+        var before = registrationState(target);
+
+        review(target, reviewer, "CONFIRMED")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("protocol.eligibility_violation"))
+                .andExpect(jsonPath(
+                        "$.violations[*].message",
+                        org.hamcrest.Matchers.hasItem(
+                                org.hamcrest.Matchers.containsString(reason))));
+
+        assertEquals(before, registrationState(target));
+        assertEquals("SUBMITTED", registrationState(target).get("status"));
+    }
+
+    @Test
+    void admissionRejectsDisciplineGenderMismatchEvenForAdmin() throws Exception {
+        var f = fixture();
+        UUID target = registration(f.discipline(), f.admin(), 27.00, false);
+
+        admissionSettings(f, "{\"gender\":\"FEMALE\"}");
+
+        assertAdmissionEligibilityFailure(target, f.admin(), "GENDER_NOT_ALLOWED");
+    }
+
+    @Test
+    void admissionRejectsOutOfRangeAgeFromBoundPublishedRules() throws Exception {
+        var f = fixture();
+        UUID target = registration(f.discipline(), f.admin(), 27.00, false);
+        bindAdmissionAgeRules(f);
+        admissionSnapshot(target, """
+                {"firstName":"Captured","lastName":"Participant",
+                 "birthDate":"2014-05-10","gender":"MALE"}
+                """);
+
+        assertAdmissionEligibilityFailure(target, f.admin(), "AGE_OUT_OF_RANGE");
+    }
+
+    @Test
+    void admissionAcceptsMatchingSnapshotWithBoundPublishedRules() throws Exception {
+        var f = fixture();
+        UUID target = registration(f.discipline(), f.admin(), 27.00, false);
+        bindAdmissionAgeRules(f);
+        var before = registrationState(target);
+
+        review(target, f.admin(), "CONFIRMED").andExpect(status().isOk());
+
+        var after = registrationState(target);
+        assertEquals("CONFIRMED", after.get("status"));
+        assertEquals(before.get("participant_snapshot"), after.get("participant_snapshot"));
+        assertEquals(before.get("registration_meta"), after.get("registration_meta"));
+        assertNotNull(after.get("reviewed_at"));
+        assertEquals(f.admin().getUserId(), after.get("reviewed_by_user_id"));
+    }
+
+    @Test
+    void admissionUsesStoredSnapshotInsteadOfCurrentProfile() throws Exception {
+        var f = fixture();
+        UUID target = registration(f.discipline(), f.admin(), 27.00, false);
+        bindAdmissionAgeRules(f);
+
+        // The profile created by registration() remains male, born in 2004.
+        admissionSnapshot(target, """
+                {"firstName":"Captured","lastName":"Participant",
+                 "birthDate":"2004-05-10","gender":"FEMALE"}
+                """);
+
+        assertAdmissionEligibilityFailure(target, f.admin(), "GENDER_NOT_ALLOWED");
+    }
+
+    @Test
+    void admissionMismatchDoesNotBlockReturnForCorrection() throws Exception {
+        var f = fixture();
+        UUID target = registration(f.discipline(), f.admin(), 27.00, false);
+        admissionSettings(f, "{\"gender\":\"FEMALE\"}");
+        var before = registrationState(target);
+
+        review(target, f.admin(), "NEEDS_CORRECTION").andExpect(status().isOk());
+
+        var after = registrationState(target);
+        assertEquals("NEEDS_CORRECTION", after.get("status"));
+        assertEquals(before.get("participant_snapshot"), after.get("participant_snapshot"));
+        assertEquals(before.get("registration_meta"), after.get("registration_meta"));
+    }
+
     private record Fixture(UUID discipline, UUID first, UUID second, UUID version, PlatformUserPrincipal admin) { }
 }

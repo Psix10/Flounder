@@ -454,6 +454,275 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                 .andExpect(jsonPath("$.length()").value(0));
     }
 
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate admissionJdbc;
+
+    private PlatformUserPrincipal admissionParticipant(UserEntity participant) {
+        return new PlatformUserPrincipal(
+                participant.getId(), participant.getEmail(), "", "active",
+                List.of(new SimpleGrantedAuthority("ROLE_PARTICIPANT")));
+    }
+
+    private long admissionRegistrationCount(UUID disciplineId, UUID participantId) {
+        return admissionJdbc.queryForObject("""
+                SELECT count(*) FROM registrations
+                WHERE event_discipline_id=? AND participant_user_id=?
+                """, Long.class, disciplineId, participantId);
+    }
+
+    @Test
+    void initialAdmissionRejectsWrongGenderWithoutCreatingRegistration() throws Exception {
+        var participant = createParticipantUser();
+        createParticipantProfile(participant.getId());
+        UUID eventId = createEventWithOpenRegistration();
+        UUID disciplineId = createPublishedEventDiscipline(
+                eventId, createDisciplineTemplate(), BigDecimal.ZERO);
+
+        var discipline = eventDisciplineRepository.findById(disciplineId).orElseThrow();
+        discipline.setSettingsJson("{\"gender\":\"FEMALE\"}");
+        eventDisciplineRepository.saveAndFlush(discipline);
+
+        org.junit.jupiter.api.Assertions.assertEquals(
+                0L, admissionRegistrationCount(disciplineId, participant.getId()));
+
+        mockMvc.perform(post("/api/v1/registrations")
+                        .with(user(admissionParticipant(participant)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"eventDisciplineId":"%s","registrationMeta":{}}
+                                """.formatted(disciplineId)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("protocol.eligibility_violation"))
+                .andExpect(jsonPath(
+                        "$.violations[*].message",
+                        org.hamcrest.Matchers.hasItem(
+                                org.hamcrest.Matchers.containsString("GENDER_NOT_ALLOWED"))));
+
+        org.junit.jupiter.api.Assertions.assertEquals(
+                0L, admissionRegistrationCount(disciplineId, participant.getId()));
+    }
+
+    @Test
+    void initialAdmissionRejectsCategoryFilterWithoutBindingAndCreatesNothing() throws Exception {
+        var participant = createParticipantUser();
+        createParticipantProfile(participant.getId());
+        UUID eventId = createEventWithOpenRegistration();
+        UUID disciplineId = createPublishedEventDiscipline(
+                eventId, createDisciplineTemplate(), BigDecimal.ZERO);
+
+        var discipline = eventDisciplineRepository.findById(disciplineId).orElseThrow();
+        discipline.setSettingsJson("""
+                {"gender":"MALE","allowedCategoryCodes":["JUNIOR"]}
+                """);
+        eventDisciplineRepository.saveAndFlush(discipline);
+
+        org.junit.jupiter.api.Assertions.assertEquals(
+                0L, admissionRegistrationCount(disciplineId, participant.getId()));
+
+        mockMvc.perform(post("/api/v1/registrations")
+                        .with(user(admissionParticipant(participant)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"eventDisciplineId":"%s","registrationMeta":{}}
+                                """.formatted(disciplineId)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code")
+                        .value("registrations.admission_configuration_required"));
+
+        org.junit.jupiter.api.Assertions.assertEquals(
+                0L, admissionRegistrationCount(disciplineId, participant.getId()));
+    }
+
+    private record AdmissionCorrectionFixture(
+            UUID registrationId,
+            UUID disciplineId,
+            PlatformUserPrincipal participant
+    ) { }
+
+    private AdmissionCorrectionFixture admissionCorrectionFixture() throws Exception {
+        var participant = createParticipantUser();
+        createParticipantProfile(participant.getId());
+
+        UUID eventId = createEventWithOpenRegistration();
+        UUID disciplineId = createPublishedEventDiscipline(
+                eventId, createDisciplineTemplate(), BigDecimal.ZERO);
+        var principal = admissionParticipant(participant);
+
+        String response = mockMvc.perform(post("/api/v1/registrations")
+                        .with(user(principal))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"eventDisciplineId":"%s",
+                                 "registrationMeta":{"seedTimeSeconds":64.44,"keep":"original"}}
+                                """.formatted(disciplineId)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        UUID registrationId = UUID.fromString(
+                (String) JsonPath.read(response, "$.id"));
+
+        mockMvc.perform(post("/api/v1/registrations/{id}/review", registrationId)
+                        .with(user(organizerForEvent(eventId)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"decision":"NEEDS_CORRECTION",
+                                 "reviewNote":"Check registration data"}
+                                """))
+                .andExpect(status().isOk());
+
+        return new AdmissionCorrectionFixture(
+                registrationId, disciplineId, principal);
+    }
+
+    private String admissionResubmitPayload(boolean refreshGender) {
+        return """
+                {
+                  "reply":"Data checked",
+                  "emergencyContactName":"Test contact",
+                  "emergencyContactPhone":"+79990000000",
+                  "medicalCertificate":true,
+                  "agreeToRules":true,
+                  "refreshGenderFromProfile":%s
+                }
+                """.formatted(refreshGender);
+    }
+
+    @Test
+    void resubmitAdmissionFailurePreservesEntireRegistration() throws Exception {
+        var f = admissionCorrectionFixture();
+
+        var discipline = eventDisciplineRepository.findById(f.disciplineId()).orElseThrow();
+        discipline.setSettingsJson("{\"gender\":\"FEMALE\"}");
+        eventDisciplineRepository.saveAndFlush(discipline);
+
+        var before = admissionJdbc.queryForMap(
+                "SELECT * FROM registrations WHERE id=?", f.registrationId());
+
+        // Even explicit copying from the male profile does not satisfy FEMALE.
+        mockMvc.perform(post("/api/v1/registrations/{id}/resubmit", f.registrationId())
+                        .with(user(f.participant()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(admissionResubmitPayload(true)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("protocol.eligibility_violation"))
+                .andExpect(jsonPath(
+                        "$.violations[*].message",
+                        org.hamcrest.Matchers.hasItem(
+                                org.hamcrest.Matchers.containsString("GENDER_NOT_ALLOWED"))));
+
+        var after = admissionJdbc.queryForMap(
+                "SELECT * FROM registrations WHERE id=?", f.registrationId());
+
+        org.junit.jupiter.api.Assertions.assertEquals(before, after);
+        org.junit.jupiter.api.Assertions.assertEquals(
+                "NEEDS_CORRECTION", after.get("status"));
+    }
+
+    @Test
+    void resubmitAdmissionAcceptsMatchingSnapshotAndAppendsHistory() throws Exception {
+        var f = admissionCorrectionFixture();
+        var before = admissionJdbc.queryForMap(
+                "SELECT * FROM registrations WHERE id=?", f.registrationId());
+        var parser = new com.fasterxml.jackson.databind.ObjectMapper();
+        var oldMeta = parser.readTree(before.get("registration_meta").toString());
+        int oldHistorySize = oldMeta.path("correctionHistory").size();
+
+        mockMvc.perform(post("/api/v1/registrations/{id}/resubmit", f.registrationId())
+                        .with(user(f.participant()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(admissionResubmitPayload(false)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("SUBMITTED"));
+
+        var after = admissionJdbc.queryForMap(
+                "SELECT * FROM registrations WHERE id=?", f.registrationId());
+        var newMeta = parser.readTree(after.get("registration_meta").toString());
+
+        org.junit.jupiter.api.Assertions.assertEquals(
+                before.get("participant_snapshot"), after.get("participant_snapshot"));
+        org.junit.jupiter.api.Assertions.assertEquals(
+                before.get("created_at"), after.get("created_at"));
+        org.junit.jupiter.api.Assertions.assertEquals(
+                "SUBMITTED", after.get("status"));
+        org.junit.jupiter.api.Assertions.assertEquals(
+                oldHistorySize + 1, newMeta.path("correctionHistory").size());
+        org.junit.jupiter.api.Assertions.assertEquals(
+                oldMeta.path("seedTimeSeconds"), newMeta.path("seedTimeSeconds"));
+        org.junit.jupiter.api.Assertions.assertEquals(
+                "original", newMeta.path("keep").asText());
+        org.junit.jupiter.api.Assertions.assertEquals(
+                "Data checked",
+                newMeta.path("correctionHistory").get(oldHistorySize).path("reply").asText());
+        org.junit.jupiter.api.Assertions.assertFalse(
+                newMeta.path("correctionHistory").get(oldHistorySize).has("genderChange"));
+    }
+
+    private UUID admissionFixtureEvent(AdmissionCorrectionFixture fixture) {
+        return admissionJdbc.queryForObject(
+                "SELECT event_id FROM registrations WHERE id=?",
+                UUID.class, fixture.registrationId());
+    }
+
+    @Test
+    void organizerRegistrationListExcludesForeignEvent() throws Exception {
+        var own = admissionCorrectionFixture();
+        var foreign = admissionCorrectionFixture();
+        UUID ownEvent = admissionFixtureEvent(own);
+        var organizer = organizerForEvent(ownEvent);
+
+        org.junit.jupiter.api.Assertions.assertNotEquals(
+                ownEvent, admissionFixtureEvent(foreign));
+
+        for (boolean filtered : List.of(false, true)) {
+            var request = get("/api/v1/registrations").with(user(organizer));
+            if (filtered) {
+                request.param("status", "NEEDS_CORRECTION");
+            }
+
+            mockMvc.perform(request)
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.length()").value(1))
+                    .andExpect(jsonPath("$[0].id")
+                            .value(own.registrationId().toString()))
+                    .andExpect(jsonPath("$[0].eventId")
+                            .value(ownEvent.toString()));
+        }
+    }
+
+    @Test
+    void organizerCannotSelectForeignRegistrationEvent() throws Exception {
+        var own = admissionCorrectionFixture();
+        var foreign = admissionCorrectionFixture();
+        var organizer = organizerForEvent(admissionFixtureEvent(own));
+
+        for (boolean filtered : List.of(false, true)) {
+            var request = get("/api/v1/registrations")
+                    .param("eventId", admissionFixtureEvent(foreign).toString())
+                    .with(user(organizer));
+            if (filtered) {
+                request.param("status", "NEEDS_CORRECTION");
+            }
+
+            mockMvc.perform(request).andExpect(status().isForbidden());
+        }
+    }
+
+    @Test
+    void organizerReadsOwnRegistrationButCannotReadForeignId() throws Exception {
+        var own = admissionCorrectionFixture();
+        var foreign = admissionCorrectionFixture();
+        var organizer = organizerForEvent(admissionFixtureEvent(own));
+
+        mockMvc.perform(get("/api/v1/registrations/{id}", own.registrationId())
+                        .with(user(organizer)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(own.registrationId().toString()));
+
+        mockMvc.perform(get("/api/v1/registrations/{id}", foreign.registrationId())
+                        .with(user(organizer)))
+                .andExpect(status().isForbidden());
+    }
+
     private UserEntity createParticipantUser() {
         UserEntity user = new UserEntity();
         user.setEmail("participant-" + UUID.randomUUID() + "@example.com");

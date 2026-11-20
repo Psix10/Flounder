@@ -14,22 +14,27 @@ public class GetRegistrationByIdUseCase {
 
     private final RegistrationRepository registrationRepository;
     private final RegistrationMapper registrationMapper;
+    private final RegistrationReadAccess readAccess;
 
     public GetRegistrationByIdUseCase(
             RegistrationRepository registrationRepository,
-            RegistrationMapper registrationMapper
+            RegistrationMapper registrationMapper,
+            RegistrationReadAccess readAccess
     ) {
         this.registrationRepository = registrationRepository;
         this.registrationMapper = registrationMapper;
+        this.readAccess = readAccess;
     }
 
     public RegistrationResponse execute(UUID registrationId) {
+        var reader = readAccess.currentReader();
         RegistrationEntity registration = registrationRepository.findById(registrationId)
                 .orElseThrow(() -> new BusinessException(
                         "registrations.not_found",
                         "Registration not found: " + registrationId
                 ));
 
+        reader.requireEvent(registration.getEventId());
         return registrationMapper.toResponse(registration);
     }
 }

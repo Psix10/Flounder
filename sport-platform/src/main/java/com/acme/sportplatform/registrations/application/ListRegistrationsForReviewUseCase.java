@@ -16,16 +16,23 @@ public class ListRegistrationsForReviewUseCase {
 
     private final RegistrationRepository registrationRepository;
     private final RegistrationMapper registrationMapper;
+    private final RegistrationReadAccess readAccess;
 
     public ListRegistrationsForReviewUseCase(
             RegistrationRepository registrationRepository,
-            RegistrationMapper registrationMapper
+            RegistrationMapper registrationMapper,
+            RegistrationReadAccess readAccess
     ) {
         this.registrationRepository = registrationRepository;
         this.registrationMapper = registrationMapper;
+        this.readAccess = readAccess;
     }
 
     public List<RegistrationResponse> execute(UUID eventId, RegistrationStatus status) {
+        var reader = readAccess.currentReader();
+        if (eventId != null) {
+            reader.requireEvent(eventId);
+        }
         List<com.acme.sportplatform.registrations.infrastructure.jpa.RegistrationEntity> entities;
 
         if (eventId != null && status != null) {
@@ -39,6 +46,7 @@ public class ListRegistrationsForReviewUseCase {
         }
 
         return entities.stream()
+                .filter(entity -> reader.canRead(entity.getEventId()))
                 .map(registrationMapper::toResponse)
                 .toList();
     }

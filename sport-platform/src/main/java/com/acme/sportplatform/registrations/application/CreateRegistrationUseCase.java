@@ -40,6 +40,7 @@ public class CreateRegistrationUseCase {
     private final EventDisciplineLookup eventDisciplineLookup;
     private final RegistrationMapper registrationMapper;
     private final ObjectMapper objectMapper;
+    private final com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck;
 
     public CreateRegistrationUseCase(
             RegistrationRepository registrationRepository,
@@ -47,7 +48,8 @@ public class CreateRegistrationUseCase {
             EventLookup eventLookup,
             EventDisciplineLookup eventDisciplineLookup,
             RegistrationMapper registrationMapper,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck
     ) {
         this.registrationRepository = registrationRepository;
         this.profileLookup = profileLookup;
@@ -55,6 +57,7 @@ public class CreateRegistrationUseCase {
         this.eventDisciplineLookup = eventDisciplineLookup;
         this.registrationMapper = registrationMapper;
         this.objectMapper = objectMapper;
+        this.admissionCheck = admissionCheck;
     }
 
     @Transactional
@@ -143,14 +146,18 @@ public class CreateRegistrationUseCase {
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
+        UUID registrationId = UUID.randomUUID();
+        String participantSnapshot = createParticipantSnapshot(profile);
+        admissionCheck.verify(discipline.id(), registrationId, participantSnapshot);
+
         RegistrationEntity entity = new RegistrationEntity();
-        entity.setId(UUID.randomUUID());
+        entity.setId(registrationId);
         entity.setEventId(event.id());
         entity.setEventDisciplineId(discipline.id());
         entity.setParticipantUserId(participantUserId);
         entity.setParticipantProfileId(profile.id());
         entity.setStatus(RegistrationStatus.SUBMITTED.name());
-        entity.setParticipantSnapshot(createParticipantSnapshot(profile));
+        entity.setParticipantSnapshot(participantSnapshot);
         entity.setRegistrationMeta(
                 request.registrationMeta() == null || request.registrationMeta().isNull()
                         ? "{}"

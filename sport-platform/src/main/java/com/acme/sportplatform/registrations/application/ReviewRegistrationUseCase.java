@@ -28,6 +28,7 @@ public class ReviewRegistrationUseCase {
     private final com.acme.sportplatform.registrations.RegistrationProtocolGuard protocolGuard;
     private final com.acme.sportplatform.competition.ProtocolDisciplineLookup disciplines;
     private final jakarta.persistence.EntityManager entityManager;
+    private final com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck;
 
     public ReviewRegistrationUseCase(
             RegistrationRepository registrationRepository,
@@ -35,7 +36,8 @@ public class ReviewRegistrationUseCase {
             EventOperationAccess eventAccess,
             com.acme.sportplatform.registrations.RegistrationProtocolGuard protocolGuard,
             com.acme.sportplatform.competition.ProtocolDisciplineLookup disciplines,
-            jakarta.persistence.EntityManager entityManager
+            jakarta.persistence.EntityManager entityManager,
+            com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck
     ) {
         this.registrationRepository = registrationRepository;
         this.registrationMapper = registrationMapper;
@@ -43,6 +45,7 @@ public class ReviewRegistrationUseCase {
         this.protocolGuard = protocolGuard;
         this.disciplines = disciplines;
         this.entityManager = entityManager;
+        this.admissionCheck = admissionCheck;
     }
 
     @Transactional(isolation = org.springframework.transaction.annotation.Isolation.READ_COMMITTED)
@@ -177,6 +180,11 @@ public class ReviewRegistrationUseCase {
         if (newStatus == RegistrationStatus.CONFIRMED) {
             // No administrator bypass: admission must not change a generated pool.
             protocolGuard.requireNoProtocolsOrUnits(eventId, disciplineId);
+            admissionCheck.verify(
+                    disciplineId,
+                    registration.getId(),
+                    registration.getParticipantSnapshot()
+            );
         }
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);

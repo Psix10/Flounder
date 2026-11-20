@@ -38,6 +38,7 @@ public class ResubmitRegistrationUseCase {
     private final RegistrationProtocolGuard protocolGuard;
     private final RegistrationPaymentGuard paymentGuard;
     private final EntityManager entityManager;
+    private final com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck;
 
     public ResubmitRegistrationUseCase(
             RegistrationRepository registrations,
@@ -47,7 +48,8 @@ public class ResubmitRegistrationUseCase {
             ProtocolDisciplineLookup disciplines,
             RegistrationProtocolGuard protocolGuard,
             RegistrationPaymentGuard paymentGuard,
-            EntityManager entityManager
+            EntityManager entityManager,
+            com.acme.sportplatform.registrations.RegistrationAdmissionCheck admissionCheck
     ) {
         this.registrations = registrations;
         this.mapper = mapper;
@@ -57,6 +59,7 @@ public class ResubmitRegistrationUseCase {
         this.protocolGuard = protocolGuard;
         this.paymentGuard = paymentGuard;
         this.entityManager = entityManager;
+        this.admissionCheck = admissionCheck;
     }
 
     @Transactional
@@ -231,6 +234,11 @@ public class ResubmitRegistrationUseCase {
                 );
             }
         }
+
+        String candidateSnapshot = snapshot == null
+                ? registration.getParticipantSnapshot()
+                : snapshot.toString();
+        admissionCheck.verify(disciplineId, registrationId, candidateSnapshot);
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
