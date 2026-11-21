@@ -34,7 +34,7 @@ export function AppLayout() {
     <div className={styles.shell}>
       <header className={styles.header}>
         <NavLink className={styles.brand} to="/">
-          Flounder
+          Sport Gate
         </NavLink>
 
         <nav
