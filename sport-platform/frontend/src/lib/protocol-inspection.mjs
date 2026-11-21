@@ -111,7 +111,7 @@ export function disciplineFacts(raw) {
   if (!isObject(data)) return { error: 'Настройки дисциплины должны быть объектом.', distance: 'Не задано', stroke: 'Не задано', gender: 'Не задано', pool: 'Не задано' }
   const measure = value => value == null ? 'Не задано' : typeof value === 'number' && Number.isFinite(value) && value > 0 ? `${value} м` : 'Некорректное значение'
   const code = (value, labels) => value == null ? 'Не задано' : typeof value === 'string' ? labels[value.toUpperCase()] ?? `Код: ${value}` : 'Некорректное значение'
-  return { error: null, distance: measure(data.distanceMeters), stroke: code(data.stroke, strokes), gender: code(data.gender, genders), pool: measure(data.poolLengthMeters) }
+  return { error: null, distance: measure(data.distanceMeters), stroke: code(data.stroke, strokes), gender: code(data.gender, { ...genders, OPEN: 'Без ограничения' }), pool: measure(data.poolLengthMeters) }
 }
 export function configuredGenderWarning(raw, snapshot) {
   let data

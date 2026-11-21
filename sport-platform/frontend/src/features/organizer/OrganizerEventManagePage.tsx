@@ -1,3 +1,12 @@
+import {
+  disciplineFacts,
+  inspectCategories,
+  type CategoryInspection,
+} from '../../lib/protocol-inspection.mjs'
+import { filterDisciplineCategoryInspection } from '../../lib/swimming-discipline-settings.mjs'
+import { getRegulationConfiguration } from '../../api/regulations.api'
+import { readEventCategories } from '../../lib/event-category-read.mjs'
+import { startRead } from '../../lib/read-lifecycle.mjs'
 import { competitionFormatLabel } from '../../lib/discipline-labels.mjs'
 // EVENT_OPERATORS_LINK_V1
 // SWIM_LABELS_V1
@@ -172,6 +181,9 @@ function OrganizerEventManageContent({
 }) {
   const [event, setEvent] = useState<Event | null>(null)
   const [disciplines, setDisciplines] = useState<EventDiscipline[]>([])
+  const [categoryInspection, setCategoryInspection] = useState<CategoryInspection>(
+    () => inspectCategories(null),
+  )
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [actionMessage, setActionMessage] = useState<string | null>(null)
@@ -197,12 +209,11 @@ function OrganizerEventManageContent({
   }, [])
 
   useEffect(() => {
-    let active = true
-
     loadingRef.current = true
     setIsLoading(true)
     setErrorMessage(null)
     setActionMessage(null)
+    setCategoryInspection(inspectCategories(null))
 
     if (!eventId || !accessToken) {
       loadingRef.current = false
@@ -212,51 +223,48 @@ function OrganizerEventManageContent({
           ? 'Не указан идентификатор мероприятия.'
           : 'Для управления мероприятием необходимо войти в аккаунт.',
       )
-
-      return () => {
-        active = false
-      }
+      return
     }
 
     const resolvedEventId = eventId
     const token = accessToken
 
-    async function loadData() {
-      try {
+    return startRead(
+      async () => {
         const [eventData, disciplinesData] = await Promise.all([
           getEventById(resolvedEventId, token),
           getEventDisciplines(resolvedEventId, token),
         ])
 
-        if (!active) {
-          return
-        }
+        const inspection = await readEventCategories(
+          eventData.regulationVersionId,
+          id => getRegulationConfiguration(id, token),
+          getErrorMessage,
+        )
 
-        setEvent(eventData)
-        setDisciplines(disciplinesData)
-        refreshRequired.current = false
-        setNeedsRefresh(false)
-      } catch (error) {
-        if (active) {
+        return { eventData, disciplinesData, inspection }
+      },
+      {
+        success: ({ eventData, disciplinesData, inspection }) => {
+          setCategoryInspection(inspection)
+          setEvent(eventData)
+          setDisciplines(disciplinesData)
+          refreshRequired.current = false
+          setNeedsRefresh(false)
+        },
+        failure: error => {
           refreshRequired.current = true
           setNeedsRefresh(true)
           setErrorMessage(
             getErrorMessage(error, 'Не удалось загрузить мероприятие.'),
           )
-        }
-      } finally {
-        if (active) {
+        },
+        finished: () => {
           loadingRef.current = false
           setIsLoading(false)
-        }
-      }
-    }
-
-    void loadData()
-
-    return () => {
-      active = false
-    }
+        },
+      },
+    )
   }, [eventId, accessToken, refresh])
 
   const isActionBusy =
@@ -670,6 +678,11 @@ function OrganizerEventManageContent({
             ) : (
               <div className={styles.disciplineList}>
                 {disciplines.map((discipline) => {
+                  const facts = disciplineFacts(discipline.settingsJson)
+                  const disciplineCategories = filterDisciplineCategoryInspection(
+                    categoryInspection,
+                    discipline.settingsJson,
+                  )
                   const disciplineStatus = (
                     discipline.status || 'UNKNOWN'
                   ).trim().toUpperCase()
@@ -698,6 +711,50 @@ function OrganizerEventManageContent({
                             Код: {discipline.code || '—'} · Формат:{' '}
                             {competitionFormatLabel(discipline.competitionFormat)}
                           </p>
+
+                          <div>
+                            <p className={styles.disciplineMeta}>
+                              Категории регламента с учётом фильтра дисциплины:
+                            </p>
+                            {categoryInspection.state === 'unavailable' ? (
+                              <p className={styles.disciplineMeta}>
+                                {categoryInspection.message}
+                              </p>
+                            ) : disciplineCategories.state === 'ready' ? (
+                              <ul>
+                                {disciplineCategories.categories.map((category) => (
+                                  <li key={category.code}>
+                                    {category.description} ({category.code})
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className={styles.disciplineMeta}>
+                                {disciplineCategories.message}
+                              </p>
+                            )}
+                          </div>
+
+                          <div>
+                            <p className={styles.disciplineMeta}>
+                              Параметры из настроек дисциплины:
+                            </p>
+
+                            {facts.error ? (
+                              <p className={styles.disciplineMeta}>
+                                {facts.error}
+                              </p>
+                            ) : (
+                              <>
+                                <p className={styles.disciplineMeta}>
+                                  Дистанция: {facts.distance} · Стиль: {facts.stroke}
+                                </p>
+                                <p className={styles.disciplineMeta}>
+                                  Пол: {facts.gender} · Длина бассейна: {facts.pool}
+                                </p>
+                              </>
+                            )}
+                          </div>
                         </div>
 
                         <span

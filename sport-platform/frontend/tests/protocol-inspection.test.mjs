@@ -61,3 +61,21 @@ test('inspection and preview do not mutate input snapshots or rules',()=>{
   const value=settings([rule('A','MALE')]),person=snapshot();const before=JSON.stringify({value,person})
   previewCategory(person,inspectCategories(value));assert.equal(JSON.stringify({value,person}),before)
 })
+test('OPEN discipline label does not change participant gender', () => {
+  assert.equal(disciplineFacts({ gender: 'OPEN' }).gender, 'Без ограничения')
+  assert.equal(snapshotGender({ gender: 'OPEN' }), 'Неизвестное значение: OPEN')
+})
+test('OPEN discipline gender works with JSON settings and lowercase', () => {
+  assert.equal(disciplineFacts('{"gender":"OPEN"}').gender, 'Без ограничения')
+  assert.equal(disciplineFacts({ gender: 'open' }).gender, 'Без ограничения')
+})
+test('discipline gender preserves missing unknown and malformed distinctions', () => {
+  assert.equal(disciplineFacts({}).gender, 'Не задано')
+  assert.equal(disciplineFacts({ gender: 'FUTURE' }).gender, 'Код: FUTURE')
+  assert.equal(disciplineFacts({ gender: ' OPEN ' }).gender, 'Код:  OPEN ')
+  assert.equal(disciplineFacts({ gender: 1 }).gender, 'Некорректное значение')
+})
+test('OPEN discipline adds no configured gender mismatch warning', () => {
+  assert.equal(configuredGenderWarning({ gender: 'OPEN' }, snapshot()), null)
+  assert.equal(configuredGenderWarning({ gender: 'OPEN' }, snapshot('2014-01-01', 'FEMALE')), null)
+})

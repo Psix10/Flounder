@@ -21,7 +21,7 @@ export function ProtocolDisciplineFacts({ settings }: { settings: unknown }) {
     <dl className={styles.facts}>
       <div><dt>Дистанция</dt><dd>{facts.distance}</dd></div>
       <div><dt>Стиль</dt><dd>{facts.stroke}</dd></div>
-      <div><dt>Пол в настройках дисциплины</dt><dd>{facts.gender === 'Код: OPEN' ? 'без ограничения' : facts.gender}</dd></div>
+      <div><dt>Пол в настройках дисциплины</dt><dd>{facts.gender}</dd></div>
       <div><dt>Длина бассейна</dt><dd>{facts.pool}</dd></div>
     </dl>
     {facts.error ? <p className={styles.warning}>{facts.error}</p> : null}
