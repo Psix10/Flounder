@@ -1,3 +1,4 @@
+import { positionLabel } from '../../lib/position-label.mjs'
 // SWIM_LABELS_V1
 import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useEffect, useMemo, useState } from 'react'
@@ -306,12 +307,9 @@ export function PublicDisciplineResultsPage() {
                                   {entry.participantName}
                                 </strong>
 
-                                {entry.laneOrPosition !== null ? (
-                                  <span className={styles.positionLabel}>
-                                    Дорожка / позиция{' '}
-                                    {entry.laneOrPosition}
-                                  </span>
-                                ) : null}
+                                <span className={styles.positionLabel}>
+                                  {positionLabel(entry.laneOrPosition)}
+                                </span>
                               </td>
 
                               <td className={styles.clubCell}>
