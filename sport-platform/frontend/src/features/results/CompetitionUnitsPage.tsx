@@ -1,6 +1,7 @@
+import { startRead } from '../../lib/read-lifecycle.mjs'
 // SWIM_LABELS_V1
 import { formatHeatLabel } from '../../lib/heat-labels.mjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router'
 
@@ -105,16 +106,38 @@ function CompetitionUnitsContent({
     initialDisciplineId,
   )
   const [units, setUnits] = useState<CompetitionUnitResponse[]>([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(
+    Boolean(initialDisciplineId.trim() && accessToken),
+  )
   const [hasLoaded, setHasLoaded] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [request, setRequest] = useState({
+    disciplineId: initialDisciplineId.trim(),
+    revision: 0,
+  })
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    if (!accessToken || !request.disciplineId) return
+
+    return startRead(
+      () => getCompetitionUnitsByDiscipline(request.disciplineId, accessToken),
+      {
+        success: data => {
+          setUnits(data)
+          setHasLoaded(true)
+        },
+        failure: error => {
+          setUnits([])
+          setErrorMessage(getErrorMessage(error))
+        },
+        finished: () => setIsLoading(false),
+      },
+    )
+  }, [accessToken, request])
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-
-    if (isLoading) {
-      return
-    }
+    if (isLoading) return
 
     if (!accessToken) {
       navigate('/login', { replace: true })
@@ -122,7 +145,6 @@ function CompetitionUnitsContent({
     }
 
     const normalizedDisciplineId = eventDisciplineId.trim()
-
     if (!normalizedDisciplineId) {
       setUnits([])
       setHasLoaded(false)
@@ -134,23 +156,11 @@ function CompetitionUnitsContent({
     setHasLoaded(false)
     setUnits([])
     setErrorMessage(null)
-
-    try {
-      const data = await getCompetitionUnitsByDiscipline(
-        normalizedDisciplineId,
-        accessToken,
-      )
-
-      setUnits(data)
-      setHasLoaded(true)
-    } catch (error) {
-      setUnits([])
-      setErrorMessage(getErrorMessage(error))
-    } finally {
-      setIsLoading(false)
-    }
+    setRequest(current => ({
+      disciplineId: normalizedDisciplineId,
+      revision: current.revision + 1,
+    }))
   }
-
   return (
     <section className={styles.page}>
       <Link
@@ -170,7 +180,7 @@ function CompetitionUnitsContent({
 
       <p className={styles.description}>
         {initialDisciplineId
-          ? 'Дисциплина уже выбрана. Нажмите «Открыть», затем выберите нужный заплыв.'
+          ? 'Дисциплина уже выбрана. Заплывы загружаются автоматически. Выберите нужный заплыв или обновите список.'
           : 'Введите идентификатор дисциплины, чтобы открыть список заплывов, матчей, групп или финалов.'}
       </p>
 
@@ -204,7 +214,7 @@ function CompetitionUnitsContent({
           disabled={isLoading || !eventDisciplineId.trim()}
           type="submit"
         >
-          {isLoading ? 'Загружаем…' : 'Открыть'}
+          {isLoading ? 'Загружаем…' : 'Открыть / обновить'}
         </button>
       </form>
 
