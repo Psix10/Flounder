@@ -15,6 +15,7 @@ public record PublicEventDetailsResponse(
         OffsetDateTime eventEndAt,
         String status,
         String publicSlug,
+        String venueTimezone,
         List<PublicEventDisciplineResponse> disciplines
 ) {
 }

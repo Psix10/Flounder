@@ -49,6 +49,7 @@ export type EventResponse = Event
 export type OrganizerEvent = Event
 
 export type PublicEvent = {
+  venueTimezone?: string | null
   id: string
   sportId: string
   title: string

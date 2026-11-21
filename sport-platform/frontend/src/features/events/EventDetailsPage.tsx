@@ -1,3 +1,4 @@
+import { formatVenueDate, venueTimeZoneLabel } from '../../lib/venue-time.mjs'
 import { competitionFormatLabel } from '../../lib/discipline-labels.mjs'
 // SWIM_LABELS_V1
 import { formatHeatLabel } from '../../lib/heat-labels.mjs'
@@ -19,17 +20,6 @@ type DisciplineSettings = {
   poolLengthMeters?: number
 }
 
-function formatDate(value: string | null) {
-  if (!value) {
-    return 'Не указано'
-  }
-
-  return new Intl.DateTimeFormat('ru-RU', {
-    dateStyle: 'long',
-    timeStyle: 'short',
-    timeZone: 'Europe/Moscow',
-  }).format(new Date(value))
-}
 
 function formatMoney(amount: number | null, currency: string | null) {
   if (amount === null || currency === null || !currency.trim()) {
@@ -155,19 +145,20 @@ export function EventDetailsPage() {
         <p className={styles.description}>{event.description}</p>
       ) : null}
 
+      <p>{venueTimeZoneLabel(event.venueTimezone)}</p>
       <div className={styles.metaGrid}>
         <div className={styles.metaCard}>
           <span>Регистрация</span>
           <strong>
-            {formatDate(event.registrationOpenAt)} —{' '}
-            {formatDate(event.registrationCloseAt)}
+            {formatVenueDate(event.registrationOpenAt, event.venueTimezone)} —{' '}
+            {formatVenueDate(event.registrationCloseAt, event.venueTimezone)}
           </strong>
         </div>
 
         <div className={styles.metaCard}>
           <span>Дата события</span>
           <strong>
-            {formatDate(event.eventStartAt)} — {formatDate(event.eventEndAt)}
+            {formatVenueDate(event.eventStartAt, event.venueTimezone)} — {formatVenueDate(event.eventEndAt, event.venueTimezone)}
           </strong>
         </div>
       </div>

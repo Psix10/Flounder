@@ -1,21 +1,12 @@
+import { formatVenueDate, venueTimeZoneLabel } from '../../lib/venue-time.mjs'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
-import { getPublicEvents, type Event } from '../../api/events.api'
+import { getPublicEvents, type PublicEvent } from '../../api/events.api'
 import { ApiError } from '../../api/http'
 import { ErrorState } from '../../components/ErrorState'
 import { LoadingState } from '../../components/LoadingState'
 import styles from './EventsPage.module.css'
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Moscow',
-  }).format(new Date(value))
-}
 
 function getStatusLabel(status: string) {
   const labels: Record<string, string> = {
@@ -42,7 +33,7 @@ function getStatusClassName(status: string) {
 }
 
 export function EventsPage() {
-  const [events, setEvents] = useState<Event[]>([])
+  const [events, setEvents] = useState<PublicEvent[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -118,19 +109,20 @@ export function EventsPage() {
                 <div className={styles.metaItem}>
                   <dt>Регистрация</dt>
                   <dd>
-                    {formatDate(event.registrationOpenAt)} —{' '}
-                    {formatDate(event.registrationCloseAt)}
+                    {formatVenueDate(event.registrationOpenAt, event.venueTimezone)} —{' '}
+                    {formatVenueDate(event.registrationCloseAt, event.venueTimezone)}
                   </dd>
                 </div>
 
                 <div className={styles.metaItem}>
                   <dt>Дата события</dt>
                   <dd>
-                    {formatDate(event.eventStartAt)} — {formatDate(event.eventEndAt)}
+                    {formatVenueDate(event.eventStartAt, event.venueTimezone)} — {formatVenueDate(event.eventEndAt, event.venueTimezone)}
                   </dd>
                 </div>
               </dl>
 
+              <p>{venueTimeZoneLabel(event.venueTimezone)}</p>
               <div className={styles.cardFooter}>
                 <Link
                   className={styles.primaryAction}

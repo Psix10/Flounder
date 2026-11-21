@@ -64,6 +64,7 @@ public class PublicEventCatalogQueryService {
                 event.eventEndAt(),
                 event.status(),
                 event.publicSlug(),
+                event.venueTimezone(),
                 disciplines
         );
     }
@@ -81,7 +82,8 @@ public class PublicEventCatalogQueryService {
                 event.eventStartAt(),
                 event.eventEndAt(),
                 event.status(),
-                event.publicSlug()
+                event.publicSlug(),
+                event.venueTimezone()
         );
     }
 

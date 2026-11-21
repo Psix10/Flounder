@@ -13,6 +13,7 @@ public record PublicEventListItemResponse(
         OffsetDateTime eventStartAt,
         OffsetDateTime eventEndAt,
         String status,
-        String publicSlug
+        String publicSlug,
+        String venueTimezone
 ) {
 }

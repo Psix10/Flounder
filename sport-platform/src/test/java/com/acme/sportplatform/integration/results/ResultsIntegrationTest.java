@@ -1622,6 +1622,128 @@ class ResultsIntegrationTest extends AbstractPostgresIntegrationTest {
         return UUID.fromString(registrationId);
     }
 
+    @Autowired
+    private com.acme.sportplatform.organizations.infrastructure.jpa.VenueRepository
+            timezoneVenueRepository;
+
+    private EventEntity publicTimezoneEvent(String timezone) {
+        var venue = new com.acme.sportplatform.organizations.infrastructure.jpa.VenueEntity();
+        venue.setName("Timezone test venue " + UUID.randomUUID());
+        venue.setTimezone(timezone);
+        venue.setVenueMeta("{}");
+        venue = timezoneVenueRepository.saveAndFlush(venue);
+
+        var event = eventRepository.findById(createEvent()).orElseThrow();
+        event.setVenueId(venue.getId());
+        event.setEventStartAt(OffsetDateTime.parse("2026-11-21T23:30:00Z"));
+        event.setEventEndAt(OffsetDateTime.parse("2026-11-22T01:30:00Z"));
+        return eventRepository.saveAndFlush(event);
+    }
+
+    private com.fasterxml.jackson.databind.JsonNode publicTimezoneList() throws Exception {
+        String response = mockMvc.perform(get("/api/v1/public/events"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse()
+                .getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
+        return objectMapper.readTree(response);
+    }
+
+    private com.fasterxml.jackson.databind.JsonNode publicTimezoneDetails(
+            EventEntity event
+    ) throws Exception {
+        String response = mockMvc.perform(get(
+                        "/api/v1/public/events/{slug}", event.getPublicSlug()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse()
+                .getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
+        return objectMapper.readTree(response);
+    }
+
+    private void assertPublicTimezone(
+            com.fasterxml.jackson.databind.JsonNode row,
+            EventEntity event,
+            String timezone
+    ) {
+        assertEquals(event.getId().toString(), row.path("id").asText());
+        assertEquals(timezone, row.path("venueTimezone").asText());
+        assertEquals(
+                event.getEventStartAt().toInstant(),
+                OffsetDateTime.parse(row.path("eventStartAt").asText()).toInstant());
+        assertEquals(
+                event.getEventEndAt().toInstant(),
+                OffsetDateTime.parse(row.path("eventEndAt").asText()).toInstant());
+    }
+
+    @Test
+    void publicCatalogReturnsEachVenueTimezoneAndPreservesInstants() throws Exception {
+        var east = publicTimezoneEvent("Asia/Vladivostok");
+        var west = publicTimezoneEvent("Europe/Moscow");
+        var expected = Map.of(
+                east.getId().toString(), "Asia/Vladivostok",
+                west.getId().toString(), "Europe/Moscow");
+        var events = Map.of(
+                east.getId().toString(), east,
+                west.getId().toString(), west);
+        var seen = new java.util.HashSet<String>();
+
+        for (var row : publicTimezoneList()) {
+            String id = row.path("id").asText();
+            if (expected.containsKey(id)) {
+                assertTrue(seen.add(id));
+                assertPublicTimezone(row, events.get(id), expected.get(id));
+            }
+        }
+        assertEquals(expected.keySet(), seen);
+
+        assertPublicTimezone(publicTimezoneDetails(east), east, "Asia/Vladivostok");
+        assertPublicTimezone(publicTimezoneDetails(west), west, "Europe/Moscow");
+
+        for (var event : List.of(east, west)) {
+            var stored = eventRepository.findById(event.getId()).orElseThrow();
+            assertEquals(event.getEventStartAt().toInstant(),
+                    stored.getEventStartAt().toInstant());
+            assertEquals(event.getEventEndAt().toInstant(),
+                    stored.getEventEndAt().toInstant());
+        }
+    }
+
+    @Test
+    void publicCatalogWithoutStoredVenueDoesNotInventTimezone() throws Exception {
+        // Existing fixture deliberately references a nonexistent venue UUID.
+        var event = eventRepository.findById(createEvent()).orElseThrow();
+        assertTrue(!timezoneVenueRepository.existsById(event.getVenueId()));
+
+        var details = publicTimezoneDetails(event);
+        assertTrue(details.path("venueTimezone").isMissingNode()
+                || details.path("venueTimezone").isNull());
+
+        boolean found = false;
+        for (var row : publicTimezoneList()) {
+            if (event.getId().toString().equals(row.path("id").asText())) {
+                found = true;
+                assertTrue(row.path("venueTimezone").isMissingNode()
+                        || row.path("venueTimezone").isNull());
+            }
+        }
+        assertTrue(found);
+    }
+
+    @Test
+    void timezoneLookupDoesNotExposeDraftEvent() throws Exception {
+        var event = publicTimezoneEvent("Asia/Vladivostok");
+        event.setStatus(EventStatus.DRAFT.name());
+        eventRepository.saveAndFlush(event);
+
+        for (var row : publicTimezoneList()) {
+            org.junit.jupiter.api.Assertions.assertNotEquals(
+                    event.getId().toString(), row.path("id").asText());
+        }
+
+        mockMvc.perform(get(
+                        "/api/v1/public/events/{slug}", event.getPublicSlug()))
+                .andExpect(status().isNotFound());
+    }
+
     private UUID createEvent() {
         ManagedRegistrationOrganization managed =
                 createManagedRegistrationOrganization();
