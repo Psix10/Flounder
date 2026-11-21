@@ -18,6 +18,14 @@ public class RegistrationMapper {
     }
 
     public RegistrationResponse toResponse(RegistrationEntity entity) {
+        return toResponse(entity, null, null);
+    }
+
+    public RegistrationResponse toResponse(
+            RegistrationEntity entity,
+            String eventTitle,
+            String disciplineName
+    ) {
         return new RegistrationResponse(
                 entity.getId(),
                 entity.getEventId(),
@@ -32,7 +40,9 @@ public class RegistrationMapper {
                 entity.getReviewedAt(),
                 entity.getSubmittedAt(),
                 entity.getCreatedAt(),
-                entity.getUpdatedAt()
+                entity.getUpdatedAt(),
+                eventTitle,
+                disciplineName
         );
     }
 

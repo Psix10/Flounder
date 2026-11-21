@@ -1,3 +1,4 @@
+import { registrationEventTitle, registrationDisciplineName, registrationParticipantName } from '../../lib/registration-display.mjs'
 import { registrationStatusLabel } from '../registrations/registration-withdrawal.mjs'
 import { useEffect, useState } from 'react'
 import {
@@ -341,7 +342,7 @@ export function PaymentPage() {
           <div className={styles.cardHeader}>
             <div>
               <p className={styles.cardLabel}>Заявка</p>
-              <h2 className={styles.cardTitle}>Участие в соревновании</h2>
+              <h2 className={styles.cardTitle}>{registrationParticipantName(registration)}</h2>
             </div>
 
             <span className={styles.registrationBadge}>
@@ -351,24 +352,18 @@ export function PaymentPage() {
 
           <dl className={styles.facts}>
             <div>
-              <dt>ID заявки</dt>
-              <dd className={styles.technicalValue}>{registration.id}</dd>
+              <dt>Мероприятие</dt>
+              <dd>{registrationEventTitle(registration)}</dd>
             </div>
-
             <div>
-              <dt>ID события</dt>
-              <dd className={styles.technicalValue}>
-                {registration.eventId}
-              </dd>
-            </div>
-
-            <div>
-              <dt>ID дисциплины</dt>
-              <dd className={styles.technicalValue}>
-                {registration.eventDisciplineId}
-              </dd>
+              <dt>Дисциплина</dt>
+              <dd>{registrationDisciplineName(registration)}</dd>
             </div>
           </dl>
+          <details>
+            <summary>Технические сведения о заявке</summary>
+            <p>Идентификатор: {registration.id}</p>
+          </details>
 
           {registration.reviewNote ? (
             <div className={styles.reviewNote}>

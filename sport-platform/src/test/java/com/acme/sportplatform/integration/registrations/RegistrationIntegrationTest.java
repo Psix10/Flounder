@@ -723,6 +723,140 @@ class RegistrationIntegrationTest extends AbstractPostgresIntegrationTest {
                 .andExpect(status().isForbidden());
     }
 
+    private record RegistrationLabelFixture(
+            UUID registrationId,
+            UUID eventId,
+            UUID disciplineId,
+            String eventTitle,
+            String disciplineName
+    ) {}
+
+    private RegistrationLabelFixture createRegistrationLabelFixture(
+            UserEntity participant,
+            String eventTitle,
+            String disciplineName
+    ) throws Exception {
+        UUID eventId = createEventWithOpenRegistration();
+        var event = eventRepository.findById(eventId).orElseThrow();
+        event.setTitle(eventTitle);
+        eventRepository.saveAndFlush(event);
+
+        UUID disciplineId = createPublishedEventDiscipline(
+                eventId, createDisciplineTemplate(), BigDecimal.ZERO);
+        var discipline = eventDisciplineRepository.findById(disciplineId).orElseThrow();
+        discipline.setName(disciplineName);
+        eventDisciplineRepository.saveAndFlush(discipline);
+
+        String response = mockMvc.perform(post("/api/v1/registrations")
+                        .with(user(admissionParticipant(participant)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"eventDisciplineId":"%s","registrationMeta":{}}
+                                """.formatted(disciplineId)))
+                .andExpect(status().isOk())
+                .andReturn().getResponse()
+                .getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
+
+        UUID registrationId = UUID.fromString(
+                (String) JsonPath.read(response, "$.id"));
+        return new RegistrationLabelFixture(
+                registrationId, eventId, disciplineId, eventTitle, disciplineName);
+    }
+
+    @Test
+    void ownRegistrationLabelsMatchScopeAndExcludeForeignEntries() throws Exception {
+        var participant = createParticipantUser();
+        createParticipantProfile(participant.getId());
+        var first = createRegistrationLabelFixture(
+                participant, "Кубок Север", "50 м вольный стиль");
+        var second = createRegistrationLabelFixture(
+                participant, "Кубок Юг", "100 м на спине");
+
+        var otherParticipant = createParticipantUser();
+        createParticipantProfile(otherParticipant.getId());
+        var foreign = createRegistrationLabelFixture(
+                otherParticipant, "Чужое мероприятие", "Чужая дисциплина");
+
+        String response = mockMvc.perform(get("/api/v1/registrations/me")
+                        .with(user(admissionParticipant(participant))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andReturn().getResponse()
+                .getContentAsString(java.nio.charset.StandardCharsets.UTF_8);
+
+        var rows = new com.fasterxml.jackson.databind.ObjectMapper().readTree(response);
+        var expected = Map.of(
+                first.registrationId().toString(), first,
+                second.registrationId().toString(), second);
+        var seen = new java.util.HashSet<String>();
+
+        for (var row : rows) {
+            String registrationId = row.path("id").asText();
+            var fixture = expected.get(registrationId);
+            org.junit.jupiter.api.Assertions.assertNotNull(fixture);
+            org.junit.jupiter.api.Assertions.assertTrue(seen.add(registrationId));
+            org.junit.jupiter.api.Assertions.assertEquals(
+                    participant.getId().toString(), row.path("participantUserId").asText());
+            org.junit.jupiter.api.Assertions.assertEquals(
+                    fixture.eventId().toString(), row.path("eventId").asText());
+            org.junit.jupiter.api.Assertions.assertEquals(
+                    fixture.disciplineId().toString(), row.path("eventDisciplineId").asText());
+            org.junit.jupiter.api.Assertions.assertEquals(
+                    fixture.eventTitle(), row.path("eventTitle").asText());
+            org.junit.jupiter.api.Assertions.assertEquals(
+                    fixture.disciplineName(), row.path("disciplineName").asText());
+            org.junit.jupiter.api.Assertions.assertEquals(
+                    "Иванов", row.path("participantSnapshot").path("lastName").asText());
+        }
+
+        org.junit.jupiter.api.Assertions.assertEquals(expected.keySet(), seen);
+        org.junit.jupiter.api.Assertions.assertFalse(
+                response.contains(foreign.registrationId().toString()));
+        org.junit.jupiter.api.Assertions.assertFalse(
+                response.contains(foreign.eventTitle()));
+        org.junit.jupiter.api.Assertions.assertFalse(
+                response.contains(foreign.disciplineName()));
+    }
+
+    @Test
+    void ownRegistrationLabelsRemainAvailableForDraftEvent() throws Exception {
+        var participant = createParticipantUser();
+        createParticipantProfile(participant.getId());
+        var fixture = createRegistrationLabelFixture(
+                participant, "Непубличное тестовое мероприятие", "200 м комплекс");
+
+        // Test-only historical state: registration was created while open.
+        var event = eventRepository.findById(fixture.eventId()).orElseThrow();
+        event.setStatus(EventStatus.DRAFT.name());
+        eventRepository.saveAndFlush(event);
+
+        mockMvc.perform(get("/api/v1/registrations/me")
+                        .with(user(admissionParticipant(participant))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id")
+                        .value(fixture.registrationId().toString()))
+                .andExpect(jsonPath("$[0].eventTitle").value(fixture.eventTitle()))
+                .andExpect(jsonPath("$[0].disciplineName").value(fixture.disciplineName()));
+    }
+
+    @Test
+    void participantWithoutRegistrationsDoesNotReceiveForeignLabels() throws Exception {
+        var otherParticipant = createParticipantUser();
+        createParticipantProfile(otherParticipant.getId());
+        createRegistrationLabelFixture(
+                otherParticipant, "Чужой кубок", "Чужая дистанция");
+
+        var participant = createParticipantUser();
+        createParticipantProfile(participant.getId());
+
+        mockMvc.perform(get("/api/v1/registrations/me")
+                        .with(user(admissionParticipant(participant))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(0));
+    }
+
     private UserEntity createParticipantUser() {
         UserEntity user = new UserEntity();
         user.setEmail("participant-" + UUID.randomUUID() + "@example.com");

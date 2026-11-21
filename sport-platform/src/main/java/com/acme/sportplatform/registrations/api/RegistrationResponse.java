@@ -19,5 +19,7 @@ public record RegistrationResponse(
         OffsetDateTime reviewedAt,
         OffsetDateTime submittedAt,
         OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        OffsetDateTime updatedAt,
+        String eventTitle,
+        String disciplineName
 ) {}

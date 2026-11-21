@@ -1,3 +1,4 @@
+import { registrationEventTitle, registrationDisciplineName, mergeRegistrationDisplay } from '../../lib/registration-display.mjs'
 import { registrationStatusLabel as getStatusLabel } from './registration-withdrawal.mjs'
 import { useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router'
@@ -193,7 +194,7 @@ export function MyRegistrationsPage() {
   function handleUpdated(updated: Registration) {
     setRegistrations((current) =>
       current.map((registration) =>
-        registration.id === updated.id ? updated : registration,
+        registration.id === updated.id ? mergeRegistrationDisplay(registration, updated) : registration,
       ),
     )
 
@@ -266,6 +267,14 @@ export function MyRegistrationsPage() {
                 </div>
 
                 <dl className={styles.facts}>
+                  <div>
+                    <dt>Мероприятие</dt>
+                    <dd>{registrationEventTitle(registration)}</dd>
+                  </div>
+                  <div>
+                    <dt>Дисциплина</dt>
+                    <dd>{registrationDisciplineName(registration)}</dd>
+                  </div>
                   <div>
                     <dt>Заявочное время</dt>
                     <dd>{getSeedTimeLabel(registration)}</dd>
@@ -341,9 +350,7 @@ export function MyRegistrationsPage() {
                   </div>
                 ) : null}
 
-                <p className={styles.technicalId}>
-                  ID дисциплины: {registration.eventDisciplineId}
-                </p>
+
               </article>
             )
           })}

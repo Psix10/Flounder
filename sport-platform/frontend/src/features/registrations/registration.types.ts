@@ -87,6 +87,8 @@ export type RegistrationStatus =
   | 'WITHDRAWN'
 
 export type Registration = {
+  eventTitle?: string | null
+  disciplineName?: string | null
   id: string
   eventId: string
   eventDisciplineId: string
