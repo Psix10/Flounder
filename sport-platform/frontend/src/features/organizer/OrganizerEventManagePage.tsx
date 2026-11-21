@@ -1,3 +1,4 @@
+import { competitionFormatLabel } from '../../lib/discipline-labels.mjs'
 // EVENT_OPERATORS_LINK_V1
 // SWIM_LABELS_V1
 import { formatHeatLabel } from '../../lib/heat-labels.mjs'
@@ -695,7 +696,7 @@ function OrganizerEventManageContent({
 
                           <p className={styles.disciplineMeta}>
                             Код: {discipline.code || '—'} · Формат:{' '}
-                            {discipline.competitionFormat}
+                            {competitionFormatLabel(discipline.competitionFormat)}
                           </p>
                         </div>
 
