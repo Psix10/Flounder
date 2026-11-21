@@ -1,3 +1,4 @@
+import { parseDisciplineId } from '../../lib/discipline-id.mjs'
 import { startRead } from '../../lib/read-lifecycle.mjs'
 // SWIM_LABELS_V1
 import { formatHeatLabel } from '../../lib/heat-labels.mjs'
@@ -101,18 +102,21 @@ function CompetitionUnitsContent({
   accessToken,
 }: CompetitionUnitsContentProps) {
   const navigate = useNavigate()
+  const initialSelection = parseDisciplineId(initialDisciplineId)
 
   const [eventDisciplineId, setEventDisciplineId] = useState(
     initialDisciplineId,
   )
   const [units, setUnits] = useState<CompetitionUnitResponse[]>([])
   const [isLoading, setIsLoading] = useState(
-    Boolean(initialDisciplineId.trim() && accessToken),
+    Boolean(initialSelection.disciplineId && accessToken),
   )
   const [hasLoaded, setHasLoaded] = useState(false)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(
+    initialDisciplineId.trim() ? initialSelection.errorMessage : null,
+  )
   const [request, setRequest] = useState({
-    disciplineId: initialDisciplineId.trim(),
+    disciplineId: initialSelection.disciplineId,
     revision: 0,
   })
 
@@ -144,11 +148,11 @@ function CompetitionUnitsContent({
       return
     }
 
-    const normalizedDisciplineId = eventDisciplineId.trim()
-    if (!normalizedDisciplineId) {
+    const selection = parseDisciplineId(eventDisciplineId)
+    if (selection.errorMessage) {
       setUnits([])
       setHasLoaded(false)
-      setErrorMessage('Введите ID дисциплины.')
+      setErrorMessage(selection.errorMessage)
       return
     }
 
@@ -157,7 +161,7 @@ function CompetitionUnitsContent({
     setUnits([])
     setErrorMessage(null)
     setRequest(current => ({
-      disciplineId: normalizedDisciplineId,
+      disciplineId: selection.disciplineId,
       revision: current.revision + 1,
     }))
   }
@@ -179,7 +183,7 @@ function CompetitionUnitsContent({
       <h1 className={styles.title}>Заплывы и результаты</h1>
 
       <p className={styles.description}>
-        {initialDisciplineId
+        {initialSelection.disciplineId
           ? 'Дисциплина уже выбрана. Заплывы загружаются автоматически. Выберите нужный заплыв или обновите список.'
           : 'Введите идентификатор дисциплины, чтобы открыть список заплывов, матчей, групп или финалов.'}
       </p>
