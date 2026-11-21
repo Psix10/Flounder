@@ -33,7 +33,7 @@ export async function apiFetch<T>(
 ): Promise<T> {
   if (!API_BASE_URL) {
     throw new Error(
-      'VITE_API_BASE_URL is not configured. Create frontend/.env.local and restart Vite.',
+      'Не настроено подключение к серверу. Обратитесь к администратору.',
     )
   }
 

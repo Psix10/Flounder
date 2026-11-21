@@ -1,3 +1,4 @@
+import { competitionFormatLabel } from '../../lib/discipline-labels.mjs'
 // SWIM_LABELS_V1
 import { formatHeatLabel } from '../../lib/heat-labels.mjs'
 import { useEffect, useState } from 'react'
@@ -226,9 +227,7 @@ export function EventDetailsPage() {
                 <div className={styles.disciplineFooter}>
                   <span>
                     Формат:{' '}
-                    {discipline.competitionFormat === 'INDIVIDUAL'
-                      ? 'личный'
-                      : 'командный'}
+                    {competitionFormatLabel(discipline.competitionFormat)}
                   </span>
 
                   <div className={styles.actions}>

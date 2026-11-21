@@ -1,3 +1,4 @@
+import { competitionFormatLabel, competitionUnitTypeLabel, resultTypeLabel } from '../../lib/discipline-labels.mjs'
 import { useCallback, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link, useParams } from 'react-router'
@@ -13,8 +14,8 @@ import styles from './OperatorWorkspace.module.css'
 function errorText(error: unknown): string {
   if (error instanceof ApiError) {
     if (error.status === 401) return 'Сессия завершена. Войдите повторно.'
-    if (error.status === 403) return 'Нет действующего доступа оператора. Назначение могло быть снято, учётная запись отключена или роль OPERATOR отозвана.'
-    if (error.status === 404) return 'Мероприятие или API рабочего места не найдены. Если патч только установлен, проверьте перезапуск backend.'
+    if (error.status === 403) return 'Рабочее место оператора недоступно. Обратитесь к организатору: назначение или права могли измениться.'
+    if (error.status === 404) return 'Мероприятие или рабочее место оператора не найдено. Вернитесь к списку мероприятий и обновите данные.'
     return error.message || 'Не удалось загрузить данные.'
   }
   return error instanceof Error ? error.message : 'Не удалось загрузить данные.'
@@ -96,7 +97,7 @@ function EventContent({ eventId, token }: { eventId: string; token: string }) {
       <div className={styles.list}>{resource.data.disciplines.map(discipline => <article className={styles.card} key={discipline.id}>
         <span className={styles.badge}>{getDisciplineStatusLabel(discipline.status)}</span>
         <h3>{formatHeatLabel(discipline.name)}</h3>
-        <p>Формат: {discipline.competitionFormat} · Тип: {discipline.unitType ?? '—'} · Результат: {discipline.resultType ?? '—'}</p>
+        <p>Формат: {competitionFormatLabel(discipline.competitionFormat)} · Тип старта: {competitionUnitTypeLabel(discipline.unitType)} · Результат: {resultTypeLabel(discipline.resultType)}</p>
         <Link className={styles.link} to={operatorDisciplinePath(eventId, discipline.id)}>Открыть заплывы</Link>
       </article>)}</div>
     </> : null}

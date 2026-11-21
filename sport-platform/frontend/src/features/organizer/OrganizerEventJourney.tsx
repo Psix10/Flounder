@@ -233,7 +233,7 @@ export function OrganizerEventJourney({
           {supported.length === 0 ? (
             <p>
               Для новой генерации нужны опубликованные индивидуальные
-              дисциплины формата HEAT.
+              дисциплины с заплывами.
             </p>
           ) : null}
 

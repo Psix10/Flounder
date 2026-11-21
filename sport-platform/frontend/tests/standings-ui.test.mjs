@@ -9,7 +9,7 @@ test('malformed violations are ignored safely',()=>{
   assert.deepEqual(readApiFailure({violations:[null,{},'bad',{field:'a',message:1},{field:'b',message:'valid',secret:'discard'}]},400).violations,[{field:'b',message:'valid'}])
 })
 test('non JSON errors have HTTP fallback',()=>{
-  assert.equal(readApiFailure(null,502).message,'Request failed with HTTP 502')
+  assert.equal(readApiFailure(null,502).message,'Не удалось выполнить запрос. Код ответа: 502.')
   assert.equal(readApiFailure('gateway error',502).code,undefined)
 })
 test('only typed final-not-found is treated as absent snapshot',()=>{

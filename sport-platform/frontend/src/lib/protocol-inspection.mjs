@@ -20,8 +20,8 @@ export function snapshotGender(snapshot) {
   return typeof value === 'string' ? genders[value.toUpperCase()] ?? `Неизвестное значение: ${value}` : 'Некорректное значение'
 }
 function policy(raw) {
-  if (!isObject(raw)) throw new Error('У категории отсутствует объект eligibility.')
-  if (Object.keys(raw).some(key => !['ageMethod','ageReferenceDate','minAge','maxAge','allowedGenders'].includes(key))) throw new Error('Неизвестные параметры eligibility: предварительная проверка недоступна.')
+  if (!isObject(raw)) throw new Error('У категории отсутствуют настройки допуска.')
+  if (Object.keys(raw).some(key => !['ageMethod','ageReferenceDate','minAge','maxAge','allowedGenders'].includes(key))) throw new Error('Неизвестные параметры допуска: предварительная проверка недоступна.')
   let allowed = []
   if ('allowedGenders' in raw) {
     allowed = raw.allowedGenders
@@ -45,7 +45,7 @@ function describe(p) {
     const birth = p.min != null && p.max != null
       ? `${year - p.max}–${year - p.min} г. р.`
       : p.min != null ? `${year - p.min} г. р. и старше` : `${year - p.max} г. р. и младше`
-    return `${sex} · ${birth} · BY_YEAR, опорная дата ${p.reference.iso}`
+    return `${sex} · ${birth} · возраст по году рождения, опорная дата ${p.reference.iso}`
   }
   const age = p.min != null && p.max != null ? `${p.min}–${p.max}` : p.min != null ? `от ${p.min}` : `до ${p.max}`
   return `${sex} · ${age} полных лет на ${p.reference.iso}`
@@ -118,7 +118,7 @@ export function configuredGenderWarning(raw, snapshot) {
   try { data = typeof raw === 'string' ? JSON.parse(raw) : raw } catch { return null }
   const restriction = typeof data?.gender === 'string' ? data.gender.toUpperCase() : null
   const actual = typeof snapshot?.gender === 'string' ? snapshot.gender.toUpperCase() : null
-  if (['MALE','FEMALE'].includes(restriction) && ['MALE','FEMALE'].includes(actual) && restriction !== actual) return 'Пол в снимке не совпадает с gender в настройках дисциплины. Требуется проверка серверного допуска.'
+  if (['MALE','FEMALE'].includes(restriction) && ['MALE','FEMALE'].includes(actual) && restriction !== actual) return 'Пол, сохранённый в заявке, не соответствует ограничению дисциплины. Требуется проверка допуска на сервере.'
   return null
 }
 export function savedCategoryLabel(code, inspection) {

@@ -1,3 +1,4 @@
+import { competitionFormatLabel, competitionUnitTypeLabel, resultTypeLabel } from '../../lib/discipline-labels.mjs'
 // PROTOCOL_INSPECTION_V1
 import { ProtocolDisciplineFacts, ProtocolCategoryRules, ConfirmedRegistrationAudit, SavedParticipantFacts, SavedCategoryDetails } from './ProtocolInspection'
 // SWIM_LABELS_V1
@@ -112,7 +113,7 @@ export function StartProtocolPage() {
   async function handleGenerate() {
     if (!token || !disciplineId || !versionId || !compatible || !published || locked.current) return
     if (!window.confirm(protocol
-      ? 'Переформировать протокол? Состав и ID черновых заплывов могут измениться. Сервер проверит допустимость операции.'
+      ? 'Переформировать протокол? Состав и идентификаторы черновых заплывов могут измениться. Система проверит допустимость операции.'
       : 'Сформировать и сохранить стартовый протокол по выбранным правилам?')) return
     locked.current = true
     setBusy(true)
@@ -140,11 +141,11 @@ export function StartProtocolPage() {
     {!loading && event && discipline ? <>
       <header className={styles.card}>
         <h2>{formatHeatLabel(discipline.name)}</h2><p>{event.title}</p>
-        <p>Формат: {discipline.competitionFormat === 'INDIVIDUAL' ? 'индивидуальный' : discipline.competitionFormat === 'TEAM' ? 'командный' : discipline.competitionFormat} · Тип старта: {discipline.unitType === 'HEAT' ? 'заплыв' : (discipline.unitType ?? '—')} · Результат: {discipline.resultType === 'TIME' ? 'время' : (discipline.resultType ?? '—')}</p>
+        <p>Формат: {competitionFormatLabel(discipline.competitionFormat)} · Тип старта: {competitionUnitTypeLabel(discipline.unitType)} · Результат: {resultTypeLabel(discipline.resultType)}</p>
         <ProtocolDisciplineFacts settings={discipline.settingsJson} />
         <p>Подтверждено: {confirmed.length} · Остальных заявок: {registrations.length - confirmed.length}</p>
       </header>
-      {!compatible ? <p className={styles.notice}>Версионируемая генерация рассчитана на INDIVIDUAL / HEAT. У этой дисциплины другой формат или тип. Не меняйте опубликованную дисциплину через SQL: сначала нужно подготовить совместимый шаблон. TIME может оставаться типом результата.</p> : null}
+      {!compatible ? <p className={styles.notice}>Формирование протокола по версии правил доступно для индивидуальных дисциплин с заплывами. У этой дисциплины другой формат или тип старта. Для формирования протокола нужна дисциплина с совместимыми настройками.</p> : null}
       {!published ? <p className={styles.notice}>Перед генерацией дисциплина должна быть опубликована.</p> : null}
       <section className={styles.card}>
         <h2>Настройки выбранного регламента</h2>

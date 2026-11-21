@@ -11,7 +11,7 @@ export function readApiFailure(payload, status) {
   const source = payload && typeof payload === 'object' ? payload : {}
   const violations = Array.isArray(source.violations) ? source.violations.filter(v =>
     v && typeof v.field === 'string' && typeof v.message === 'string').map(v => ({field:v.field,message:v.message})) : []
-  return {message:typeof source.message === 'string' ? source.message : `Request failed with HTTP ${status}`,
+  return {message:typeof source.message === 'string' ? source.message : `Не удалось выполнить запрос. Код ответа: ${status}.`,
     code:typeof source.code === 'string' ? source.code : undefined,violations}
 }
 export function failureMessage(error, fallback = 'Не удалось выполнить запрос.') {
